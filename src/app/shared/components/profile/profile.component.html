@@ -1,0 +1,51 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Perfil
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-grid *ngIf="user">
+      <ion-row class="ion-text-center">
+          <ion-col>Nombre</ion-col>
+          <ion-col>{{user.name}}</ion-col>
+      </ion-row>
+
+      <ion-row class="ion-text-center">
+        <ion-col>Apellidos</ion-col>
+        <ion-col>{{user.surname}}</ion-col>
+      </ion-row>
+
+      <ion-row class="ion-text-center">
+        <ion-col>Género</ion-col>
+        <ion-col>{{user.genre}}</ion-col>
+      </ion-row>
+
+      <ion-row class="ion-text-center">
+        <ion-col>Email</ion-col>
+        <ion-col>{{user.email}}</ion-col>
+      </ion-row>
+
+      <ion-row class="ion-text-center">
+        <ion-col>
+          <ion-button expand="block" (click)="logout()">
+            <ion-icon slot="start" name="log-out-outline"></ion-icon>
+            Cerrar sesion
+          </ion-button>    
+        </ion-col>            
+      </ion-row>
+
+      <ion-row class="ion-text-center">
+        <ion-col>
+          <ion-button expand="block" color="danger" (click)="confirmDeleteUser()">
+            <ion-icon slot="start" name="trash-outline"></ion-icon>
+            Borrar usuario
+          </ion-button>    
+        </ion-col>            
+      </ion-row>
+
+
+  </ion-grid>
+</ion-content>

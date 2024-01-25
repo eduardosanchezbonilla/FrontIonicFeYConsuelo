@@ -1,0 +1,6 @@
+<ion-app>
+  <ion-menu (ionDidOpen)="openMenu()" contentId="content" menuId="content">
+      <app-profile [user]="user"></app-profile>
+  </ion-menu>
+  <ion-router-outlet id="content"></ion-router-outlet>
+</ion-app>

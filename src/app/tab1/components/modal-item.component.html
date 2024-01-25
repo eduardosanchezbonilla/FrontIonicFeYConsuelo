@@ -1,0 +1,59 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="medium" (click)="cancel()">Cancelar</ion-button>
+    </ion-buttons>
+    <ion-title>{{updating ? 'Actualizar': 'Crear'}} item</ion-title>    
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form (ngSubmit)="confirm()">
+    <ion-item>
+      <ion-label>Descripcion</ion-label>
+      <ion-textarea
+        name="description" 
+        [(ngModel)] = "item.description">
+      </ion-textarea>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Cantidad</ion-label>
+      <ion-input
+        class="ion-text-right"
+        type="number"
+        min="1"
+        name="quantity" 
+        [(ngModel)] = "item.quantity">
+      </ion-input>
+
+      <ion-select
+        slot="end"
+        okText="Aceptar"
+        cancelText="Cancelar"
+        name="unit"
+        placeHolder="unidad"
+        [(ngModel)] = "item.unit">    
+          <ion-select-option [value]="null">Sin unidad</ion-select-option>
+          <ion-select-option *ngFor="let unit of units" [value]="unit">{{unit}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Categorias</ion-label>
+      <ion-select        
+        okText="Aceptar"
+        cancelText="Cancelar"
+        name="category"
+        placeHolder="Categoria"
+        [compareWith] = "compareWith"
+        [(ngModel)] = "item.category">    
+          <ion-select-option [value]="null">Sin categoria</ion-select-option>
+          <ion-select-option *ngFor="let category of categories" [value]="category">{{category.name}}</ion-select-option>
+      </ion-select>      
+    </ion-item>
+
+    <ion-button type="submit" [disabled]="!item.description" expand="block">{{updating ? 'Actualizar': 'Crear'}} item</ion-button>
+
+  </form>
+</ion-content>
