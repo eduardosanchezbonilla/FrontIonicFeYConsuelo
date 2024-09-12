@@ -27,3 +27,37 @@
 
 @import "scss/__aio_components.scss";
 @import "scss/__aio_fonts.scss";
+
+
+/* Global Styles properties */
+.spacer {
+	height: 18px;
+}
+.spacer-small {
+	height: 10px; 
+}
+.background-transparent {
+    --ion-background-color: transparent;
+}
+.background-color-primary {
+    background-color: var(--ion-color-primary);
+}
+.border-color-primary {
+    border-color: var(--ion-color-primary);
+}
+.padding-content {
+    text-align: center !important;	
+    --padding-start: 32px; 
+    --padding-end: 32px; 
+}
+.border-content {
+	border:6px solid var(--ion-color-primary);;
+	border-radius: 16px; 
+	margin: 10px; 
+	overflow: hidden;
+}
+ion-content {
+    //--background: url('/assets/images/fondo.jpeg') no-repeat center center / cover;
+    --background: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.99)), url('/assets/images/fondo.jpeg') no-repeat center center / cover;
+}
+

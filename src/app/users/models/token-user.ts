@@ -1,3 +1,5 @@
 export class TokenUser {
-    accessToken: string;
+    token: string;    
+    username: string;
+    roles:string[];
 }

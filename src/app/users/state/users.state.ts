@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { State, Action, StateContext, Selector } from '@ngxs/store';
-import { CreateUser, DeleteUser, GetUser, Login, Logout } from './users.actions';
+import { /*CreateUser, DeleteUser, GetUser,*/ Login, Logout } from './users.actions';
 import { UsersService } from '../services/users.service';
 import { TokenUser } from '../models/token-user';
 import { StorageService } from 'src/app/services/storage/storage.service';
@@ -36,8 +36,9 @@ export class UsersState {
       { payload }: Login
   ) {
     return this.userService.login(payload.auth).then( async (token:TokenUser) => {
-        if(token){
-          await this.storage.setItem('token',token.accessToken);
+        if(token){                    
+          await this.storage.setItem('token',token.token);
+          await this.storage.setItem('user',JSON.stringify(new User(token.username,token.roles)));
           patchState({
             success: true
           })
@@ -51,7 +52,7 @@ export class UsersState {
     )
   }
 
-  @Action(GetUser)
+  /*@Action(GetUser)
   getUser(
       { patchState }: StateContext<UsersStateModel>,
       { payload }: GetUser
@@ -90,7 +91,7 @@ export class UsersState {
         }
       }
     )
-  }
+  }*/
 
   @Action(Logout)
   async logout(
@@ -102,7 +103,7 @@ export class UsersState {
     })
   }
 
-  @Action(DeleteUser)
+  /*@Action(DeleteUser)
   deleteUser(
       { patchState }: StateContext<UsersStateModel>,
       { payload }: DeleteUser
@@ -113,6 +114,6 @@ export class UsersState {
         })     
       }
     )
-  }
+  }*/
 
 }

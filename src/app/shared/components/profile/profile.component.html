@@ -10,22 +10,7 @@
   <ion-grid *ngIf="user">
       <ion-row class="ion-text-center">
           <ion-col>Nombre</ion-col>
-          <ion-col>{{user.name}}</ion-col>
-      </ion-row>
-
-      <ion-row class="ion-text-center">
-        <ion-col>Apellidos</ion-col>
-        <ion-col>{{user.surname}}</ion-col>
-      </ion-row>
-
-      <ion-row class="ion-text-center">
-        <ion-col>Género</ion-col>
-        <ion-col>{{user.genre}}</ion-col>
-      </ion-row>
-
-      <ion-row class="ion-text-center">
-        <ion-col>Email</ion-col>
-        <ion-col>{{user.email}}</ion-col>
+          <ion-col>{{user.username}}</ion-col>
       </ion-row>
 
       <ion-row class="ion-text-center">
@@ -37,15 +22,14 @@
         </ion-col>            
       </ion-row>
 
-      <ion-row class="ion-text-center">
+      <!--<ion-row class="ion-text-center">
         <ion-col>
           <ion-button expand="block" color="danger" (click)="confirmDeleteUser()">
             <ion-icon slot="start" name="trash-outline"></ion-icon>
             Borrar usuario
           </ion-button>    
         </ion-col>            
-      </ion-row>
-
+      </ion-row>-->      
 
   </ion-grid>
 </ion-content>

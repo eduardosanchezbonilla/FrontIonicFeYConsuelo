@@ -5,7 +5,7 @@ import { Store } from '@ngxs/store';
 import { StorageService } from 'src/app/services/storage/storage.service';
 import { ToastService } from 'src/app/services/toast/toast.service';
 import { User } from 'src/app/users/models/user';
-import { DeleteUser, Logout } from 'src/app/users/state/users.actions';
+import { /*DeleteUser,*/ Logout } from 'src/app/users/state/users.actions';
 import { UsersState } from 'src/app/users/state/users.state';
 
 @Component({
@@ -33,7 +33,7 @@ export class Profile  {
     this.navController.navigateForward('login');
   }
 
-  async confirmDeleteUser() {
+  /*async confirmDeleteUser() {
     const alert = await this.alertController.create({
         header: 'Confirmacion',
         message: '¿Estas seguro de eliminar tu cuenta? Todos los datos serán eliminados',
@@ -68,6 +68,6 @@ export class Profile  {
       }
     })
   
-  }
+  }*/
 
 }

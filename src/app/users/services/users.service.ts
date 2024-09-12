@@ -21,15 +21,15 @@ export class UsersService {
         }
       }
     ).then(async response => {
-      if(response.status==201){
-        const data = await response.data;
+      if(response.status==200){
+        const data = await response.data;      
         return data;
       }
       return null;
     })
   }
 
-  async getUser(email:string){
+  /*async getUser(email:string){
     const token = await this.storage.getItem('token');
     return Http.get({
       url: environment.host + '/users',
@@ -82,7 +82,7 @@ export class UsersService {
       }
       return null;
     })
-  }
+  }*/
 
 
 }
