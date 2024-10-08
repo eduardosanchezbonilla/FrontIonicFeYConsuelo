@@ -13,6 +13,10 @@ const routes: Routes = [
     canActivate: [AuthGuard] 
   },
   {
+    path: 'tabs-super-admin',
+    loadChildren: () => import('./tabs-super-admin/tabs-super-admin.module').then( m => m.TabsSuperAdminPageModule)
+  },
+  {
     path: 'tabs-admin',
     loadChildren: () => import('./tabs-admin/tabs-admin.module').then( m => m.TabsAdminPageModule),
     canActivate: [AuthGuard] 

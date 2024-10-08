@@ -1,12 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
-import { AlertController, IonicModule, MenuController, NavController } from '@ionic/angular';
-import { Store } from '@ngxs/store';
-import { StorageService } from 'src/app/services/storage/storage.service';
-import { ToastService } from 'src/app/services/toast/toast.service';
+import { Component, Input } from '@angular/core';
+import { IonicModule } from '@ionic/angular';
 import { User } from 'src/app/users/models/user';
-import { /*DeleteUser,*/ Logout } from 'src/app/users/state/users.actions';
-import { UsersState } from 'src/app/users/state/users.state';
+import { UsersService } from 'src/app/users/services/users.service';
+import { DEFAULT_VOICE_IMAGE, DEFAULT_MUSICIAN_IMAGE } from '../../../constants/constants';
 
 @Component({
   selector: 'app-profile',
@@ -18,56 +15,16 @@ import { UsersState } from 'src/app/users/state/users.state';
 export class Profile  {
 
   @Input() user:User;
+  public defaultMusicianImage: string = DEFAULT_MUSICIAN_IMAGE;
+  public defaultVoiceImage: string = DEFAULT_VOICE_IMAGE;
 
   constructor(
-    private store:Store,
-    private navController:NavController,
-    private menuController: MenuController,
-    private alertController: AlertController,
-    private toastService: ToastService) { }
+    private userService: UsersService
+  ) { }
 
   logout() {
-    this.store.dispatch(new Logout());
-    this.menuController.close("content");
-    this.user = null;
-    this.navController.navigateForward('login');
+    this.userService.logout();
+    this.user = null;  
   }
-
-  /*async confirmDeleteUser() {
-    const alert = await this.alertController.create({
-        header: 'Confirmacion',
-        message: '¿Estas seguro de eliminar tu cuenta? Todos los datos serán eliminados',
-        buttons: [
-          {
-            text: 'No',
-            role: 'cancel'
-          },
-          {
-            text: 'Si',
-            role: 'confirm',
-            handler: () => {
-              this.deleteUser()
-            }
-          }
-        ]
-    });
-    alert.present();
-  }
-
-  deleteUser() {
-    this.store.dispatch(new DeleteUser({idUser: this.user._id})).subscribe({
-      next: () => {
-        const success = this.store.selectSnapshot(UsersState.success);
-        if(success){
-          this.toastService.presentToast("Cuenta eliminada");
-          this.logout();
-        }
-        else{
-          this.toastService.presentToast("Error al eliminar la cuenta");
-        }
-      }
-    })
-  
-  }*/
 
 }

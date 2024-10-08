@@ -14,6 +14,6 @@ export class AppComponent {
   constructor(private storage: StorageService) {}
 
   async openMenu(){
-      this.user = JSON.parse(await this.storage.getItem('user'));
+      this.user = JSON.parse(await this.storage.getItem('user'));      
   }
 }

@@ -1,12 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { AuthDto } from '../../models/auth-dto';
-import { InitState, Store } from '@ngxs/store';
-import { /*CreateUser, GetUser,*/ Login } from '../../state/users.actions';
+import { Store } from '@ngxs/store';
+import { ChangeExpiredPassword, Login, ResetPassword } from '../../state/users.actions';
 import { UsersState } from '../../state/users.state';
 import { ToastService } from 'src/app/services/toast/toast.service';
 import { NavController } from '@ionic/angular';
-import { User } from '../../models/user';
 import { StorageService } from 'src/app/services/storage/storage.service';
+import { ChangePasswordDto } from '../../models/change-password-dto';
+import { LoadingService } from 'src/app/services/loading/loading.service';
+import { ResetPasswordDto } from '../../models/reset-password-dto';
 
 @Component({
   selector: 'app-login',
@@ -16,29 +18,32 @@ import { StorageService } from 'src/app/services/storage/storage.service';
 export class LoginPage {
 
   public auth: AuthDto;
-  //public showCreateForm: boolean;
-  //public user: User;
-
+  public showChangeExpiredPassword: boolean;
+  public showForgotPassword: boolean;
+  public changePassword: ChangePasswordDto;  
+  public resetPassword: ResetPasswordDto;  
 
   constructor(
       private store: Store,
       private toastService: ToastService,
       private navController: NavController,
-      private storage: StorageService
+      private storage: StorageService,
+      private loadingService: LoadingService
   ) {
-    this.auth = new AuthDto();
-    //this.user = new User();
-    //this.showCreateForm = false;
+    this.auth = new AuthDto(); 
+    this.changePassword = new ChangePasswordDto();   
+    this.resetPassword = new ResetPasswordDto();   
+    this.showChangeExpiredPassword = false;    
+    this.showForgotPassword = false;  
   }
 
   async ionViewWillEnter(){
     const user = JSON.parse(await this.storage.getItem('user'));
     if(user){
-      this.navController.navigateForward('tabs/tab1');         
+      this.redirectAfterLogin();      
     }
     else{
-      this.auth = new AuthDto();
-      //this.showCreateForm = false;
+      this.auth = new AuthDto();      
     }
   }
 
@@ -49,55 +54,112 @@ export class LoginPage {
     this.login();
   }
 
-  login() {        
+  async redirectAfterLogin(){
+    const user = JSON.parse(await this.storage.getItem('user'));         
+          if(user.roles.includes('SUPER_ADMIN')){           
+            this.storage.setItem('profile', 'SUPER_ADMIN');
+            this.navController.navigateForward('tabs-super-admin/menu-musician');   
+          }        
+          else if(user.roles.includes('ADMIN')){
+            this.storage.setItem('profile', 'ADMIN');
+            this.navController.navigateForward('tabs-admin/menu-musician');   
+          }
+          else if(user.roles.includes('MUSICO')){
+            this.storage.setItem('profile', 'MUSICO');
+            this.navController.navigateForward('tabs-musician/menu-musician');   
+          }
+          else{
+            this.storage.setItem('profile', 'INVITADO');
+            this.navController.navigateForward('tabs-guest/tab1');   
+          }
+  }
+
+  async login() {        
+    await this.loadingService.presentLoading('Loading...');
     this.store.dispatch(new Login({auth:this.auth})).subscribe({
       next: async () => {
         let success = this.store.selectSnapshot(UsersState.success);
         if(success){                              
           this.auth.username=null;
           this.auth.password=null;
-          this.toastService.presentToast("Logueado correctamente");
-          
-          // recogemos el usuario y segun el perfil redirigimos a un sitio u otro
-          const user = JSON.parse(await this.storage.getItem('user'));                 
-          if(user.roles.includes('ADMIN')){
-            this.navController.navigateForward('tabs-admin/tab1');   
-          }
-          else if(user.roles.includes('MUSICO')){
-            this.navController.navigateForward('tabs-musician/tab1');   
-          }
-          else{
-            this.navController.navigateForward('tabs-guest/tab1');   
-          }
+          this.redirectAfterLogin();
         }
         else{
-          this.toastService.presentToast("Usuario incorrecto");
+          // aqui dependiendo del tipo de error tendremos que hacer una cosa u otra, 
+          // si es un 403, tengo que mostrar un formulario porque la password ha expirado, 
+          // sino simplemente muestro el error que nos esta llegando     
+          const errorStatusCode = this.store.selectSnapshot(UsersState.errorStatusCode);
+          const errorMessage = this.store.selectSnapshot(UsersState.errorMessage);
+          if(errorStatusCode==403){
+            this.toastService.presentToast("Debe actualizar el password actual");
+            this.changePassword = new ChangePasswordDto();       
+            this.showChangeExpiredPassword = true;            
+          }
+          else{
+            this.toastService.presentToast(errorMessage);
+          }                    
         }
+        await this.loadingService.dismissLoading();
       } 
     })
   }
 
-  /*createAccount() {    
-    this.store.dispatch(new CreateUser({user:this.user})).subscribe({
-      next: () => {
+  volverLogin(event: Event) {       
+    event.preventDefault(); // Previene el comportamiento predeterminado del enlace <a>
+    this.showChangeExpiredPassword = false;
+    this.showForgotPassword = false;
+  }
+
+  showForgotPasswordScreen(event: Event) {       
+    event.preventDefault(); // Previene el comportamiento predeterminado del enlace <a>
+    this.showChangeExpiredPassword = false;
+    this.showForgotPassword = true;
+  }
+
+  async changeExpiredPassword() {         
+    await this.loadingService.presentLoading('Loading...');
+    this.changePassword.username = this.auth.username;
+    this.store.dispatch(new ChangeExpiredPassword({changePassword:this.changePassword})).subscribe({
+      next: async () => {
         let success = this.store.selectSnapshot(UsersState.success);
-        if(success){
-          this.toastService.presentToast("Usuario creado correctamente");
-          this.auth.username = this.user.email;
-          this.auth.password = this.user.password;
-          this.login();
+        if(success){                              
+          this.auth.username=null;
+          this.auth.password=null;
+          this.toastService.presentToast("Password actualizado correctamente");          
+          this.showChangeExpiredPassword = false;
+          this.showForgotPassword = false;
         }
         else{
-          this.toastService.presentToast("Error al crear el usuario");
+          const errorStatusCode = this.store.selectSnapshot(UsersState.errorStatusCode);
+          const errorMessage = this.store.selectSnapshot(UsersState.errorMessage);
+          this.toastService.presentToast(errorMessage);                
         }
+        await this.loadingService.dismissLoading();
       } 
     })
-  }*/
+  }
 
-  /*onShowCreateForm() {
-    this.user = new User();
-    this.user.genre = 'Hombre';
-    this.showCreateForm = ! this.showCreateForm;
-  }*/
+  async doResetPassword() {         
+    await this.loadingService.presentLoading('Loading...');
+    this.resetPassword.username = this.auth.username;
+    this.store.dispatch(new ResetPassword({resetPassword:this.resetPassword})).subscribe({
+      next: async () => {
+        let success = this.store.selectSnapshot(UsersState.success);
+        if(success){                              
+          this.auth.username=null;
+          this.auth.password=null;
+          this.toastService.presentToast("Password reseteado correctamente");          
+          this.showChangeExpiredPassword = false;
+          this.showForgotPassword = false;
+        }
+        else{
+          const errorStatusCode = this.store.selectSnapshot(UsersState.errorStatusCode);
+          const errorMessage = this.store.selectSnapshot(UsersState.errorMessage);
+          this.toastService.presentToast(errorMessage);                
+        }
+        await this.loadingService.dismissLoading();
+      } 
+    })
+  }
 
 }

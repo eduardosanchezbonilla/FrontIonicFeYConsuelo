@@ -11,7 +11,7 @@ export class StorageService {
     this.init();
   }
 
-  async init(){
+  async init(){    
       this._storage = await this.storate.create();
   }
 
@@ -19,11 +19,11 @@ export class StorageService {
     return await this._storage.get(key);    
   }
 
-  async setItem(key:string,value: string){
+  async setItem(key:string,value: string){    
     return await this._storage.set(key,value);    
   }
 
-  clear(){
+  clear(){    
     this._storage.clear();
   }
 

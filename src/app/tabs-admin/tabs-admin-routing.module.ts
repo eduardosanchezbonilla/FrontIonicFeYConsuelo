@@ -9,8 +9,8 @@ const routes: Routes = [
     component: TabsAdminPage,
     children: [
       {
-        path: 'tab1',
-        loadChildren: () => import('../tab1/tab1.module').then(m => m.Tab1PageModule)
+        path: 'menu-musician',       
+        loadChildren: () => import('../menu-musician/menu-musician.module').then(m => m.MenuMusicianPageModule)
       },
       {
         path: 'tab2',
@@ -18,14 +18,14 @@ const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: '/tabs-admin/tab1',
+        redirectTo: '/tabs-admin/menu-musician',
         pathMatch: 'full'
       }
     ]
   },
   {
     path: '',
-    redirectTo: '/tabs-admin/tab1',
+    redirectTo: '/tabs-admin/menu-musician',
     pathMatch: 'full'
   }
 ];

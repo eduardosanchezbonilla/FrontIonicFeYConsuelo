@@ -28,16 +28,30 @@
 @import "scss/__aio_components.scss";
 @import "scss/__aio_fonts.scss";
 
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Ephesis:ital@0;1&display=swap');
+
+
 
 /* Global Styles properties */
+.spacer-big {
+	height: 22px;
+}
 .spacer {
 	height: 18px;
 }
 .spacer-small {
 	height: 10px; 
 }
+.spacer-super-small {
+	height: 6px; 
+}
 .background-transparent {
     --ion-background-color: transparent;
+}
+.background-white {
+    --ion-background-color: #ffffff;
 }
 .background-color-primary {
     background-color: var(--ion-color-primary);
@@ -56,8 +70,63 @@
 	margin: 10px; 
 	overflow: hidden;
 }
-ion-content {
-    //--background: url('/assets/images/fondo.jpeg') no-repeat center center / cover;
-    --background: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.99)), url('/assets/images/fondo.jpeg') no-repeat center center / cover;
+ion-content {    
+    --background: linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.99)), url('/assets/images/fondo.jpeg') no-repeat center center / cover;
 }
 
+html, body {
+    --background: linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.99)), url('/assets/images/fondo.jpeg') no-repeat center center / cover;
+    background: linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.99)), url('/assets/images/fondo.jpeg') no-repeat center center / cover;
+    height: 100%; 
+}
+
+ion-content {
+    --ion-background-color: transparent;
+}
+
+ion-toolbar { 
+    //--background:  linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.1)), url('/assets/images/headerTopNew7.png') no-repeat center center / contain;    
+    --background:  linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.1)), url('/assets/images/headerTopNew13.png') no-repeat center center / cover;
+    filter: contrast(1.3) saturate(1.2);    
+    //border-bottom: 1px solid  #888888; 
+    border-bottom: 1px solid var(--ion-color-primary);
+}
+
+ion-tab-bar {
+    border-top: 1px solid var(--ion-color-primary);
+}
+
+ion-tab-bar{
+    //--background: linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.0)), url('/assets/images/trama.jpeg') center / contain;    
+    --background: linear-gradient(rgba(255, 255, 255, 0.87), rgba(255, 255, 255, 0.95)), url('/assets/images/fondoPie.jpeg') center / contain;         
+    //--ion-background-color:#ededed; 
+    //--background: linear-gradient(135deg, #f7f7f7, #e0e0e0); /* Gradiente de gris claro */
+    //background-size: cover;
+    //filter: brightness(1.1); /* Aumenta el brillo ligeramente */
+}
+
+ion-modal {
+    --background: linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.99)), url(/assets/images/fondo.jpeg) no-repeat center center / cover;    
+}
+
+.fancy-title {
+    font-family: 'Dancing Script', cursive; /* Fuente personalizada */
+    font-size: 35px; /* Tamaño de la fuente */
+    text-align: center; /* Centrar el texto */
+    margin-top: 16px; /* Margen superior e inferior */
+    margin-bottom: 0px; /* Margen superior e inferior */
+    letter-spacing: 1px; /* Espaciado entre letras */
+    //text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); /* Sombra del texto */  
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8); /* Sombra del texto */  
+  }
+  
+  .ephesis-title {
+    font-family: 'Ephesis', cursive; /* Fuente personalizada */
+    font-size: 35px; /* Tamaño de la fuente */
+    text-align: center; /* Centrar el texto */
+    margin-top: 16px; /* Margen superior e inferior */
+    margin-bottom: 0px; /* Margen superior e inferior */
+    letter-spacing: 1px; /* Espaciado entre letras */
+    //text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); /* Sombra del texto */  
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8); /* Sombra del texto */  
+  }

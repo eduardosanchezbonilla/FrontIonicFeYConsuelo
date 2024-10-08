@@ -1,0 +1,302 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="medium" (click)="cancel()">Cancelar</ion-button>
+    </ion-buttons>    
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form (ngSubmit)="confirm()" #musicianForm="ngForm">    
+    <!------------------------->
+    <!------ DATOS MUSICO ----->
+    <!------------------------->
+    <h2 class="fancy-title custom-h2">
+      Datos músico
+    </h2>
+    
+    <!-- DNI -->
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+      <ion-label color="primary" position="floating">
+          Dni
+      </ion-label>
+      <ion-icon name="id-card-outline" slot="end"></ion-icon>
+      <ion-input                      
+            autocomplete="dni"       
+            minlength="5"                     
+            maxlength="9"
+            name="dni"
+            placeholder="Introduzca el dni del músico"
+            type="text"
+            required="true"
+            (ionInput)="inputUpperCase($event,musician.dni)"
+            [(ngModel)]="musician.dni"                                                 
+            #dniInput="ngModel"            
+      >
+      </ion-input>
+    </ion-item>
+    
+    <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(dniInput.invalid && dniInput.touched)">
+      <ion-text color="danger" *ngIf="dniInput.errors && dniInput.errors['required']">El dni es obligatorio.</ion-text>
+      <ion-text color="danger" *ngIf="dniInput.errors && dniInput.errors['minlength']">El dni debe tener al menos 5 caracteres.</ion-text>
+      <ion-text color="danger" *ngIf="dniInput.errors && dniInput.errors['maxlength']">El ddni no puede exceder los 9 caracteres.</ion-text>
+    </div>
+
+    <!-- NOMBRE -->
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+      <ion-label color="primary" position="floating">
+          Nombre
+      </ion-label>
+      <ion-icon name="person-outline" slot="end"></ion-icon>
+      <ion-input                                                        
+            autocomplete="name"       
+            minlength="1"                     
+            maxlength="50"
+            name="name"
+            placeholder="Introduzca el nombre del músico"
+            type="text"
+            required="true"
+            (ionInput)="inputUpperCase($event,musician.name)"
+            [(ngModel)]="musician.name"                                                 
+            #nameInput="ngModel"            
+      >
+      </ion-input>
+    </ion-item>
+    
+    <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(nameInput.invalid && nameInput.touched)">
+      <ion-text color="danger" *ngIf="nameInput.errors && nameInput.errors['required']">El nombre es obligatorio.</ion-text>
+      <ion-text color="danger" *ngIf="nameInput.errors && nameInput.errors['minlength']">El nombre debe tener al menos 1 caracter..</ion-text>
+      <ion-text color="danger" *ngIf="nameInput.errors && nameInput.errors['maxlength']">El nombre no puede exceder los 50 caracteres.</ion-text>
+    </div>
+
+    <!-- APELLIDOS -->
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+      <ion-label color="primary" position="floating">
+          Apellidos
+      </ion-label>
+      <ion-icon name="person-outline" slot="end"></ion-icon>
+      <ion-input                                                        
+            autocomplete="surname"       
+            minlength="1"                     
+            maxlength="200"
+            name="surname"
+            placeholder="Introduzca los apellidos del músico"
+            type="text"
+            required="true"
+            (ionInput)="inputUpperCase($event,musician.surname)"
+            [(ngModel)]="musician.surname"                                                 
+            #surnameInput="ngModel"            
+      >
+      </ion-input>
+    </ion-item>
+
+    <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(surnameInput.invalid && surnameInput.touched)">
+      <ion-text color="danger" *ngIf="surnameInput.errors && surnameInput.errors['required']">Los apellidos son obligatorios.</ion-text>
+      <ion-text color="danger" *ngIf="surnameInput.errors && surnameInput.errors['minlength']">Los apellidos deben tener al menos 1 caracter..</ion-text>
+      <ion-text color="danger" *ngIf="surnameInput.errors && surnameInput.errors['maxlength']">Los apellidos no pueden exceder los 200 caracteres.</ion-text>
+    </div>
+
+
+    <!-- FECHA NACIMIENTO -->
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item" >
+      <ion-label color="primary" class="custom-label">Fecha nacimiento</ion-label>
+
+      <ion-datetime-button slot="end" datetime="datetime-birth" color="primary" class="custom-datetime-button"></ion-datetime-button>      
+
+      <ion-icon name="calendar-outline" slot="end" class="custom-icon"></ion-icon>
+
+      <ion-modal #modalDatetimeBirth [keepContentsMounted]="true">
+        <ng-template>
+          <ion-datetime 
+              id="datetime-birth" 
+              presentation="date"
+              [(ngModel)]="musician.birthDate"
+              [ngModelOptions]="{standalone: true}"              
+              [showDefaultButtons]="true"
+          >
+          </ion-datetime>
+        </ng-template>
+      </ion-modal>              
+    </ion-item>
+    
+    <!-- DIRECCION -->
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+      <ion-label color="primary" position="floating">
+          Dirección
+      </ion-label>
+      <ion-icon name="home-outline" slot="end"></ion-icon>
+      <ion-input                                                        
+            autocomplete="direction"       
+            minlength="1"                     
+            maxlength="200"
+            name="direction"
+            placeholder="Introduzca la dirección del músico"
+            type="text"
+            required="true"
+            (ionInput)="inputUpperCase($event,musician.direction)"
+            [(ngModel)]="musician.direction"                                                 
+            #directionInput="ngModel"            
+      >
+      </ion-input>
+    </ion-item>
+
+    <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(directionInput.invalid && directionInput.touched)">
+      <ion-text color="danger" *ngIf="directionInput.errors && directionInput.errors['required']">La dirección es obligatoria.</ion-text>
+      <ion-text color="danger" *ngIf="directionInput.errors && directionInput.errors['minlength']">La dirección debe tener al menos 1 caracter..</ion-text>
+      <ion-text color="danger" *ngIf="directionInput.errors && directionInput.errors['maxlength']">La dirección no puede exceder los 200 caracteres.</ion-text>
+    </div>
+
+    <!-- MUNICIPIO -->
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+      <ion-label color="primary" position="floating">
+          Municipio
+      </ion-label>
+      <ion-icon name="earth-outline" slot="end"></ion-icon>
+      <ion-input                                                        
+            autocomplete="municipality"       
+            minlength="1"                     
+            maxlength="100"
+            name="municipality"
+            placeholder="Introduzca el municipio del músico"
+            type="text"
+            required="true"
+            (ionInput)="inputUpperCase($event,musician.municipality)"
+            [(ngModel)]="musician.municipality"                                                 
+            #municipalityInput="ngModel"            
+      >
+      </ion-input>
+    </ion-item>
+
+    <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(municipalityInput.invalid && municipalityInput.touched)">
+      <ion-text color="danger" *ngIf="municipalityInput.errors && municipalityInput.errors['required']">El municipio es obligatorio.</ion-text>
+      <ion-text color="danger" *ngIf="municipalityInput.errors && municipalityInput.errors['minlength']">El municipio debe tener al menos 1 caracter..</ion-text>
+      <ion-text color="danger" *ngIf="municipalityInput.errors && municipalityInput.errors['maxlength']">El municipio no puede exceder los 200 caracteres.</ion-text>
+    </div>
+
+    <!-- PROVINCIA -->
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+      <ion-label color="primary" position="floating">
+          Provincia
+      </ion-label>
+      <ion-icon name="earth-outline" slot="end"></ion-icon>
+      <ion-input                                                        
+            autocomplete="province"       
+            minlength="1"                     
+            maxlength="100"
+            name="province"
+            placeholder="Introduzca la provincia del músico"
+            type="text"
+            required="true"
+            (ionInput)="inputUpperCase($event,musician.province)"
+            [(ngModel)]="musician.province"                                                 
+            #provinceInput="ngModel"            
+      >
+      </ion-input>
+    </ion-item>
+
+    <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(provinceInput.invalid && provinceInput.touched)">
+      <ion-text color="danger" *ngIf="provinceInput.errors && provinceInput.errors['required']">La provincia es obligatoria.</ion-text>
+      <ion-text color="danger" *ngIf="provinceInput.errors && provinceInput.errors['minlength']">La provincia debe tener al menos 1 caracter..</ion-text>
+      <ion-text color="danger" *ngIf="provinceInput.errors && provinceInput.errors['maxlength']">La provincia no puede exceder los 200 caracteres.</ion-text>
+    </div>
+    
+    <!-- EMAIL -->
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+      <ion-label color="primary" position="floating">
+          Email
+      </ion-label>
+      <ion-icon name="at-outline" slot="end"></ion-icon>
+      <ion-input                                                        
+            autocomplete="email"       
+            minlength="1"                     
+            maxlength="100"
+            name="email"
+            placeholder="Introduzca el email del músico"
+            type="email"
+            required="true"
+            pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" 
+            [(ngModel)]="musician.email"                                                 
+            #emailInput="ngModel"            
+      >
+      </ion-input>
+    </ion-item>
+
+    <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(emailInput.invalid && emailInput.touched)">
+      <ion-text color="danger" *ngIf="emailInput.errors && emailInput.errors['required']">El mail es obligatoria.</ion-text>
+      <ion-text color="danger" *ngIf="emailInput.errors && emailInput.errors['pattern']">Introduzca un email válido.</ion-text>
+      <ion-text color="danger" *ngIf="emailInput.errors && emailInput.errors['minlength']">El mail debe tener al menos 1 caracter..</ion-text>
+      <ion-text color="danger" *ngIf="emailInput.errors && emailInput.errors['maxlength']">El mail no puede exceder los 200 caracteres.</ion-text>
+    </div>
+
+    <!-- FECHA INCORPORACION -->
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item" >
+      <ion-label color="primary" class="custom-label">Fecha incorporación</ion-label>
+
+      <ion-datetime-button slot="end" datetime="datetime-register" color="primary" class="custom-datetime-button"></ion-datetime-button>      
+
+      <ion-icon name="calendar-outline" slot="end" class="custom-icon"></ion-icon>
+
+      <ion-modal #modalDatetimeBirth [keepContentsMounted]="true">
+        <ng-template>
+          <ion-datetime 
+              id="datetime-register" 
+              presentation="date"
+              [(ngModel)]="musician.registrationDate"
+              [ngModelOptions]="{standalone: true}"              
+              [showDefaultButtons]="true"
+              required
+          >
+          </ion-datetime>
+        </ng-template>
+      </ion-modal>              
+    </ion-item>
+    
+    <!-- VOZ -->
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item">
+      <ion-label color="primary" class="custom-label-voice">Voces</ion-label>
+      <ion-select  class="custom-select"      
+        okText="Aceptar"
+        cancelText="Cancelar"
+        name="voice"
+        placeHolder="Voz"        
+        [compareWith]="compareWith"
+        [(ngModel)] = "musician.voice"
+        required
+        #voiceInput="ngModel"         
+      >              
+          <ion-select-option *ngFor="let voice of voices" [value]="voice">{{voice.name}}</ion-select-option>
+      </ion-select>      
+    </ion-item>
+
+    <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(voiceInput.invalid && voiceInput.touched)">
+      <ion-text color="danger" *ngIf="voiceInput.errors && voiceInput.errors['required']">La voz es obligatoria.</ion-text>      
+    </div>
+
+    <!-- IMAGEN -->
+    <ion-item class="ion-margin-start ion-no-padding background-transparent image-selector custom-item">
+      <ion-label color="primary"  class="image-label">
+        Foto
+        <img *ngIf="showImage" [src]="showImage" alt="Vista previa de la imagen" class="preview-image"/>
+      </ion-label>
+            
+      <ion-button  (click)="selectImage()" class="custom-ion-button-image">
+        <ion-icon name="image-outline"></ion-icon>
+      </ion-button>
+          
+      <ion-button color="warning" (click)="clearImage()" *ngIf="showImage" class="custom-ion-button-image">
+        <ion-icon name="trash-outline"></ion-icon>
+      </ion-button>      
+    </ion-item>
+
+    <div class="spacer"></div>   
+    <div class="spacer"></div>  
+
+    <ion-button 
+          type="submit"           
+          [disabled]="musicianForm.invalid"
+          expand="block">
+        {{updating ? 'Actualizar': 'Crear'}} músico
+    </ion-button>
+
+  </form>
+</ion-content>

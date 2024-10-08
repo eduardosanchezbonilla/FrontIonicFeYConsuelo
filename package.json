@@ -1,5 +1,5 @@
 {
-  "name": "shopping-list",
+  "name": "fe-y-consuelo",
   "version": "0.0.1",
   "author": "Ionic Framework",
   "homepage": "https://ionicframework.com/",
@@ -10,7 +10,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test --browsers ChromeHeadless",
     "lint": "ng lint",
-    "generate-icons":"cordova-res android --skip-config --copy"
+    "generate-icons": "cordova-res android --skip-config --copy"
   },
   "private": true,
   "dependencies": {
@@ -25,6 +25,7 @@
     "@capacitor-community/http": "^1.4.1",
     "@capacitor/android": "5.5.1",
     "@capacitor/app": "5.0.6",
+    "@capacitor/camera": "^5.0.6",
     "@capacitor/core": "5.5.1",
     "@capacitor/haptics": "5.0.6",
     "@capacitor/keyboard": "5.0.6",
@@ -32,6 +33,7 @@
     "@ionic/angular": "^6.7.5",
     "@ionic/storage-angular": "^4.0.0",
     "@ngxs/store": "^3.8.2",
+    "capacitor-plugin-permissions": "^1.0.0",
     "ionicons": "^7.0.0",
     "lodash-es": "^4.17.21",
     "rxjs": "~7.5.0",

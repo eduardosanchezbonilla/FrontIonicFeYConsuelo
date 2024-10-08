@@ -1,26 +1,22 @@
 import { AuthDto } from "../models/auth-dto";
-import { User } from "../models/user";
+import { ChangePasswordDto } from "../models/change-password-dto";
+import { ResetPasswordDto } from "../models/reset-password-dto";
 
 export class Login { 
   static readonly type = '[Users] Login';
   constructor(public payload: {auth: AuthDto}) { }
 }
 
-/*export class GetUser {
-  static readonly type = '[Users] Get user by email';
-  constructor(public payload: {email: string}) { }
+export class ChangeExpiredPassword { 
+  static readonly type = '[Users] ChangeExpiredPassword';
+  constructor(public payload: {changePassword: ChangePasswordDto}) { }
 }
 
-export class CreateUser {
-  static readonly type = '[Users] Create user';
-  constructor(public payload: {user: User}) { }
-}*/
+export class ResetPassword { 
+  static readonly type = '[Users] ResetPassword';
+  constructor(public payload: {resetPassword: ResetPasswordDto}) { }
+}
 
 export class Logout {
   static readonly type = '[Users] Logout';  
 }
-
-/*export class DeleteUser {
-  static readonly type = '[Users] Delete user';
-  constructor(public payload: {idUser: string}) { }
-}*/

@@ -1,35 +1,167 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>
-      Perfil
-    </ion-title>
+   
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <ion-grid *ngIf="user">
-      <ion-row class="ion-text-center">
-          <ion-col>Nombre</ion-col>
-          <ion-col>{{user.username}}</ion-col>
-      </ion-row>
+<ion-content class="ion-padding musician-menu-content"  [fullscreen]="false">
+  
+  <!---------------------------------------------->
+  <!-------  PROFILE SUPER ADMINISTRADOR  -------->
+  <!---------------------------------------------->
+  <ion-grid *ngIf="user?.profile === 'SUPER_ADMIN'">
+    
+      <!-- Imagen del administrador -->    
+      <div class="musician-image-container">
+        <img 
+          [src]="user.userDetail?.image ? 'data:image/jpeg;base64,' + user.userDetail?.image : 'data:image/jpeg;base64,' + defaultMusicianImage" class="musician-image-small"        
+        >
+      </div>
 
+      <!-- Datos del usuario -->
+    <ion-grid>
       <ion-row class="ion-text-center">
         <ion-col>
-          <ion-button expand="block" (click)="logout()">
-            <ion-icon slot="start" name="log-out-outline"></ion-icon>
-            Cerrar sesion
-          </ion-button>    
-        </ion-col>            
+          <h2 class="musician-name">{{user.username}}</h2>
+          <p *ngIf="user.userDetail?.description" class="user-description">{{user.userDetail?.description}}</p>
+        </ion-col>        
       </ion-row>
-
       <!--<ion-row class="ion-text-center">
+        <ion-col *ngIf="user.userDetail?.description">
+          <h5 class="user-description">{{user.userDetail?.description}}</h5>
+        </ion-col>
+      </ion-row>-->
+
+      <ion-row *ngIf="user.userDetail" class="ion-text-left">
         <ion-col>
-          <ion-button expand="block" color="danger" (click)="confirmDeleteUser()">
-            <ion-icon slot="start" name="trash-outline"></ion-icon>
-            Borrar usuario
-          </ion-button>    
-        </ion-col>            
-      </ion-row>-->      
+          <p *ngIf="user.userDetail?.dni"><strong>Dni:</strong> &nbsp; {{user.userDetail?.dni}}</p>
+          <p *ngIf="user.userDetail?.name"><strong>Nombre:</strong>&nbsp; {{user.userDetail?.name}} {{user.userDetail?.surname}}</p>
+          <p *ngIf="user.userDetail?.direction"><strong>Dirección:</strong> &nbsp;{{user.userDetail?.direction}}</p>
+          <p *ngIf="user.userDetail?.municipality"><strong>Municipio:</strong>&nbsp; {{user.userDetail?.municipality}}</p>
+          <p *ngIf="user.userDetail?.province"><strong>Provincia:</strong>&nbsp; {{user.userDetail?.province}}</p>
+          <p *ngIf="user.userDetail?.email"><strong>Email:</strong>&nbsp; {{user.userDetail?.email}}</p>                    
+        </ion-col>
+      </ion-row>
+    </ion-grid>
 
   </ion-grid>
+
+  <!---------------------------------------------->
+  <!-------  PROFILE ADMINISTRADOR  -------------->
+  <!---------------------------------------------->
+  <ion-grid *ngIf="user?.profile === 'ADMIN'">
+    
+    <!-- Imagen del administrador -->    
+    <div class="musician-image-container">
+      <img 
+        [src]="user.userDetail?.image ? 'data:image/jpeg;base64,' + user.userDetail?.image : 'data:image/jpeg;base64,' + defaultMusicianImage" class="musician-image-small"        
+      >
+    </div>
+
+    <!-- Datos del usuario -->
+  <ion-grid>
+    <ion-row class="ion-text-center">
+      <ion-col>
+        <h2 class="musician-name">{{user.username}}</h2>
+        <p *ngIf="user.userDetail?.description" class="user-description">{{user.userDetail?.description}}</p>
+      </ion-col>        
+    </ion-row>
+    <!--<ion-row class="ion-text-center">
+      <ion-col *ngIf="user.userDetail?.description">
+        <h5 class="user-description">{{user.userDetail?.description}}</h5>
+      </ion-col>
+    </ion-row>-->
+
+    <ion-row *ngIf="user.userDetail" class="ion-text-left">
+      <ion-col>
+        <p *ngIf="user.userDetail?.dni"><strong>Dni:</strong> &nbsp; {{user.userDetail?.dni}}</p>
+        <p *ngIf="user.userDetail?.name"><strong>Nombre:</strong>&nbsp; {{user.userDetail?.name}} {{user.userDetail?.surname}}</p>
+        <p *ngIf="user.userDetail?.direction"><strong>Dirección:</strong> &nbsp;{{user.userDetail?.direction}}</p>
+        <p *ngIf="user.userDetail?.municipality"><strong>Municipio:</strong>&nbsp; {{user.userDetail?.municipality}}</p>
+        <p *ngIf="user.userDetail?.province"><strong>Provincia:</strong>&nbsp; {{user.userDetail?.province}}</p>
+        <p *ngIf="user.userDetail?.email"><strong>Email:</strong>&nbsp; {{user.userDetail?.email}}</p>                    
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+</ion-grid>
+
+  <!--------------------------------------->
+  <!-------  PROFILE MUSICO  -------------->
+  <!--------------------------------------->
+  <ion-grid *ngIf="user?.profile === 'MUSICO'">
+
+    <!-- Imagen del músico -->    
+    <div class="musician-image-container">
+      <img 
+        [src]="user.musician?.image ? 'data:image/jpeg;base64,' + user.musician.image : 'data:image/jpeg;base64,' + defaultMusicianImage" class="musician-image-small"        
+      >
+    </div>
+
+    <!-- Datos del músico -->
+    <ion-grid>
+      <ion-row class="ion-text-center">
+        <ion-col>
+          <h2 class="musician-name">{{user.musician?.name}} {{user.musician?.surname}}</h2>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="ion-text-left">
+        <ion-col>
+          <p><strong>Dni:</strong> &nbsp;{{user.musician?.dni}}</p>
+          <p><strong>Dirección:</strong> &nbsp;{{user.musician?.direction}}</p>
+          <p><strong>Municipio:</strong> &nbsp;{{user.musician?.municipality}}</p>
+          <p><strong>Provincia:</strong> &nbsp;{{user.musician?.province}}</p>
+          <p><strong>Email:</strong> &nbsp;{{user.musician?.email}}</p>
+          <p><strong>Voz:</strong> &nbsp;{{user.musician?.voice?.name}}</p>
+
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+  </ion-grid>
+
+
+  <!----------------------------------------->
+  <!-------  PROFILE INVITADO  -------------->
+  <!----------------------------------------->
+  <ion-grid *ngIf="user?.profile === 'INVITADO'">
+    
+    <!-- Imagen del músico -->    
+    <div class="musician-image-container">
+      <img 
+        [src]="'data:image/jpeg;base64,' + defaultMusicianImage" class="musician-image-small"        
+      >
+    </div>
+
+    <ion-grid>
+      <ion-row class="ion-text-center">
+        <ion-col>
+          <h2 class="musician-name">INVITADO</h2>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+  </ion-grid>
+
+
+  <!--------------------------------------->
+  <!-------------  COMUN  ----------------->
+  <!--------------------------------------->
+  <ion-grid *ngIf="user?.profile">
+    <ion-row class="ion-text-center">
+      <ion-col>
+        <ion-button expand="block" (click)="logout()">
+          <ion-icon slot="start" name="log-out-outline"></ion-icon>
+          Cerrar sesion
+        </ion-button>    
+      </ion-col>            
+    </ion-row>
+  </ion-grid>
+
+  <div class="spacer"></div>   
+
+  <div class="spacer"></div>   
+
+
 </ion-content>

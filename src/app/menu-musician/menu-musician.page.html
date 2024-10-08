@@ -1,0 +1,114 @@
+<ion-header [translucent]="true" >
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>   
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="false">
+
+  <div class="spacer-super-small"></div>  
+
+  <ion-refresher slot="fixed" (ionRefresh)="refreshMusicians($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-searchbar [(ngModel)]="filter.name" (ionChange)="onSearchTextChanged($event)" placeholder="Buscar"></ion-searchbar>
+
+  
+  <ion-accordion-group #accordionGroup [multiple]="true" [value]="expandVoiceList" (ionChange)="accordionGroupChange($event)">
+
+    <ion-list *ngFor="let musicianGroupByVoice of musiciansGroupByVoice; trackBy: trackByVoiceFn" class="ion-no-padding background-transparent" >
+
+      <ion-accordion value="{{ musicianGroupByVoice.voice.id }}" >
+
+        <!---------------------------->
+        <!-- Repite para cada voice -->
+        <!---------------------------->
+        <ion-item slot="header" >                   
+          <ion-item-divider class="ion-no-padding voice-header">
+            <ion-avatar slot="start" class="voice-avatar">
+              <ion-img 
+                [src]="musicianGroupByVoice.voice.image ? 'data:image/jpeg;base64,' + musicianGroupByVoice.voice.image : 'data:image/jpeg;base64,' + defaultVoiceImage">
+              </ion-img>              
+            </ion-avatar>
+            <ion-label class="voice-header-label">
+              {{ musicianGroupByVoice.voice.name }}
+            </ion-label>    
+            <div class="voice-header-buttons" class="voice-header-div-fab" > 
+              <ion-fab-button fill="clear" color="warning" size="small" (click)="updateVoice($event,musicianGroupByVoice.voice)" class="voice-header-fab">
+                <ion-icon name="pencil-outline" class="voice-header-fab-icon"></ion-icon>        
+              </ion-fab-button>   
+              <ion-fab-button *ngIf="!musicianGroupByVoice.musicians" fill="clear" color="warning" size="small" (click)="confirmDeleteVoice($event,musicianGroupByVoice.voice)" class="voice-header-fab">
+                <ion-icon name="trash-outline" class="voice-header-fab-icon"></ion-icon>        
+              </ion-fab-button>                             
+            </div>
+          </ion-item-divider>
+        </ion-item>
+
+
+        <!---------------------------->
+        <!---- Para cada musician ---->
+        <!---------------------------->
+        <div class="div-accordion-padding" slot="content">
+          <ion-item-sliding *ngFor="let musician of musicianGroupByVoice.musicians; trackBy: trackByMusicianFn" #musicianSliding>
+            <ion-card class="musician-card background-white">
+              <ion-item lines="none">
+                <ion-avatar slot="start" class="musician-avatar">                  
+                  <ion-img 
+                    [src]="musician.image ? 'data:image/jpeg;base64,' + musician.image : 'data:image/jpeg;base64,' + defaultMusicianImage">
+                  </ion-img>                              
+                </ion-avatar>
+                <ion-label>
+                  <h2>{{ musician.name }} {{ musician.surname }}</h2>
+                  <p>{{ musician.email }}</p>
+                </ion-label>
+              </ion-item>
+            </ion-card> 
+            
+            <ion-item-options>
+              <ion-item-option color="warning" (click)="updateMusician(musician, musicianSliding)" >
+                <ion-icon color="light" slot="icon-only" name="pencil-outline"></ion-icon>
+              </ion-item-option>        
+              <ion-item-option color="danger"  class="rounded-right" (click)="confirmDeleteMusician(musician, musicianSliding)">
+                <ion-icon color="light" slot="icon-only" name="trash-outline"></ion-icon>
+              </ion-item-option>
+            </ion-item-options>
+          </ion-item-sliding>
+        </div>          
+      </ion-accordion>
+    </ion-list>   
+  </ion-accordion-group><div class="spacer"></div>  
+
+  <!-- separador -->
+  <div class="spacer-small"></div>  
+  <div class="spacer-small"></div>  
+  <div class="spacer-small"></div>     
+  <div class="spacer-super-small"></div>  
+  <div class="spacer-super-small"></div>  
+  <div class="spacer-super-small"></div>  
+
+  <!-- botones finales -->    
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button>
+      <ion-icon name="apps-outline"></ion-icon>
+    </ion-fab-button>  
+  
+    <ion-fab-list side="start">
+      <ion-fab-button color="warning" (click)="createMusician()">
+        <ion-icon name="person-add-outline"></ion-icon>        
+      </ion-fab-button>
+      <ion-fab-button color="warning" (click)="createVoice()">
+        <ion-icon name="pencil-outline"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button color="warning" (click)="expandAll()">
+        <ion-icon name="chevron-expand-outline"></ion-icon>        
+      </ion-fab-button>
+      <ion-fab-button color="warning" (click)="collapseAll()">
+        <ion-icon name="chevron-collapse-outline"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
+
+</ion-content>
