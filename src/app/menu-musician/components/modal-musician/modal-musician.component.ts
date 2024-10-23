@@ -26,6 +26,8 @@ export class ModalMusicianComponent implements OnInit, OnDestroy {
   @Input() updating: boolean;
   public showImage: string;
   public selectedImage: string;
+  public initScreen = false;
+  public initSearchFinish = false;
   
   constructor(
     private store:Store,
@@ -54,8 +56,15 @@ export class ModalMusicianComponent implements OnInit, OnDestroy {
     this.getVoices();        
   }
 
+  async dismissInitialLoading(){
+    if(this.initScreen && this.initSearchFinish){
+      await this.loadingService.dismissLoading();         
+    }
+  }
+
   async ionViewDidEnter(){
-    await this.loadingService.dismissLoading();          
+    this.initScreen = true;    
+    this.dismissInitialLoading();    
   }
 
   ngOnDestroy() {    
@@ -81,6 +90,8 @@ export class ModalMusicianComponent implements OnInit, OnDestroy {
     this.voicesSubscription = this.voices$.subscribe({
       next: async ()=> {
         this.voices = this.store.selectSnapshot(VoiceState.voices).map(({ image, ...rest }) => rest);            
+        this.initSearchFinish = true;    
+        this.dismissInitialLoading();      
       }
     })
   }

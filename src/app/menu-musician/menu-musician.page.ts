@@ -20,6 +20,7 @@ import { Voice } from '../models/voice/voice';
 import { DEFAULT_VOICE_IMAGE, DEFAULT_MUSICIAN_IMAGE } from '../constants/constants';
 import { ModalPartitureComponent } from './components/modal-partiture/modal-partiture.component';
 import {  ModalMusicianInventoryComponent } from './components/modal-inventory/modal-musician-inventory.component';
+import { StorageService } from '../services/storage/storage.service';
 
 @Component({
   selector: 'app-menu-musician',
@@ -40,6 +41,9 @@ export class MenuMusicianPage implements OnDestroy {
   public isSearching: boolean = false;
   public defaultMusicianImage: string = DEFAULT_MUSICIAN_IMAGE;
   public defaultVoiceImage: string = DEFAULT_VOICE_IMAGE;    
+  public profile: string;  
+  public initScreen = false;
+  public initSearchFinish = false;
 
   constructor(
     private modalController:ModalController,
@@ -47,7 +51,8 @@ export class MenuMusicianPage implements OnDestroy {
     private toast:ToastService,    
     private alertController: AlertController,
     private userService: UsersService,
-    private loadingService: LoadingService
+    private loadingService: LoadingService,
+    private storage: StorageService
   ) {
     this.expandVoiceList = null;
     this.expandVoiceMap = null;
@@ -61,9 +66,21 @@ export class MenuMusicianPage implements OnDestroy {
       });      
   }
 
-  async ionViewWillEnter(){           
+  async ionViewWillEnter(){      
+    this.profile = await this.storage.getItem('profile');         
     this.getMusiciansGroupByVoice();      
     this.filterMusicians();    
+  }
+
+  async dismissInitialLoading(){
+    if(this.initScreen && this.initSearchFinish){
+      await this.loadingService.dismissLoading();         
+    }
+  }
+
+  async ionViewDidEnter(){    
+    this.initScreen = true;    
+    this.dismissInitialLoading();
   }
 
   ngOnDestroy() {    
@@ -255,8 +272,9 @@ export class MenuMusicianPage implements OnDestroy {
                 this.toast.presentToast(errorMessage);
               }          
             }                        
-            this.isSearching = false;     
-            await this.loadingService.dismissLoading();            
+            this.isSearching = false;  
+            this.initSearchFinish = true;    
+            this.dismissInitialLoading();                 
           }          
         }
       })

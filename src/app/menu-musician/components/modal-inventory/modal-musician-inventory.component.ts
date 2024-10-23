@@ -28,6 +28,8 @@ export class ModalMusicianInventoryComponent implements OnInit {
   public showImage: string;
   public selectedImage: string;
   public defaultInventoryImage: string = DEFAULT_INVENTORY_IMAGE;  
+  public initScreen = false;
+  public initSearchFinish = false;
 
   constructor(
     private store:Store,
@@ -49,8 +51,15 @@ export class ModalMusicianInventoryComponent implements OnInit {
     this.getMusicianInventories();   
   }
 
-  async ionViewDidEnter(){
-    await this.loadingService.dismissLoading();          
+  async dismissInitialLoading(){
+    if(this.initScreen && this.initSearchFinish){
+      await this.loadingService.dismissLoading();         
+    }
+  }
+
+  async ionViewDidEnter(){    
+    this.initScreen = true;    
+    this.dismissInitialLoading();
   }
 
   ngOnDestroy() {      
@@ -88,8 +97,9 @@ export class ModalMusicianInventoryComponent implements OnInit {
       next: async ()=> {                
         const finish = this.store.selectSnapshot(MusicianInventoryState.finish)        
         if(finish){
-          this.musicianInventories = this.store.selectSnapshot(MusicianInventoryState.musicianInventories);                 
-          console.log(this.musicianInventories);
+          this.musicianInventories = this.store.selectSnapshot(MusicianInventoryState.musicianInventories);                  
+          this.initSearchFinish = true;    
+          this.dismissInitialLoading();              
         }
       }
     })

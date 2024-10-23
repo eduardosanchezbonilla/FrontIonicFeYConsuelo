@@ -34,6 +34,8 @@ export class MenuPartiturePage implements OnDestroy {
   public accordionValue: string[] = [];
   public isLoading: boolean = false;
   public profile: string;  
+  public initScreen = false;
+  public initSearchFinish = false;
 
   constructor(
       private modalController:ModalController,
@@ -53,6 +55,17 @@ export class MenuPartiturePage implements OnDestroy {
     this.accordionValue = [];
     this.getPartitureGroups();         
     this.filterPartitureGroups();    
+  }
+
+  async dismissInitialLoading(){
+    if(this.initScreen && this.initSearchFinish){
+      await this.loadingService.dismissLoading();         
+    }
+  }
+
+  async ionViewDidEnter(){    
+    this.initScreen = true;    
+    this.dismissInitialLoading();
   }
 
   ngOnDestroy() {  
@@ -185,11 +198,12 @@ export class MenuPartiturePage implements OnDestroy {
               else{
                 this.toast.presentToast(errorMessage);
               }          
-            }                             
-            this.isSearching = false;     
-            await this.loadingService.dismissLoading();
+            }                                                     
             // cara vez que recagamos la lista de grupos de partituras, collapsamos todos los acordeones
             this.accordionValue = [];  
+            this.isSearching = false;     
+            this.initSearchFinish = true;    
+            this.dismissInitialLoading();  
           }          
         }
       })    

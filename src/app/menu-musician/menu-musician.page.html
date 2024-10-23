@@ -71,7 +71,7 @@
               <ion-item-option color="tertiary" (click)="manageMusicianInventary(musician, musicianSliding)" >
                 <ion-icon color="light" slot="icon-only" name="shirt-outline"></ion-icon>
               </ion-item-option>   
-              <ion-item-option color="success" (click)="asignPartituresMusician(musician, musicianSliding)" >
+              <ion-item-option *ngIf="profile=='SUPER_ADMIN'" color="success" (click)="asignPartituresMusician(musician, musicianSliding)" >
                 <ion-icon color="light" slot="icon-only" name="albums-outline"></ion-icon>
               </ion-item-option>        
               <ion-item-option color="warning" (click)="updateMusician(musician, musicianSliding)" >

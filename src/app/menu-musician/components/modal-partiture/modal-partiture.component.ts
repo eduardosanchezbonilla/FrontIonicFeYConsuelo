@@ -27,6 +27,8 @@ export class ModalPartitureComponent implements OnInit {
   @Input() musician: Musician;
   public showImage: string;
   public selectedImage: string;
+  public initScreen = false;
+  public initSearchFinish = false;
 
   public defaultPartitureGroupImage: string = DEFAULT_PARTITURE_GROUP_IMAGE;  
 
@@ -49,10 +51,17 @@ export class ModalPartitureComponent implements OnInit {
     this.store.dispatch(new GetUserPartitureGroups({username: this.musician.dni}));
     this.getUserPartitureGroups();   
   }
-  
+
+  async dismissInitialLoading(){
+    if(this.initScreen && this.initSearchFinish){
+      await this.loadingService.dismissLoading();         
+    }
+  }
+
   async ionViewDidEnter(){
-    await this.loadingService.dismissLoading();          
-  } 
+    this.initScreen = true;    
+    this.dismissInitialLoading();    
+  }
 
   ngOnDestroy() {      
     this.doDestroy();
@@ -90,6 +99,8 @@ export class ModalPartitureComponent implements OnInit {
         const finish = this.store.selectSnapshot(UserPartitureGroupState.finish)        
         if(finish){
           this.userPartitureGroups = this.store.selectSnapshot(UserPartitureGroupState.userPartitureGroups);                  
+          this.initSearchFinish = true;    
+          this.dismissInitialLoading();   
         }
       }
     })
@@ -126,11 +137,7 @@ export class ModalPartitureComponent implements OnInit {
         next: () => {
           const success = this.store.selectSnapshot(UserPartitureGroupState.success);
             if(success){
-              this.toast.presentToast("Grupo de partituras asociado del usuario");            
-              // cuando insertamos siempre expandimos
-              //this.expandVoiceMap.set(data.voiceId+"", true);
-              //this.updateExpandVoiceList();            
-              //this.filterMusicians(false);          
+              this.toast.presentToast("Grupo de partituras asociado del usuario");                          
             }
             else{
               const errorStatusCode = this.store.selectSnapshot(UserPartitureGroupState.errorStatusCode);
@@ -141,8 +148,7 @@ export class ModalPartitureComponent implements OnInit {
               }
               else{
                 this.toast.presentToast(errorMessage);
-              }    
-              //await this.loadingService.dismissLoading();      
+              }                
             }  
         }
       })

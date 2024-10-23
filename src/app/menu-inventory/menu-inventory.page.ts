@@ -33,6 +33,8 @@ export class MenuInventoryPage implements OnDestroy {
   public accordionValue: string[] = [];
   public isLoading: boolean = false;
   public profile: string;
+  public initScreen = false;
+  public initSearchFinish = false;
 
   constructor(
       private modalController:ModalController,
@@ -51,6 +53,17 @@ export class MenuInventoryPage implements OnDestroy {
     this.accordionValue = [];
     this.getInventories();         
     this.filterInventories();    
+  }
+
+  async dismissInitialLoading(){
+    if(this.initScreen && this.initSearchFinish){
+      await this.loadingService.dismissLoading();         
+    }
+  }
+
+  async ionViewDidEnter(){    
+    this.initScreen = true;    
+    this.dismissInitialLoading();
   }
 
   ngOnDestroy() {  
@@ -184,10 +197,11 @@ export class MenuInventoryPage implements OnDestroy {
                 this.toast.presentToast(errorMessage);
               }          
             }                             
-            this.isSearching = false;     
-            await this.loadingService.dismissLoading();
-            // cara vez que recagamos la lista de grupos de partituras, collapsamos todos los acordeones
+            // cara vez que recagamos la lista de grupos de partituras, collapsamos todos los acordeones            
             this.accordionValue = [];  
+            this.isSearching = false;                             
+            this.initSearchFinish = true;    
+            this.dismissInitialLoading();  
           }          
         }
       })    
@@ -266,8 +280,7 @@ export class MenuInventoryPage implements OnDestroy {
       .subscribe({
         next: async ()=> {            
           const success = this.store.selectSnapshot(MusicianInventoryState.success);
-          if(success){
-            console.log("entramos aqui al success");
+          if(success){            
             this.setInventoryById(inventoryId, this.store.selectSnapshot(MusicianInventoryState.musicians));
             await this.loadingService.dismissLoading();               
           }

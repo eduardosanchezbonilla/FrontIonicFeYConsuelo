@@ -1,6 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Voice } from '../../../models/voice/voice';
-import { Store } from '@ngxs/store';
 import { ModalController } from '@ionic/angular';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { DEFAULT_VOICE_IMAGE } from '../../../constants/constants';
@@ -18,8 +17,7 @@ export class ModalVoiceComponent implements OnInit {
   public showImage: string;
   public selectedImage: string;
 
-  constructor(
-    private store:Store,
+  constructor(    
     private modalController: ModalController,
     private loadingService: LoadingService
   ) { }

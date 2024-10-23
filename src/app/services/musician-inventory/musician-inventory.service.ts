@@ -90,8 +90,7 @@ export class MusicianInventoryService {
     });
   }
 
-  async getMusicianInventories(musicianId: number){    
-    console.log("DENTRO DEL SERVICE");
+  async getMusicianInventories(musicianId: number){        
     const token = await this.storage.getItem('token');  
     return Http.get(
       {
@@ -103,13 +102,11 @@ export class MusicianInventoryService {
         }
       }
     ).then(async response => {     
-      const newToken = response.headers['Authorization'] || response.headers['authorization'];      
-      console.log(newToken);
+      const newToken = response.headers['Authorization'] || response.headers['authorization'];            
       if(newToken){        
         await this.storage.setItem('token', newToken.replace('Bearer ', ''));
       }           
-      if(response.status==200 || response.status==204){        
-        console.log(response.data);
+      if(response.status==200 || response.status==204){                
         return await response.data as MusicianInventory[];        
       }
       else{                
@@ -147,8 +144,7 @@ export class MusicianInventoryService {
       const newToken = response.headers['Authorization'] || response.headers['authorization'];      
       if(newToken){        
         await this.storage.setItem('token', newToken.replace('Bearer ', ''));
-      }   
-      console.log("estamos aqui: "+response.status);        
+      }                
       if(response.status==200 ){        
         return await response.data as Musician[];        
       }

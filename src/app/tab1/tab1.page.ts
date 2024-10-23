@@ -84,8 +84,7 @@ export class Tab1Page {
 
     const {data, role} = await modal.onWillDismiss();
 
-    if(role=='confirm'){
-      console.log(data);
+    if(role=='confirm'){      
       this.store.dispatch(new CreateItem({item: data})).subscribe({
         next: ()=> {
           const success = this.store.selectSnapshot(ItemsState.success);
@@ -113,8 +112,7 @@ export class Tab1Page {
 
     const {data, role} = await modal.onWillDismiss();
 
-    if(role=='confirm'){
-      console.log(data);
+    if(role=='confirm'){      
       this.store.dispatch(new UpdateItem({id: data._id, newItem:data})).subscribe({
         next: ()=> {
           const success = this.store.selectSnapshot(ItemsState.success);
