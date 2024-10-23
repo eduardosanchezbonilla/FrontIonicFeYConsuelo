@@ -1,0 +1,55 @@
+.custom-modal-title {
+    margin-top:5px;
+    margin-bottom:10px;
+    color: #B22222;   
+    text-shadow: 1px 1px 2px #FFFFFF;  
+}
+
+.musician-card {
+    width: calc(100%);
+    max-height: 70px; 
+    margin: 0px;    
+    margin-top:20px;
+    margin-bottom:10px;
+}
+
+.musician-avatar {
+    margin-top:5px;
+    margin-left: -4px;
+}
+  
+ion-item h2 {
+    //font-size: 16px;
+    font-size: 1rem;
+    margin: 0;
+}
+  
+ion-item p {
+    //font-size: 12px;
+    font-size: 0.75rem;
+    color: gray;
+    margin: 0;
+}
+
+.custom-label-musician-inventory {
+    margin-top:12px;
+    margin-left: 10px;
+}
+
+.custom-ion-item-musician-inventory {    
+    margin-left: -3px;
+    margin-right:12px;
+}
+
+.musician-inventory-avatar {
+    margin-right: 10px;
+    width: 35px;
+    height: 35px;
+    border: 1px solid #000000; 
+    border-radius: 0 !important;
+    background-color: #f7f7f7; 
+}
+
+ion-img {
+    border-radius: 0 !important;
+}

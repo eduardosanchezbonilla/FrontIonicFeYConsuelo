@@ -1,0 +1,111 @@
+.custom-modal-title {
+    margin-top:10px !important;    
+    margin-bottom:15px !important;            
+}
+
+.inventory-header {    
+    font-size: 1.12rem; 
+    font-weight: bold; 
+    display: flex;
+    align-items: center;   
+    color: #B22222;   
+    text-shadow: 1px 1px 2px #FFFFFF;  
+}
+
+.inventory-header-label {
+    margin-top:10px;    
+}
+
+.inventory-header ion-label {
+    padding-right: 5px;     
+}
+
+.inventory-header-div-fab {
+    position: absolute;
+    right: 47px;
+    display: flex; 
+}
+
+.inventory-header-fab {
+    width: 30px;
+    height: 30px; 
+    margin-right: 3px;    
+}
+
+.inventory-header-fab-icon {
+    width: 15px;
+    height: 15px;     
+}
+
+.inventory-avatar {
+    margin-right: 15px;
+    width: 40px;
+    height: 40px;
+    border: 1px solid #000000; 
+    border-radius: 0 !important;
+    background-color: #f7f7f7; 
+}
+
+ion-img {
+    border-radius: 0 !important;
+}
+
+ion-item h2 {
+    //font-size: 16px;
+    font-size: 1rem;
+    margin: 0;
+}
+  
+ion-item p {
+    //font-size: 12px;
+    font-size: 0.75rem;
+    color: gray;
+    margin: 0;
+}
+
+ion-accordion-group ion-item-divider {
+    border: 0px solid;
+    border-image-width: 0px;
+}
+
+ion-accordion ion-item[slot="header"] {
+    --border-width: 0 0 1px 0;    
+}
+
+.div-accordion-padding {
+    padding-top: 1px;
+    padding-bottom: 12px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.musician-card {
+    width: calc(100% - 10px);
+    margin: 5px;  
+    margin-bottom: 0px;   
+}
+
+.musician-card ion-card-content {
+    padding: 5px; 
+    padding-left: 15px;
+    color: #000;
+}
+
+.musician-card ion-card-content div {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;   
+}
+
+.musician-header-fab {
+    width: 25px;
+    height: 25px;   
+    margin-top: 0px;  
+    margin-bottom: 0px;
+    margin-right: 15px;
+}
+
+.musician-header-fab-icon {
+    width: 15px;
+    height: 15px;     
+}

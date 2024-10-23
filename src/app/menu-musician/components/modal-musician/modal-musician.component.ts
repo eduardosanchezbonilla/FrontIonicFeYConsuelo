@@ -1,34 +1,36 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { Musician } from '../../models/musician/musician';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Musician } from '../../../models/musician/musician';
 import { Select, Store } from '@ngxs/store';
 import { IonModal, ModalController } from '@ionic/angular';
-import { Voice } from '../../models/voice/voice';
-import { Observable } from 'rxjs';
-import { GetVoices } from '../../state/voice/voice.actions';
+import { Voice } from '../../../models/voice/voice';
+import { Observable, Subscription } from 'rxjs';
+import { GetVoices } from '../../../state/voice/voice.actions';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
-import { VoiceState } from '../../state/voice/voice.state';
+import { VoiceState } from '../../../state/voice/voice.state';
 import { DEFAULT_MUSICIAN_IMAGE } from '../../../constants/constants';
+import { LoadingService } from 'src/app/services/loading/loading.service';
 
 @Component({
   selector: 'app-modal-musician',
   templateUrl: './modal-musician.component.html',
   styleUrls: ['./modal-musician.component.scss'],
 })
-export class ModalMusicianComponent implements OnInit {
+export class ModalMusicianComponent implements OnInit, OnDestroy {
 
   @Select(VoiceState.voices)
   voices$: Observable<Voice[]>;
-  
+  voicesSubscription: Subscription;
+  public voices: Voice[];
+
   @Input() musician: Musician;
   @Input() updating: boolean;
   public showImage: string;
   public selectedImage: string;
-
-  public voices: Voice[];
-
+  
   constructor(
     private store:Store,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private loadingService: LoadingService
   ) { }
 
   async ngOnInit() {
@@ -49,7 +51,26 @@ export class ModalMusicianComponent implements OnInit {
       }            
     }
     this.store.dispatch(new GetVoices({}));
-    this.getVoices();    
+    this.getVoices();        
+  }
+
+  async ionViewDidEnter(){
+    await this.loadingService.dismissLoading();          
+  }
+
+  ngOnDestroy() {    
+    this.doDestroy();
+  }
+  
+  async ionViewDidLeave(){
+    this.doDestroy();
+  }
+
+  private doDestroy(){
+    console.log("ngOnDestroy musician");
+    if (this.voicesSubscription) {      
+      this.voicesSubscription.unsubscribe();  
+    }        
   }
 
   compareWith(o1: Voice, o2: Voice){
@@ -57,9 +78,9 @@ export class ModalMusicianComponent implements OnInit {
   }
 
   getVoices(){
-    this.voices$.subscribe({
-      next: ()=> {
-        this.voices = this.store.selectSnapshot(VoiceState.voices).map(({ image, ...rest }) => rest);        
+    this.voicesSubscription = this.voices$.subscribe({
+      next: async ()=> {
+        this.voices = this.store.selectSnapshot(VoiceState.voices).map(({ image, ...rest }) => rest);            
       }
     })
   }

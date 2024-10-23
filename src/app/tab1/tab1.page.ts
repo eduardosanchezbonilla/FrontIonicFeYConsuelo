@@ -7,7 +7,7 @@ import { ItemsState } from './state/items.state';
 import { ToastService } from '../services/toast/toast.service';
 import { Item } from './models/item';
 import { Observable } from 'rxjs/internal/Observable';
-import { User } from '../users/models/user';
+import { User } from '../models/user/user';
 import { CategoriesState } from '../tab2/state/categories.state';
 import { Category } from '../tab2/models/category';
 import { StorageService } from '../services/storage/storage.service';

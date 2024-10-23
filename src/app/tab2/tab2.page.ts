@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Category } from './models/category';
-import { User } from '../users/models/user';
+import { User } from '../models/user/user';
 import { Select, Store } from '@ngxs/store';
 import { StorageService } from '../services/storage/storage.service';
 import { CreateCategory, DeleteCategory, GetCategories, UpdateCategory } from './state/categories.actions';

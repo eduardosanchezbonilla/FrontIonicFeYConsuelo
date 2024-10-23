@@ -1,4 +1,4 @@
-import { User } from "src/app/users/models/user";
+import { User } from "src/app/models/user/user";
 
 export class UpdateCategoryDto {
     originalName: string;

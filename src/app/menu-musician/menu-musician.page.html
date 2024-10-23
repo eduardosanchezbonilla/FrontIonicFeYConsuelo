@@ -68,6 +68,12 @@
             </ion-card> 
             
             <ion-item-options>
+              <ion-item-option color="tertiary" (click)="manageMusicianInventary(musician, musicianSliding)" >
+                <ion-icon color="light" slot="icon-only" name="shirt-outline"></ion-icon>
+              </ion-item-option>   
+              <ion-item-option color="success" (click)="asignPartituresMusician(musician, musicianSliding)" >
+                <ion-icon color="light" slot="icon-only" name="albums-outline"></ion-icon>
+              </ion-item-option>        
               <ion-item-option color="warning" (click)="updateMusician(musician, musicianSliding)" >
                 <ion-icon color="light" slot="icon-only" name="pencil-outline"></ion-icon>
               </ion-item-option>        
@@ -79,9 +85,10 @@
         </div>          
       </ion-accordion>
     </ion-list>   
-  </ion-accordion-group><div class="spacer"></div>  
+  </ion-accordion-group>    
 
   <!-- separador -->
+  <div class="spacer"></div>  
   <div class="spacer-small"></div>  
   <div class="spacer-small"></div>  
   <div class="spacer-small"></div>     

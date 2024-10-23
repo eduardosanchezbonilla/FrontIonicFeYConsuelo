@@ -9,23 +9,19 @@ const routes: Routes = [
     component: TabsMusicianPage,
     children: [
       {
-        path: 'menu-musician',      
-        loadChildren: () => import('../menu-musician/menu-musician.module').then(m => m.MenuMusicianPageModule)
-      },
-      {
-        path: 'tab2',
-        loadChildren: () => import('../tab2/tab2.module').then(m => m.Tab2PageModule)
+        path: 'menu-partiture',        
+        loadChildren: () => import('../menu-partiture/menu-partiture.module').then(m => m.MenuPartiturePageModule)
       },
       {
         path: '',
-        redirectTo: '/tabs-musician/menu-musician',
+        redirectTo: '/tabs-musician/menu-partiture',
         pathMatch: 'full'
       }
     ]
   },
   {
     path: '',
-    redirectTo: '/tabs-musician/menu-musician',
+    redirectTo: '/tabs-musician/menu-partiture',
     pathMatch: 'full'
   }
 ];

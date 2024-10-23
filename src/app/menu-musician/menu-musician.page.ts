@@ -1,23 +1,25 @@
 import { Component, OnDestroy } from '@angular/core';
 import { AlertController, IonItemSliding, ModalController } from '@ionic/angular';
 import { Select, Store } from '@ngxs/store';
-import { CreateMusician,DeleteMusician,GetMusiciansGroupByVoice,ResetMusician,UpdateMusician} from './state/musician/musician.actions';
-import { MusicianState } from './state/musician/musician.state';
+import { CreateMusician,DeleteMusician,GetMusiciansGroupByVoice,ResetMusician,UpdateMusician} from '../state/musician/musician.actions';
+import { MusicianState } from '../state/musician/musician.state';
 import { ToastService } from '../services/toast/toast.service';
-import { Musician } from './models/musician/musician';
+import { Musician } from '../models/musician/musician';
 import { Observable } from 'rxjs/internal/Observable';
 import { ModalMusicianComponent } from './components/modal-musician/modal-musician.component';
-import { MusicianGroupByVoice } from './models/musician/musician-group-by-voice';
-import { UsersService } from 'src/app/users/services/users.service';
+import { MusicianGroupByVoice } from '../models/musician/musician-group-by-voice';
+import { UsersService } from 'src/app/services/user/users.service';
 import { LoadingService } from '../services/loading/loading.service';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
-import { FilterMusicians } from './models/musician/filter-musicians';
+import { FilterMusicians } from '../models/musician/filter-musicians';
 import { ModalVoiceComponent } from './components/modal-voice/modal-voice.component';
-import { CreateVoice, DeleteVoice, ResetVoice, UpdateVoice } from './state/voice/voice.actions';
-import { VoiceState } from './state/voice/voice.state';
-import { Voice } from './models/voice/voice';
+import { CreateVoice, DeleteVoice,  ResetVoice, UpdateVoice } from '../state/voice/voice.actions';
+import { VoiceState } from '../state/voice/voice.state';
+import { Voice } from '../models/voice/voice';
 import { DEFAULT_VOICE_IMAGE, DEFAULT_MUSICIAN_IMAGE } from '../constants/constants';
+import { ModalPartitureComponent } from './components/modal-partiture/modal-partiture.component';
+import {  ModalMusicianInventoryComponent } from './components/modal-inventory/modal-musician-inventory.component';
 
 @Component({
   selector: 'app-menu-musician',
@@ -29,7 +31,7 @@ export class MenuMusicianPage implements OnDestroy {
   musiciansGroupByVoiceSubscription: Subscription;
   @Select(MusicianState.musiciansGroupByVoice)
   musiciansGroupByVoice$: Observable<MusicianGroupByVoice[]>;
-    
+
   public musiciansGroupByVoice: MusicianGroupByVoice[];
   public expandVoiceList: string[];
   public expandVoiceMap: Map<string, boolean> = new Map();
@@ -37,7 +39,7 @@ export class MenuMusicianPage implements OnDestroy {
   public searchTextChanged = new Subject<string>();
   public isSearching: boolean = false;
   public defaultMusicianImage: string = DEFAULT_MUSICIAN_IMAGE;
-  public defaultVoiceImage: string = DEFAULT_VOICE_IMAGE;  
+  public defaultVoiceImage: string = DEFAULT_VOICE_IMAGE;    
 
   constructor(
     private modalController:ModalController,
@@ -60,18 +62,39 @@ export class MenuMusicianPage implements OnDestroy {
   }
 
   async ionViewWillEnter(){           
-    await this.loadingService.dismissLoading();       
     this.getMusiciansGroupByVoice();      
     this.filterMusicians();    
   }
 
+  ngOnDestroy() {    
+    this.doDestroy();
+  }
+  
+  async ionViewDidLeave(){
+    this.doDestroy();
+  }
+
+  private doDestroy(){
+    console.log("ngOnDestroy musician");
+    if (this.musiciansGroupByVoiceSubscription) {      
+      this.musiciansGroupByVoiceSubscription.unsubscribe();  // Cancelar la suscripción al destruir el componente
+    }
+    this.store.dispatch(new ResetMusician({})).subscribe({ next: async () => { } })
+    this.store.dispatch(new ResetVoice({})).subscribe({ next: async () => { } })    
+  }
+
+  
   /*******************************************************/
   /******************* MUSICIAN **************************/
   /*******************************************************/
-
   async createMusician(){
+    // mostramos spinner
+    await this.loadingService.presentLoading('Loading...');   
+
+    // mostramos la modal
     const modal = await this.modalController.create({
-      component: ModalMusicianComponent
+      component: ModalMusicianComponent,
+      componentProps: {}
     });
     modal.present();
 
@@ -114,7 +137,10 @@ export class MenuMusicianPage implements OnDestroy {
     // cerramos el sliding 
     musicianSliding.close();
     
-    // abrimos modal
+    // mostramos spinner
+    await this.loadingService.presentLoading('Loading...');   
+
+    // abrimos modal    
     const modal = await this.modalController.create({
       component: ModalMusicianComponent,
       componentProps: {
@@ -154,13 +180,47 @@ export class MenuMusicianPage implements OnDestroy {
     }
   }
 
+  async asignPartituresMusician(musician:Musician, musicianSliding: IonItemSliding){   
+    // cerramos el sliding 
+    musicianSliding.close();
+
+    // mostramos spinner
+    await this.loadingService.presentLoading('Loading...');   
+    
+    // abrimos modal    
+    const modal = await this.modalController.create({
+      component: ModalPartitureComponent,
+      componentProps: {
+        musician
+      }
+    });
+    modal.present();
+  }
+
+  async manageMusicianInventary(musician:Musician, musicianSliding: IonItemSliding){   
+    // cerramos el sliding 
+    musicianSliding.close();
+
+    // mostramos spinner
+    await this.loadingService.presentLoading('Loading...');   
+    
+    // abrimos modal
+    const modal = await this.modalController.create({
+      component: ModalMusicianInventoryComponent,
+      componentProps: {
+        musician
+      }
+    });
+    modal.present();
+  }
+
   async getMusiciansGroupByVoice(){            
     this.musiciansGroupByVoiceSubscription = this.musiciansGroupByVoice$     
       .subscribe({
-        next: async ()=> {                     
+        next: async ()=> {                
           const finish = this.store.selectSnapshot(MusicianState.finish);          
           const errorStatusCode = this.store.selectSnapshot(MusicianState.errorStatusCode);          
-          const errorMessage = this.store.selectSnapshot(MusicianState.errorMessage);     
+          const errorMessage = this.store.selectSnapshot(MusicianState.errorMessage);               
           if(finish){
             if(errorStatusCode==200){      
               this.musiciansGroupByVoice = this.store.selectSnapshot(MusicianState.musiciansGroupByVoice);
@@ -194,9 +254,9 @@ export class MenuMusicianPage implements OnDestroy {
               else{
                 this.toast.presentToast(errorMessage);
               }          
-            }            
-            await this.loadingService.dismissLoading();
-            this.isSearching = false;
+            }                        
+            this.isSearching = false;     
+            await this.loadingService.dismissLoading();            
           }          
         }
       })
@@ -329,6 +389,10 @@ export class MenuMusicianPage implements OnDestroy {
   /******************* VOICES  ***************************/
   /*******************************************************/
   async createVoice(){
+    // mostramos spinner
+    await this.loadingService.presentLoading('Loading...');   
+
+    // abrimos la modal
     const modal = await this.modalController.create({
       component: ModalVoiceComponent
     });
@@ -367,6 +431,9 @@ export class MenuMusicianPage implements OnDestroy {
 
   async updateVoice(event: Event, voice:Voice){  
     event.stopPropagation(); 
+
+    // mostramos spinner
+    await this.loadingService.presentLoading('Loading...');   
     
     // abrimos modal
     const modal = await this.modalController.create({
@@ -455,13 +522,5 @@ export class MenuMusicianPage implements OnDestroy {
         }          
       }
     })
-  }
-
-  ngOnDestroy() {    
-    if (this.musiciansGroupByVoiceSubscription) {      
-      this.musiciansGroupByVoiceSubscription.unsubscribe();  // Cancelar la suscripción al destruir el componente
-    }
-    this.store.dispatch(new ResetMusician({})).subscribe({ next: async () => { } })
-    this.store.dispatch(new ResetVoice({})).subscribe({ next: async () => { } })    
-  }
+  }  
 }

@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
-import { User } from 'src/app/users/models/user';
-import { UsersService } from 'src/app/users/services/users.service';
+import { User } from 'src/app/models/user/user';
+import { UsersService } from 'src/app/services/user/users.service';
 import { DEFAULT_VOICE_IMAGE, DEFAULT_MUSICIAN_IMAGE } from '../../../constants/constants';
 
 @Component({

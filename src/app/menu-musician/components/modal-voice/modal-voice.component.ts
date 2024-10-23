@@ -1,9 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Voice } from '../../models/voice/voice';
+import { Voice } from '../../../models/voice/voice';
 import { Store } from '@ngxs/store';
 import { ModalController } from '@ionic/angular';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { DEFAULT_VOICE_IMAGE } from '../../../constants/constants';
+import { LoadingService } from 'src/app/services/loading/loading.service';
 
 @Component({
   selector: 'app-modal-voice',
@@ -19,7 +20,8 @@ export class ModalVoiceComponent implements OnInit {
 
   constructor(
     private store:Store,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private loadingService: LoadingService
   ) { }
 
   async ngOnInit() {
@@ -36,7 +38,11 @@ export class ModalVoiceComponent implements OnInit {
         this.showImage = `data:image/jpeg;base64,${DEFAULT_VOICE_IMAGE}`;
         this.selectedImage = DEFAULT_VOICE_IMAGE;
       }      
-    }    
+    }     
+  }
+  
+  async ionViewDidEnter(){
+    await this.loadingService.dismissLoading();          
   }
 
   confirm(){

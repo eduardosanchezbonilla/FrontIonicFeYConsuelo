@@ -4,7 +4,7 @@ import { CategoriesState } from 'src/app/tab2/state/categories.state';
 import { Category } from 'src/app/tab2/models/category';
 import { Observable } from 'rxjs';
 import { Select, Store } from '@ngxs/store';
-import { User } from 'src/app/users/models/user';
+import { User } from 'src/app/models/user/user';
 import { StorageService } from 'src/app/services/storage/storage.service';
 import { GetCategories } from 'src/app/tab2/state/categories.actions';
 import { units } from 'src/app/constants/constants';

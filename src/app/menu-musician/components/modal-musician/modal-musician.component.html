@@ -258,7 +258,7 @@
         okText="Aceptar"
         cancelText="Cancelar"
         name="voice"
-        placeHolder="Voz"        
+        placeHolder="Seleccionar Voz"        
         [compareWith]="compareWith"
         [(ngModel)] = "musician.voice"
         required
@@ -271,6 +271,25 @@
     <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(voiceInput.invalid && voiceInput.touched)">
       <ion-text color="danger" *ngIf="voiceInput.errors && voiceInput.errors['required']">La voz es obligatoria.</ion-text>      
     </div>
+
+    <!-- PARTITURAS -->
+    <!--<ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item">
+      <ion-label color="primary" class="custom-label-voice">Partituras</ion-label>
+      <ion-select  
+        class="custom-select" 
+        okText="Aceptar"
+        cancelText="Cancelar"
+        name="partitureGroup"
+        placeholder="Seleccionar Partituras"      
+        multiple="true"
+        [compareWith]="compareWithPartitureGroup"
+        [(ngModel)] = "musician.partitureGroups"       
+        #partitureGroupInput="ngModel"         
+      >              
+          <ion-select-option *ngFor="let partitureGroup of partitureGroups" [value]="partitureGroup">{{partitureGroup.name}}</ion-select-option>
+      </ion-select>      
+    </ion-item>
+    -->
 
     <!-- IMAGEN -->
     <ion-item class="ion-margin-start ion-no-padding background-transparent image-selector custom-item">

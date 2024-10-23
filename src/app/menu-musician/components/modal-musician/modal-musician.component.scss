@@ -49,7 +49,7 @@ ion-item.image-selector {
 }
 
 .custom-select {
-  padding-bottom: 17px;  
+  padding-bottom: 17px;    
 }
 
 .custom-icon {
@@ -58,4 +58,12 @@ ion-item.image-selector {
 
 .custom-ion-button-image {
   margin-bottom: 11px;  
+}
+
+/*********************************************************************/
+/************ Estilos para el selecct ********************************/
+/*********************************************************************/
+::ng-deep .alert-wrapper {
+  width: 400px !important;  
+  max-width: 90% !important; 
 }

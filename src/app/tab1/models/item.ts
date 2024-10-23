@@ -1,5 +1,5 @@
 import { Category } from "src/app/tab2/models/category";
-import { User } from "src/app/users/models/user";
+import { User } from "src/app/models/user/user";
 
 export class Item {
     _id?: string;

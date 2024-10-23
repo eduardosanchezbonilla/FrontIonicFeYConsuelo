@@ -1,0 +1,82 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="medium" (click)="cancel()">Cancelar</ion-button>
+    </ion-buttons>    
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form (ngSubmit)="confirm()" #partitureGroupForm="ngForm">    
+    <!-------------------------------------->
+    <!------ DATOS GRUPO PARTITURAS -------->
+    <!-------------------------------------->
+    <h2 class="fancy-title custom-modal-title">
+      Datos Grupo Partituras
+    </h2>
+    
+    <!-- NOMBRE -->
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+      <ion-label color="primary" position="floating">
+          Nombre
+      </ion-label>      
+      <ion-icon name="file-tray-full-outline" slot="end"></ion-icon> 
+      <ion-input                                                        
+            autocomplete="name"       
+            minlength="1"                     
+            maxlength="150"
+            name="name"
+            placeholder="Introduzca el nombre del grupo de partituras"
+            type="text"
+            required="true"
+            (ionInput)="inputUpperCase($event,partitureGroup.name)"
+            [(ngModel)]="partitureGroup.name"                                                 
+            #nameInput="ngModel"            
+      >
+      </ion-input>
+    </ion-item>
+    
+    <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(nameInput.invalid && nameInput.touched)">
+      <ion-text color="danger" *ngIf="nameInput.errors && nameInput.errors['required']">El nombre es obligatorio.</ion-text>
+      <ion-text color="danger" *ngIf="nameInput.errors && nameInput.errors['minlength']">El nombre debe tener al menos 1 caracter..</ion-text>
+      <ion-text color="danger" *ngIf="nameInput.errors && nameInput.errors['maxlength']">El nombre no puede exceder los 150 caracteres.</ion-text>
+    </div>
+
+
+    <!-- GOOGLE ID -->
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+      <ion-label color="primary" position="floating">
+          Google ID
+      </ion-label>
+      <ion-icon name="logo-google" slot="end"></ion-icon>
+      <ion-input                                                        
+            autocomplete="name"       
+            minlength="1"                     
+            maxlength="150"
+            name="googleId"
+            placeholder="Introduzca el google Id"
+            type="text"                       
+            [(ngModel)]="partitureGroup.googleId"                                                 
+            #googleIdInput="ngModel"            
+      >
+      </ion-input>
+    </ion-item>
+    
+    <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(googleIdInput.invalid && googleIdInput.touched)">
+      <ion-text color="danger" *ngIf="googleIdInput.errors && googleIdInput.errors['minlength']">El google ID debe tener al menos 1 caracter..</ion-text>
+      <ion-text color="danger" *ngIf="googleIdInput.errors && googleIdInput.errors['maxlength']">El google ID no puede exceder los 150 caracteres.</ion-text>
+    </div>
+        
+
+    <div class="spacer"></div>   
+    <div class="spacer"></div>  
+
+    <ion-button 
+          type="submit"           
+          [disabled]="partitureGroupForm.invalid"
+          expand="block">
+        {{updating ? 'Actualizar': 'Crear'}} grupo partituras
+    </ion-button>
+
+  </form>
+</ion-content>

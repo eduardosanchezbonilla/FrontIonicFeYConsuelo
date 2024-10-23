@@ -13,8 +13,12 @@ const routes: Routes = [
         loadChildren: () => import('../menu-musician/menu-musician.module').then(m => m.MenuMusicianPageModule)
       },
       {
-        path: 'tab2',
-        loadChildren: () => import('../tab2/tab2.module').then(m => m.Tab2PageModule)
+        path: 'menu-partiture',       
+        loadChildren: () => import('../menu-partiture/menu-partiture.module').then(m => m.MenuPartiturePageModule)
+      },
+      {
+        path: 'menu-inventory',        
+        loadChildren: () => import('../menu-inventory/menu-inventory.module').then(m => m.MenuInventoryPageModule)
       },
       {
         path: '',

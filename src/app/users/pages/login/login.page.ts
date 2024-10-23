@@ -1,14 +1,14 @@
 import { Component } from '@angular/core';
-import { AuthDto } from '../../models/auth-dto';
+import { AuthDto } from '../../../models/user/auth-dto';
 import { Store } from '@ngxs/store';
-import { ChangeExpiredPassword, Login, ResetPassword } from '../../state/users.actions';
-import { UsersState } from '../../state/users.state';
+import { ChangeExpiredPassword, Login, ResetPassword } from '../../../state/user/users.actions';
+import { UsersState } from '../../../state/user/users.state';
 import { ToastService } from 'src/app/services/toast/toast.service';
 import { NavController } from '@ionic/angular';
 import { StorageService } from 'src/app/services/storage/storage.service';
-import { ChangePasswordDto } from '../../models/change-password-dto';
+import { ChangePasswordDto } from '../../../models/user/change-password-dto';
 import { LoadingService } from 'src/app/services/loading/loading.service';
-import { ResetPasswordDto } from '../../models/reset-password-dto';
+import { ResetPasswordDto } from '../../../models/user/reset-password-dto';
 
 @Component({
   selector: 'app-login',
@@ -66,7 +66,7 @@ export class LoginPage {
           }
           else if(user.roles.includes('MUSICO')){
             this.storage.setItem('profile', 'MUSICO');
-            this.navController.navigateForward('tabs-musician/menu-musician');   
+            this.navController.navigateForward('tabs-musician/menu-partiture');   
           }
           else{
             this.storage.setItem('profile', 'INVITADO');

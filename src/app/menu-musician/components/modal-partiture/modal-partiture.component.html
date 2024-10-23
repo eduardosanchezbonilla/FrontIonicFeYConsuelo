@@ -1,0 +1,54 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="medium" (click)="cancel()">Cancelar</ion-button>
+    </ion-buttons>    
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form (ngSubmit)="confirm()" #partitureForm="ngForm">    
+    <!------------------------->
+    <!------ DATOS VOZ -------->
+    <!------------------------->
+    <h2 class="fancy-title custom-modal-title">
+      Partituras asignadas
+    </h2>
+
+    <ion-card class="musician-card background-white">
+      <ion-item lines="none">
+        <ion-avatar slot="start" class="musician-avatar">                  
+          <ion-img 
+            [src]="showImage">
+          </ion-img> 
+        </ion-avatar>
+        <ion-label>
+          <h2>{{ musician.name }} {{ musician.surname }}</h2>
+          <p>{{ musician.voice.name }}</p>          
+        </ion-label>
+      </ion-item>
+    </ion-card> 
+  
+    <ion-item *ngFor="let group of userPartitureGroups" class="custom-ion-item-user-partiture-group">                  
+      <ion-avatar slot="start" class="partiture-group-avatar">
+        <ion-img 
+          [src]="'data:image/jpeg;base64,' + defaultPartitureGroupImage">
+        </ion-img>              
+      </ion-avatar>
+      <ion-label class="custom-label-partiture-group">
+        <h2>{{group.name}}</h2>        
+      </ion-label>     
+      <ion-checkbox (ionChange)="associateDisassociatePartitureGroupUser(musician.dni,group)" [checked]="group.assigned"> </ion-checkbox>      
+    </ion-item>
+        
+    <div class="spacer"></div>  
+
+    <ion-button 
+          type="submit"           
+          [disabled]="partitureForm.invalid"
+          expand="block">
+          Volver
+    </ion-button>
+
+  </form>
+</ion-content>

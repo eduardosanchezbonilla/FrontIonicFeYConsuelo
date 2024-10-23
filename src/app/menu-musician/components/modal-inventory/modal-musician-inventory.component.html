@@ -1,0 +1,55 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="medium" (click)="cancel()">Cancelar</ion-button>
+    </ion-buttons>    
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form (ngSubmit)="confirm()" #inventaryForm="ngForm">    
+
+    <!------------------------->
+    <!------ DATOS INVENTARIO -------->
+    <!------------------------->
+    <h2 class="fancy-title custom-modal-title">
+      Inventario Musico
+    </h2>
+
+    <ion-card class="musician-card background-white">
+      <ion-item lines="none">
+        <ion-avatar slot="start" class="musician-avatar">                  
+          <ion-img 
+            [src]="showImage">
+          </ion-img> 
+        </ion-avatar>
+        <ion-label>
+          <h2>{{ musician.name }} {{ musician.surname }}</h2>
+          <p>{{ musician.voice.name }}</p>          
+        </ion-label>
+      </ion-item>
+    </ion-card> 
+  
+    <ion-item *ngFor="let inventory of musicianInventories" class="custom-ion-item-musician-inventory">                  
+      <ion-avatar slot="start" class="musician-inventory-avatar">
+        <ion-img 
+                [src]="inventory.image ? 'data:image/jpeg;base64,' + inventory.image : 'data:image/jpeg;base64,' + defaultInventoryImage">
+        </ion-img>  
+      </ion-avatar>
+      <ion-label class="custom-label-musician-inventory">
+        <h2>{{inventory.name}}</h2>        
+      </ion-label>     
+      <ion-checkbox (ionChange)="associateDisassociateMusicianInventory(musician.id,inventory)" [checked]="inventory.assigned"> </ion-checkbox>      
+    </ion-item>
+        
+    <div class="spacer"></div>  
+
+    <ion-button 
+          type="submit"           
+          [disabled]="inventaryForm.invalid"
+          expand="block">
+          Volver
+    </ion-button>
+
+  </form>
+</ion-content>

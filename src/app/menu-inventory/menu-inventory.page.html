@@ -1,0 +1,103 @@
+<ion-header [translucent]="true" >
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>   
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="false">
+  
+  <div *ngIf="isLoading" class="custom-loading-overlay">
+    <div class="custom-loading-content animated">
+      <ion-spinner name="crescent" class="custom-loading-spinner"></ion-spinner>
+      <p>Loading...</p>
+    </div>    
+  </div>
+
+  <div class="spacer-super-small"></div>  
+
+  <h2  class="fancy-title custom-modal-title">
+    Inventario
+  </h2>
+
+  <ion-refresher slot="fixed" (ionRefresh)="refreshInventories($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+
+  <ion-accordion-group #accordionGroup [multiple]="true" [value]="accordionValue" (ionChange)="accordionInventoryChange($event)">
+
+    <ion-list *ngFor="let inventory of inventories; trackBy: trackByInventoryFn" class="ion-no-padding background-transparent" >
+
+      <ion-accordion value="{{ inventory.id }}" >
+
+        <!--------------------------------------------->
+        <!-- Repite para cada elemento de inventario -->
+        <!--------------------------------------------->
+        <ion-item slot="header" >                   
+          <ion-item-divider class="ion-no-padding inventory-header">
+            <ion-avatar slot="start" class="inventory-avatar">
+              <ion-img 
+                [src]="inventory.image ? 'data:image/jpeg;base64,' + inventory.image : 'data:image/jpeg;base64,' + defaultInventoryImage">
+              </ion-img>                     
+            </ion-avatar>
+            <ion-label class="inventory-header-label">
+              {{ inventory.name }}
+            </ion-label>    
+            <div class="inventory-header-buttons" class="inventory-header-div-fab" > 
+              <ion-fab-button fill="clear" color="warning" size="small" (click)="updateInventory($event,inventory)" class="inventory-header-fab">
+                <ion-icon name="pencil-outline" class="inventory-header-fab-icon"></ion-icon>        
+              </ion-fab-button>   
+              <ion-fab-button fill="clear" color="warning" size="small" (click)="confirmDeleteInventory($event,inventory)" class="inventory-header-fab">
+                <ion-icon name="trash-outline" class="inventory-header-fab-icon"></ion-icon>        
+              </ion-fab-button>                            
+            </div>
+          </ion-item-divider>
+        </ion-item>
+
+
+        <!------------------------->
+        <!---- Para cada musico --->
+        <!------------------------->
+        <div class="div-accordion-padding" slot="content">
+          <ion-item-sliding *ngFor="let musician of inventory.musicians; trackBy: trackByMusicianFn" #musiciansSliding>
+            <ion-card class="musician-card background-white">
+              <ion-card-content>                
+                <div>
+                  <h5>{{ musician.name }} {{ musician.surname }}</h5>                  
+                </div>
+              </ion-card-content>              
+            </ion-card>             
+          </ion-item-sliding>
+        </div>
+      </ion-accordion>
+    </ion-list>
+  </ion-accordion-group>
+
+  <!-- separador -->
+  <div class="spacer"></div>  
+  <div class="spacer-small"></div>  
+  <div class="spacer-small"></div>  
+  <div class="spacer-small"></div>     
+  <div class="spacer-super-small"></div>  
+  <div class="spacer-super-small"></div>  
+  <div class="spacer-super-small"></div>  
+
+  <!-- botones finales -->    
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button>
+      <ion-icon name="apps-outline"></ion-icon>
+    </ion-fab-button>  
+  
+    <ion-fab-list side="start">
+      <ion-fab-button *ngIf="profile=='SUPER_ADMIN'" color="warning" (click)="createInventory()">            
+        <ion-icon name="add-outline"></ion-icon>
+      </ion-fab-button>    
+      <ion-fab-button color="warning" (click)="collapseAll()">
+        <ion-icon name="chevron-collapse-outline"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
+
+</ion-content>

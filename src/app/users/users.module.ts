@@ -5,9 +5,9 @@ import { UsersRoutingModule } from './users-routing.module';
 import { IonicModule } from '@ionic/angular';
 import { LoginPage } from './pages/login/login.page';
 import { FormsModule } from '@angular/forms';
-import { UsersService } from './services/users.service';
+import { UsersService } from '../services/user/users.service';
 import { NgxsModule } from '@ngxs/store';
-import { UsersState } from './state/users.state';
+import { UsersState } from '../state/user/users.state';
 
 
 @NgModule({
