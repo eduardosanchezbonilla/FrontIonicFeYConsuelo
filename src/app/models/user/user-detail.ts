@@ -1,6 +1,7 @@
 import { Musician } from "src/app/models/musician/musician";
 
 export class UserDetail {
+    username?: string;
     dni?: string;    
     name?: string;    
     surname?: string;    

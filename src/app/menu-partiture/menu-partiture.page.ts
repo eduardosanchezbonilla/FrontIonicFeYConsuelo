@@ -15,6 +15,9 @@ import { DownloadPartiture, GetPartitures, ResetPartiture } from '../state/parti
 import { PartitureState } from '../state/partiture/partiture.state';
 import { FileManagerService } from '../services/filemanager/file-manager.service';
 import { StorageService } from '../services/storage/storage.service';
+import { ModalRequestPartitureComponent } from './components/modal-request-partiture/modal-request-partiture.component';
+import { CreateUserPartitureRequest } from '../state/user-partiture-request/user-partiture-request.actions';
+import { UserPartitureRequestState, UserPartitureRequestStateModel } from '../state/user-partiture-request/user-partiture-request.state';
 
 @Component({
   selector: 'app-menu-partiture',
@@ -269,6 +272,46 @@ export class MenuPartiturePage implements OnDestroy {
         }          
       }
     })
+  }
+
+  async requestPartitureGroup(){
+    // mostramos spinner
+    await this.loadingService.presentLoading('Loading...');   
+
+    // mostramos la modal
+    const modal = await this.modalController.create({
+      component: ModalRequestPartitureComponent
+    });
+    modal.present();
+
+    const {data, role} = await modal.onWillDismiss();
+
+    if(role=='confirm'){            
+      await this.loadingService.presentLoading('Loading...');             
+      
+      this.store.dispatch(new CreateUserPartitureRequest({userPartitureRequest: data}))        
+        .subscribe({
+          next: async ()=> {
+            const success = this.store.selectSnapshot(UserPartitureRequestState.success);
+            if(success){
+              this.toast.presentToast("Petición de partituras registrada correctamente");                                        
+            }
+            else{
+              const errorStatusCode = this.store.selectSnapshot(UserPartitureRequestState.errorStatusCode);
+              const errorMessage = this.store.selectSnapshot(UserPartitureRequestState.errorMessage);        
+              // si el token ha caducado (403) lo sacamos de la aplicacion
+              if(errorStatusCode==403){            
+                this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
+              }
+              else{
+                this.toast.presentToast(errorMessage);
+              }                  
+            }      
+            await this.loadingService.dismissLoading();          
+          }
+        }
+      )    
+    }
   }
 
   /*******************************************************/

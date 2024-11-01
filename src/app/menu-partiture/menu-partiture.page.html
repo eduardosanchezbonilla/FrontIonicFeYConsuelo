@@ -98,9 +98,13 @@
     </ion-fab-button>  
   
     <ion-fab-list side="start">
+      <ion-fab-button *ngIf="profile=='SUPER_ADMIN' || profile=='ADMIN'  || profile=='MUSICO'" color="warning" (click)="requestPartitureGroup()">            
+        <ion-icon name="hand-left-outline" size="small"></ion-icon>
+      </ion-fab-button> 
+      <!-- este solo sera para cualqueira que no sea administrador-->   
       <ion-fab-button *ngIf="profile=='SUPER_ADMIN'" color="warning" (click)="createPartitureGroup()">            
         <ion-icon name="add-outline"></ion-icon>
-      </ion-fab-button>    
+      </ion-fab-button> 
       <ion-fab-button color="warning" (click)="collapseAll()">
         <ion-icon name="chevron-collapse-outline"></ion-icon>
       </ion-fab-button>

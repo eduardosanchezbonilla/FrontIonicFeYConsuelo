@@ -8,6 +8,8 @@ import { MenuController, NavController } from '@ionic/angular';
 import { Logout } from '../../state/user/users.actions';
 import { ToastService } from 'src/app/services/toast/toast.service';
 import { ResetPasswordDto } from '../../models/user/reset-password-dto';
+import { UpdateFirebaseTokenDto } from 'src/app/models/user/update-firebase-token-dto';
+import { StorageService } from '../storage/storage.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +20,8 @@ export class UsersService {
     private store: Store,
     private navController: NavController,
     private menuController: MenuController,
-    private toast:ToastService
+    private toast:ToastService,
+    private storage:StorageService
   ) { }
 
   logout(message: string = null) {
@@ -105,6 +108,35 @@ export class UsersService {
         return Promise.reject({
           status: response.status,
           message: response.data?.message || 'Error al resetear el password'
+        });
+      }      
+    })
+    .catch((error) => {      
+      return Promise.reject(error);
+    });
+  }
+
+  async updateFirebaseToken(updateFirebaseToken: UpdateFirebaseTokenDto){    
+    const token = await this.storage.getItem('token');
+    return Http.put(
+      {
+        url:environment.host + '/user/'+updateFirebaseToken.username + '/firebase-token',
+        params:{},
+        data: updateFirebaseToken,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        }
+      }
+    )
+    .then(async response => {
+      if(response.status==200){
+        return true;
+      }
+      else{                
+        return Promise.reject({
+          status: response.status,
+          message: response.data?.message || 'Error al actualizar el firebase token del usuario'
         });
       }      
     })

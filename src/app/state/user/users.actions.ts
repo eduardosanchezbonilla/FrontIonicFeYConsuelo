@@ -1,3 +1,4 @@
+import { UpdateFirebaseTokenDto } from "src/app/models/user/update-firebase-token-dto";
 import { AuthDto } from "../../models/user/auth-dto";
 import { ChangePasswordDto } from "../../models/user/change-password-dto";
 import { ResetPasswordDto } from "../../models/user/reset-password-dto";
@@ -15,6 +16,11 @@ export class ChangeExpiredPassword {
 export class ResetPassword { 
   static readonly type = '[Users] ResetPassword';
   constructor(public payload: {resetPassword: ResetPasswordDto}) { }
+}
+
+export class UpdateFirebaseToken { 
+  static readonly type = '[Users] UpdateFirebaseToken';
+  constructor(public payload: {updateFirebaseToken: UpdateFirebaseTokenDto}) { }
 }
 
 export class Logout {

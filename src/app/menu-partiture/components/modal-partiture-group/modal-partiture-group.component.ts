@@ -1,7 +1,6 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { PartitureGroup } from '../../../models/partiture-group/partiture-group';
 import { ModalController } from '@ionic/angular';
-import { Store } from '@ngxs/store';
 import { LoadingService } from 'src/app/services/loading/loading.service';
 
 @Component({
@@ -15,7 +14,7 @@ export class ModalPartitureGroupComponent implements OnInit {
   @Input() updating: boolean;
   
   constructor(    
-    private store:Store,
+  
     private modalController: ModalController,
     private loadingService: LoadingService
   ) { }

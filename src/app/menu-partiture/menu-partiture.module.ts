@@ -10,6 +10,9 @@ import { PartitureGroupService } from '../services/partiture-group/partiture-gro
 import { ModalPartitureGroupComponent } from './components/modal-partiture-group/modal-partiture-group.component';
 import { PartitureState } from '../state/partiture/partiture.state';
 import { PartitureService } from '../services/partiture/partiture.service';
+import { ModalRequestPartitureComponent } from './components/modal-request-partiture/modal-request-partiture.component';
+import { UserPartitureRequestState } from '../state/user-partiture-request/user-partiture-request.state';
+import { UserPartitureRequestService } from '../services/user-partiture-request/user-partiture-request.service';
 
 
 @NgModule({
@@ -19,12 +22,14 @@ import { PartitureService } from '../services/partiture/partiture.service';
     IonicModule,
     MenuPartiturePageRoutingModule,
     NgxsModule.forFeature([PartitureGroupState]),
+    NgxsModule.forFeature([UserPartitureRequestState]),
     NgxsModule.forFeature([PartitureState])
   ],
-  declarations: [MenuPartiturePage, ModalPartitureGroupComponent],
+  declarations: [MenuPartiturePage, ModalPartitureGroupComponent, ModalRequestPartitureComponent],
   providers:[
     PartitureGroupService,
-    PartitureService
+    PartitureService,
+    UserPartitureRequestService
   ]
 })
 export class MenuPartiturePageModule {}

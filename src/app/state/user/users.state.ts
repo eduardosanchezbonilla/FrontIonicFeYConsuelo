@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { State, Action, StateContext, Selector } from '@ngxs/store';
-import { ChangeExpiredPassword, Login, Logout, ResetPassword } from './users.actions';
+import { ChangeExpiredPassword, Login, Logout, ResetPassword, UpdateFirebaseToken } from './users.actions';
 import { UsersService } from '../../services/user/users.service';
 import { TokenUser } from '../../models/user/token-user';
 import { StorageService } from 'src/app/services/storage/storage.service';
@@ -151,6 +151,40 @@ export class UsersState {
               })          
             }
         }
+      )
+      .catch(
+        async (error) => {          
+          patchState({
+            success: false,
+            errorStatusCode: error.status,
+            errorMessage: error.message
+          })
+      });
+  }
+
+  @Action(UpdateFirebaseToken)
+  updateFirebaseToken(
+      { patchState }: StateContext<UsersStateModel>,
+      { payload }: UpdateFirebaseToken
+  ) {
+    return this.userService.updateFirebaseToken(payload.updateFirebaseToken)
+      .then( 
+        async (success:Boolean) => {       
+          if(success)   {
+            patchState({
+              success: true,
+              errorStatusCode: null,
+              errorMessage: null
+            })          
+          }
+          else{
+            patchState({
+              success: false,
+              errorStatusCode: null,
+              errorMessage: null
+            })          
+          }
+      }
       )
       .catch(
         async (error) => {          

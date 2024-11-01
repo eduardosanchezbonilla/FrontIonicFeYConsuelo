@@ -1,0 +1,143 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="medium" (click)="cancel()">Cancelar</ion-button>
+    </ion-buttons>    
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form *ngIf="profile=='ADMIN' || profile=='MUSICO'" (ngSubmit)="confirmRequestPartiture()" #requestPartitureForm="ngForm">   
+
+    <!-------------------------------------->
+    <!------ SOLICITUD DE PARTITURAS ------->
+    <!-------------------------------------->   
+    <h2 class="fancy-title custom-modal-title">
+      Solicitud de partituras
+    </h2>
+    
+    <ion-item lines="none">
+    <!--<ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">-->
+      <ion-label color="primary" position="stacked" class="custom-label-textarea">
+        Petición
+      </ion-label>
+      <ion-textarea 
+          name="description"
+          placeholder="Escribe aquí que partituras desea solicitar..." 
+          class="custom-textarea focus-style"
+          minlength="1"                     
+          maxlength="1000"
+          required="true"
+          [(ngModel)]="textRequestPartiture"  
+          (ngModelChange)="validTextRequestPartiture()"                                                         
+      >
+      </ion-textarea>
+    </ion-item>
+
+    <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="invalidTextRequest">
+      <ion-text color="danger" *ngIf="invalidTextRequest">Debe introducir una descripción de 1 a 500 caracteres.</ion-text>      
+    </div>
+
+    <div class="spacer"></div>   
+    <div class="spacer"></div>  
+
+    <ion-button 
+          type="submit"           
+          [disabled]="disabledForm"
+          expand="block">
+        Solicitar
+    </ion-button>  
+  </form>
+
+  
+  <form *ngIf="profile=='SUPER_ADMIN'" (ngSubmit)="cancel()" #requestPartitureForm="ngForm">   
+
+    <!------------------------------------------------>
+    <!------ GESTION DE PARTITURAS SOLICITADAS ------->
+    <!------------------------------------------------>   
+    <h2 class="fancy-title custom-modal-title">
+      Solicitudes pendientes
+    </h2>
+
+    <ion-refresher slot="fixed" (ionRefresh)="refreshRequestPartitureGroupByUser($event)">
+      <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+
+    <!-- Selector de filtro justo debajo del título -->
+    <div class="filter-container">
+      <ion-segment (ionChange)="onReadedChanged($event)" value="unread">
+        <ion-segment-button value="unread">
+          <ion-label>No leídas</ion-label>
+        </ion-segment-button>
+
+        <ion-segment-button value="all">
+          <ion-label>Todas</ion-label>
+        </ion-segment-button>          
+      </ion-segment>
+    </div>
+    
+
+    <!-- Mensaje vistoso cuando no hay datos -->
+    <div *ngIf="initSearchFinish && !existsRequest" class="no-data-container">
+      <div class="spacer"></div>   
+      <ion-icon name="alert-circle-outline" class="no-data-icon"></ion-icon>
+      <p class="no-data-text">No hay solicitudes pendientes de gestionar.</p>     
+      <div class="spacer"></div>   
+      <div class="spacer"></div> 
+    </div>
+
+    <!-- Contenido principal (solo se muestra si hay datos) -->
+    <div *ngIf="initSearchFinish && existsRequest">
+      <div class="spacer-super-small"></div>   
+
+      <ion-accordion-group>
+        <!-- Iterar sobre cada usuario -->
+        <ion-accordion *ngFor="let userRequestPartitire of userRequestPartitureGroupByUser">
+          <ion-item slot="header" class="user-item" >
+            <ion-avatar slot="start">
+              <ion-img 
+                [src]="userRequestPartitire.user.image ? 'data:image/jpeg;base64,' + userRequestPartitire.user.image : 'data:image/jpeg;base64,' + defaultMusicianImage">
+              </ion-img>                              
+            </ion-avatar>            
+            <ion-label>
+              <!--<h2>{{ userRequestPartitire.user.username }} ({{ userRequestPartitire.user.name }} {{ userRequestPartitire.user.surname }})</h2>-->
+              <span class="username">{{ userRequestPartitire.user.username }}</span>
+              <span class="full-name">{{ userRequestPartitire.user.name }} {{ userRequestPartitire.user.surname }}</span>
+            </ion-label>
+          </ion-item>
+    
+          <!-- Contenido expandido para las peticiones de cada usuario -->
+          <div class="expanded-content" slot="content">
+            <ion-list class="ion-no-padding">
+              <ion-item *ngFor="let request of userRequestPartitire.request">
+                <!-- Botón de marcar/desmarcar al inicio -->
+                <ion-button
+                  slot="start"
+                  color="primary"
+                  fill="clear"
+                  (click)="markAsReadUnread(request)"
+                >
+                  <ion-icon [name]="request.readed ? 'checkmark-circle' : 'ellipse-outline'"></ion-icon>
+                </ion-button>
+
+                <!-- Descripción de la petición -->
+                <ion-label class="request-label">
+                  {{ request.description }}
+                </ion-label>
+              </ion-item>
+            </ion-list>
+          </div>
+        </ion-accordion>
+      </ion-accordion-group>
+
+      <div class="spacer"></div> 
+    </div>
+
+    <ion-button 
+          type="submit"                     
+          expand="block">
+        Volver
+    </ion-button>  
+  </form>
+
+</ion-content>
