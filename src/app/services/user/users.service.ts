@@ -109,16 +109,14 @@ export class UsersService {
       if(response.status==200){
         return true;
       }
-      else{     
-        console.log("error en service");           
+      else{                  
         return Promise.reject({
           status: response.status,
           message: response.data?.message || 'Error al resetear el password'
         });
       }      
     })
-    .catch((error) => {      
-      console.log("error en service catch");           
+    .catch((error) => {                
       return Promise.reject(error);
     });
   }

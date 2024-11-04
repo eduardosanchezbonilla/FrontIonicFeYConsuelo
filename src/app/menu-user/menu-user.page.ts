@@ -257,16 +257,13 @@ export class MenuUserPage implements OnDestroy {
 
     const {data, role} = await modal.onWillDismiss();
 
-    console.log(data);
-
     if(role=='confirm'){      
       await this.loadingService.presentLoading('Loading...');          
       
       data.username = user.username;
       this.store.dispatch(new ResetPasswordUser({resetPassword:data})).subscribe({      
           next: async ()=> {
-            const success = this.store.selectSnapshot(UsersState.success);
-            console.log(success);
+            const success = this.store.selectSnapshot(UsersState.success);            
             if(success){
               this.toast.presentToast("Password reseteado correctamente");                 
             }
@@ -274,8 +271,7 @@ export class MenuUserPage implements OnDestroy {
               const errorStatusCode = this.store.selectSnapshot(UsersState.errorStatusCode);
               const errorMessage = this.store.selectSnapshot(UsersState.errorMessage);        
               // si el token ha caducado (403) lo sacamos de la aplicacion
-              if(errorStatusCode==403){    
-                console.log("Ha caducado la sesion, debe logarse de nuevo");
+              if(errorStatusCode==403){                    
                 this.store.dispatch(new ResetUser({})).subscribe({ next: async () => { } })            
                 this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
               }
@@ -498,14 +494,4 @@ export class MenuUserPage implements OnDestroy {
         .map(([key]) => key);
   }
 
-  /*showMap(origin?: string){
-    console.log("///////////////////////////////////////////");
-    console.log(origin);
-    this.expandVoiceMap.forEach((value, key) => {
-      console.log(`Clave: ${key}, Valor: ${value}`);
-    });
-    console.log("///////////////////////////////////////////");
-  }*/
-
-  
 }

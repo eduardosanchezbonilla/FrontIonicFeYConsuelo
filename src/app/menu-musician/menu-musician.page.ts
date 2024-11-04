@@ -410,15 +410,6 @@ export class MenuMusicianPage implements OnDestroy {
         .map(([key]) => key);
   }
 
-  /*showMap(origin?: string){
-    console.log("///////////////////////////////////////////");
-    console.log(origin);
-    this.expandVoiceMap.forEach((value, key) => {
-      console.log(`Clave: ${key}, Valor: ${value}`);
-    });
-    console.log("///////////////////////////////////////////");
-  }*/
-
   /*******************************************************/
   /******************* VOICES  ***************************/
   /*******************************************************/
