@@ -64,6 +64,9 @@
                 <ion-icon color="light" slot="icon-only" name="shirt-outline"></ion-icon>
               </ion-item-option>   
               -->
+              <ion-item-option *ngIf="profile=='SUPER_ADMIN'" color="tertiary" (click)="resetPassword(user, userSliding)" >
+                <ion-icon slot="icon-only" name="refresh-outline"></ion-icon>                
+              </ion-item-option>   
               <ion-item-option *ngIf="profile=='SUPER_ADMIN'" color="success" (click)="asignPartituresUser(user, userSliding)" >
                 <ion-icon color="light" slot="icon-only" name="albums-outline"></ion-icon>
               </ion-item-option>        

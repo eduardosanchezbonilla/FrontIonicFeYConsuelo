@@ -1,3 +1,4 @@
+import { ResetPasswordDto } from "src/app/models/user/reset-password-dto";
 import { Musician } from "../../models/musician/musician";
 
 export class CreateMusician {
@@ -29,3 +30,9 @@ export class ResetMusician {
   static readonly type = '[Musicians] Rest Musician';
   constructor(public payload: {}) { }
 }
+
+export class ResetPassword { 
+  static readonly type = '[Musicians] ResetPassword';
+  constructor(public payload: {resetPassword: ResetPasswordDto}) { }
+}
+

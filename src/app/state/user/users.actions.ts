@@ -14,8 +14,8 @@ export class ChangeExpiredPassword {
   constructor(public payload: {changePassword: ChangePasswordDto}) { }
 }
 
-export class ResetPassword { 
-  static readonly type = '[Users] ResetPassword';
+export class ResetPasswordUser { 
+  static readonly type = '[Users] ResetPasswordUser';
   constructor(public payload: {resetPassword: ResetPasswordDto}) { }
 }
 

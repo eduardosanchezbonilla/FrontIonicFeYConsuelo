@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
 import { State, Action, StateContext, Selector } from '@ngxs/store';
-import { ChangeExpiredPassword, CreateUser, DeleteUser, GetAllRoles, GetUsersGroupByRole, Login, Logout, ResetPassword, ResetUser, UpdateFirebaseToken, UpdateUserDetail, UpdateUserRoles } from './users.actions';
+import { ChangeExpiredPassword, CreateUser, DeleteUser, GetAllRoles, GetUsersGroupByRole, Login, Logout,  ResetPasswordUser, ResetUser, UpdateFirebaseToken, UpdateUserDetail, UpdateUserRoles } from './users.actions';
 import { UsersService } from '../../services/user/users.service';
 import { TokenUser } from '../../models/user/token-user';
 import { StorageService } from 'src/app/services/storage/storage.service';
 import { User } from '../../models/user/user';
 import { UserGroupByRole } from 'src/app/models/user/user-group-by-role';
 import { Role } from 'src/app/models/role/role';
-import { UserRequest } from 'src/app/models/user/user-request';
 
 export class UsersStateModel {
   usersGroupByRole: UserGroupByRole[];
@@ -152,12 +151,12 @@ export class UsersState {
       });
   }
 
-  @Action(ResetPassword)
-  resetPassword(
+  @Action(ResetPasswordUser)
+  resetPasswordUser(
       { patchState }: StateContext<UsersStateModel>,
-      { payload }: ResetPassword
+      { payload }: ResetPasswordUser
   ) {
-    return this.userService.resetPassword(payload.resetPassword)
+    return this.userService.resetPasswordUser(payload.resetPassword)
       .then( 
         async (success:Boolean) => {       
             if(success)   {

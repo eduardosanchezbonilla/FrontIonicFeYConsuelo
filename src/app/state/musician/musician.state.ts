@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { MusicianService } from '../../services/musician/musician.service';
 import { Musician } from '../../models/musician/musician';
-import { CreateMusician, DeleteMusician, GetMusicians, GetMusiciansGroupByVoice, ResetMusician, UpdateMusician } from './musician.actions';
+import { CreateMusician, DeleteMusician, GetMusicians, GetMusiciansGroupByVoice, ResetMusician, ResetPassword, UpdateMusician } from './musician.actions';
 import { MusicianGroupByVoice } from '../../models/musician/musician-group-by-voice';
 
 export class MusicianStateModel {
@@ -246,6 +246,40 @@ export class MusicianState {
       errorStatusCode: null,
       errorMessage: null
     })
+  }
+
+  @Action(ResetPassword)
+  resetPassword(
+      { patchState }: StateContext<MusicianStateModel>,
+      { payload }: ResetPassword
+  ) {
+    return this.musicianService.resetPassword(payload.resetPassword)
+      .then( 
+        async (success:Boolean) => {       
+            if(success)   {
+              patchState({
+                success: true,
+                errorStatusCode: null,
+                errorMessage: null
+              })          
+            }
+            else{
+              patchState({
+                success: false,
+                errorStatusCode: null,
+                errorMessage: null
+              })          
+            }
+        }
+      )
+      .catch(
+        async (error) => {          
+          patchState({
+            success: false,
+            errorStatusCode: error.status,
+            errorMessage: error.message
+          })
+      });
   }
 
 }

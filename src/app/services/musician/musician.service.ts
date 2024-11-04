@@ -4,6 +4,7 @@ import { Musician } from '../../models/musician/musician';
 import { Http } from '@capacitor-community/http';
 import { environment } from 'src/environments/environment';
 import { MusicianGroupByVoice } from '../../models/musician/musician-group-by-voice';
+import { ResetPasswordDto } from 'src/app/models/user/reset-password-dto';
 
 @Injectable()
 export class MusicianService {
@@ -208,6 +209,33 @@ export class MusicianService {
           message: null
         });                
       }           
+    });
+  }
+
+  resetPassword(resetPassword: ResetPasswordDto){    
+    return Http.put(
+      {
+        url:environment.host + '/musician/'+resetPassword.username + '/reset-password',
+        params:{},
+        data: {},
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    )
+    .then(async response => {
+      if(response.status==200){
+        return true;
+      }
+      else{                
+        return Promise.reject({
+          status: response.status,
+          message: response.data?.message || 'Error al resetear el password'
+        });
+      }      
+    })
+    .catch((error) => {      
+      return Promise.reject(error);
     });
   }
 

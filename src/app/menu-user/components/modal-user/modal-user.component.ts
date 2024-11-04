@@ -36,8 +36,7 @@ export class ModalUserComponent  implements OnInit, OnDestroy {
     private loadingService: LoadingService
   ) { }
 
-  async ngOnInit() {
-    console.log(this.user);
+  async ngOnInit() {    
     if(!this.user){
       this.user = new UserRequest(null,null,null,null,null,null,);      
       this.showImage = null;      
@@ -99,8 +98,7 @@ export class ModalUserComponent  implements OnInit, OnDestroy {
   confirm(){
     this.user.image = this.selectedImage;
     this.user.roles = [];
-    this.user.roles.push(this.user.role.role);
-    console.log(this.user);
+    this.user.roles.push(this.user.role.role);    
     this.modalController.dismiss(this.user, 'confirm');
   }
 

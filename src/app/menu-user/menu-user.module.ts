@@ -11,6 +11,7 @@ import { NgxsModule } from '@ngxs/store';
 import { UsersState, UsersStateModel } from '../state/user/users.state';
 import { ModalUserComponent } from './components/modal-user/modal-user.component';
 import { UsersService } from '../services/user/users.service';
+import { ModalResetPasswordComponent } from './components/modal-reset-password/modal-reset-password.component';
 
 @NgModule({
   imports: [
@@ -20,7 +21,7 @@ import { UsersService } from '../services/user/users.service';
     MenuUserPageRoutingModule,
     NgxsModule.forFeature([UsersState])
   ],
-  declarations: [MenuUserPage,ModalUserComponent],
+  declarations: [MenuUserPage,ModalUserComponent,ModalResetPasswordComponent],
   providers:[
     UsersService
   ]

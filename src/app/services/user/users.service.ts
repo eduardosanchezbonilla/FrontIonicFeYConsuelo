@@ -92,14 +92,16 @@ export class UsersService {
     });
   }
 
-  resetPassword(resetPassword: ResetPasswordDto){    
+  async resetPasswordUser(resetPassword: ResetPasswordDto){    
+    const token = await this.storage.getItem('token');
     return Http.put(
       {
-        url:environment.host + '/musician/'+resetPassword.username + '/reset-password',
+        url:environment.host + '/user/'+resetPassword.username + '/reset',
         params:{},
-        data: {},
+        data: resetPassword,        
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
         }
       }
     )
@@ -107,7 +109,8 @@ export class UsersService {
       if(response.status==200){
         return true;
       }
-      else{                
+      else{     
+        console.log("error en service");           
         return Promise.reject({
           status: response.status,
           message: response.data?.message || 'Error al resetear el password'
@@ -115,6 +118,7 @@ export class UsersService {
       }      
     })
     .catch((error) => {      
+      console.log("error en service catch");           
       return Promise.reject(error);
     });
   }

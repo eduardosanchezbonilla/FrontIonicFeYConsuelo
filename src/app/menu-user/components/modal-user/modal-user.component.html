@@ -65,7 +65,7 @@
 
     <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(passwordInput.invalid && passwordInput.touched)">            
       <ion-text color="danger" *ngIf="passwordInput.errors && passwordInput.errors['required']">El password es obligatorio.</ion-text>
-      <ion-text color="danger" *ngIf="passwordInput.errors && passwordInput.errors['minlength']">El password debe tener al menos 5 caracteres.</ion-text>
+      <ion-text color="danger" *ngIf="passwordInput.errors && passwordInput.errors['minlength']">El password debe tener al menos 8 caracteres.</ion-text>
       <ion-text color="danger" *ngIf="passwordInput.errors && passwordInput.errors['maxlength']">El password no puede exceder los 50 caracteres.</ion-text>
     </div>
     

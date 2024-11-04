@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { debounceTime, Observable, Subject, Subscription } from 'rxjs';
 import { UsersState } from '../state/user/users.state';
 import { AlertController, IonItemSliding, ModalController } from '@ionic/angular';
@@ -9,13 +9,14 @@ import { LoadingService } from '../services/loading/loading.service';
 import { StorageService } from '../services/storage/storage.service';
 import { UserGroupByRole } from '../models/user/user-group-by-role';
 import { FilterUsers } from '../models/user/filter-users';
-import { DEFAULT_MUSICIAN_IMAGE, DEFAULT_ROLE_IMAGE, DEFAULT_USER_IMAGE } from '../constants/constants';
-import { CreateUser, DeleteUser, GetUsersGroupByRole, ResetUser, UpdateUserDetail, UpdateUserRoles } from '../state/user/users.actions';
+import { DEFAULT_ROLE_IMAGE, DEFAULT_USER_IMAGE } from '../constants/constants';
+import { CreateUser, DeleteUser, GetUsersGroupByRole, ResetPasswordUser, ResetUser, UpdateUserDetail, UpdateUserRoles } from '../state/user/users.actions';
 import { User } from '../models/user/user';
 import { ModalUserComponent } from './components/modal-user/modal-user.component';
 import { UserRequest } from '../models/user/user-request';
 import { Role } from '../models/role/role';
 import { ModalPartitureComponent } from '../menu-musician/components/modal-partiture/modal-partiture.component';
+import { ModalResetPasswordComponent } from './components/modal-reset-password/modal-reset-password.component';
 
 @Component({
   selector: 'app-menu-user',
@@ -95,7 +96,6 @@ export class MenuUserPage implements OnDestroy {
       this.usersGroupByRoleSubscription.unsubscribe();  // Cancelar la suscripción al destruir el componente
     }
     this.store.dispatch(new ResetUser({})).subscribe({ next: async () => { } })    
-    // this.store.dispatch(new ResetRole({})).subscribe({ next: async () => { } })      // TODO
   }
 
   
@@ -241,6 +241,54 @@ export class MenuUserPage implements OnDestroy {
     }
   }
 
+  async resetPassword(user:User, userSliding: IonItemSliding) {       
+    // cerramos el sliding 
+    userSliding.close();
+      
+    // mostramos spinner    
+    await this.loadingService.presentLoading('Loading...');
+
+    // mostramos la modal
+    const modal = await this.modalController.create({
+      component: ModalResetPasswordComponent,
+      componentProps: {}
+    });
+    modal.present();
+
+    const {data, role} = await modal.onWillDismiss();
+
+    console.log(data);
+
+    if(role=='confirm'){      
+      await this.loadingService.presentLoading('Loading...');          
+      
+      data.username = user.username;
+      this.store.dispatch(new ResetPasswordUser({resetPassword:data})).subscribe({      
+          next: async ()=> {
+            const success = this.store.selectSnapshot(UsersState.success);
+            console.log(success);
+            if(success){
+              this.toast.presentToast("Password reseteado correctamente");                 
+            }
+            else{
+              const errorStatusCode = this.store.selectSnapshot(UsersState.errorStatusCode);
+              const errorMessage = this.store.selectSnapshot(UsersState.errorMessage);        
+              // si el token ha caducado (403) lo sacamos de la aplicacion
+              if(errorStatusCode==403){    
+                console.log("Ha caducado la sesion, debe logarse de nuevo");
+                this.store.dispatch(new ResetUser({})).subscribe({ next: async () => { } })            
+                this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
+              }
+              else{
+                this.toast.presentToast(errorMessage);
+              }                  
+            }      
+            await this.loadingService.dismissLoading();          
+          }
+        }
+      )      
+    }
+  }
 
   async asignPartituresUser(user:User, userSliding: IonItemSliding){   
     // cerramos el sliding 
@@ -249,14 +297,26 @@ export class MenuUserPage implements OnDestroy {
     // mostramos spinner
     await this.loadingService.presentLoading('Loading...');   
 
+    let name = '';
+
+    if(user.userDetail.name!=null && user.userDetail.surname!=null){
+      name = '(' + user.userDetail.name + ' ' + user.userDetail.surname + ')';
+    }
+    else if(user.userDetail.name!=null){
+      name = '(' + user.userDetail.name + ')';
+    }
+    else if(user.userDetail.surname!=null){
+      name = '(' + user.userDetail.surname + ')';
+    }
+
     let userRequest = new UserRequest(
       user.username, 
       null,
       null,
       null,
       user.userDetail.dni,  
-      user.userDetail.name,
-      user.userDetail.surname,
+      user.username,
+      name,
       user.userDetail.direction,
       user.userDetail.municipality,
       user.userDetail.province,
@@ -274,23 +334,6 @@ export class MenuUserPage implements OnDestroy {
     });
     modal.present();
   }
-
-  /*async manageMusicianInventary(musician:Musician, musicianSliding: IonItemSliding){   
-    // cerramos el sliding 
-    musicianSliding.close();
-
-    // mostramos spinner
-    await this.loadingService.presentLoading('Loading...');   
-    
-    // abrimos modal
-    const modal = await this.modalController.create({
-      component: ModalMusicianInventoryComponent,
-      componentProps: {
-        musician
-      }
-    });
-    modal.present();
-  }*/
 
   async getUsersGroupByRole(){            
     this.usersGroupByRoleSubscription = this.usersGroupByRole$     
@@ -464,142 +507,5 @@ export class MenuUserPage implements OnDestroy {
     console.log("///////////////////////////////////////////");
   }*/
 
-  /*******************************************************/
-  /******************* VOICES  ***************************/
-  /*******************************************************/
-  /*async createVoice(){
-    // mostramos spinner
-    await this.loadingService.presentLoading('Loading...');   
-
-    // abrimos la modal
-    const modal = await this.modalController.create({
-      component: ModalVoiceComponent
-    });
-    modal.present();
-
-    const {data, role} = await modal.onWillDismiss();
-
-    if(role=='confirm'){      
-      await this.loadingService.presentLoading('Loading...');          
-      
-      this.store.dispatch(new CreateVoice({voice: data}))        
-        .subscribe({
-          next: async ()=> {
-            const success = this.store.selectSnapshot(VoiceState.success);
-            if(success){
-              this.toast.presentToast("Voz creada correctamente");            
-              this.filterMusicians(false);          
-            }
-            else{
-              const errorStatusCode = this.store.selectSnapshot(VoiceState.errorStatusCode);
-              const errorMessage = this.store.selectSnapshot(VoiceState.errorMessage);        
-              // si el token ha caducado (403) lo sacamos de la aplicacion
-              if(errorStatusCode==403){            
-                this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
-              }
-              else{
-                this.toast.presentToast(errorMessage);
-              }    
-              await this.loadingService.dismissLoading();      
-            }          
-          }
-        }
-      )      
-    }
-  }
-
-  async updateVoice(event: Event, voice:Voice){  
-    event.stopPropagation(); 
-
-    // mostramos spinner
-    await this.loadingService.presentLoading('Loading...');   
-    
-    // abrimos modal
-    const modal = await this.modalController.create({
-      component: ModalVoiceComponent,
-      componentProps: {
-        voice,
-        updating: true
-      }
-    });
-    modal.present();
-
-    const {data, role} = await modal.onWillDismiss();
-
-    // tratamos el resultado de la modal
-    if(role=='confirm'){      
-      await this.loadingService.presentLoading('Loading...');        
-      this.store.dispatch(new UpdateVoice({id: data.id, voice:data})).subscribe({
-        next: async ()=> {
-          const success = this.store.selectSnapshot(VoiceState.success);
-          if(success){
-            this.toast.presentToast("Voz modificada correctamente");
-            this.filterMusicians(false);          
-          }
-          else{
-            const errorStatusCode = this.store.selectSnapshot(VoiceState.errorStatusCode);
-            const errorMessage = this.store.selectSnapshot(VoiceState.errorMessage);        
-            // si el token ha caducado (403) lo sacamos de la aplicacion
-            if(errorStatusCode==403){            
-              this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
-            }
-            else{
-              this.toast.presentToast(errorMessage);
-            }    
-            await this.loadingService.dismissLoading();      
-          }          
-        }
-      })
-    }
-  }
-
-  async confirmDeleteVoice(event: Event, voice:Voice) {
-    event.stopPropagation(); // Detener la propagación del evento de clic
-
-    const alert = await this.alertController.create({
-        header: 'Confirmacion',
-        message: '¿Estas seguro de eliminar la voz?',
-        buttons: [
-          {
-            text: 'No',
-            role: 'cancel',
-            handler: () => {}
-          },
-          {
-            text: 'Si',
-            role: 'confirm',
-            handler: () => {
-              this.deleteVoice(voice);
-            }
-          }
-        ]
-    });
-    alert.present();
-  }
-
-  async deleteVoice(voice:Voice) {    
-    // eliminamos la voz
-    await this.loadingService.presentLoading('Loading...');    
-    this.store.dispatch(new DeleteVoice({id: voice.id})).subscribe({
-      next: async () => {
-        const success = this.store.selectSnapshot(VoiceState.success);
-        if(success){
-          this.toast.presentToast("Voz eliminada correctamente");
-          this.filterMusicians(false);          
-        }
-        else{
-          const errorStatusCode = this.store.selectSnapshot(VoiceState.errorStatusCode);
-          const errorMessage = this.store.selectSnapshot(VoiceState.errorMessage);        
-          // si el token ha caducado (403) lo sacamos de la aplicacion
-          if(errorStatusCode==403){            
-            this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
-          }
-          else{
-            this.toast.presentToast(errorMessage);
-          }    
-          await this.loadingService.dismissLoading();      
-        }          
-      }
-    })
-  }  */
+  
 }

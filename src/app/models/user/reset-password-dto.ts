@@ -1,3 +1,5 @@
 export class ResetPasswordDto {
-    username: string;   
+    username: string;  
+    password: string;
+    repeatPassword: string; 
 }

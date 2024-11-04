@@ -40,8 +40,7 @@ export class ModalPartitureComponent implements OnInit {
     private loadingService: LoadingService
   ) { }
 
-  async ngOnInit() {
-    console.log(this.user);
+  async ngOnInit() {    
     this.userPartitureGroups = [];
     if(this.user.image){
       this.showImage = `data:image/jpeg;base64,${this.user.image}`;      

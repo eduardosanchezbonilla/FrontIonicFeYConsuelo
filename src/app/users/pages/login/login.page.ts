@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { AuthDto } from '../../../models/user/auth-dto';
 import { Store } from '@ngxs/store';
-import { ChangeExpiredPassword, Login, ResetPassword, UpdateFirebaseToken } from '../../../state/user/users.actions';
+import { ChangeExpiredPassword, Login, UpdateFirebaseToken } from '../../../state/user/users.actions';
+import { ResetPassword } from '../../../state/musician/musician.actions';
 import { UsersState } from '../../../state/user/users.state';
 import { ToastService } from 'src/app/services/toast/toast.service';
 import { NavController } from '@ionic/angular';
