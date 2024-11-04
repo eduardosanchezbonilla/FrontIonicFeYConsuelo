@@ -9,6 +9,10 @@ const routes: Routes = [
     component: TabsSuperAdminPage,
     children: [
       {
+        path: 'menu-user',        
+        loadChildren: () => import('../menu-user/menu-user.module').then(m => m.MenuUserPageModule)
+      },  
+      {
         path: 'menu-musician',        
         loadChildren: () => import('../menu-musician/menu-musician.module').then(m => m.MenuMusicianPageModule)
       },

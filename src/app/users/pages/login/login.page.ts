@@ -11,7 +11,7 @@ import { LoadingService } from 'src/app/services/loading/loading.service';
 import { ResetPasswordDto } from '../../../models/user/reset-password-dto';
 import { FirebaseMessaging } from '@capacitor-firebase/messaging';
 import { Capacitor } from '@capacitor/core';
-import { ADMIN_TOPIC } from 'src/app/constants/firebase-topics';
+import { ADMIN_TOPIC, GENERAL_TOPIC, MUSICO_TOPIC } from 'src/app/constants/firebase-topics';
 import { UpdateFirebaseTokenDto } from 'src/app/models/user/update-firebase-token-dto';
 
 @Component({
@@ -87,7 +87,15 @@ export class LoginPage {
       if (userRole === 'ADMIN' || userRole === 'SUPER_ADMIN') {
         // Si el usuario es administrador, suscribirlo al topic 'admin'     
         await FirebaseMessaging.subscribeToTopic({ topic: ADMIN_TOPIC });        
-      }      
+      }     
+      if (userRole === 'MUSICO') {
+        // Si el usuario es músico, suscribirlo al topic 'musico'     
+        await FirebaseMessaging.subscribeToTopic({ topic: MUSICO_TOPIC });        
+      } 
+      if (userRole === 'INVITADO') {
+        // Si el usuario es invitado, suscribirlo al topic 'general'     
+        await FirebaseMessaging.subscribeToTopic({ topic: GENERAL_TOPIC });
+      }
     }
   }
 
@@ -95,7 +103,7 @@ export class LoginPage {
     if (Capacitor.isNativePlatform()) {      
       const user = JSON.parse(await this.storage.getItem('user'));                
       const { token } = await FirebaseMessaging.getToken(); // este token es el que identifica al dispositivo, por si quisieramos enviar mensajes individualizados     
-      if(user!=null && token!=null){                                 
+      if(user!=null && token!=null){                 
         let updateFirebaseToken = new UpdateFirebaseTokenDto(user.username, token);
         
         this.store.dispatch(new UpdateFirebaseToken({updateFirebaseToken:updateFirebaseToken})).subscribe({

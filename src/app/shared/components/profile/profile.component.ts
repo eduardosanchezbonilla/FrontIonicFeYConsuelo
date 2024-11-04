@@ -3,7 +3,7 @@ import { Component, Input } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { User } from 'src/app/models/user/user';
 import { UsersService } from 'src/app/services/user/users.service';
-import { DEFAULT_VOICE_IMAGE, DEFAULT_MUSICIAN_IMAGE } from '../../../constants/constants';
+import { DEFAULT_VOICE_IMAGE, DEFAULT_MUSICIAN_IMAGE, DEFAULT_USER_IMAGE } from '../../../constants/constants';
 
 @Component({
   selector: 'app-profile',
@@ -15,8 +15,8 @@ import { DEFAULT_VOICE_IMAGE, DEFAULT_MUSICIAN_IMAGE } from '../../../constants/
 export class Profile  {
 
   @Input() user:User;
-  public defaultMusicianImage: string = DEFAULT_MUSICIAN_IMAGE;
-  public defaultVoiceImage: string = DEFAULT_VOICE_IMAGE;
+  public defaultMusicianImage: string = DEFAULT_MUSICIAN_IMAGE;  
+  public defaultUserImage: string = DEFAULT_USER_IMAGE;
 
   constructor(
     private userService: UsersService

@@ -2,7 +2,6 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { ModalController } from '@ionic/angular';
 import { DEFAULT_MUSICIAN_IMAGE } from '../../../constants/constants';
-import { Musician } from 'src/app/models/musician/musician';
 import { UserPartitureGroupState } from 'src/app/state/user-partiture-group/user-partiture-group.state';
 import { UserPartitureGroup } from 'src/app/models/user-partiture-group/user-partiture-group';
 import { Observable, Subscription } from 'rxjs';
@@ -11,6 +10,7 @@ import { ToastService } from 'src/app/services/toast/toast.service';
 import { UsersService } from 'src/app/services/user/users.service';
 import { LoadingService } from 'src/app/services/loading/loading.service';
 import { DEFAULT_PARTITURE_GROUP_IMAGE} from '../../../constants/constants';
+import { UserRequest } from 'src/app/models/user/user-request';
 
 @Component({
   selector: 'app-modal-partiture',
@@ -24,7 +24,7 @@ export class ModalPartitureComponent implements OnInit {
   userPartitureGroupsSubscription: Subscription;
   public userPartitureGroups: UserPartitureGroup[];
   
-  @Input() musician: Musician;
+  @Input() user: UserRequest;
   public showImage: string;
   public selectedImage: string;
   public initScreen = false;
@@ -41,14 +41,15 @@ export class ModalPartitureComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
+    console.log(this.user);
     this.userPartitureGroups = [];
-    if(this.musician.image){
-      this.showImage = `data:image/jpeg;base64,${this.musician.image}`;      
+    if(this.user.image){
+      this.showImage = `data:image/jpeg;base64,${this.user.image}`;      
     }
     else{
       this.showImage = `data:image/jpeg;base64,${DEFAULT_MUSICIAN_IMAGE}`;      
     }       
-    this.store.dispatch(new GetUserPartitureGroups({username: this.musician.dni}));
+    this.store.dispatch(new GetUserPartitureGroups({username: this.user.username}));
     this.getUserPartitureGroups();   
   }
 
@@ -72,7 +73,7 @@ export class ModalPartitureComponent implements OnInit {
   }
 
   private doDestroy(){
-    console.log("ngOnDestroy musician partiture");
+    console.log("ngOnDestroy user partiture");
     if (this.userPartitureGroupsSubscription) {      
       this.userPartitureGroupsSubscription.unsubscribe();  
     }     

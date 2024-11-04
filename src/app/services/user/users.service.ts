@@ -10,6 +10,9 @@ import { ToastService } from 'src/app/services/toast/toast.service';
 import { ResetPasswordDto } from '../../models/user/reset-password-dto';
 import { UpdateFirebaseTokenDto } from 'src/app/models/user/update-firebase-token-dto';
 import { StorageService } from '../storage/storage.service';
+import { UserGroupByRole } from 'src/app/models/user/user-group-by-role';
+import { Role } from 'src/app/models/role/role';
+import { UserRequest } from 'src/app/models/user/user-request';
 
 @Injectable({
   providedIn: 'root'
@@ -144,5 +147,245 @@ export class UsersService {
       return Promise.reject(error);
     });
   }
+
+  async getUsersGroupByRole(filter:string){    
+    const token = await this.storage.getItem('token');        
+    return Http.get(
+      {
+        url:environment.host + '/user/group-by-role',
+        params:{'filter':filter},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        }
+      }
+    ).then(async response => {            
+      const newToken = response.headers['Authorization'] || response.headers['authorization'];      
+      if(newToken){             
+        await this.storage.setItem('token', newToken.replace('Bearer ', ''));
+      }    
+      if(response.status==200 || response.status==204){
+        const data = await response.data as UserGroupByRole[];
+        return data;
+      }
+      else{                
+        return Promise.reject({
+          status: response.status,
+          message: response.data?.message || 'Error al obtener el listado de usuarios'
+        });
+      }   
+    })
+    .catch((error) => {    
+      if(error.status){
+        return Promise.reject(error);
+      }
+      else {
+        return Promise.reject({
+          status: 403,
+          message: null
+        });                
+      }           
+    });
+  }
+
+  async getAllRoles(){    
+    const token = await this.storage.getItem('token');        
+    return Http.get(
+      {
+        url:environment.host + '/role/all',
+        params:{},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        }
+      }
+    ).then(async response => {            
+      const newToken = response.headers['Authorization'] || response.headers['authorization'];      
+      if(newToken){             
+        await this.storage.setItem('token', newToken.replace('Bearer ', ''));
+      }    
+      if(response.status==200 || response.status==204){
+        const data = await response.data as Role[];
+        return data;
+      }
+      else{                
+        return Promise.reject({
+          status: response.status,
+          message: response.data?.message || 'Error al obtener el listado de roles'
+        });
+      }   
+    })
+    .catch((error) => {    
+      if(error.status){
+        return Promise.reject(error);
+      }
+      else {
+        return Promise.reject({
+          status: 403,
+          message: null
+        });                
+      }           
+    });
+  }
+
+  async createUser(user:UserRequest){
+    const token = await this.storage.getItem('token');
+    return Http.post(
+      {
+        url:environment.host + '/user',
+        params:{},
+        data:user,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        }
+      }
+    ).then(async response => {
+      const newToken = response.headers['Authorization'] || response.headers['authorization'];
+      if(newToken){            
+        await this.storage.setItem('token', newToken.replace('Bearer ', ''));
+      }
+      if(response.status==201){        
+        return true;
+      }
+      else{                
+        return Promise.reject({
+          status: response.status,
+          message: response.data?.message || 'Error al crear el musico'
+        });
+      }      
+    })
+    .catch((error) => {    
+      if(error.status){
+        return Promise.reject(error);
+      }
+      else {
+        return Promise.reject({
+          status: 403,
+          message: null
+        });                
+      }           
+    });
+  }
+
+  async deleteUser(username:string){
+    const token = await this.storage.getItem('token');
+    return Http.del(
+      {
+        url:environment.host + '/user/'+ username,
+        params:{},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        }
+      }
+    ).then(async response => {
+      const newToken = response.headers['Authorization'] || response.headers['authorization'];
+      if(newToken){                
+        await this.storage.setItem('token', newToken.replace('Bearer ', ''));
+      }
+      if(response.status==200){
+        return true;
+      }
+      else{                
+        return Promise.reject({
+          status: response.status,
+          message: response.data?.message || 'Error al eliminar el usuario'
+        });
+      }    
+    })
+    .catch((error) => {    
+      if(error.status){
+        return Promise.reject(error);
+      }
+      else {
+        return Promise.reject({
+          status: 403,
+          message: null
+        });                
+      }           
+    });
+  }
+
+  async updateUserDetail(user:UserRequest){
+    const token = await this.storage.getItem('token');
+    return Http.put(
+      {
+        url:environment.host + '/user/' + user.username + '/detail',
+        params:{},
+        data:user,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        }
+      }
+    ).then(async response => {
+      const newToken = response.headers['Authorization'] || response.headers['authorization'];
+      if(newToken){            
+        await this.storage.setItem('token', newToken.replace('Bearer ', ''));
+      }
+      if(response.status==200){        
+        return true;
+      }
+      else{                
+        return Promise.reject({
+          status: response.status,
+          message: response.data?.message || 'Error al modificar los detalles del usuario'
+        });
+      }      
+    })
+    .catch((error) => {    
+      if(error.status){
+        return Promise.reject(error);
+      }
+      else {
+        return Promise.reject({
+          status: 403,
+          message: null
+        });                
+      }           
+    });
+  }
+
+  async updateUserRoles(user:UserRequest){
+    const token = await this.storage.getItem('token');
+    return Http.put(
+      {
+        url:environment.host + '/user/' + user.username + '/roles',
+        params:{},
+        data:user,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        }
+      }
+    ).then(async response => {
+      const newToken = response.headers['Authorization'] || response.headers['authorization'];
+      if(newToken){            
+        await this.storage.setItem('token', newToken.replace('Bearer ', ''));
+      }
+      if(response.status==200){        
+        return true;
+      }
+      else{                
+        return Promise.reject({
+          status: response.status,
+          message: response.data?.message || 'Error al modificar los roles del usuario'
+        });
+      }      
+    })
+    .catch((error) => {    
+      if(error.status){
+        return Promise.reject(error);
+      }
+      else {
+        return Promise.reject({
+          status: 403,
+          message: null
+        });                
+      }           
+    });
+  }
+
 
 }

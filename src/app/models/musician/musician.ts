@@ -9,7 +9,7 @@ export class Musician {
     registrationDate: string;
     direction: string;
     municipality: string;
-    province: number;
+    province: string;
     email?: string;
     image?: string;
     voice: Voice;    

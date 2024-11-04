@@ -23,8 +23,8 @@
           </ion-img> 
         </ion-avatar>
         <ion-label>
-          <h2>{{ musician.name }} {{ musician.surname }}</h2>
-          <p>{{ musician.voice.name }}</p>          
+          <h2>{{ user.name }} {{ user.surname }}</h2>
+          <p>{{ user.email }}</p>          
         </ion-label>
       </ion-item>
     </ion-card> 
@@ -38,7 +38,7 @@
       <ion-label class="custom-label-partiture-group">
         <h2>{{group.name}}</h2>        
       </ion-label>     
-      <ion-checkbox (ionChange)="associateDisassociatePartitureGroupUser(musician.dni,group)" [checked]="group.assigned"> </ion-checkbox>      
+      <ion-checkbox (ionChange)="associateDisassociatePartitureGroupUser(user.username,group)" [checked]="group.assigned"> </ion-checkbox>      
     </ion-item>
         
     <div class="spacer"></div>  

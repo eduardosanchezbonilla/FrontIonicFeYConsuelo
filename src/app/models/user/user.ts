@@ -6,6 +6,7 @@ export class User {
     username: string;
     roles: string[];
     profile: string;
+    passwordExpired: boolean;
     musician: Musician;
     userDetail: UserDetail;
 

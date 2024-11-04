@@ -1,5 +1,10 @@
-export class UserDetail {
-    username?: string;
+import { Role } from "../role/role";
+
+export class UserRequest {
+    username: string;
+    password: string;
+    roles: string[];
+    role: Role;
     dni?: string;    
     name?: string;    
     surname?: string;    
@@ -10,7 +15,11 @@ export class UserDetail {
     image?: string;    
     description?: string;    
 
-    constructor(dni?: string,  
+    constructor(username:string, 
+                password:string,
+                roles:string[],
+                role:Role,
+                dni?: string,  
                 name?: string,
                 surname?: string,
                 direction?: string,
@@ -20,6 +29,10 @@ export class UserDetail {
                 image?: string,    
                 description?: string
             ) {
+        this.username = username;
+        this.password = password;
+        this.roles = roles;
+        this.role = role;
         this.dni = dni;
         this.name = name;
         this.surname = surname;

@@ -2,6 +2,7 @@ import { UpdateFirebaseTokenDto } from "src/app/models/user/update-firebase-toke
 import { AuthDto } from "../../models/user/auth-dto";
 import { ChangePasswordDto } from "../../models/user/change-password-dto";
 import { ResetPasswordDto } from "../../models/user/reset-password-dto";
+import { UserRequest } from "src/app/models/user/user-request";
 
 export class Login { 
   static readonly type = '[Users] Login';
@@ -25,4 +26,39 @@ export class UpdateFirebaseToken {
 
 export class Logout {
   static readonly type = '[Users] Logout';  
+}
+
+export class GetUsersGroupByRole {
+  static readonly type = '[Users] GetUsersGroupByRole';
+  constructor(public payload: {filter: string}) { }
+}
+
+export class GetAllRoles {
+  static readonly type = '[Users] GetAllRoles';
+  constructor(public payload: {}) { }
+}
+
+export class ResetUser {
+  static readonly type = '[Users] Restet User';
+  constructor(public payload: {}) { }
+}
+
+export class CreateUser {
+  static readonly type = '[Users] Create User';
+  constructor(public payload: {user: UserRequest}) { }
+}
+
+export class DeleteUser {
+  static readonly type = '[Users] Delete USer';
+  constructor(public payload: {username:string}) { }
+}
+
+export class UpdateUserDetail {
+  static readonly type = '[User] Update UserDetail';
+  constructor(public payload: {user: UserRequest}) { }
+}
+
+export class UpdateUserRoles {
+  static readonly type = '[User] Update UserRoles';
+  constructor(public payload: {user: UserRequest}) { }
 }

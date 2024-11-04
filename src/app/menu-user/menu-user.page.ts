@@ -1,51 +1,48 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { debounceTime, Observable, Subject, Subscription } from 'rxjs';
+import { UsersState } from '../state/user/users.state';
 import { AlertController, IonItemSliding, ModalController } from '@ionic/angular';
 import { Select, Store } from '@ngxs/store';
-import { CreateMusician,DeleteMusician,GetMusiciansGroupByVoice,ResetMusician,UpdateMusician} from '../state/musician/musician.actions';
-import { MusicianState } from '../state/musician/musician.state';
 import { ToastService } from '../services/toast/toast.service';
-import { Musician } from '../models/musician/musician';
-import { Observable } from 'rxjs/internal/Observable';
-import { ModalMusicianComponent } from './components/modal-musician/modal-musician.component';
-import { MusicianGroupByVoice } from '../models/musician/musician-group-by-voice';
-import { UsersService } from 'src/app/services/user/users.service';
+import { UsersService } from '../services/user/users.service';
 import { LoadingService } from '../services/loading/loading.service';
-import { Subject, Subscription } from 'rxjs';
-import { debounceTime } from 'rxjs/operators';
-import { FilterMusicians } from '../models/musician/filter-musicians';
-import { ModalVoiceComponent } from './components/modal-voice/modal-voice.component';
-import { CreateVoice, DeleteVoice,  ResetVoice, UpdateVoice } from '../state/voice/voice.actions';
-import { VoiceState } from '../state/voice/voice.state';
-import { Voice } from '../models/voice/voice';
-import { DEFAULT_VOICE_IMAGE, DEFAULT_MUSICIAN_IMAGE } from '../constants/constants';
-import { ModalPartitureComponent } from './components/modal-partiture/modal-partiture.component';
-import {  ModalMusicianInventoryComponent } from './components/modal-inventory/modal-musician-inventory.component';
 import { StorageService } from '../services/storage/storage.service';
+import { UserGroupByRole } from '../models/user/user-group-by-role';
+import { FilterUsers } from '../models/user/filter-users';
+import { DEFAULT_MUSICIAN_IMAGE, DEFAULT_ROLE_IMAGE, DEFAULT_USER_IMAGE } from '../constants/constants';
+import { CreateUser, DeleteUser, GetUsersGroupByRole, ResetUser, UpdateUserDetail, UpdateUserRoles } from '../state/user/users.actions';
+import { User } from '../models/user/user';
+import { ModalUserComponent } from './components/modal-user/modal-user.component';
 import { UserRequest } from '../models/user/user-request';
+import { Role } from '../models/role/role';
+import { ModalPartitureComponent } from '../menu-musician/components/modal-partiture/modal-partiture.component';
 
 @Component({
-  selector: 'app-menu-musician',
-  templateUrl: './menu-musician.page.html',
-  styleUrls: ['./menu-musician.page.scss'],
+  selector: 'app-menu-user',
+  templateUrl: './menu-user.page.html',
+  styleUrls: ['./menu-user.page.scss'],
 })
-export class MenuMusicianPage implements OnDestroy {
+export class MenuUserPage implements OnDestroy {
 
-  musiciansGroupByVoiceSubscription: Subscription;
-  @Select(MusicianState.musiciansGroupByVoice)
-  musiciansGroupByVoice$: Observable<MusicianGroupByVoice[]>;
+  usersGroupByRoleSubscription: Subscription;
+  @Select(UsersState.usersGroupByRole)
+  usersGroupByRole$: Observable<UserGroupByRole[]>;
 
-  public musiciansGroupByVoice: MusicianGroupByVoice[];
-  public expandVoiceList: string[];
-  public expandVoiceMap: Map<string, boolean> = new Map();
-  public filter: FilterMusicians;
+  public usersGroupByRole: UserGroupByRole[];
+  public expandRoleList: string[];
+  public expandRoleMap: Map<string, boolean> = new Map();
+  public filter: FilterUsers;
   public searchTextChanged = new Subject<string>();
   public isSearching: boolean = false;
-  public defaultMusicianImage: string = DEFAULT_MUSICIAN_IMAGE;
-  public defaultVoiceImage: string = DEFAULT_VOICE_IMAGE;    
+  public defaultUserImage: string = DEFAULT_USER_IMAGE;
+  public defaultRoleImage: string = DEFAULT_ROLE_IMAGE;    
   public profile: string;  
   public initScreen = false;
   public initSearchFinish = false;
-
+  public updateDetail=false;
+  public updateRoles=false;
+  
+ 
   constructor(
     private modalController:ModalController,
     private store:Store,
@@ -55,22 +52,22 @@ export class MenuMusicianPage implements OnDestroy {
     private loadingService: LoadingService,
     private storage: StorageService
   ) {
-    this.expandVoiceList = null;
-    this.expandVoiceMap = null;
-    this.filter = new FilterMusicians();
-    this.filter.name = '';
+    this.expandRoleList = null;
+    this.expandRoleMap = null;
+    this.filter = new FilterUsers();
+    this.filter.filter = '';
     this.isSearching = false;
     this.searchTextChanged
       .pipe(debounceTime(300)) // 200 milisegundos de espera
       .subscribe(value => {
-        this.searchMusicians(value);
-      });      
+        this.searchUsers(value);
+      });    
   }
 
   async ionViewWillEnter(){      
     this.profile = await this.storage.getItem('profile');         
-    this.getMusiciansGroupByVoice();      
-    this.filterMusicians();    
+    this.getUsersGroupByRole();      
+    this.filterUsers();
   }
 
   async dismissInitialLoading(){
@@ -93,25 +90,25 @@ export class MenuMusicianPage implements OnDestroy {
   }
 
   private doDestroy(){
-    console.log("ngOnDestroy musician");
-    if (this.musiciansGroupByVoiceSubscription) {      
-      this.musiciansGroupByVoiceSubscription.unsubscribe();  // Cancelar la suscripción al destruir el componente
+    console.log("ngOnDestroy user");
+    if (this.usersGroupByRoleSubscription) {      
+      this.usersGroupByRoleSubscription.unsubscribe();  // Cancelar la suscripción al destruir el componente
     }
-    this.store.dispatch(new ResetMusician({})).subscribe({ next: async () => { } })
-    this.store.dispatch(new ResetVoice({})).subscribe({ next: async () => { } })    
+    this.store.dispatch(new ResetUser({})).subscribe({ next: async () => { } })    
+    // this.store.dispatch(new ResetRole({})).subscribe({ next: async () => { } })      // TODO
   }
 
   
   /*******************************************************/
-  /******************* MUSICIAN **************************/
+  /********************** USERS **************************/
   /*******************************************************/
-  async createMusician(){
+  async createUser(){
     // mostramos spinner
     await this.loadingService.presentLoading('Loading...');   
 
     // mostramos la modal
     const modal = await this.modalController.create({
-      component: ModalMusicianComponent,
+      component: ModalUserComponent,
       componentProps: {}
     });
     modal.present();
@@ -119,23 +116,22 @@ export class MenuMusicianPage implements OnDestroy {
     const {data, role} = await modal.onWillDismiss();
 
     if(role=='confirm'){      
-      await this.loadingService.presentLoading('Loading...');    
-      data.voiceId = data.voice.id;
+      await this.loadingService.presentLoading('Loading...');          
       
-      this.store.dispatch(new CreateMusician({musician: data}))        
+      this.store.dispatch(new CreateUser({user: data}))        
         .subscribe({
           next: async ()=> {
-            const success = this.store.selectSnapshot(MusicianState.success);
+            const success = this.store.selectSnapshot(UsersState.success);
             if(success){
-              this.toast.presentToast("Músico creado correctamente");            
+              this.toast.presentToast("Usuario creado correctamente");            
               // cuando insertamos siempre expandimos
-              this.expandVoiceMap.set(data.voiceId+"", true);
-              this.updateExpandVoiceList();            
-              this.filterMusicians(false);          
+              this.expandRoleMap.set(data.roles[0]+"", true);
+              this.updateExpandRoleList();            
+              this.filterUsers(false);          
             }
             else{
-              const errorStatusCode = this.store.selectSnapshot(MusicianState.errorStatusCode);
-              const errorMessage = this.store.selectSnapshot(MusicianState.errorMessage);        
+              const errorStatusCode = this.store.selectSnapshot(UsersState.errorStatusCode);
+              const errorMessage = this.store.selectSnapshot(UsersState.errorMessage);        
               // si el token ha caducado (403) lo sacamos de la aplicacion
               if(errorStatusCode==403){            
                 this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
@@ -151,18 +147,36 @@ export class MenuMusicianPage implements OnDestroy {
     }
   }
 
-  async updateMusician(musician:Musician, musicianSliding: IonItemSliding){   
+  async updateUser(user:User, userSliding: IonItemSliding){   
     // cerramos el sliding 
-    musicianSliding.close();
+    userSliding.close();
     
     // mostramos spinner
     await this.loadingService.presentLoading('Loading...');   
 
+    // creamos el userRequest
+    const userRole = new Role(user.roles[0], user.roles[0]);
+    const userRequest = new UserRequest(
+      user.username,
+      '**********',
+      user.roles,
+      userRole,
+      user.userDetail.dni,
+      user.userDetail.name,
+      user.userDetail.surname,
+      user.userDetail.direction,
+      user.userDetail.municipality,
+      user.userDetail.province,
+      user.userDetail.email,
+      user.userDetail.image,
+      user.userDetail.description,
+    );
+
     // abrimos modal    
     const modal = await this.modalController.create({
-      component: ModalMusicianComponent,
+      component: ModalUserComponent,
       componentProps: {
-        musician,
+        user:userRequest,
         updating: true
       }
     });
@@ -171,19 +185,41 @@ export class MenuMusicianPage implements OnDestroy {
     const {data, role} = await modal.onWillDismiss();
 
     // tratamos el resultado de la modal
+    this.updateDetail=false;
+    this.updateRoles=false;
     if(role=='confirm'){      
-      await this.loadingService.presentLoading('Loading...');    
-      data.voiceId = data.voice.id;
-      this.store.dispatch(new UpdateMusician({id: data.id, musician:data})).subscribe({
+      await this.loadingService.presentLoading('Loading...');         
+      this.store.dispatch(new UpdateUserDetail({user:data})).subscribe({
         next: async ()=> {
-          const success = this.store.selectSnapshot(MusicianState.success);
+          const success = this.store.selectSnapshot(UsersState.success);
           if(success){
-            this.toast.presentToast("Músico modificado correctamente");
-            this.filterMusicians(false);          
+            this.updateDetail=true;
+            this.endUpdateUser();            
           }
           else{
-            const errorStatusCode = this.store.selectSnapshot(MusicianState.errorStatusCode);
-            const errorMessage = this.store.selectSnapshot(MusicianState.errorMessage);        
+            const errorStatusCode = this.store.selectSnapshot(UsersState.errorStatusCode);
+            const errorMessage = this.store.selectSnapshot(UsersState.errorMessage);        
+            // si el token ha caducado (403) lo sacamos de la aplicacion
+            if(errorStatusCode==403){            
+              this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
+            }
+            else{
+              this.toast.presentToast(errorMessage);
+            }    
+            await this.loadingService.dismissLoading();      
+          }          
+        }
+      })
+      this.store.dispatch(new UpdateUserRoles({user:data})).subscribe({
+        next: async ()=> {
+          const success = this.store.selectSnapshot(UsersState.success);
+          if(success){
+            this.updateRoles=true;
+            this.endUpdateUser();            
+          }
+          else{
+            const errorStatusCode = this.store.selectSnapshot(UsersState.errorStatusCode);
+            const errorMessage = this.store.selectSnapshot(UsersState.errorMessage);        
             // si el token ha caducado (403) lo sacamos de la aplicacion
             if(errorStatusCode==403){            
               this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
@@ -198,39 +234,48 @@ export class MenuMusicianPage implements OnDestroy {
     }
   }
 
-  async asignPartituresMusician(musician:Musician, musicianSliding: IonItemSliding){   
+  endUpdateUser(){
+    if(this.updateDetail && this.updateRoles){
+      this.toast.presentToast("Usuario modificado correctamente");
+      this.filterUsers(false);          
+    }
+  }
+
+
+  async asignPartituresUser(user:User, userSliding: IonItemSliding){   
     // cerramos el sliding 
-    musicianSliding.close();
+    userSliding.close();
 
     // mostramos spinner
     await this.loadingService.presentLoading('Loading...');   
-    
-    let user = new UserRequest(
-      musician.dni, 
-      null,
-      null,
-      null,
-      musician.dni,  
-      musician.name,
-      musician.surname,
-      musician.direction,
-      musician.municipality,
-      musician.province,
-      musician.email, 
-      musician.image,    
-      null);
 
+    let userRequest = new UserRequest(
+      user.username, 
+      null,
+      null,
+      null,
+      user.userDetail.dni,  
+      user.userDetail.name,
+      user.userDetail.surname,
+      user.userDetail.direction,
+      user.userDetail.municipality,
+      user.userDetail.province,
+      user.userDetail.email, 
+      user.userDetail.image==null?DEFAULT_USER_IMAGE:user.userDetail.image,    
+      user.userDetail.description
+    );
+    
     // abrimos modal    
     const modal = await this.modalController.create({
       component: ModalPartitureComponent,
       componentProps: {
-        user
+        user:userRequest
       }
     });
     modal.present();
   }
 
-  async manageMusicianInventary(musician:Musician, musicianSliding: IonItemSliding){   
+  /*async manageMusicianInventary(musician:Musician, musicianSliding: IonItemSliding){   
     // cerramos el sliding 
     musicianSliding.close();
 
@@ -245,41 +290,41 @@ export class MenuMusicianPage implements OnDestroy {
       }
     });
     modal.present();
-  }
+  }*/
 
-  async getMusiciansGroupByVoice(){            
-    this.musiciansGroupByVoiceSubscription = this.musiciansGroupByVoice$     
+  async getUsersGroupByRole(){            
+    this.usersGroupByRoleSubscription = this.usersGroupByRole$     
       .subscribe({
         next: async ()=> {                
-          const finish = this.store.selectSnapshot(MusicianState.finish);          
-          const errorStatusCode = this.store.selectSnapshot(MusicianState.errorStatusCode);          
-          const errorMessage = this.store.selectSnapshot(MusicianState.errorMessage);               
+          const finish = this.store.selectSnapshot(UsersState.finish);          
+          const errorStatusCode = this.store.selectSnapshot(UsersState.errorStatusCode);          
+          const errorMessage = this.store.selectSnapshot(UsersState.errorMessage);               
           if(finish){
             if(errorStatusCode==200){      
-              this.musiciansGroupByVoice = this.store.selectSnapshot(MusicianState.musiciansGroupByVoice);
-              if(!this.musiciansGroupByVoice){
-                this.musiciansGroupByVoice = [];
+              this.usersGroupByRole = this.store.selectSnapshot(UsersState.usersGroupByRole);
+              if(!this.usersGroupByRole){
+                this.usersGroupByRole = [];
               }
-              if(this.expandVoiceList===null){                              
-                this.expandVoiceMap = new Map(); 
-                this.musiciansGroupByVoice.map(musician => musician.voice.id+"").forEach(element => {
-                  this.expandVoiceMap.set(element, true);
+              if(this.expandRoleList===null){                              
+                this.expandRoleMap = new Map(); 
+                this.usersGroupByRole.map(user => user.role+"").forEach(element => {
+                  this.expandRoleMap.set(element, true);
                 });
-                this.updateExpandVoiceList();              
+                this.updateExpandRoleList();              
               }
               else{                        
-                this.updateExpandVoiceList();
+                this.updateExpandRoleList();
               }
             }
             else{
-              if(this.expandVoiceList===null){                             
-                this.expandVoiceMap = new Map(); 
+              if(this.expandRoleList===null){                             
+                this.expandRoleMap = new Map(); 
               }
-              this.musiciansGroupByVoice = [];
-              this.musiciansGroupByVoice.map(musician => musician.voice.id+"").forEach(element => {
-                this.expandVoiceMap.set(element, false);
+              this.usersGroupByRole = [];
+              this.usersGroupByRole.map(user => user.role+"").forEach(element => {
+                this.expandRoleMap.set(element, false);
               });  
-              this.updateExpandVoiceList();
+              this.updateExpandRoleList();
               // si el token ha caducado (403) lo sacamos de la aplicacion
               if(errorStatusCode==403){            
                 this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
@@ -296,38 +341,38 @@ export class MenuMusicianPage implements OnDestroy {
       })
   }
 
-  trackByVoiceFn(index, voice) {    
-    return voice.id; // Utiliza un identificador único de tu elemento
+  trackByRoleFn(index, role) {    
+    return role; // Utiliza un identificador único de tu elemento
   }
 
-  trackByMusicianFn(index, musician) {    
-    return musician.dni; // Utiliza un identificador único de tu elemento
+  trackByUserFn(index, user) {    
+    return user.username; // Utiliza un identificador único de tu elemento
   }
 
-  async filterMusicians(showLoading:boolean=true){
+  async filterUsers(showLoading:boolean=true){
     if(showLoading){
       await this.loadingService.presentLoading('Loading...');
     }    
-    this.store.dispatch(new GetMusiciansGroupByVoice({name: this.filter.name}));    
+    this.store.dispatch(new GetUsersGroupByRole({filter: this.filter.filter}));    
   }
 
-  async confirmDeleteMusician(musician:Musician, musicianSliding: IonItemSliding) {
+  async confirmDeleteUser(user:User, userSliding: IonItemSliding) {
     const alert = await this.alertController.create({
         header: 'Confirmacion',
-        message: '¿Estas seguro de eliminar el músico?',
+        message: '¿Estas seguro de eliminar el usuario?',
         buttons: [
           {
             text: 'No',
             role: 'cancel',
             handler: () => {
-              musicianSliding.close();
+              userSliding.close();
             }
           },
           {
             text: 'Si',
             role: 'confirm',
             handler: () => {
-              this.deleteMusician(musician,musicianSliding);
+              this.deleteUser(user,userSliding);
             }
           }
         ]
@@ -335,22 +380,22 @@ export class MenuMusicianPage implements OnDestroy {
     alert.present();
   }
 
-  async deleteMusician(musician:Musician, musicianSliding: IonItemSliding) {
+  async deleteUser(user:User, userSliding: IonItemSliding) {
     // cerramos el sliding 
-    musicianSliding.close();
+    userSliding.close();
 
     // eliminamos el musico
     await this.loadingService.presentLoading('Loading...');    
-    this.store.dispatch(new DeleteMusician({id: musician.id})).subscribe({
+    this.store.dispatch(new DeleteUser({username: user.username})).subscribe({
       next: async () => {
-        const success = this.store.selectSnapshot(MusicianState.success);
+        const success = this.store.selectSnapshot(UsersState.success);
         if(success){
-          this.toast.presentToast("Músico eliminado correctamente");
-          this.filterMusicians(false);          
+          this.toast.presentToast("Usuario eliminado correctamente");
+          this.filterUsers(false);          
         }
         else{
-          const errorStatusCode = this.store.selectSnapshot(MusicianState.errorStatusCode);
-          const errorMessage = this.store.selectSnapshot(MusicianState.errorMessage);        
+          const errorStatusCode = this.store.selectSnapshot(UsersState.errorStatusCode);
+          const errorMessage = this.store.selectSnapshot(UsersState.errorMessage);        
           // si el token ha caducado (403) lo sacamos de la aplicacion
           if(errorStatusCode==403){            
             this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
@@ -365,38 +410,38 @@ export class MenuMusicianPage implements OnDestroy {
   }
 
   expandAll(){    
-    this.expandVoiceMap.forEach((value, key) => {
-      this.expandVoiceMap.set(key, true);
+    this.expandRoleMap.forEach((value, key) => {
+      this.expandRoleMap.set(key, true);
     }); 
-    this.updateExpandVoiceList();    
+    this.updateExpandRoleList();    
   }
 
   collapseAll(){    
-    this.expandVoiceMap.forEach((value, key) => {
-      this.expandVoiceMap.set(key, false);
+    this.expandRoleMap.forEach((value, key) => {
+      this.expandRoleMap.set(key, false);
     });
-    this.updateExpandVoiceList();    
+    this.updateExpandRoleList();    
   }
 
   accordionGroupChange = (ev: any) => {
-    this.expandVoiceMap.forEach((value, key) => {
-      this.expandVoiceMap.set(key, false);
+    this.expandRoleMap.forEach((value, key) => {
+      this.expandRoleMap.set(key, false);
     });
     ev.detail.value.forEach(element => {
-      this.expandVoiceMap.set(element, true);
+      this.expandRoleMap.set(element, true);
     }); 
-    this.updateExpandVoiceList();    
+    this.updateExpandRoleList();    
   };
   
-  refreshMusicians($event){      
-    this.filterMusicians();    
+  refreshUsers($event){      
+    this.filterUsers();    
     $event.target.complete();
   }
 
-  searchMusicians(searchText: string) {
+  searchUsers(searchText: string) {
     if(this.isSearching == false){
       this.isSearching = true;
-      this.filterMusicians();    
+      this.filterUsers();    
     }
   }
 
@@ -404,8 +449,8 @@ export class MenuMusicianPage implements OnDestroy {
     this.searchTextChanged.next(event.detail.value);
   }
 
-  updateExpandVoiceList(){
-    this.expandVoiceList = Array.from(this.expandVoiceMap)
+  updateExpandRoleList(){
+    this.expandRoleList = Array.from(this.expandRoleMap)
         .filter(([key, value]) => value === true)
         .map(([key]) => key);
   }
@@ -422,7 +467,7 @@ export class MenuMusicianPage implements OnDestroy {
   /*******************************************************/
   /******************* VOICES  ***************************/
   /*******************************************************/
-  async createVoice(){
+  /*async createVoice(){
     // mostramos spinner
     await this.loadingService.presentLoading('Loading...');   
 
@@ -556,5 +601,5 @@ export class MenuMusicianPage implements OnDestroy {
         }          
       }
     })
-  }  
+  }  */
 }

@@ -35,6 +35,10 @@ const routes: Routes = [
     path: '',
     redirectTo: '/login',
     pathMatch: 'full'
+  },
+  {
+    path: 'menu-user',
+    loadChildren: () => import('./menu-user/menu-user.module').then( m => m.MenuUserPageModule)
   }
 ];
 @NgModule({

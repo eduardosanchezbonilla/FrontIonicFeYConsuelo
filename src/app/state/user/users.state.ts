@@ -1,18 +1,27 @@
 import { Injectable } from '@angular/core';
 import { State, Action, StateContext, Selector } from '@ngxs/store';
-import { ChangeExpiredPassword, Login, Logout, ResetPassword, UpdateFirebaseToken } from './users.actions';
+import { ChangeExpiredPassword, CreateUser, DeleteUser, GetAllRoles, GetUsersGroupByRole, Login, Logout, ResetPassword, ResetUser, UpdateFirebaseToken, UpdateUserDetail, UpdateUserRoles } from './users.actions';
 import { UsersService } from '../../services/user/users.service';
 import { TokenUser } from '../../models/user/token-user';
 import { StorageService } from 'src/app/services/storage/storage.service';
 import { User } from '../../models/user/user';
+import { UserGroupByRole } from 'src/app/models/user/user-group-by-role';
+import { Role } from 'src/app/models/role/role';
+import { UserRequest } from 'src/app/models/user/user-request';
 
 export class UsersStateModel {
+  usersGroupByRole: UserGroupByRole[];
+  roles: Role[];
+  finish: boolean;
   success: boolean;
   errorStatusCode: number;
   errorMessage: string
 }
 
 const defaults = {
+  usersGroupByRole: [],
+  roles: [],
+  finish: false,
   success: false,
   errorStatusCode: null,
   errorMessage: null
@@ -24,6 +33,11 @@ const defaults = {
 })
 @Injectable()
 export class UsersState {
+
+  @Selector()
+  static finish(state:UsersStateModel):boolean {
+    return state.finish;
+  }
 
   @Selector()
   static success(state:UsersStateModel):boolean {
@@ -38,6 +52,16 @@ export class UsersState {
   @Selector()
   static errorMessage(state:UsersStateModel):string {
     return state.errorMessage;
+  }
+
+  @Selector()
+  static usersGroupByRole(state:UsersStateModel):UserGroupByRole[] {
+    return state.usersGroupByRole;
+  }
+
+  @Selector()
+  static roles(state:UsersStateModel):Role[] {
+    return state.roles;
   }
 
   constructor(
@@ -202,10 +226,236 @@ export class UsersState {
   ) {    
     await this.storage.clear();
     setState({
+      usersGroupByRole: [],
+      roles: [],
+      finish: false,
       success:false,
       errorStatusCode: null,
       errorMessage: null
     })
   }
+
+  @Action(GetUsersGroupByRole)
+  getUsersGroupByRole(
+      { patchState }: StateContext<UsersStateModel>,
+      { payload }: GetUsersGroupByRole
+  ) {
+    return this.userService.getUsersGroupByRole(payload.filter)
+      .then(
+          (usersGroupByRole:UserGroupByRole[]) => {
+            patchState({
+              finish: true,
+              success: true,
+              usersGroupByRole: usersGroupByRole,
+              errorStatusCode: 200,
+              errorMessage: null
+            })
+          }
+      )
+      .catch(
+        async (error) => {                    
+          patchState({
+            finish: true,
+            success: false,
+            usersGroupByRole: [],
+            errorStatusCode: error.status,
+            errorMessage: error.message
+          })
+        }
+      );
+  }
+
+  @Action(GetAllRoles)
+  getAllRoles(
+      { patchState }: StateContext<UsersStateModel>,
+      { payload }: GetAllRoles
+  ) {
+    return this.userService.getAllRoles()
+      .then(
+          (roles:Role[]) => {
+            patchState({
+              finish: true,
+              success: true,
+              roles: roles,
+              errorStatusCode: 200,
+              errorMessage: null
+            })
+          }
+      )
+      .catch(
+        async (error) => {                    
+          patchState({
+            finish: true,
+            success: false,
+            roles: [],
+            errorStatusCode: error.status,
+            errorMessage: error.message
+          })
+        }
+      );
+  }
+
+  @Action(ResetUser)
+  resetMusician(
+      { patchState }: StateContext<UsersStateModel>,
+      { payload }: ResetUser
+  ) {
+    patchState({
+      finish: false,
+      success: true,
+      errorStatusCode: null,
+      errorMessage: null
+    })
+  }
+
+  @Action(CreateUser)
+  createUser(
+      { patchState }: StateContext<UsersStateModel>,
+      { payload }: CreateUser
+  ) {
+    return this.userService.createUser(payload.user)
+      .then( 
+        async (success:Boolean) => {       
+          if(success){
+            patchState({
+              finish: true,
+              success: true,
+              errorStatusCode: 201,
+              errorMessage: null
+            })
+          }
+          else{
+            patchState({
+              finish: true,
+              success: false,
+              errorStatusCode: 500,
+              errorMessage: 'Error al crear el usuario'
+            })
+          }
+        }
+      )
+      .catch(
+        async (error) => {          
+          patchState({
+            finish: true,
+            success: false,
+            errorStatusCode: error.status,
+            errorMessage: error.message
+          })
+      });
+  }
+
+  @Action(DeleteUser)
+  deleteUser(
+      { patchState }: StateContext<UsersStateModel>,
+      { payload }: DeleteUser
+  ) {
+    return this.userService.deleteUser(payload.username)
+      .then( 
+        async (success:boolean) => {
+          if(success){
+            patchState({
+              finish: true,
+              success: true,
+              errorStatusCode: 200,
+              errorMessage: null
+            })
+          }
+          else{
+            patchState({
+              finish: true,
+              success: false,
+              errorStatusCode: 500,
+              errorMessage: 'Error al eliminar el usuario'
+            })
+          }
+        }
+      )
+      .catch(
+        async (error) => {          
+          patchState({
+            finish: true,
+            success: false,
+            errorStatusCode: error.status,
+            errorMessage: error.message
+          })
+      });     
+  }
+
+  @Action(UpdateUserDetail)
+  updateUserDetail(
+      { patchState }: StateContext<UsersStateModel>,
+      { payload }: UpdateUserDetail
+  ) {
+    return this.userService.updateUserDetail(payload.user)
+      .then( 
+        async (success:Boolean) => {       
+          if(success){
+            patchState({
+              finish: true,
+              success: true,
+              errorStatusCode: 200,
+              errorMessage: null
+            })
+          }
+          else{
+            patchState({
+              finish: true,
+              success: false,
+              errorStatusCode: 500,
+              errorMessage: 'Error al modificar los detalles del usuario'
+            })
+          }
+        }
+      )
+      .catch(
+        async (error) => {          
+          patchState({
+            finish: true,
+            success: false,
+            errorStatusCode: error.status,
+            errorMessage: error.message
+          })
+      });
+  }
+
+  @Action(UpdateUserRoles)
+  updateUserRoles(
+      { patchState }: StateContext<UsersStateModel>,
+      { payload }: UpdateUserRoles
+  ) {
+    return this.userService.updateUserRoles(payload.user)
+      .then( 
+        async (success:Boolean) => {       
+          if(success){
+            patchState({
+              finish: true,
+              success: true,
+              errorStatusCode: 200,
+              errorMessage: null
+            })
+          }
+          else{
+            patchState({
+              finish: true,
+              success: false,
+              errorStatusCode: 500,
+              errorMessage: 'Error al modificar los roles del usuario'
+            })
+          }
+        }
+      )
+      .catch(
+        async (error) => {          
+          patchState({
+            finish: true,
+            success: false,
+            errorStatusCode: error.status,
+            errorMessage: error.message
+          })
+      });
+  }
+
+
 
 }

@@ -91,7 +91,7 @@
     </ion-fab-button>  
   
     <ion-fab-list side="start">
-      <ion-fab-button *ngIf="profile=='SUPER_ADMIN'" color="warning" (click)="createInventory()">            
+      <ion-fab-button *ngIf="profile=='SUPER_ADMIN' || profile=='ADMIN'" color="warning" (click)="createInventory()">            
         <ion-icon name="add-outline"></ion-icon>
       </ion-fab-button>    
       <ion-fab-button color="warning" (click)="collapseAll()">
