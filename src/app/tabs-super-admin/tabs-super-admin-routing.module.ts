@@ -23,6 +23,10 @@ const routes: Routes = [
       {
         path: 'menu-inventory',        
         loadChildren: () => import('../menu-inventory/menu-inventory.module').then(m => m.MenuInventoryPageModule)
+      },      
+      {
+        path: 'menu-notification',        
+        loadChildren: () => import('../menu-notification/menu-notification.module').then(m => m.MenuNotificationPageModule)
       },
       {
         path: '',

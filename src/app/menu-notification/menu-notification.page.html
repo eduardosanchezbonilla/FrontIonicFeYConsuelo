@@ -1,0 +1,120 @@
+<ion-header [translucent]="true" >
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>   
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="false">
+
+  <div class="spacer-super-small"></div>  
+
+  <form (ngSubmit)="sendNotification()" #notificationForm="ngForm">   
+
+    <!-------------------------------------->
+    <!------ SOLICITUD DE PARTITURAS ------->
+    <!-------------------------------------->   
+    <h2 class="fancy-title custom-modal-title">
+      Envio notificaciones
+    </h2>
+
+    <!-- Titulo -->
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+      <ion-label color="primary" position="floating">
+          Título
+      </ion-label>
+      <ion-icon name="chatbox-outline" slot="end"></ion-icon>      
+      <ion-input                                                        
+            autocomplete="title"       
+            minlength="0"                     
+            maxlength="50"
+            name="name"
+            placeholder="Introduzca el título de la notificación"
+            type="text"            
+            [(ngModel)]="notificationRequest.title"                                                 
+            #titleInput="ngModel"            
+      >
+      </ion-input>
+    </ion-item>
+    
+    <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(titleInput.invalid && titleInput.touched)">      
+      <ion-text color="danger" *ngIf="titleInput.errors && titleInput.errors['minlength']">El título debe tener al menos 1 caracter..</ion-text>
+      <ion-text color="danger" *ngIf="titleInput.errors && titleInput.errors['maxlength']">El título no puede exceder los 50 caracteres.</ion-text>
+    </div>
+   
+    <!-- Topic -->
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item">
+      <ion-label color="primary" class="custom-label-topic">Topics</ion-label>
+      <ion-select  class="custom-select"      
+        okText="Aceptar"
+        cancelText="Cancelar"
+        name="topic"
+        placeHolder="Seleccionar Topics&nbsp;"        
+        [compareWith]="compareWithTopic"
+        [(ngModel)] = "notificationRequest.topicsObject"        
+        multiple = "true"
+        #topicInput="ngModel"         
+      >              
+          <ion-select-option *ngFor="let topic of notificationTopicResponseList" [value]="topic">{{topic.topicName}}</ion-select-option>
+      </ion-select>      
+    </ion-item>
+
+    <!-- Usuarios -->
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item">
+      <ion-label color="primary" class="custom-label-topic">Usuarios</ion-label>
+      <ion-select  class="custom-select"      
+        okText="Aceptar"
+        cancelText="Cancelar"
+        name="topic"
+        placeHolder="Seleccionar Usuarios&nbsp;"            
+        [compareWith]="compareWithUserToken"
+        [(ngModel)] = "notificationRequest.tokensObject"        
+        multiple = "true"
+        #topicInput="ngModel"         
+      >              
+          <ion-select-option *ngFor="let user of notificationUserTokenResponseList" [value]="user">{{user.username}} ({{user.name}})</ion-select-option>
+      </ion-select>      
+    </ion-item>
+
+
+    <!-- Notificacion -->
+    <ion-item lines="none">  
+      <ion-label color="primary" position="stacked" class="custom-label-textarea">
+        Notificación
+      </ion-label>
+      <ion-textarea 
+          name="notification"
+          placeholder="Escriba aquí el mensaje de la notificación ..."           
+          class="custom-textarea focus-style"
+          minlength="1"                     
+          maxlength="1000"
+          required="true"
+          [(ngModel)]="notificationRequest.notification"  
+          (ngModelChange)="validNotification()"                                                         
+      >
+      </ion-textarea>
+    </ion-item>
+
+    <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="invalidNotification">
+      <ion-text color="danger" *ngIf="invalidNotification">Debe introducir una notificación de 1 a 500 caracteres.</ion-text>      
+    </div>
+
+
+    <div class="spacer"></div>   
+    <div class="spacer"></div>  
+
+    <ion-button 
+          type="submit"           
+          [disabled]="disabledForm"
+          expand="block"
+          class="custom-button"
+    >
+        Enviar
+    </ion-button>  
+
+    <div class="spacer"></div>   
+
+  </form>
+
+</ion-content>

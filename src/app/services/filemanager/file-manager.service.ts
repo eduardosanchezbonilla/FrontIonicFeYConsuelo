@@ -2,13 +2,17 @@ import { Injectable } from '@angular/core';
 import { Directory, Filesystem, WriteFileOptions } from '@capacitor/filesystem';
 import { FileOpener, FileOpenerOptions } from '@capacitor-community/file-opener';
 import { Platform } from '@ionic/angular';
+import { ToastService } from '../toast/toast.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FileManagerService {
 
-    constructor(private platform: Platform) { }
+    constructor(
+        private platform: Platform,
+        private toastService: ToastService
+    ) { }
 
     private showFileNavigatorWeb(base64String: string) {
         // Convierte la cadena base64 a un Blob
@@ -49,7 +53,7 @@ export class FileManagerService {
 
     private async showFileAndroid(name:string, base64String: string): Promise<void> {    
         // guardamos el fichero       
-        const fileName = 'tmp/'+name;
+        /*const fileName = 'tmp/'+name;
         const contentBase64= base64String;
 
         const fileOptions: WriteFileOptions = {
@@ -73,7 +77,27 @@ export class FileManagerService {
             contentType: 'application/pdf',
             openWithDefault: true
         };
-        await FileOpener.open(fileOpenerOptions);        
+        await FileOpener.open(fileOpenerOptions);     */   
+
+
+        // guardamos el fichero en directorio cache        
+        const result = await Filesystem.writeFile({
+          path: name,
+          data: base64String,
+          directory: Directory.Cache,
+          recursive: true,
+        });
+      
+        try {
+            // ahora lo abrimos  
+        await FileOpener.open({
+            filePath: result.uri,
+            contentType: 'application/pdf',
+            openWithDefault: true
+          });
+        } catch (error) {
+            this.toastService.presentToast('Error al abrir el archivo: ' + error);            
+        }
     }
 
     public async showFile(name:string, contentBase64: string): Promise<void> {        

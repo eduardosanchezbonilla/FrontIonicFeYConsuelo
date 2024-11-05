@@ -180,7 +180,7 @@ export class MenuInventoryPage implements OnDestroy {
           const finish = this.store.selectSnapshot(InventoryState.finish);          
           const errorStatusCode = this.store.selectSnapshot(InventoryState.errorStatusCode);          
           const errorMessage = this.store.selectSnapshot(InventoryState.errorMessage);                         
-          if(finish){
+          if(finish){            
             if(errorStatusCode==200){      
               this.inventories = this.store.selectSnapshot(InventoryState.inventorioes);
               if(!this.inventories){
