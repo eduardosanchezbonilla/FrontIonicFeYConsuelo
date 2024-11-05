@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { State, Action, StateContext, Selector } from '@ngxs/store';
-import { ChangeExpiredPassword, CreateUser, DeleteUser, GetAllRoles, GetUsersGroupByRole, Login, Logout,  ResetPasswordUser, ResetUser, UpdateFirebaseToken, UpdateUserDetail, UpdateUserRoles } from './users.actions';
+import { ChangeExpiredPassword, CreateUser, DeleteUser, GetAllRoles, GetUsersGroupByRole, Login, Logout,  ResetPasswordUser, ResetUser, UpdateFirebaseToken, UpdateLassAccessDate, UpdateUserDetail, UpdateUserRoles } from './users.actions';
 import { UsersService } from '../../services/user/users.service';
 import { TokenUser } from '../../models/user/token-user';
 import { StorageService } from 'src/app/services/storage/storage.service';
@@ -191,6 +191,40 @@ export class UsersState {
       { payload }: UpdateFirebaseToken
   ) {
     return this.userService.updateFirebaseToken(payload.updateFirebaseToken)
+      .then( 
+        async (success:Boolean) => {       
+          if(success)   {
+            patchState({
+              success: true,
+              errorStatusCode: null,
+              errorMessage: null
+            })          
+          }
+          else{
+            patchState({
+              success: false,
+              errorStatusCode: null,
+              errorMessage: null
+            })          
+          }
+      }
+      )
+      .catch(
+        async (error) => {          
+          patchState({
+            success: false,
+            errorStatusCode: error.status,
+            errorMessage: error.message
+          })
+      });
+  }
+
+  @Action(UpdateLassAccessDate)
+  updateLassAccessDate(
+      { patchState }: StateContext<UsersStateModel>,
+      { payload }: UpdateLassAccessDate
+  ) {
+    return this.userService.updateLassAccessDate(payload.username)
       .then( 
         async (success:Boolean) => {       
           if(success)   {

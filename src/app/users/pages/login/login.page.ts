@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { AuthDto } from '../../../models/user/auth-dto';
 import { Store } from '@ngxs/store';
-import { ChangeExpiredPassword, Login, UpdateFirebaseToken } from '../../../state/user/users.actions';
+import { ChangeExpiredPassword, Login, UpdateFirebaseToken, UpdateLassAccessDate } from '../../../state/user/users.actions';
 import { ResetPassword } from '../../../state/musician/musician.actions';
 import { UsersState } from '../../../state/user/users.state';
 import { ToastService } from 'src/app/services/toast/toast.service';
@@ -119,6 +119,21 @@ export class LoginPage {
     }
   }
 
+  async updateLassAccessDate() {     
+    const user = JSON.parse(await this.storage.getItem('user'));                
+    if(user!=null ){                 
+      this.store.dispatch(new UpdateLassAccessDate({username:user.username})).subscribe({
+        next: async () => {
+          let success = this.store.selectSnapshot(UsersState.success);
+          if(!success){                              
+            this.toastService.presentToast("Error al actualizar la fecha de último acceso");                        
+          }              
+        } 
+      })        
+    }   
+  }
+
+
   async login() {        
     await this.loadingService.presentLoading('Loading...');
     this.store.dispatch(new Login({auth:this.auth})).subscribe({
@@ -126,6 +141,7 @@ export class LoginPage {
         let success = this.store.selectSnapshot(UsersState.success);
         if(success){                
           this.updateFirebaseToken();  
+          this.updateLassAccessDate();
           this.auth.username=null;
           this.auth.password=null;
           this.redirectAfterLogin();          

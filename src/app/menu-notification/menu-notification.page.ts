@@ -63,7 +63,6 @@ export class MenuNotificationPage implements OnInit {
 
   async dismissInitialLoading(){    
     if(this.initScreen && this.initNotificationTopicResponseList && this.initNotificationUserTokenResponseList){
-      console.log("3");
       await this.loadingService.dismissLoading();         
     }
   }
@@ -176,7 +175,6 @@ export class MenuNotificationPage implements OnInit {
   async doSendNotification(){
     
     await this.loadingService.presentLoading('Loading...');    
-    console.log(this.notificationRequest);    
     this.store.dispatch(new SendNotification({notificationRequest: this.notificationRequest}))        
       .subscribe({
         next: async ()=> {

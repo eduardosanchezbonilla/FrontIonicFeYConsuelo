@@ -24,6 +24,11 @@ export class UpdateFirebaseToken {
   constructor(public payload: {updateFirebaseToken: UpdateFirebaseTokenDto}) { }
 }
 
+export class UpdateLassAccessDate { 
+  static readonly type = '[Users] UpdateLassAccessDate';
+  constructor(public payload: {username: string}) { }
+}
+
 export class Logout {
   static readonly type = '[Users] Logout';  
 }

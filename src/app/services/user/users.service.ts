@@ -150,6 +150,35 @@ export class UsersService {
     });
   }
 
+  async updateLassAccessDate(username: string){    
+    const token = await this.storage.getItem('token');
+    return Http.put(
+      {
+        url:environment.host + '/user/'+username + '/last-date-access',
+        params:{},
+        data: {},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        }
+      }
+    )
+    .then(async response => {
+      if(response.status==200){
+        return true;
+      }
+      else{                
+        return Promise.reject({
+          status: response.status,
+          message: response.data?.message || 'Error al actualizar el la ultima fecha de acceso del usuario'
+        });
+      }      
+    })
+    .catch((error) => {      
+      return Promise.reject(error);
+    });
+  }
+
   async getUsersGroupByRole(filter:string){    
     const token = await this.storage.getItem('token');        
     return Http.get(
