@@ -97,10 +97,11 @@ export class MenuNotificationPage implements OnInit {
 
   getNotificationUserTokenResponseList(){
     this.notificationUserTokenResponseListSubscription = this.notificationUserTokenResponseList$.subscribe({
-      next: async ()=> {
-        const finish = this.store.selectSnapshot(NotificationState.finishToken); 
-        if(finish){
+      next: async ()=> {        
+        const finishToken = this.store.selectSnapshot(NotificationState.finishToken);         
+        if(finishToken){
           this.notificationUserTokenResponseList = this.store.selectSnapshot(NotificationState.notificationUserTokenResponseList);            
+          this.notificationUserTokenResponseList = this.notificationUserTokenResponseList.filter(token => token.name !== null);
           this.initNotificationUserTokenResponseList = true;    
           this.dismissInitialLoading();      
         }
@@ -115,8 +116,8 @@ export class MenuNotificationPage implements OnInit {
   getNotificationTopicResponseList(){
     this.notificationTopicResponseListSubscription = this.notificationTopicResponseList$.subscribe({
       next: async ()=> {
-        const finish = this.store.selectSnapshot(NotificationState.finishTopic); 
-        if(finish){
+        const finishTopic = this.store.selectSnapshot(NotificationState.finishTopic); 
+        if(finishTopic){
           this.notificationTopicResponseList = this.store.selectSnapshot(NotificationState.notificationTopicResponseList);            
           this.initNotificationTopicResponseList = true;    
           this.dismissInitialLoading();
@@ -143,7 +144,7 @@ export class MenuNotificationPage implements OnInit {
 
   async sendNotification(){
     // enviamos la notificacion        
-    if (this.notificationRequest.title.trim().length === 0) {
+    if (!this.notificationRequest.title || this.notificationRequest.title.trim().length === 0) {
       await this.showAlert('Debe introducir el titulo de la notificación');
       return;
     }

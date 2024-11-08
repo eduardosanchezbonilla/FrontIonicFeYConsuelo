@@ -11,7 +11,7 @@ import { NgxsModule } from '@ngxs/store';
 import { Profile } from './shared/components/profile/profile.component';
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent ] ,
   imports: [
     BrowserModule, 
     IonicModule.forRoot(), 

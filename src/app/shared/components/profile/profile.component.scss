@@ -58,3 +58,68 @@ ion-col p {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+ion-icon {
+    margin-right: 20px;
+}
+
+ion-item[button] {
+    width: 95%;    
+  }
+
+
+
+/**********************************************************/
+
+
+.user-info {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+}
+  
+ion-avatar {
+    width: 60px;
+    height: 60px;
+    margin-right: 16px;
+    border-radius: 50%; 
+    object-fit: cover;
+    border: 1px solid var(--ion-color-primary); 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.8); 
+    padding: 2px;
+}
+  
+.user-details {
+    display: flex;
+    flex-direction: column;
+}
+  
+.user-details h2 {
+    font-size: 1.2rem;
+    margin: 0;
+}
+  
+.user-details p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--ion-color-medium);
+}
+  
+.section-label {
+    font-size: 1.5rem;
+    font-weight: bold;
+    padding-left: 16px;
+    margin-top: 16px;
+    color: var(--ion-color-medium);
+}
+
+
+/*
+
+  
+ .section-label {
+    font-weight: bold;
+    padding-left: 16px;
+    margin-top: 16px;
+    color: var(--ion-color-medium);
+ }*/

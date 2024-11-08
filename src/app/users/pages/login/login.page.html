@@ -20,6 +20,7 @@
                     <h1 color="primary">
                         Datos usuario
                     </h1>
+                    
                     <!------------------------->
                     <!----- DATOS USUARIO ----->
                     <!------------------------->                   
@@ -50,14 +51,21 @@
                               minlength="8"
                               maxlength="50"
                               name="password"
-                              placeholder="Enter Password"
-                              type="password"
+                              placeholder="Enter Password"                              
+                              [type]="showPassword ? 'text' : 'password'"
                               required
                               [(ngModel)]="auth.password"
                               #passwordInput="ngModel"                           
                         >
                         </ion-input>                      
-                        <ion-icon name="eye" slot="end" data-action="show-hide"></ion-icon>
+                        <ion-icon 
+                            slot="end"                             
+                            [name]="showPassword ? 'eye-off' : 'eye'"       
+                            (click)="togglePasswordVisibility()"                     
+                            data-action="show-hide"
+                            class="toggle-password-icon"
+                        >
+                        </ion-icon>
                     </ion-item>                    
 
                     <!-- Mostrar errores -->
@@ -75,19 +83,29 @@
 
                     <div *ngIf="!(usernameInput.invalid && usernameInput.touched) && !(passwordInput.invalid && passwordInput.touched)" class="spacer-big"></div>                    
                     
+                    <!-- Acceso como invitado -->
                     <a href="#" (click)="loginInvitado($event)">
                         <ion-text color="primary">
-                            <h4>Acceso como invitado</h4>
+                            <h4 class="custom-h4">Acceso como invitado</h4>
                           </ion-text>                        
                     </a>        
-
-                    <div class="spacer-small"></div>       
+                    
+                    <!-- Remember me y olvido la contraseña -->
+                    <div class="remember-forgot-container">
+                        <ion-item class="ion-no-padding remember-me" lines="none">
+                            <ion-checkbox [(ngModel)]="rememberMe" name="rememberMe"></ion-checkbox>
+                            <ion-label class="label-text">Recordar usuario</ion-label>
+                        </ion-item>
+                        <a class="label-text-href" href="#" (click)="showForgotPasswordScreen($event)" >¿Olvidó la contraseña?</a>
+                    </div>
                   
-                    <a href="#" (click)="showForgotPasswordScreen($event)">¿Olvido la contraseña?</a>     
+
+                    <!-- Olvido la contraseña -->
+                    <!--<a href="#" (click)="showForgotPasswordScreen($event)">¿Olvido la contraseña?</a>    -->
                     
 
                     <div class="spacer-small"></div>       
-                    <div class="spacer"></div>   
+                    <!--<div class="spacer"></div>   -->
                     
                     <!----------->
                     <!-- LOGIN -->

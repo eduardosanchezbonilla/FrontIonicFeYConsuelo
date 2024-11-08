@@ -256,8 +256,9 @@ export class UsersState {
   @Action(Logout)
   async logout(
       { setState }: StateContext<UsersStateModel>,      
-  ) {    
+  ) {        
     await this.storage.clear();
+    
     setState({
       usersGroupByRole: [],
       roles: [],

@@ -1,13 +1,31 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { IonTabs } from '@ionic/angular';
+import { Subscription } from 'rxjs';
+import { TabNavigationService } from '../services/tab-navigation/tab-navigation.service';
 
 @Component({
   selector: 'app-tabs-super-admin',
   templateUrl: './tabs-super-admin.page.html',
   styleUrls: ['./tabs-super-admin.page.scss'],
 })
-export class TabsSuperAdminPage {
+export class TabsSuperAdminPage implements OnInit, OnDestroy {
 
-  constructor() { }
+  @ViewChild('tabs', { static: true }) tabs: IonTabs;
+  private tabChangeSubscription: Subscription;
+
+  constructor(private tabNavigationService: TabNavigationService) {}
+
+  ngOnInit() {
+    this.tabChangeSubscription = this.tabNavigationService.tabChange$.subscribe(tab => {
+      this.tabs.select(tab);
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.tabChangeSubscription) {
+      this.tabChangeSubscription.unsubscribe();
+    }
+  }
 
 
 }

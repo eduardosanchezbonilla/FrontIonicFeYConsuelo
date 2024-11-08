@@ -23,6 +23,10 @@ const routes: Routes = [
       {
         path: 'menu-notification',        
         loadChildren: () => import('../menu-notification/menu-notification.module').then(m => m.MenuNotificationPageModule)
+      },      
+      {
+        path: 'menu-multimedia',        
+        loadChildren: () => import('../menu-multimedia/menu-multimedia.module').then(m => m.MenuMultimediaPageModule)
       },
       {
         path: '',

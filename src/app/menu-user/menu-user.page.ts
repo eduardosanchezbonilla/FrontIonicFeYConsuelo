@@ -68,7 +68,7 @@ export class MenuUserPage implements OnDestroy {
   async ionViewWillEnter(){      
     this.profile = await this.storage.getItem('profile');         
     this.getUsersGroupByRole();      
-    this.filterUsers();
+    this.filterUsers();    
   }
 
   async dismissInitialLoading(){
@@ -77,7 +77,7 @@ export class MenuUserPage implements OnDestroy {
     }
   }
 
-  async ionViewDidEnter(){    
+  async ionViewDidEnter(){        
     this.initScreen = true;    
     this.dismissInitialLoading();
   }
@@ -337,8 +337,8 @@ export class MenuUserPage implements OnDestroy {
         next: async ()=> {                
           const finish = this.store.selectSnapshot(UsersState.finish);          
           const errorStatusCode = this.store.selectSnapshot(UsersState.errorStatusCode);          
-          const errorMessage = this.store.selectSnapshot(UsersState.errorMessage);               
-          if(finish){
+          const errorMessage = this.store.selectSnapshot(UsersState.errorMessage);                    
+          if(finish){               
             if(errorStatusCode==200){      
               this.usersGroupByRole = this.store.selectSnapshot(UsersState.usersGroupByRole);
               if(!this.usersGroupByRole){
@@ -380,8 +380,8 @@ export class MenuUserPage implements OnDestroy {
       })
   }
 
-  trackByRoleFn(index, role) {    
-    return role; // Utiliza un identificador único de tu elemento
+  trackByRoleFn(index, role) {      
+    return role.role; // Utiliza un identificador único de tu elemento
   }
 
   trackByUserFn(index, user) {    

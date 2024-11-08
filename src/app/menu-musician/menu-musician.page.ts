@@ -254,7 +254,7 @@ export class MenuMusicianPage implements OnDestroy {
           const finish = this.store.selectSnapshot(MusicianState.finish);          
           const errorStatusCode = this.store.selectSnapshot(MusicianState.errorStatusCode);          
           const errorMessage = this.store.selectSnapshot(MusicianState.errorMessage);               
-          if(finish){
+          if(finish){             
             if(errorStatusCode==200){      
               this.musiciansGroupByVoice = this.store.selectSnapshot(MusicianState.musiciansGroupByVoice);
               if(!this.musiciansGroupByVoice){

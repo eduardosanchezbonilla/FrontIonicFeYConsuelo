@@ -1,4 +1,4 @@
-<ion-tabs >
+<ion-tabs #tabs>
 
   <ion-tab-bar slot="bottom" >
     <ion-tab-button tab="menu-musician" href="/tabs-admin/menu-musician" >
@@ -16,9 +16,14 @@
       <ion-label>Inventario</ion-label>
     </ion-tab-button> 
 
-    <ion-tab-button tab="menu-notification" href="/tabs-admin/menu-notification" >
+    <ion-tab-button tab="menu-notification" href="/tabs-admin/menu-notification" class="hide-tab" >
       <ion-icon name="notifications-outline"></ion-icon>
       <ion-label>Notificaciones</ion-label>
+    </ion-tab-button> 
+
+    <ion-tab-button tab="menu-multimedia" href="/tabs-admin/menu-multimedia" >      
+      <ion-icon name="images-outline"></ion-icon>      
+      <ion-label>Multimedia</ion-label>
     </ion-tab-button> 
 
   </ion-tab-bar>

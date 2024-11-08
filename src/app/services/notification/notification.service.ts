@@ -67,9 +67,13 @@ export class NotificationService {
       if(newToken){        
         await this.storage.setItem('token', newToken.replace('Bearer ', ''));
       }     
-      if(response.status==200 || response.status==204){
+      if(response.status==200){
         const data = await response.data as NotificationUserTokenResponseDto[];
         return data;
+      }
+      else if(response.status==204){
+        let token = new NotificationUserTokenResponseDto(null,null,null,null);
+        return [token];
       }
       else{                
         return Promise.reject({

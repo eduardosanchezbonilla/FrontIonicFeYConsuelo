@@ -11,6 +11,10 @@ const routes: Routes = [
       {
         path: 'menu-partiture',        
         loadChildren: () => import('../menu-partiture/menu-partiture.module').then(m => m.MenuPartiturePageModule)
+      },      
+      {
+        path: 'menu-multimedia',        
+        loadChildren: () => import('../menu-multimedia/menu-multimedia.module').then(m => m.MenuMultimediaPageModule)
       },
       {
         path: '',

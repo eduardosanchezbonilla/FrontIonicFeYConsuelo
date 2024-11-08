@@ -10,19 +10,19 @@ const routes: Routes = [
     component: TabsGuestPage,
     children: [
       {
-        path: 'tab1',
-        loadChildren: () => import('../tab1/tab1.module').then(m => m.Tab1PageModule)
+        path: 'menu-multimedia',        
+        loadChildren: () => import('../menu-multimedia/menu-multimedia.module').then(m => m.MenuMultimediaPageModule)
       },
       {
         path: '',
-        redirectTo: '/tabs-guest/tab1',
+        redirectTo: '/tabs-guest/menu-multimedia',
         pathMatch: 'full'
       }
     ]
   },
   {
     path: '',
-    redirectTo: '/tabs-guest/tab1',
+    redirectTo: '/tabs-guest/menu-multimedia',
     pathMatch: 'full'
   }
 ];

@@ -1,90 +1,200 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-   
+  <ion-toolbar> 
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding musician-menu-content"  [fullscreen]="false">
+
+
+  <!--  
+  <div class="user-info">
+    <ion-avatar slot="start">
+      <img *ngIf="user?.profile === 'SUPER_ADMIN'" [src]="user.userDetail?.image ? 'data:image/jpeg;base64,' + user.userDetail?.image : 'data:image/jpeg;base64,' + defaultUserImage" >
+      <img *ngIf="user?.profile === 'ADMIN'" [src]="user.userDetail?.image ? 'data:image/jpeg;base64,' + user.userDetail?.image : 'data:image/jpeg;base64,' + defaultUserImage" >
+      <img *ngIf="user?.profile === 'MUSICO'" [src]="user.musician?.image ? 'data:image/jpeg;base64,' + user.musician.image : 'data:image/jpeg;base64,' + defaultMusicianImage" >
+      <img *ngIf="user?.profile === 'INVITADO'" [src]="'data:image/jpeg;base64,' + defaultMusicianImage" >
+    </ion-avatar>
+    <div class="user-details">
+      <h2 *ngIf="user?.profile === 'SUPER_ADMIN'">{{user.username}} ({{user.userDetail?.name}} {{user.userDetail?.surname}})</h2>
+      <h2 *ngIf="user?.profile === 'ADMIN'">{{user.username}} ({{user.userDetail?.name}} {{user.userDetail?.surname}})</h2>
+      <h2 *ngIf="user?.profile === 'MUSICO'">{{user.musician?.name}} {{user.musician?.surname}}</h2>
+      <h2 *ngIf="user?.profile === 'INVITADO'">INVITADO</h2>
+      <p *ngIf="user?.profile === 'SUPER_ADMIN' && user?.userDetail?.email"> {{user?.userDetail?.email}}</p>
+      <p *ngIf="user?.profile === 'ADMIN' && user?.userDetail?.email"> {{user?.userDetail?.email}}</p>
+      <p *ngIf="user?.profile === 'MUSICO' && user?.musician?.email"> {{user?.musician?.email}}</p>      
+      <p *ngIf="user?.profile === 'SUPER_ADMIN' && user?.userDetail?.municipality && user?.userDetail?.province">{{user?.userDetail?.municipality}} ({{user?.userDetail?.province}})</p>
+    </div>
+  </div>
+
+  <div class="spacer-small"></div>   
+  
+  <ion-list>
+    <ion-label class="section-label">Menu</ion-label>
+    <div class="spacer-small"></div>   
+    <ion-item button>
+      <ion-icon slot="start" name="mail-outline"></ion-icon>
+      <ion-label>Inbox</ion-label>
+    </ion-item>
+    <ion-item button>
+      <ion-icon slot="start" name="paper-plane-outline"></ion-icon>
+      <ion-label>Outbox</ion-label>
+    </ion-item>
+    <ion-item button>
+      <ion-icon slot="start" name="heart-outline"></ion-icon>
+      <ion-label>Favorites</ion-label>
+    </ion-item>
+    <ion-item button>
+      <ion-icon slot="start" name="archive-outline"></ion-icon>
+      <ion-label>Archive</ion-label>
+    </ion-item>
+    <ion-item button>
+      <ion-icon slot="start" name="trash-outline"></ion-icon>
+      <ion-label>Trash</ion-label>
+    </ion-item>
+    <ion-item button>
+      <ion-icon slot="start" name="warning-outline"></ion-icon>
+      <ion-label>Spam</ion-label>
+    </ion-item>
+  </ion-list>
+
+  <ion-list>
+    <ion-label class="section-label">Labels</ion-label>
+    <ion-item button>
+      <ion-icon slot="start" name="bookmark-outline"></ion-icon>
+      <ion-label>Family</ion-label>
+    </ion-item>  
+  </ion-list>
+  
+  
+  -->
   
   <!---------------------------------------------->
   <!-------  PROFILE SUPER ADMINISTRADOR  -------->
   <!---------------------------------------------->
   <ion-grid *ngIf="user?.profile === 'SUPER_ADMIN'">
-    
-      <!-- Imagen del administrador -->    
-      <div class="musician-image-container">
-        <img 
-          [src]="user.userDetail?.image ? 'data:image/jpeg;base64,' + user.userDetail?.image : 'data:image/jpeg;base64,' + defaultUserImage" class="musician-image-small"        
-        >
+
+      <!-- Sección de información del usuario -->
+      <div class="user-info">
+        <ion-avatar slot="start">
+          <img [src]="user.userDetail?.image ? 'data:image/jpeg;base64,' + user.userDetail?.image : 'data:image/jpeg;base64,' + defaultUserImage" >          
+        </ion-avatar>
+        <div class="user-details">
+          <h2 *ngIf="user?.userDetail?.name && user?.userDetail?.surname">{{user.userDetail?.name}} {{user.userDetail?.surname}}</h2>
+          <h2 *ngIf="!user?.userDetail?.name || !user?.userDetail?.surname">{{user.username}}</h2>
+          <p *ngIf="user?.userDetail?.email"> {{user?.userDetail?.email}}</p>
+          <p *ngIf="user?.userDetail?.municipality && user?.userDetail?.province">{{user?.userDetail?.municipality}} ({{user?.userDetail?.province}})</p>
+        </div>
       </div>
 
-      <!-- Datos del usuario -->
-    <ion-grid>
-      <ion-row class="ion-text-center">
-        <ion-col>
-          <h2 class="musician-name">{{user.username}}</h2>
-          <p *ngIf="user.userDetail?.description" class="user-description">{{user.userDetail?.description}}</p>
-        </ion-col>        
-      </ion-row>
-      <!--<ion-row class="ion-text-center">
-        <ion-col *ngIf="user.userDetail?.description">
-          <h5 class="user-description">{{user.userDetail?.description}}</h5>
-        </ion-col>
-      </ion-row>-->
+      <div class="spacer-small"></div>   
 
-      <ion-row *ngIf="user.userDetail" class="ion-text-left">
-        <ion-col>
-          <p *ngIf="user.userDetail?.dni"><strong>Dni:</strong> &nbsp; {{user.userDetail?.dni}}</p>
-          <p *ngIf="user.userDetail?.name"><strong>Nombre:</strong>&nbsp; {{user.userDetail?.name}} {{user.userDetail?.surname}}</p>
-          <p *ngIf="user.userDetail?.direction"><strong>Dirección:</strong> &nbsp;{{user.userDetail?.direction}}</p>
-          <p *ngIf="user.userDetail?.municipality"><strong>Municipio:</strong>&nbsp; {{user.userDetail?.municipality}}</p>
-          <p *ngIf="user.userDetail?.province"><strong>Provincia:</strong>&nbsp; {{user.userDetail?.province}}</p>
-          <p *ngIf="user.userDetail?.email"><strong>Email:</strong>&nbsp; {{user.userDetail?.email}}</p>                    
-        </ion-col>
-      </ion-row>
-    </ion-grid>
+      <!-- Opciones del menú -->
+      <ion-list>
+        <ion-label class="section-label">Menu</ion-label>
+        <div class="spacer-small"></div>   
 
+        <ion-item button (click)="onTabSelect('menu-user')" >
+          <ion-icon slot="start" name="person-circle-outline"></ion-icon>
+          <ion-label>Usuarios</ion-label>
+        </ion-item>
+
+        <ion-item button (click)="onTabSelect('menu-musician')" >
+          <ion-icon slot="start" name="people-outline"></ion-icon>
+          <ion-label>Musicos</ion-label>
+        </ion-item>
+
+        <ion-item button (click)="onTabSelect('menu-partiture')" >
+          <ion-icon slot="start" name="albums-outline"></ion-icon>
+          <ion-label>Partituras</ion-label>
+        </ion-item>
+        
+        <ion-item button (click)="onTabSelect('menu-inventory')" >
+          <ion-icon slot="start" name="shirt-outline"></ion-icon>
+          <ion-label>Inventario</ion-label>
+        </ion-item>
+
+        <ion-item button (click)="onTabSelect('menu-notification')" >
+          <ion-icon slot="start" name="notifications-outline"></ion-icon>
+          <ion-label>Notificaciones</ion-label>
+        </ion-item>
+
+        <ion-item button (click)="onTabSelect('menu-multimedia')" >
+          <ion-icon slot="start" name="images-outline"></ion-icon>
+          <ion-label>Multimedia</ion-label>
+        </ion-item>
+      </ion-list>
+
+      <!--<ion-list>
+        <ion-label class="section-label">Labels</ion-label>
+        <ion-item button>
+          <ion-icon slot="start" name="bookmark-outline"></ion-icon>
+          <ion-label>Family</ion-label>
+        </ion-item>        
+      </ion-list>    
+      -->
+    
   </ion-grid>
 
   <!---------------------------------------------->
   <!-------  PROFILE ADMINISTRADOR  -------------->
   <!---------------------------------------------->
   <ion-grid *ngIf="user?.profile === 'ADMIN'">
-    
-    <!-- Imagen del administrador -->    
-    <div class="musician-image-container">
-      <img 
-        [src]="user.userDetail?.image ? 'data:image/jpeg;base64,' + user.userDetail?.image : 'data:image/jpeg;base64,' + defaultUserImage" class="musician-image-small"        
-      >
+
+    <!-- Sección de información del usuario -->
+    <div class="user-info">
+      <ion-avatar slot="start">
+        <img  [src]="user.userDetail?.image ? 'data:image/jpeg;base64,' + user.userDetail?.image : 'data:image/jpeg;base64,' + defaultUserImage" >      
+      </ion-avatar>
+      <div class="user-details">
+        <h2 *ngIf="user?.userDetail?.name && user?.userDetail?.surname">{{user.userDetail?.name}} {{user.userDetail?.surname}}</h2>
+        <h2 *ngIf="!user?.userDetail?.name || !user?.userDetail?.surname">{{user.username}}</h2>                
+        <p *ngIf="user?.userDetail?.municipality && user?.userDetail?.province">{{user?.userDetail?.municipality}} ({{user?.userDetail?.province}})</p>
+      </div>
     </div>
 
-    <!-- Datos del usuario -->
-  <ion-grid>
-    <ion-row class="ion-text-center">
-      <ion-col>
-        <h2 class="musician-name">{{user.username}}</h2>
-        <p *ngIf="user.userDetail?.description" class="user-description">{{user.userDetail?.description}}</p>
-      </ion-col>        
-    </ion-row>
-    <!--<ion-row class="ion-text-center">
-      <ion-col *ngIf="user.userDetail?.description">
-        <h5 class="user-description">{{user.userDetail?.description}}</h5>
-      </ion-col>
-    </ion-row>-->
+    <div class="spacer-small"></div>   
 
-    <ion-row *ngIf="user.userDetail" class="ion-text-left">
-      <ion-col>
-        <p *ngIf="user.userDetail?.dni"><strong>Dni:</strong> &nbsp; {{user.userDetail?.dni}}</p>
-        <p *ngIf="user.userDetail?.name"><strong>Nombre:</strong>&nbsp; {{user.userDetail?.name}} {{user.userDetail?.surname}}</p>
-        <p *ngIf="user.userDetail?.direction"><strong>Dirección:</strong> &nbsp;{{user.userDetail?.direction}}</p>
-        <p *ngIf="user.userDetail?.municipality"><strong>Municipio:</strong>&nbsp; {{user.userDetail?.municipality}}</p>
-        <p *ngIf="user.userDetail?.province"><strong>Provincia:</strong>&nbsp; {{user.userDetail?.province}}</p>
-        <p *ngIf="user.userDetail?.email"><strong>Email:</strong>&nbsp; {{user.userDetail?.email}}</p>                    
-      </ion-col>
-    </ion-row>
+    <!-- Opciones del menú -->
+    <ion-list>
+      <ion-label class="section-label">Menu</ion-label>
+      <div class="spacer-small"></div>   
+
+      <ion-item button (click)="onTabSelect('menu-musician')" >
+        <ion-icon slot="start" name="people-outline"></ion-icon>
+        <ion-label>Musicos</ion-label>
+      </ion-item>
+
+      <ion-item button (click)="onTabSelect('menu-partiture')" >
+        <ion-icon slot="start" name="albums-outline"></ion-icon>
+        <ion-label>Partituras</ion-label>
+      </ion-item>
+      
+      <ion-item button (click)="onTabSelect('menu-inventory')" >
+        <ion-icon slot="start" name="shirt-outline"></ion-icon>
+        <ion-label>Inventario</ion-label>
+      </ion-item>
+
+      <ion-item button (click)="onTabSelect('menu-notification')" >
+        <ion-icon slot="start" name="notifications-outline"></ion-icon>
+        <ion-label>Notificaciones</ion-label>
+      </ion-item>
+
+      <ion-item button (click)="onTabSelect('menu-multimedia')" >
+        <ion-icon slot="start" name="images-outline"></ion-icon>
+        <ion-label>Multimedia</ion-label>
+      </ion-item>
+    </ion-list>
+
+    <!--<ion-list>
+      <ion-label class="section-label">Labels</ion-label>
+      <ion-item button>
+        <ion-icon slot="start" name="bookmark-outline"></ion-icon>
+        <ion-label>Family</ion-label>
+      </ion-item>        
+    </ion-list>    
+    -->
+  
   </ion-grid>
-
-</ion-grid>
 
   <!--------------------------------------->
   <!-------  PROFILE MUSICO  -------------->

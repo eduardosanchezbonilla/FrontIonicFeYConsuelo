@@ -1,4 +1,4 @@
-<ion-tabs >
+<ion-tabs #tabs>
 
   <ion-tab-bar slot="bottom" >
     <ion-tab-button tab="menu-user" href="/tabs-super-admin/menu-user" >
@@ -6,7 +6,7 @@
       <ion-label>Usuarios</ion-label>
     </ion-tab-button>
 
-    <ion-tab-button tab="menu-musician" href="/tabs-super-admin/menu-musician" >
+    <ion-tab-button tab="menu-musician" href="/tabs-super-admin/menu-musician">
       <ion-icon name="people-outline"></ion-icon>
       <ion-label>Musicos</ion-label>
     </ion-tab-button>
@@ -16,7 +16,7 @@
       <ion-label>Partituras</ion-label>
     </ion-tab-button> 
 
-    <ion-tab-button tab="menu-inventory" href="/tabs-super-admin/menu-inventory" >
+    <ion-tab-button tab="menu-inventory" href="/tabs-super-admin/menu-inventory" class="hide-tab">
       <ion-icon name="shirt-outline"></ion-icon>
       <ion-label>Inventario</ion-label>
     </ion-tab-button> 
@@ -24,6 +24,11 @@
     <ion-tab-button tab="menu-notification" href="/tabs-super-admin/menu-notification" >      
       <ion-icon name="notifications-outline"></ion-icon>
       <ion-label>Notificaciones</ion-label>
+    </ion-tab-button> 
+
+    <ion-tab-button tab="menu-multimedia" href="/tabs-super-admin/menu-multimedia" >      
+      <ion-icon name="images-outline"></ion-icon>      
+      <ion-label>Multimedia</ion-label>
     </ion-tab-button> 
 
   </ion-tab-bar>

@@ -15,7 +15,7 @@ export class StorageService {
       this._storage = await this.storate.create();
   }
 
-  async getItem(key:string){
+  async getItem(key:string){   
     return await this._storage.get(key);    
   }
 
@@ -23,8 +23,11 @@ export class StorageService {
     return await this._storage.set(key,value);    
   }
 
-  clear(){    
-    this._storage.clear();
+  async clear(){    
+    this._storage.remove('user');
+    this._storage.remove('token');
+    this._storage.remove('profile');
+    //this._storage.clear();
   }
 
 }

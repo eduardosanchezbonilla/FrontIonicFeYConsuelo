@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, MenuController } from '@ionic/angular';
 import { User } from 'src/app/models/user/user';
 import { UsersService } from 'src/app/services/user/users.service';
 import { DEFAULT_VOICE_IMAGE, DEFAULT_MUSICIAN_IMAGE, DEFAULT_USER_IMAGE } from '../../../constants/constants';
+import { TabNavigationService } from 'src/app/services/tab-navigation/tab-navigation.service';
 
 @Component({
   selector: 'app-profile',
@@ -19,8 +20,15 @@ export class Profile  {
   public defaultUserImage: string = DEFAULT_USER_IMAGE;
 
   constructor(
-    private userService: UsersService
+    private userService: UsersService,
+    private tabNavigationService: TabNavigationService,
+    private menuController: MenuController
   ) { }
+
+  onTabSelect(tab: string) {
+    this.tabNavigationService.changeTab(tab);
+    this.menuController.close();
+  }
 
   logout() {
     this.userService.logout();

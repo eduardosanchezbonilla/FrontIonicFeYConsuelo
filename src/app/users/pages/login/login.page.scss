@@ -24,3 +24,39 @@ span[_rrss] {
 .custom-h4 {
 	margin-top: 10px; 
 }
+.toggle-password-icon {
+	cursor: pointer;
+	font-size: 1.2em;
+	color: var(--ion-color-medium);
+}
+
+/* Estilos del checkbox "Recordar usuario y contraseña" */
+.remember-forgot-container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	//max-width: 400px;
+	margin: 0px auto;
+	text-align: center;
+}
+  
+.remember-me {
+	flex: 1;
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	margin-right: 0px;
+}
+
+.label-text {
+	font-size: 0.9rem;
+	color:var(--ion-color-primary);; /* Cambia el color a rojo */
+	margin-left: 8px; /* Agrega espacio entre el checkbox y el texto */
+}
+
+.label-text-href {
+	font-size: 0.9rem;
+	color:var(--ion-color-primary);; 
+}
+  

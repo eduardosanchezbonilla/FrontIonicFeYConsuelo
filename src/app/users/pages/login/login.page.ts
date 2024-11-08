@@ -12,7 +12,7 @@ import { LoadingService } from 'src/app/services/loading/loading.service';
 import { ResetPasswordDto } from '../../../models/user/reset-password-dto';
 import { FirebaseMessaging } from '@capacitor-firebase/messaging';
 import { Capacitor } from '@capacitor/core';
-import { ADMIN_TOPIC, GENERAL_TOPIC, MUSICO_TOPIC } from 'src/app/constants/firebase-topics';
+import { ADMIN_TOPIC, GENERAL_TOPIC, MUSICO_TOPIC, SUPER_ADMIN_TOPIC } from 'src/app/constants/firebase-topics';
 import { UpdateFirebaseTokenDto } from 'src/app/models/user/update-firebase-token-dto';
 
 @Component({
@@ -28,12 +28,16 @@ export class LoginPage {
   public changePassword: ChangePasswordDto;  
   public resetPassword: ResetPasswordDto;  
 
+  public showPassword = false;
+
+  public rememberMe = false;
+
   constructor(
       private store: Store,
       private toastService: ToastService,
       private navController: NavController,
-      private storage: StorageService,
-      private loadingService: LoadingService
+      private storage: StorageService,          
+      private loadingService: LoadingService      
   ) {
     this.auth = new AuthDto(); 
     this.changePassword = new ChangePasswordDto();   
@@ -48,7 +52,20 @@ export class LoginPage {
       this.redirectAfterLogin();      
     }
     else{
-      this.auth = new AuthDto();      
+      this.auth = new AuthDto();  
+      
+      // recomeramos los datos asociados al remerber
+      const rememberStorage = await this.storage.getItem('rememberMe');
+      
+      if(rememberStorage==='true'){
+        this.rememberMe = true;
+        this.auth.username = await this.storage.getItem('username');
+        this.auth.password = await this.storage.getItem('password');
+      }
+      else{
+        this.rememberMe = false;
+      }
+
     }
   }
 
@@ -79,13 +96,17 @@ export class LoginPage {
     else{
       this.subscribeToRoleTopics('INVITADO');
       this.storage.setItem('profile', 'INVITADO');
-      this.navController.navigateForward('tabs-guest/tab1');   
+      this.navController.navigateForward('tabs-guest/menu-multimedia');   
     }
   }
 
   async subscribeToRoleTopics(userRole: string) {    
     if (Capacitor.isNativePlatform()) {
-      if (userRole === 'ADMIN' || userRole === 'SUPER_ADMIN') {
+      if (userRole === 'SUPER_ADMIN') {
+        // Si el usuario es super administrador, suscribirlo al topic 'superadmin'     
+        await FirebaseMessaging.subscribeToTopic({ topic: SUPER_ADMIN_TOPIC });        
+      }
+      if (userRole === 'ADMIN') {
         // Si el usuario es administrador, suscribirlo al topic 'admin'     
         await FirebaseMessaging.subscribeToTopic({ topic: ADMIN_TOPIC });        
       }     
@@ -100,46 +121,70 @@ export class LoginPage {
     }
   }
 
-  async updateFirebaseToken() {           
-    if (Capacitor.isNativePlatform()) {      
-      const user = JSON.parse(await this.storage.getItem('user'));                
-      const { token } = await FirebaseMessaging.getToken(); // este token es el que identifica al dispositivo, por si quisieramos enviar mensajes individualizados     
-      if(user!=null && token!=null){                 
-        let updateFirebaseToken = new UpdateFirebaseTokenDto(user.username, token);
-        
-        this.store.dispatch(new UpdateFirebaseToken({updateFirebaseToken:updateFirebaseToken})).subscribe({
-          next: async () => {
-            let success = this.store.selectSnapshot(UsersState.success);
-            if(!success){                              
-              this.toastService.presentToast("Error al actualizar el token del disposibtivo");                        
-            }              
-          } 
-        })        
+  async updateFirebaseToken() {    
+    try{       
+      if (Capacitor.isNativePlatform()) {      
+        const user = JSON.parse(await this.storage.getItem('user'));                
+        const { token } = await FirebaseMessaging.getToken(); // este token es el que identifica al dispositivo, por si quisieramos enviar mensajes individualizados     
+        if(user!=null && token!=null){                 
+          let updateFirebaseToken = new UpdateFirebaseTokenDto(user.username, token);
+          
+          this.store.dispatch(new UpdateFirebaseToken({updateFirebaseToken:updateFirebaseToken})).subscribe({
+            next: async () => {
+              let success = this.store.selectSnapshot(UsersState.success);
+              if(!success){                              
+                this.toastService.presentToast("Error al actualizar el token del disposibtivo");                        
+              }              
+            } 
+          })        
+        }
       }
+    }
+    catch(error){
+      console.error('Error al actualizar el token de Firebase: ', error);
     }
   }
 
-  async updateLassAccessDate() {     
-    const user = JSON.parse(await this.storage.getItem('user'));                
-    if(user!=null ){                 
-      this.store.dispatch(new UpdateLassAccessDate({username:user.username})).subscribe({
-        next: async () => {
-          let success = this.store.selectSnapshot(UsersState.success);
-          if(!success){                              
-            this.toastService.presentToast("Error al actualizar la fecha de último acceso");                        
-          }              
-        } 
-      })        
-    }   
+  async updateLassAccessDate() {  
+    try{        
+      const user = JSON.parse(await this.storage.getItem('user'));                
+      if(user!=null ){                 
+        this.store.dispatch(new UpdateLassAccessDate({username:user.username})).subscribe({
+          next: async () => {
+            let success = this.store.selectSnapshot(UsersState.success);
+            if(!success){                              
+              this.toastService.presentToast("Error al actualizar la fecha de último acceso");                        
+            }              
+          } 
+        })        
+      }   
+    }
+    catch(error){
+      console.error('Error al actualizar la fecha de último acceso: ', error);
+    }
   }
 
+  updateRemerberData(){
+    if(this.rememberMe){
+      this.storage.setItem('rememberMe', 'true');
+      this.storage.setItem('username', this.auth.username);
+      this.storage.setItem('password', this.auth.password);
+    }
+    else{
+      this.storage.setItem('rememberMe', 'false');
+      this.storage.setItem('username', '');
+      this.storage.setItem('password', '');
+    }
+  }
 
-  async login() {        
+  async login() {     
+    
     await this.loadingService.presentLoading('Loading...');
     this.store.dispatch(new Login({auth:this.auth})).subscribe({
       next: async () => {
         let success = this.store.selectSnapshot(UsersState.success);
-        if(success){                
+        if(success){         
+          this.updateRemerberData();
           this.updateFirebaseToken();  
           this.updateLassAccessDate();
           this.auth.username=null;
@@ -222,6 +267,10 @@ export class LoginPage {
         await this.loadingService.dismissLoading();
       } 
     })
+  }
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
   }
 
 }
