@@ -96,6 +96,11 @@ export class AppComponent {
   };
 
   async showNotificationAlert(title: string, message: string) {
+    // solo mostramos notificacion si el mensaje tiene algun caracter
+    if(message && message.trim().length === 0){
+      return;
+    }
+
     const alert = await this.alertController.create({
       header: title,       // Título de la notificación
       message: message,    // Descripción de la notificación
