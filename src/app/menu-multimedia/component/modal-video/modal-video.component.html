@@ -1,0 +1,169 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="medium" (click)="cancel()">Cancelar</ion-button>
+    </ion-buttons>    
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form (ngSubmit)="confirm()" #videoForm="ngForm">    
+    <!------------------------->
+    <!------ DATOS MUSICO ----->
+    <!------------------------->
+    <h2 class="fancy-title custom-h2">
+      Datos video
+    </h2>
+
+    <div class="spacer"></div>  
+    
+    <!-- ID YOUTUBE -->
+    <ion-grid class="no-padding-grid">
+      <ion-row class="no-padding-row">
+        <!-- Campo de entrada de YouTube ID (80%) -->
+        <ion-col size="9" class="no-padding-col">
+          <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+            <ion-label color="primary" position="floating">
+              Id Youtube
+            </ion-label>
+            <ion-icon name="logo-youtube" slot="end"></ion-icon>
+            <ion-input
+              autocomplete="youtubeId"
+              minlength="5"
+              maxlength="50"
+              name="youtubeId"
+              placeholder="Introduzca el id del video en youtube"
+              type="text"
+              required="true"
+              [(ngModel)]="video.youtubeId"
+              (ionBlur)="loadThumbnail(video.youtubeId)"
+              #youtubeIdInput="ngModel"
+            ></ion-input>
+          </ion-item>          
+        </ion-col>
+
+        <!-- Thumbnail a la derecha (20%) -->
+        <ion-col size="3" class="no-padding-col thumbnail-preview-container">
+          <ion-img 
+            [src]="thumbnailUrl || defaultThumbnailUrl" 
+            alt="Vista previa del thumbnail" 
+            class="thumbnail-preview">
+          </ion-img>
+        </ion-col>
+      </ion-row>
+
+      <!-- Mensajes de error para YouTube ID -->
+      <ion-row class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+        <ion-col class="no-padding-col" size="12" >
+          <div *ngIf="(youtubeIdInput.invalid && youtubeIdInput.touched)">
+            <ion-text color="danger" *ngIf="youtubeIdInput.errors && youtubeIdInput.errors['required']">El id de youtube es obligatorio.</ion-text>
+            <ion-text color="danger" *ngIf="youtubeIdInput.errors && youtubeIdInput.errors['minlength']">El id de youtube debe tener al menos 5 caracteres.</ion-text>
+            <ion-text color="danger" *ngIf="youtubeIdInput.errors && youtubeIdInput.errors['maxlength']">El id de youtube no puede exceder los 50 caracteres.</ion-text>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <!-- NAME -->
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+      <ion-label color="primary" position="floating">
+          Nombre
+      </ion-label>
+      <ion-icon name="videocam-outline" slot="end"></ion-icon>      
+      <ion-input                                                        
+            autocomplete="name"       
+            minlength="1"                     
+            maxlength="100"
+            name="name"
+            placeholder="Introduzca el nombre del video"
+            type="text"
+            required="true"            
+            [(ngModel)]="video.name"                                                 
+            #nameInput="ngModel"            
+      >
+      </ion-input>
+    </ion-item>
+
+    <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(nameInput.invalid && nameInput.touched)">
+      <ion-text color="danger" *ngIf="nameInput.errors && nameInput.errors['required']">El nombre es obligatorio.</ion-text>
+      <ion-text color="danger" *ngIf="nameInput.errors && nameInput.errors['minlength']">El nombre debe tener al menos 1 caracter..</ion-text>
+      <ion-text color="danger" *ngIf="nameInput.errors && nameInput.errors['maxlength']">El nombre no puede exceder los 100 caracteres.</ion-text>
+    </div>
+
+    <!-- CATEGORIA -->
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item">
+      <ion-label color="primary" class="custom-label-category">Categorías</ion-label>
+      <ion-select  class="custom-select"      
+        okText="Aceptar"
+        cancelText="Cancelar"
+        name="videoCategory"
+        placeHolder="Seleccionar Categoría"        
+        [compareWith]="compareWith"
+        [(ngModel)] = "video.videoCategory"
+        required
+        #videoCategoryInput="ngModel"         
+      >              
+          <ion-select-option *ngFor="let videoCategory of videoCategories" [value]="videoCategory">{{videoCategory.name}}</ion-select-option>
+      </ion-select>      
+    </ion-item>
+
+    <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(videoCategoryInput.invalid && videoCategoryInput.touched)">
+      <ion-text color="danger" *ngIf="videoCategoryInput.errors && videoCategoryInput.errors['required']">La categoría es obligatoria.</ion-text>      
+    </div>
+    
+    <!-- ORDEN -->
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+      <ion-label color="primary" position="floating">
+        Orden
+      </ion-label>
+      <ion-icon name="list-outline" slot="end"></ion-icon>
+      <ion-input
+            name="order"
+            placeholder="Introduzca el orden"
+            type="text" 
+            required
+            [(ngModel)]="video.order"
+            #orderInput="ngModel"
+            inputmode="numeric" 
+            pattern="^\d{1,4}$" 
+            maxlength="4" 
+      >
+      </ion-input>
+    </ion-item>
+
+    <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(orderInput.invalid && orderInput.touched)">
+      <ion-text color="danger" *ngIf="orderInput.errors && orderInput.errors['required']">El orden es obligatorio.</ion-text>
+      <ion-text color="danger" *ngIf="orderInput.errors && orderInput.errors['pattern']">Introduzca solo digitos numericos.</ion-text>
+      <ion-text color="danger" *ngIf="orderInput.errors && orderInput.errors['minlength']">El orden debe tener al menos 1 caracter..</ion-text>
+      <ion-text color="danger" *ngIf="orderInput.errors && orderInput.errors['maxlength']">El orden no puede exceder los 4 caracteres.</ion-text>
+    </div>
+
+
+    <!-- DESCRIPCION -->    
+    <ion-item lines="none">  
+      <ion-label color="primary" position="stacked" class="custom-label-textarea">
+        Descripción
+      </ion-label>
+      <ion-textarea 
+          name="description"
+          placeholder="Escriba aquí la descripción del vídeo ..."           
+          class="custom-textarea focus-style"
+          minlength="0"                     
+          maxlength="1000"          
+          [(ngModel)]="video.description"            
+      >
+      </ion-textarea>
+    </ion-item>
+
+    <div class="spacer"></div>   
+    <div class="spacer"></div>  
+
+    <ion-button 
+          type="submit"           
+          [disabled]="videoForm.invalid"
+          expand="block">
+        {{updating ? 'Actualizar': 'Crear'}} vídeo
+    </ion-button>
+
+  </form>
+</ion-content>

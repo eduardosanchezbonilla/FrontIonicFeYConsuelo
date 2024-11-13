@@ -1,0 +1,36 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="medium" (click)="cancel()">Cancelar</ion-button>
+    </ion-buttons>    
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Información del Video -->
+  <ion-card class="card-information">
+    <ion-card-header>
+      <ion-card-subtitle>{{ video?.videoCategory?.name || 'Sin categoría' }}</ion-card-subtitle>
+      <ion-card-title>{{ video?.name }}</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <p>{{ video?.description || 'No hay descripción disponible.' }}</p>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Contenedor del Video -->
+  <div class="video-container">
+    <ng-container *ngIf="videoLink">
+      <iframe [src]="videoLink" allowfullscreen></iframe>
+    </ng-container>
+  </div>
+
+  <!-- Pie de página con el enlace al canal de YouTube -->
+  <div class="footer-info">
+    <p>Todo el catálogo de videos está disponible en nuestro canal de YouTube</p>
+    <a href="https://youtube.com/@feyconsuelomartos6190?si=VsxYDgTw40p4JGqs" target="_blank">
+      <ion-icon name="logo-youtube" class="youtube-icon"></ion-icon> Visitar Canal
+    </a>
+  </div>
+</ion-content>

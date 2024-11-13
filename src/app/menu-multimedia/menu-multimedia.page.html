@@ -7,15 +7,118 @@
 </ion-header>
 
 <ion-content [fullscreen]="false">
-  <ion-grid>
-    <ion-row>
-      <ion-col size="6" *ngFor="let video of videos">
-        <div class="video-thumbnail" (click)="openModal(video.id)">
-          <img [src]="getThumbnail(video.id)" />
-          <ion-label>{{ video.title }}</ion-label>
-        </div>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
   
+  <div class="spacer-super-small"></div>  
+
+  <ion-refresher slot="fixed" (ionRefresh)="refreshVideos($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-searchbar [(ngModel)]="filter.name" (ionChange)="onSearchTextChanged($event)" placeholder="Buscar"></ion-searchbar>
+
+  
+  <ion-accordion-group #accordionGroup [multiple]="true" [value]="expandVideoCategoryList" (ionChange)="accordionGroupChange($event)">
+
+    <ion-list *ngFor="let videoGroupByCategory of videosGroupByCategory; trackBy: trackByVideoCategoryFn" class="ion-no-padding background-transparent" >
+
+      <ion-accordion *ngIf="(profile=='SUPER_ADMIN' || profile=='ADMIN') || (profile!='SUPER_ADMIN' && profile!='ADMIN' && videoGroupByCategory.category.isPublic)" value="{{ videoGroupByCategory.category.id }}" >
+
+        <!-------------------------------->
+        <!-- Repite para cada categoria -->
+        <!-------------------------------->
+        <ion-item slot="header" >                   
+          <ion-item-divider class="ion-no-padding video-category-header">
+            <ion-avatar slot="start" class="video-category-avatar">
+              <ion-img 
+                [src]="videoGroupByCategory.category.image ? 'data:image/jpeg;base64,' + videoGroupByCategory.category.image : 'data:image/jpeg;base64,' + defaultVideoCategoryImage">
+              </ion-img>              
+            </ion-avatar>
+            <ion-label class="video-category-header-label">              
+              <div class="vide-category-info">
+                <ion-icon 
+                  [name]="videoGroupByCategory.category.isPublic ? 'checkmark-circle' : 'close-circle'" 
+                  [ngClass]="{'published-icon': videoGroupByCategory.category.isPublic, 'unpublished-icon': !videoGroupByCategory.category.isPublic}">
+                </ion-icon>
+                <span class="video-category-name">{{ videoGroupByCategory.category.name }}</span>                      
+              </div>
+            </ion-label>               
+            <div class="video-category-header-buttons" class="video-category-header-div-fab" > 
+              <ion-fab-button *ngIf="profile=='SUPER_ADMIN' || profile=='ADMIN'" fill="clear" color="warning" size="small" (click)="updateVideoCategory($event,videoGroupByCategory.category)" class="video-category-header-fab">
+                <ion-icon name="pencil-outline" class="video-category-header-fab-icon"></ion-icon>        
+              </ion-fab-button>   
+              <ion-fab-button *ngIf="!videoGroupByCategory.videos && (profile=='SUPER_ADMIN' || profile=='ADMIN')" fill="clear" color="warning" size="small" (click)="confirmDeleteVideoCategory($event,videoGroupByCategory.category)" class="video-category-header-fab">
+                <ion-icon name="trash-outline" class="video-category-header-fab-icon"></ion-icon>        
+              </ion-fab-button>                             
+            </div>
+          </ion-item-divider>
+        </ion-item>
+
+        <!---------------------------->
+        <!------ Para cada video ----->
+        <!---------------------------->
+        <ion-list slot="content" class="video-list">
+          <ion-grid class="video-grid">            
+            <ion-row>                           
+              <ion-col size="4" class="column-padding" *ngFor="let video of videoGroupByCategory.videos">
+                <ion-card class="video-card small-card" (click)="viewVideo(video,video.youtubeId)">
+                  <!-- Imagen del Video -->
+                  <ion-img [src]="getThumbnail(video.youtubeId)"></ion-img>
+              
+                  <!-- Botones flotantes para Editar y Eliminar -->
+                  <div *ngIf="profile=='SUPER_ADMIN' || profile=='ADMIN'" class="floating-buttons">
+                    <ion-button color="primary" size="small" (click)="updateVideo(video, $event)">
+                      <ion-icon name="create-outline"></ion-icon>
+                    </ion-button>
+                    <ion-button color="primary" size="small" (click)="confirmDeleteVideo(video, $event)">
+                      <ion-icon name="trash-outline"></ion-icon>
+                    </ion-button>
+                  </div>
+              
+                  <!-- Título del Video -->
+                  <ion-card-header>
+                    <ion-card-title>{{ video.name }}</ion-card-title>
+                  </ion-card-header>
+                </ion-card>
+              </ion-col>
+
+            </ion-row>
+          </ion-grid>
+        </ion-list>
+
+      </ion-accordion>
+    </ion-list>   
+  </ion-accordion-group>  
+
+
+  <!-- separador -->
+  <div class="spacer"></div>  
+  <div class="spacer-small"></div>  
+  <div class="spacer-small"></div>  
+  <div class="spacer-small"></div>     
+  <div class="spacer-super-small"></div>  
+  <div class="spacer-super-small"></div>  
+  <div class="spacer-super-small"></div>  
+ 
+  <!-- botones finales -->    
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button>
+      <ion-icon name="apps-outline"></ion-icon>
+    </ion-fab-button>  
+  
+    <ion-fab-list side="start">
+      <ion-fab-button *ngIf="profile=='SUPER_ADMIN' || profile=='ADMIN'" color="warning" (click)="createVideo()">
+        <ion-icon name="videocam-outline"></ion-icon>         
+      </ion-fab-button>
+      <ion-fab-button *ngIf="profile=='SUPER_ADMIN' || profile=='ADMIN'" color="warning" (click)="createVideoCategory()">
+        <ion-icon name="duplicate-outline"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button color="warning" (click)="expandAll()">
+        <ion-icon name="chevron-expand-outline"></ion-icon>        
+      </ion-fab-button>
+      <ion-fab-button color="warning" (click)="collapseAll()">
+        <ion-icon name="chevron-collapse-outline"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
+   
 </ion-content>
