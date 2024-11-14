@@ -9,6 +9,7 @@ import { AppComponent } from './app.component';
 import { IonicStorageModule } from '@ionic/storage-angular';
 import { NgxsModule } from '@ngxs/store';
 import { Profile } from './shared/components/profile/profile.component';
+import { CalendarModule } from 'ion2-calendar';
 
 @NgModule({
   declarations: [AppComponent ] ,
@@ -18,7 +19,8 @@ import { Profile } from './shared/components/profile/profile.component';
     IonicStorageModule.forRoot(),
     NgxsModule.forRoot(),
     AppRoutingModule,
-    Profile
+    Profile,
+    CalendarModule
   ],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent],

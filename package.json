@@ -40,6 +40,7 @@
     "@ngxs/store": "^3.8.2",
     "capacitor-plugin-permissions": "^1.0.0",
     "firebase": "^10.14.1",
+    "ion2-calendar": "^3.5.0",   
     "ionicons": "^7.0.0",
     "lodash-es": "^4.17.21",
     "rxjs": "~7.5.0",
