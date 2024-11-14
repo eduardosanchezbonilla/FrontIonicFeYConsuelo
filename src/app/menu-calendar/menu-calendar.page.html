@@ -1,0 +1,45 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- Título con estilo personalizado -->
+  <h2 class="fancy-title custom-modal-title">
+    Calendario
+  </h2>
+
+  <!-- Contenedor de calendario con estilo de tarjeta -->
+  <div class="calendar-container">
+    <ion-calendar
+      [(ngModel)]="date"
+      [type]="'string'"
+      [format]="'YYYY-MM-DD'"
+      [options]="calendarOptions"
+      (change)="onDateChange($event)">
+    </ion-calendar>
+  </div>
+
+  <!-- Leyenda -->
+  <div class="calendar-legend">
+    <h3 class="legend-title">Leyenda</h3>
+    <div class="legend-item">
+      <span class="color-box ensayo-general-day"></span> <span>Ensayo General</span>
+    </div>
+    <div class="legend-item">
+      <span class="color-box ensayo-extraordinario-day"></span> <span>Ensayo Extraordinario</span>
+    </div>
+    <div class="legend-item">
+      <span class="color-box ensayo-primeras-cornetas-day"></span> <span>Ensayo 1ª Cornetas</span>
+    </div>
+    <div class="legend-item">
+      <span class="color-box ensayo-armonia-day"></span> <span>Ensayo Armonía</span>
+    </div>
+    <div class="legend-item">
+      <span class="color-box actuacion-day"></span> <span>Actuación</span>
+    </div>    
+  </div>
+</ion-content>
