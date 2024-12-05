@@ -54,20 +54,23 @@
         <div class="div-accordion-padding" slot="content">
           <ion-item-sliding *ngFor="let musician of musicianGroupByVoice.musicians; trackBy: trackByMusicianFn" #musicianSliding>
             <ion-card class="musician-card background-white">
-              <ion-item lines="none">
+              <ion-item lines="none" class="musician-ion-item">
                 <ion-avatar slot="start" class="musician-avatar">                  
                   <ion-img 
                     [src]="musician.image ? 'data:image/jpeg;base64,' + musician.image : 'data:image/jpeg;base64,' + defaultMusicianImage">
                   </ion-img>                              
                 </ion-avatar>
-                <ion-label>
-                  <h2>{{ musician.name }} {{ musician.surname }}</h2>
-                  <p>{{ musician.email }}</p>
+                <ion-label class="musician-card-label">
+                  <p class="musician-name">{{ musician.name }} {{ musician.surname }}</p>                  
+                  <p class="musician-email">{{ musician.email?musician.email:'Sin email'  }}</p>
                 </ion-label>
               </ion-item>
             </ion-card> 
             
             <ion-item-options>
+              <ion-item-option color="calendar-custom" (click)="manageMusicianEvent(musician, musicianSliding)" >
+                <ion-icon color="light" slot="icon-only" name="calendar-outline"></ion-icon>
+              </ion-item-option>   
               <ion-item-option color="tertiary" (click)="manageMusicianInventary(musician, musicianSliding)" >
                 <ion-icon color="light" slot="icon-only" name="shirt-outline"></ion-icon>
               </ion-item-option>   

@@ -33,8 +33,8 @@ const routes: Routes = [
         loadChildren: () => import('../menu-multimedia/menu-multimedia.module').then(m => m.MenuMultimediaPageModule)
       },
       {
-        path: 'menu-calendar',
-        loadChildren: () => import('../menu-calendar/menu-calendar.module').then( m => m.MenuCalendarPageModule)
+        path: 'menu-event',
+        loadChildren: () => import('../menu-event/menu-event.module').then( m => m.MenuEventPageModule)
       },
       {
         path: '',

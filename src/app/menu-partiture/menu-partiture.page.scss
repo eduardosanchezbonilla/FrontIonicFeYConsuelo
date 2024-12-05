@@ -6,7 +6,7 @@
 }
 
 .partiture-group-header {    
-    font-size: 1.12rem; 
+    font-size: 0.92rem; 
     font-weight: bold; 
     display: flex;
     align-items: center;   
@@ -43,8 +43,8 @@
 
 .partiture-group-avatar {
     margin-right: 15px;
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
     border: 1px solid #000000; 
     border-radius: 0 !important;
     background-color: #f7f7f7; 
@@ -52,8 +52,8 @@
 
 ion-avatar img {
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
 }
 
 .partiture-group ion-img {

@@ -1,0 +1,338 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="medium" (click)="cancel()">Cancelar</ion-button>
+    </ion-buttons>    
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content class="ion-padding">
+
+  <form (ngSubmit)="confirm()" #eventForm="ngForm">
+  
+    <!---------------------->
+    <!------ DATOS --------->
+    <!---------------------->    
+    <h2 *ngIf="type=='REHEARSAL'" class="fancy-title custom-modal-title">
+      Datos Ensayo
+    </h2>
+
+    <h2 *ngIf="type=='PERFORMANCE'" class="fancy-title custom-modal-title">
+      Datos Actuación
+    </h2>
+
+    <div class="spacer-small"></div>   
+
+    <!-- TITLE -->
+    <div *ngIf="type=='PERFORMANCE'" >
+      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+        <ion-label color="primary" position="floating">
+            Título
+        </ion-label>
+        <ion-icon name="document-text-outline" slot="end" class="custom-icon-2"></ion-icon>      
+        <ion-input                                                        
+              autocomplete="title"       
+              minlength="1"                     
+              maxlength="100"
+              name="title"
+              placeholder="Introduzca el titulo de la actuación"
+              type="text"
+              required="true"            
+              [(ngModel)]="event.title"                                                 
+              #titleInput="ngModel"            
+        >
+        </ion-input>
+      </ion-item>
+
+      <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(titleInput.invalid && titleInput.touched)">
+        <ion-text color="danger" *ngIf="titleInput.errors && titleInput.errors['required']">El título es obligatorio.</ion-text>
+        <ion-text color="danger" *ngIf="titleInput.errors && titleInput.errors['minlength']">El título debe tener al menos 1 caracter..</ion-text>
+        <ion-text color="danger" *ngIf="titleInput.errors && titleInput.errors['maxlength']">El título no puede exceder los 100 caracteres.</ion-text>
+      </div>
+    </div>
+
+    <!-- TIPO DE ACTUACION -->
+    <div *ngIf="type=='PERFORMANCE'" >
+      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item">
+        <ion-label color="primary" class="custom-label">Tipo de actuación</ion-label>
+        <ion-select  class="custom-select-2" 
+          name="performanceType"
+          placeholder="Seleccionar"
+          [(ngModel)]="event.performanceType"
+          okText="Aceptar"
+          cancelText="Cancelar"      
+        >
+          <ion-select-option value="CONCIERTO" checked>Concierto</ion-select-option>
+          <ion-select-option value="DESFILE_PROCESIONAL">Desfile Procesional</ion-select-option>        
+        </ion-select>
+      </ion-item>
+    </div>
+
+    <!-- FECHA -->
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item" >
+      <ion-label color="primary" class="custom-label">Fecha</ion-label>
+
+      <ion-datetime-button slot="end" datetime="datetime-event" color="primary" class="custom-datetime-button"></ion-datetime-button>      
+
+      <ion-icon name="calendar-outline" slot="end" class="custom-icon"></ion-icon>
+
+      <ion-modal #modalDate [keepContentsMounted]="true"> 
+        <ng-template>
+          <ion-datetime 
+              id="datetime-event" 
+              name="datetime-event" 
+              presentation="date"
+              [(ngModel)]="event.date"
+              [ngModelOptions]="{standalone: true}"              
+              [showDefaultButtons]="true"
+              [readonly]="updating"
+              required
+          >
+          </ion-datetime>
+        </ng-template>
+      </ion-modal>              
+    </ion-item>
+
+    <!-- HORA DE INICIO -->
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item">
+      <ion-label color="primary" class="custom-label">Hora inicio</ion-label>
+
+      <ion-datetime-button slot="end" datetime="time-start-event" color="primary" class="custom-datetime-button"></ion-datetime-button>      
+
+      <ion-icon name="time-outline" slot="end" class="custom-icon"></ion-icon>
+
+      <ion-modal #modalTimeStart [keepContentsMounted]="true">
+        <ng-template>
+          <ion-datetime 
+            id="time-start-event" 
+            name="time-start-event" 
+            presentation="time"
+            [(ngModel)]="event.startTime"
+            [ngModelOptions]="{standalone: true}"              
+            [showDefaultButtons]="true"
+            minuteValues="0,10,20,30,40,50"
+            doneText="Aceptar"
+            cancelText="Cancelar"
+          >
+          </ion-datetime>
+        </ng-template>
+      </ion-modal>              
+    </ion-item>
+
+    <!-- HORA DE FIN -->
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item">
+      <ion-label color="primary" class="custom-label">Hora fin</ion-label>
+
+      <ion-datetime-button slot="end" datetime="time-end-event" color="primary" class="custom-datetime-button"></ion-datetime-button>      
+
+      <ion-icon name="time-outline" slot="end" class="custom-icon"></ion-icon>
+
+      <ion-modal #modalTimeEnd [keepContentsMounted]="true">
+        <ng-template>
+          <ion-datetime 
+            id="time-end-event" 
+            name="time-end-event" 
+            presentation="time"
+            [(ngModel)]="event.endTime"
+            [ngModelOptions]="{standalone: true}"              
+            [showDefaultButtons]="true"
+            minuteValues="0,10,20,30,40,50"
+            doneText="Aceptar"
+            cancelText="Cancelar"
+          >
+          </ion-datetime>
+        </ng-template>
+      </ion-modal>              
+    </ion-item>  
+
+    <!-- DESCRIPCION -->    
+    <ion-item lines="none">  
+      <ion-label color="primary" position="stacked" class="custom-label-textarea">
+        Descripción
+      </ion-label>
+      <ion-textarea 
+          name="description"
+          placeholder="Escriba aquí la descripción ..."           
+          class="custom-textarea focus-style"
+          minlength="1"                     
+          maxlength="1000"
+          required="true"
+          [(ngModel)]="event.description"            
+      >
+      </ion-textarea>
+    </ion-item>
+
+
+    <!-- VOZ -->
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item">
+      <ion-label color="primary" class="custom-label-voice">Voces</ion-label>
+      <ion-select  class="custom-select"      
+        okText="Aceptar"
+        cancelText="Cancelar"
+        name="voice"
+        placeHolder="Seleccionar Voces"        
+        [compareWith]="compareWith"
+        [(ngModel)] = "event.voiceList"
+        required
+        multiple
+        #voiceInput="ngModel"         
+      >              
+          <ion-select-option *ngFor="let voice of voices" [value]="voice">{{voice.name}}</ion-select-option>
+      </ion-select>      
+    </ion-item>
+
+    <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(voiceInput.invalid && voiceInput.touched)">
+      <ion-text color="danger" *ngIf="voiceInput.errors && voiceInput.errors['required']">La voz es obligatoria.</ion-text>      
+    </div>
+
+    <!-- PERIODO DE REPETICION PARA ENSAYOS -->
+    <div *ngIf="type=='REHEARSAL' && !updating" >
+      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item">
+        <ion-label color="primary" class="custom-label">Periodo de Repeticion</ion-label>
+        <ion-select
+          name="repetitionPeriod"
+          placeholder="Seleccionar"
+          [(ngModel)]="event.repetitionPeriod"
+          okText="Aceptar"
+          cancelText="Cancelar"      
+        >
+          <ion-select-option value="" checked>Ninguno</ion-select-option>
+          <ion-select-option value="SEMANAL">Semanal</ion-select-option>        
+        </ion-select>
+      </ion-item>
+    </div>
+
+    <!-- FECHA FINAL -->
+    <div *ngIf="event.repetitionPeriod === 'SEMANAL'">
+      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item" >
+        <ion-label color="primary" class="custom-label">Fecha final</ion-label>
+
+        <ion-datetime-button slot="end" datetime="datetime-end-event" color="primary" class="custom-datetime-button"></ion-datetime-button>      
+
+        <ion-icon name="calendar-outline" slot="end" class="custom-icon"></ion-icon>
+
+        <ion-modal #modalDate [keepContentsMounted]="true">
+          <ng-template>
+            <ion-datetime 
+                id="datetime-end-event" 
+                name="datetime-end-event" 
+                presentation="date"
+                [(ngModel)]="event.endDate"
+                [ngModelOptions]="{standalone: true}"              
+                [showDefaultButtons]="true"           
+            >
+            </ion-datetime>
+          </ng-template>
+        </ion-modal>              
+      </ion-item>
+    </div>
+
+    <!-- LOCATION -->
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+      <ion-label color="primary" position="floating">
+          Localización
+      </ion-label>
+      <ion-icon name="location-outline" slot="end" class="custom-icon"></ion-icon>      
+      <ion-input                                                        
+            autocomplete="location"                             
+            maxlength="200"
+            name="location"
+            placeholder="Introduzca la localización del evento"
+            type="text"            
+            [(ngModel)]="event.location"                                                 
+            #locationInput="ngModel"            
+      >
+      </ion-input>
+    </ion-item>
+
+    <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(locationInput.invalid && locationInput.touched)">
+      <ion-text color="danger" *ngIf="locationInput.errors && locationInput.errors['maxlength']">La localización no puede exceder los 200 caracteres.</ion-text>
+    </div>
+
+    <!-- MUNICIPIO -->
+    <div *ngIf="type=='PERFORMANCE'" >
+      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+        <ion-label color="primary" position="floating">
+            Municipio
+        </ion-label>
+        <ion-icon name="earth-outline" slot="end" class="custom-icon-2"></ion-icon>      
+        <ion-input                                                        
+              autocomplete="municipality"       
+              minlength="1"                     
+              maxlength="100"
+              name="municipality"
+              placeholder="Introduzca el municipio de la actuación"
+              type="text"
+              required="true"            
+              [(ngModel)]="event.municipality"                                                 
+              #municipalityInput="ngModel"            
+        >
+        </ion-input>
+      </ion-item>
+
+      <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(municipalityInput.invalid && municipalityInput.touched)">
+        <ion-text color="danger" *ngIf="municipalityInput.errors && municipalityInput.errors['required']">El municipio es obligatorio.</ion-text>
+        <ion-text color="danger" *ngIf="municipalityInput.errors && municipalityInput.errors['minlength']">El municipio debe tener al menos 1 caracter..</ion-text>
+        <ion-text color="danger" *ngIf="municipalityInput.errors && municipalityInput.errors['maxlength']">El municipio no puede exceder los 100 caracteres.</ion-text>
+      </div>
+    </div>
+
+    <!-- PROVINCIA -->
+    <div *ngIf="type=='PERFORMANCE'" >
+      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+        <ion-label color="primary" position="floating">
+            Provincia
+        </ion-label>
+        <ion-icon name="earth-outline" slot="end" class="custom-icon-2"></ion-icon>      
+        <ion-input                                                        
+              autocomplete="province"       
+              minlength="1"                     
+              maxlength="100"
+              name="province"
+              placeholder="Introduzca la provincia de la actuación"
+              type="text"
+              required="true"            
+              [(ngModel)]="event.province"                                                 
+              #provinceInput="ngModel"            
+        >
+        </ion-input>
+      </ion-item>
+
+      <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(provinceInput.invalid && provinceInput.touched)">
+        <ion-text color="danger" *ngIf="provinceInput.errors && provinceInput.errors['required']">La provincia es obligatorio.</ion-text>
+        <ion-text color="danger" *ngIf="provinceInput.errors && provinceInput.errors['minlength']">La provincia debe tener al menos 1 caracter..</ion-text>
+        <ion-text color="danger" *ngIf="provinceInput.errors && provinceInput.errors['maxlength']">La provincia no puede exceder los 100 caracteres.</ion-text>
+      </div>
+    </div>
+
+    <!-- IMAGEN -->
+    <div *ngIf="type=='PERFORMANCE'" >
+      <ion-item class="ion-margin-start ion-no-padding background-transparent image-selector custom-item">
+        <ion-label color="primary"  class="image-label">
+          Foto
+          <img *ngIf="showImage" [src]="showImage" alt="Vista previa de la imagen" class="preview-image"/>
+        </ion-label>
+              
+        <ion-button  (click)="selectImage()" class="custom-ion-button-image">
+          <ion-icon name="image-outline"></ion-icon>
+        </ion-button>
+            
+        <ion-button color="warning" (click)="clearImage()" *ngIf="showImage" class="custom-ion-button-image">
+          <ion-icon name="trash-outline"></ion-icon>
+        </ion-button>      
+      </ion-item>
+    </div>
+
+    <div class="spacer"></div>   
+    <div class="spacer"></div>  
+
+    <ion-button 
+          type="submit"           
+          [disabled]="eventForm.invalid"
+          expand="block">
+        {{updating ? 'Actualizar': 'Crear'}} evento
+    </ion-button>
+  </form>
+
+</ion-content>

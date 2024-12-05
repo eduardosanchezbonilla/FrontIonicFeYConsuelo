@@ -1,6 +1,5 @@
-.voice-header {    
-    //font-size: 18px; 
-    font-size: 1.12rem; 
+.voice-header {        
+    font-size: 0.92rem; 
     font-weight: bold; 
     display: flex;
     align-items: center;   
@@ -36,8 +35,8 @@
   
 .voice-avatar {
     margin-right: 15px;
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
     border: 1px solid #000000; 
     border-radius: 0 !important;
     background-color: #f7f7f7; 
@@ -51,36 +50,59 @@
 
 ion-avatar img {
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
 }
 
 .musician-card {
-    width: calc(100% - 10px);
+    width: calc(100% - 8px);
     max-height: 70px; 
     margin: 5px;    
+    margin-top: 3px;    
+    margin-bottom: 2px;    
+    margin-left: 3px;        
+}
+
+.musician-ion-item {    
+    --min-height: 38px !important;        
+}
+
+.musician-card-label {
+    padding-top: 1px;
+    padding-bottom: 0px;
+    margin-top:3px;
+    margin-bottom:3px;
 }
 
 .musician-avatar {
-    margin-top:5px;
-    margin-left: -4px;
+    width: 30px;
+    height: 30px;
+    margin-top:0px;
+    margin-bottom:0px;
+    margin-left: -4px; 
 }
   
-ion-item h2 {
-    font-size: 16px;
-    margin: 0;
+.musician-name {
+    font-size: 0.9rem !important;
+    margin: 0  !important;
+    color: #000000  !important;
 }
   
-ion-item p {
-    font-size: 12px;
+.musician-email {
+    font-size: 0.80rem;
     color: gray;
     margin: 0;
+    margin-top:-2px
 }
   
 ion-item-options {
-    padding-top: 5px;
-    padding-bottom: 5px;
+    padding-top: 3px;
+    padding-bottom: 2px;
     margin-right: 5px;    
+}
+
+ion-item-option {
+    width: 50px;
 }
 
 ion-item-option.rounded-right {
@@ -105,3 +127,9 @@ ion-accordion ion-item[slot="header"] {
     padding-right: 5px;
 }
 
+::ng-deep ion-item-option.ion-color-calendar-custom {
+    --ion-color-base: #42A5F5; /* Verde azulado */    
+    --ion-color-contrast: #ffffff; /* Blanco para el ícono */
+    --ion-color-shade: #1E88E5; /* Sombra */
+    --ion-color-tint: #64B5F6; /* Tono claro */
+}

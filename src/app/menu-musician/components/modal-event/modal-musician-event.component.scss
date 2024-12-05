@@ -1,0 +1,125 @@
+.custom-modal-title {
+    margin-top:5px;
+    margin-bottom:10px;
+    color: #B22222;   
+    text-shadow: 1px 1px 2px #FFFFFF;  
+}
+
+.musician-card {
+    width: calc(100%);
+    max-height: 70px; 
+    margin: 0px;    
+    margin-top:20px;
+    margin-bottom:10px;
+}
+
+.musician-avatar {
+    margin-top:5px;
+    margin-left: -4px;
+}
+  
+ion-item h2 {    
+    font-size: 1rem;
+    margin: 0;
+}
+  
+ion-item p {    
+    font-size: 0.75rem;
+    color: gray;
+    margin: 0;
+}
+
+.calendar-container {   
+    margin-top:10px;
+    margin-bottom:10px;
+    padding: 0px;
+    border-radius: 5px; // Bordes redondeados
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Sombra suave para efecto de elevación
+    background-color: #ffffff; // Fondo blanco para la tarjeta
+    border: 1px solid #e0e0e0; // Borde sutil alrededor de la tarjeta
+}
+
+::ng-deep ion-calendar > div > ion-button {
+    border-radius: 8px !important; // Bordes redondeados    
+    font-weight: bold !important; // Texto en negrita    
+    color: var(--ion-color-primary) !important;
+}
+
+::ng-deep ion-calendar {
+    padding-top: 15px !important; 
+    padding-bottom: 10px !important; 
+    padding-left: 15px !important; 
+    padding-right: 15px !important; 
+}
+
+::ng-deep ion-calendar > div  {
+    background-color: #F0F4F8; // Fondo sutil del contenedor general del calendario
+    border-radius: 12px;
+    padding: 10px;
+}
+
+::ng-deep ion-calendar > ion-calendar-week > ion-toolbar {
+    //background-color: var(--ion-color-primary) !important;
+    color: var(--ion-color-primary) !important;
+    --min-height: 35px !important;
+}
+
+::ng-deep ion-calendar > ion-calendar-week > ion-toolbar > div {
+    --min-height: 35px !important;
+}
+
+::ng-deep ion-calendar > ion-calendar-week > ion-toolbar > ul {
+    padding-top:15px !important;
+    padding-bottom:10px !important;
+}
+
+::ng-deep ion-calendar > ion-calendar-week > ion-toolbar > ul > li {    
+    color: var(--ion-color-primary) !important;    
+}
+
+::ng-deep .days-btn small{
+    bottom: -13px !important;
+}
+
+::ng-deep .days{
+    margin-bottom:15px !important;
+}
+
+::ng-deep .ensayo-general-day {
+    background-color: #FFCDD2 !important; /* Rosa claro */    
+    border: 1px solid rgba(0, 0, 0, 0.15); /* Borde sutil con color gris translúcido */
+}  
+
+::ng-deep .actuacion-day {
+    background-color: #CD5C5C !important; /* Granate profundo */    
+    border: 1px solid rgba(0, 0, 0, 0.15); /* Borde sutil con color gris translúcido */
+}
+
+/* Ensayo con asistencia */
+::ng-deep .ensayo-general-day-ok {
+    background-color: #C8E6C9 !important; /* Verde claro suave, armoniza con el rosa claro */
+    border: 1px solid rgba(0, 0, 0, 0.15); /* Mantén el borde gris translúcido */
+}
+
+/* Actuación con asistencia */
+::ng-deep .actuacion-day-ok {
+    background-color: #66BB6A !important; /* Verde profundo que armoniza con el granate */
+    border: 1px solid rgba(0, 0, 0, 0.15); /* Mantén el borde gris translúcido */
+}
+
+
+::ng-deep .actuacion-day-ok-ko {
+    background: linear-gradient(
+        90deg, /* Ángulo de la mezcla */
+        #CD5C5C 50%, /* Granate profundo cubre el 50% */
+        #66BB6A 50% /* Verde profundo cubre el otro 50% */
+    );
+    color: #FFF; /* Texto en blanco para mejor contraste */
+    border-radius: 4px; /* Bordes redondeados */
+    border: 1px solid rgba(0, 0, 0, 0.15); /* Borde gris translúcido */
+}
+
+::ng-deep .custom-alert-width .alert-wrapper {
+    width: 90% !important; /* Ajusta el ancho según lo necesites */
+    max-width: 90% !important;       
+}

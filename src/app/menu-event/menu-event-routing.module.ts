@@ -1,12 +1,11 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-
-import { MenuCalendarPage } from './menu-calendar.page';
+import { MenuEventPage } from './menu-event.page';
 
 const routes: Routes = [
   {
     path: '',
-    component: MenuCalendarPage
+    component: MenuEventPage
   }
 ];
 
@@ -14,4 +13,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class MenuCalendarPageRoutingModule {}
+export class MenuEventPageRoutingModule {}

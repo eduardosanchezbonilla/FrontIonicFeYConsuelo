@@ -22,6 +22,7 @@ import { ModalPartitureComponent } from './components/modal-partiture/modal-part
 import {  ModalMusicianInventoryComponent } from './components/modal-inventory/modal-musician-inventory.component';
 import { StorageService } from '../services/storage/storage.service';
 import { UserRequest } from '../models/user/user-request';
+import { ModalMusicianEventComponent } from './components/modal-event/modal-musician-event.component';
 
 @Component({
   selector: 'app-menu-musician',
@@ -548,4 +549,24 @@ export class MenuMusicianPage implements OnDestroy {
       }
     })
   }  
+
+  /*******************************************************/
+  /*********************** EVENT *************************/
+  /*******************************************************/
+  async manageMusicianEvent(musician:Musician, musicianSliding: IonItemSliding){   
+    // cerramos el sliding 
+    musicianSliding.close();
+
+    // mostramos spinner
+    await this.loadingService.presentLoading('Loading...');   
+    
+    // abrimos modal
+    const modal = await this.modalController.create({
+      component: ModalMusicianEventComponent,
+      componentProps: {
+        musician
+      }
+    });
+    modal.present();
+  }
 }

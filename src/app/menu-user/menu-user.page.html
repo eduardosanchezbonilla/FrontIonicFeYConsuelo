@@ -46,15 +46,15 @@
         <div class="div-accordion-padding" slot="content">
           <ion-item-sliding *ngFor="let user of userGroupByRole.users; trackBy: trackByUserFn" #userSliding>
             <ion-card class="user-card background-white">
-              <ion-item lines="none">
+              <ion-item lines="none" class="user-ion-item">
                 <ion-avatar slot="start" class="user-avatar">                  
                   <ion-img 
                     [src]="user.userDetail.image ? 'data:image/jpeg;base64,' + user.userDetail.image : 'data:image/jpeg;base64,' + defaultUserImage">
                   </ion-img>                              
                 </ion-avatar>
-                <ion-label>
-                  <h2>{{ user.username }}    ({{ user.userDetail.name }} {{ user.userDetail.surname }})</h2>
-                  <p>{{ user.userDetail.email }}</p>
+                <ion-label class="user-card-label">
+                  <p class="user-name">{{ user.username }}    ({{ user.userDetail.name }} {{ user.userDetail.surname }})</p>
+                  <p class="user-email">{{ user.userDetail.email?user.userDetail.email:'Sin email'  }}</p>
                 </ion-label>
               </ion-item>
             </ion-card> 

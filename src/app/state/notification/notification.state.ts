@@ -123,9 +123,6 @@ export class NotificationState {
     return this.notificationService.getNotificationUserTokens()
       .then(
           (notificationUserTokenResponseList:NotificationUserTokenResponseDto[]) => {
-            //console.log("XXXXXXXXXXXXx");
-            //console.log(notificationUserTokenResponseList);
-            //console.log("YYYYYYYYYYYYYYYYY");
             patchState({
               finishToken: true,
               success: true,

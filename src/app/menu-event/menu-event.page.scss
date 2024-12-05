@@ -1,0 +1,239 @@
+.custom-modal-title {
+    margin-top:16px !important;
+    margin-bottom:15px;  
+}
+
+.calendar-title {
+    margin: 16px 24px;
+    text-align: center;
+  
+    h2 {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: var(--ion-color-primary);
+    }
+}
+  
+.calendar-container {
+    margin: 16px 16px;
+    margin-top:10px;
+    margin-bottom:10px;
+    padding: 0px;
+    border-radius: 5px; // Bordes redondeados
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Sombra suave para efecto de elevación
+    background-color: #ffffff; // Fondo blanco para la tarjeta
+    border: 1px solid #e0e0e0; // Borde sutil alrededor de la tarjeta
+}
+
+::ng-deep ion-calendar > div > ion-button {
+    border-radius: 8px !important; // Bordes redondeados    
+    font-weight: bold !important; // Texto en negrita    
+    color: var(--ion-color-primary) !important;
+}
+
+::ng-deep ion-calendar {
+    padding-top: 15px !important; 
+    padding-bottom: 10px !important; 
+    padding-left: 15px !important; 
+    padding-right: 15px !important; 
+}
+
+::ng-deep ion-calendar > div  {
+    background-color: #F0F4F8; // Fondo sutil del contenedor general del calendario
+    border-radius: 12px;
+    padding: 10px;
+}
+
+::ng-deep ion-calendar > ion-calendar-week > ion-toolbar {
+    //background-color: var(--ion-color-primary) !important;
+    color: var(--ion-color-primary) !important;
+    --min-height: 35px !important;
+}
+
+::ng-deep ion-calendar > ion-calendar-week > ion-toolbar > div {
+    --min-height: 35px !important;
+}
+
+::ng-deep ion-calendar > ion-calendar-week > ion-toolbar > ul {
+    padding-top:15px !important;
+    padding-bottom:10px !important;
+}
+
+::ng-deep ion-calendar > ion-calendar-week > ion-toolbar > ul > li {    
+    color: var(--ion-color-primary) !important;    
+}
+
+.calendar-legend {   
+    display: flex;
+    flex-wrap: wrap;  // Permite que los elementos se dividan en varias filas
+    gap: 8px; /* Espacio entre cada elemento de la leyenda */
+
+    background: rgba(255, 255, 255, 0.4); /* Fondo blanco semitransparente */
+    border-radius: 5px; /* Bordes redondeados */
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15); /* Sombra suave */
+    padding:24px;
+    margin:16px;
+    padding-top:18px;
+    padding-bottom:14px;
+    margin-top: 15px;    
+    margin-bottom: 20px;
+}
+
+.legend-title {
+    font-size: 1.2em;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px #FFFFFF;
+    justify-content: space-between;
+    color: #B22222;
+    margin-top: 0px;
+    margin-bottom: 14px;
+    width: 100%;  // Asegura que el título ocupe toda la fila superior
+}
+  
+.legend-item {
+    display: flex;
+    align-items: center;
+    width: 48%; // Cada item ocupa aproximadamente la mitad del contenedor
+    margin-bottom:6px;
+    font-size: 0.9rem;
+} 
+
+::ng-deep .days-btn small{
+    bottom: -13px !important;
+}
+
+::ng-deep .days{
+    margin-bottom:15px !important;
+}
+
+
+/* Estilos específicos para cada tipo de ensayo */
+
+.color-box {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    margin-right: 8px;
+    border: 1px solid;    
+}
+
+
+/*::ng-deep .ensayo-extraordinario-day {
+    background-color: #C8E6C9 !important; 
+    border: 1px solid rgba(0, 0, 0, 0.15);
+}
+  
+::ng-deep .ensayo-primeras-cornetas-day {
+    background-color: #BBDEFB !important; 
+    border: 1px solid rgba(0, 0, 0, 0.15);
+}
+  
+::ng-deep .ensayo-armonia-day {
+    background-color: #FFF9C4 !important; 
+    border: 1px solid rgba(0, 0, 0, 0.15);
+}*/
+
+::ng-deep .ensayo-general-day {
+    background-color: #FFCDD2 !important; /* Rosa claro */    
+    border: 1px solid rgba(0, 0, 0, 0.15); /* Borde sutil con color gris translúcido */
+}  
+
+::ng-deep .actuacion-day {
+    background-color: #CD5C5C !important; /* Granate profundo */    
+    border: 1px solid rgba(0, 0, 0, 0.15); /* Borde sutil con color gris translúcido */
+}
+
+/* Ensayo con asistencia */
+::ng-deep .ensayo-general-day-ok {
+    background-color: #C8E6C9 !important; /* Verde claro suave, armoniza con el rosa claro */
+    border: 1px solid rgba(0, 0, 0, 0.15); /* Mantén el borde gris translúcido */
+}
+
+/* Actuación con asistencia */
+::ng-deep .actuacion-day-ok {
+    background-color: #66BB6A !important; /* Verde profundo que armoniza con el granate */
+    border: 1px solid rgba(0, 0, 0, 0.15); /* Mantén el borde gris translúcido */
+}
+
+
+::ng-deep .actuacion-day-ok-ko {
+    background: linear-gradient(
+        90deg, /* Ángulo de la mezcla */
+        #CD5C5C 50%, /* Granate profundo cubre el 50% */
+        #66BB6A 50% /* Verde profundo cubre el otro 50% */
+    );
+    color: #FFF; /* Texto en blanco para mejor contraste */
+    border-radius: 4px; /* Bordes redondeados */
+    border: 1px solid rgba(0, 0, 0, 0.15); /* Borde gris translúcido */
+}
+
+
+  
+/* Estilo para días con múltiples eventos */
+  
+/*::ng-deep .multiple-events-day {
+    background: repeating-linear-gradient(
+      45deg,
+      #FFCDD2,
+      #FFCDD2 10px,
+      #C8E6C9 10px,
+      #C8E6C9 20px,
+      #BBDEFB 20px,
+      #BBDEFB 30px
+    );
+    color: #333;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.15); 
+}*/
+
+
+.buttons-fab {
+    width: 50px;
+    height: 45px;
+    border-radius: 0%; /* Mantiene la forma circular */
+    --border-radius: 8px !important;
+}
+  
+.fab-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+  
+.fab-content ion-icon {
+    font-size: 1.4em; /* Ajusta el tamaño del icono */
+}
+  
+.fab-content span {
+    font-size: 0.6em; /* Tamaño del texto */
+    margin-top: 4px; /* Espacio entre el icono y el texto */
+    //color: #ffffff;
+}
+
+.fab-button-icon {
+    margin-top: 1px;
+}
+
+/* Estilos para el contenedor del filtro */
+.filter-container {
+    padding: 0px 0px;  /* Espaciado alrededor del filtro */
+    background-color: #FFFFFF; /* Fondo suave */
+    border-bottom: 1px solid #e0e0e0; /* Línea separadora debajo */
+    margin-bottom: 15px;
+    margin-left:16px;
+    margin-right:16px;
+    border-radius: 5px; // Bordes redondeados
+}
+
+::ng-deep .custom-alert-width .alert-wrapper {
+    width: 90% !important; /* Ajusta el ancho según lo necesites */
+    max-width: 90% !important;     
+    //border-radius: 12px !important; /* Opcional: bordes redondeados */
+}
+
+::ng-deep .mark-selected {
+    background-color: transparent !important; /* Elimina el color de fondo */
+    color: inherit !important; /* Mantén el color de texto original */
+    border: none !important; /* Elimina cualquier borde */
+}

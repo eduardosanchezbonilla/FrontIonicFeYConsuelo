@@ -1,0 +1,59 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="medium" (click)="cancel()">Cancelar</ion-button>
+    </ion-buttons>    
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form (ngSubmit)="confirm()" #eventForm="ngForm">    
+
+    <!---------------------------------->
+    <!------ CALENDARIO EVENTOS -------->
+    <!---------------------------------->
+    <h2 class="fancy-title custom-modal-title">
+      Eventos Musico
+    </h2>
+
+    <ion-card class="musician-card background-white">
+      <ion-item lines="none">
+        <ion-avatar slot="start" class="musician-avatar">                  
+          <ion-img 
+            [src]="showImage">
+          </ion-img> 
+        </ion-avatar>
+        <ion-label>
+          <h2>{{ musician.name }} {{ musician.surname }}</h2>
+          <p>{{ musician.voice.name }}</p>          
+        </ion-label>
+      </ion-item>
+    </ion-card> 
+
+    <div class="spacer-super-small"></div>  
+
+    <!-- Contenedor de calendario con estilo de tarjeta -->
+    <div class="calendar-container">
+      <ion-calendar
+        [(ngModel)]="selectedDate"
+        [ngModelOptions]="{standalone: true}"
+        [type]="'string'"
+        [format]="'YYYY-MM-DD'"
+        [options]="calendarOptions"
+        (change)="onDateChange($event)"
+        (monthChange)="onMonthChange($event)"
+      >
+      </ion-calendar>
+    </div>
+  
+    <div class="spacer"></div>  
+
+    <ion-button 
+          type="submit"           
+          [disabled]="eventForm.invalid"
+          expand="block">
+          Volver
+    </ion-button>
+
+  </form>
+</ion-content>

@@ -176,7 +176,6 @@ export class MenuMultimediaPage  implements OnDestroy {
     const {data, role} = await modal.onWillDismiss();
 
     if(role=='confirm'){     
-      console.log(data) 
       await this.loadingService.presentLoading('Loading...');    
       data.videoCategoryId = data.videoCategory.id;
       
@@ -184,7 +183,6 @@ export class MenuMultimediaPage  implements OnDestroy {
         .subscribe({
           next: async ()=> {
             const success = this.store.selectSnapshot(VideoState.success);
-            console.log(success);
             if(success){
               this.toast.presentToast("Video creado correctamente");            
               // cuando insertamos siempre expandimos

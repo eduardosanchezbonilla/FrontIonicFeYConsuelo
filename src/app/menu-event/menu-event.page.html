@@ -1,0 +1,88 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="false">
+
+  <ion-refresher slot="fixed" (ionRefresh)="refreshEvents($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- Título con estilo personalizado -->
+  <h2 class="fancy-title custom-modal-title">
+    Calendario de eventos
+  </h2>
+
+  <!-- Selector de filtro justo debajo del título -->
+  <div class="filter-container">
+    <ion-segment [(ngModel)]="selectedSegment" (ionChange)="onSegmentChanged($event)" value="calendar">
+      <ion-segment-button value="calendar">
+        <ion-label>Calendario</ion-label>
+      </ion-segment-button>
+
+      <ion-segment-button value="performance">
+        <ion-label>Actuaciones</ion-label>
+      </ion-segment-button>          
+    </ion-segment>
+  </div>
+
+  <!-- Contenedor de calendario con estilo de tarjeta -->
+  <div class="calendar-container">
+    <ion-calendar
+      [(ngModel)]="selectedDate"
+      [type]="'string'"
+      [format]="'YYYY-MM-DD'"
+      [options]="calendarOptions"
+      (change)="onDateChange($event)"
+      (monthChange)="onMonthChange($event)"
+    >
+    </ion-calendar>
+  </div>
+
+  <!-- Leyenda -->
+  <!--<div class="calendar-legend">
+    <h3 class="legend-title">Leyenda</h3>
+    <div class="legend-item">
+      <span class="color-box ensayo-general-day"></span> <span>Ensayo Ko</span>
+    </div>   
+    <div class="legend-item">
+      <span class="color-box actuacion-day"></span> <span>Actuación Ko</span>
+    </div>    
+    <div class="legend-item">
+      <span class="color-box ensayo-general-day-ok"></span> <span>Ensayo Ok</span>
+    </div>   
+    <div class="legend-item">
+      <span class="color-box actuacion-day-ok"></span> <span>Actuación Ok</span>
+    </div>    
+  </div>-->
+
+  <!-- Botones finales -->    
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end" *ngIf="profile=='SUPER_ADMIN' || profile=='ADMIN'">
+    <ion-fab-button>
+      <div class="fab-content">
+        <ion-icon name="apps-outline"></ion-icon>    
+      </div>
+    </ion-fab-button>  
+  
+    <ion-fab-list side="start">
+      <ion-fab-button class="buttons-fab" *ngIf="profile=='SUPER_ADMIN' || profile=='ADMIN'" color="warning" (click)="createUpdateEvent('REHEARSAL',null, null)">
+        <div class="fab-content">
+          <ion-icon name="duplicate-outline" class="fab-button-icon"></ion-icon>
+          <span>Ensayo</span>
+        </div>
+      </ion-fab-button>
+
+      <ion-fab-button class="buttons-fab" *ngIf="profile=='SUPER_ADMIN' || profile=='ADMIN'" color="warning" (click)="createUpdateEvent('PERFORMANCE', null, null)">
+        <div class="fab-content">
+          <ion-icon name="duplicate-outline" class="fab-button-icon"></ion-icon>
+          <span>Actuación</span>
+        </div>
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
+  
+</ion-content>

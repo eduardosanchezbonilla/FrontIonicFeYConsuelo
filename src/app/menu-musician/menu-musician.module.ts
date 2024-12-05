@@ -17,6 +17,12 @@ import { UserPartitureGroupState } from '../state/user-partiture-group/user-part
 import { ModalMusicianInventoryComponent } from './components/modal-inventory/modal-musician-inventory.component';
 import { MusicianInventoryState } from '../state/musician-inventory/musician-inventory.state';
 import { MusicianInventoryService } from '../services/musician-inventory/musician-inventory.service';
+import { ModalMusicianEventComponent } from './components/modal-event/modal-musician-event.component';
+import { MusicianEventService } from '../services/musician-event/musician-event.service';
+import { MusicianEventState } from '../state/musicien-event/musician-event.state';
+import { CalendarModule } from 'ion2-calendar';
+import { EventState } from '../state/event/event.state';
+import { EventService } from '../services/event/event.service';
 
 @NgModule({
   imports: [
@@ -24,23 +30,29 @@ import { MusicianInventoryService } from '../services/musician-inventory/musicia
     CommonModule,
     FormsModule,
     MenuMusicianPageRoutingModule,
+    CalendarModule,
     NgxsModule.forFeature([MusicianState]),
     NgxsModule.forFeature([VoiceState]),
     NgxsModule.forFeature([UserPartitureGroupState]),
-    NgxsModule.forFeature([MusicianInventoryState])
+    NgxsModule.forFeature([MusicianInventoryState]),
+    NgxsModule.forFeature([MusicianEventState]),
+    NgxsModule.forFeature([EventState]),
   ],  
   declarations: [
     MenuMusicianPage,
     ModalMusicianComponent,
     ModalVoiceComponent,
     ModalPartitureComponent,
-    ModalMusicianInventoryComponent
+    ModalMusicianInventoryComponent,
+    ModalMusicianEventComponent
   ],
   providers:[
     MusicianService,
     VoiceService,
     UserPartitureGroupService,
-    MusicianInventoryService
+    MusicianInventoryService,
+    MusicianEventService,
+    EventService
   ]
 })
 export class MenuMusicianPageModule {}
