@@ -108,15 +108,17 @@ export class ModalPartitureComponent implements OnInit {
 
   associateDisassociatePartitureGroupUser(username:string, userPartitureGroup:UserPartitureGroup){
     userPartitureGroup.username = username;
-    if(userPartitureGroup.assigned){
+    if(userPartitureGroup.assigned){      
       // desasociamos
+      userPartitureGroup.assigned = false;
       this.store.dispatch(new DeleteUserPartitureGroup({userPartitureGroup})).subscribe({
         next: () => {
           const success = this.store.selectSnapshot(UserPartitureGroupState.success);
-            if(success){
+            if(success){             
               this.toast.presentToast("Grupo de partituras eliminado del usuario");                          
             }
             else{
+              userPartitureGroup.assigned = true;
               const errorStatusCode = this.store.selectSnapshot(UserPartitureGroupState.errorStatusCode);
               const errorMessage = this.store.selectSnapshot(UserPartitureGroupState.errorMessage);        
               // si el token ha caducado (403) lo sacamos de la aplicacion
@@ -133,13 +135,15 @@ export class ModalPartitureComponent implements OnInit {
     }
     else{
       // asociamos
+      userPartitureGroup.assigned = true;
       this.store.dispatch(new CreateUserPartitureGroup({userPartitureGroup})).subscribe({
         next: () => {
           const success = this.store.selectSnapshot(UserPartitureGroupState.success);
-            if(success){
+            if(success){              
               this.toast.presentToast("Grupo de partituras asociado del usuario");                          
             }
             else{
+              userPartitureGroup.assigned = false;
               const errorStatusCode = this.store.selectSnapshot(UserPartitureGroupState.errorStatusCode);
               const errorMessage = this.store.selectSnapshot(UserPartitureGroupState.errorMessage);        
               // si el token ha caducado (403) lo sacamos de la aplicacion

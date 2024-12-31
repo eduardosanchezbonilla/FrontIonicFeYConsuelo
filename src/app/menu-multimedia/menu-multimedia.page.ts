@@ -29,9 +29,6 @@ export class MenuMultimediaPage  implements OnDestroy {
 
   isVideoModalOpen = false;  
   selectedVideoLink: SafeResourceUrl | null = null;
-  videos: any;
-  categories: any[];
-
 
   videosGroupByCategorySubscription: Subscription;
   @Select(VideoState.videosGroupByCategory)
@@ -103,61 +100,6 @@ export class MenuMultimediaPage  implements OnDestroy {
     this.store.dispatch(new ResetVideo({})).subscribe({ next: async () => { } })
     this.store.dispatch(new ResetVideoCategory({})).subscribe({ next: async () => { } })    
   }
-
-  /*ngOnInit() {
-    this.videos = [      
-    { id: 'bqcGc6XG7vo', title: 'DE TU CONSUELO…NUESTRA FE-FE Y CONSUELO MARTOS 2024-LA PIEDAD BAILÉN-VIERNES SANTO' },
-    { id: 'dmXXq_HU2X0', title: 'Spot Semana Santa de Fe y Consuelo 2018' },
-    { id: 'dQw4w9WgXcQ', title: 'Never Gonna Give You Up - Rick Astley' },
-    { id: '3JZ_D3ELwOQ', title: 'Ed Sheeran - Shape of You' },
-    { id: 'L_jWHffIx5E', title: 'Linkin Park - In the End' },
-    { id: '9bZkp7q19f0', title: 'PSY - Gangnam Style' },
-    { id: 'JGwWNGJdvx8', title: 'Ed Sheeran - Perfect' },
-    { id: '2Vv-BfVoq4g', title: 'Ed Sheeran - Happier' },
-    { id: 'oRdxUFDoQe0', title: 'Queen - Bohemian Rhapsody' },
-    { id: 'fRh_vgS2dFE', title: 'Justin Bieber - Sorry' },
-    { id: 'Zi_XLOBDo_Y', title: 'Michael Jackson - Billie Jean' },
-    { id: 'y6Sxv-sUYtM', title: 'Pharrell Williams - Happy' },
-    { id: 'eVTXPUF4Oz4', title: 'Eminem - Not Afraid' },
-    { id: '7wtfhZwyrcc', title: 'Imagine Dragons - Believer' },
-    { id: 'kXYiU_JCYtU', title: 'Linkin Park - Numb' },
-    { id: 'Rb0UmrCXxVA', title: 'Camila Cabello - Havana ft. Young Thug' },
-    { id: '2vjPBrBU-TM', title: 'Sia - Chandelier' },
-    { id: '2-MBfn8XjIU', title: 'Maroon 5 - Girls Like You ft. Cardi B' },
-    { id: 'OPf0YbXqDm0', title: 'Mark Ronson - Uptown Funk ft. Bruno Mars' },
-    ];
-
-    this.categories = [
-      {
-        name: 'Cornetas y Tambores',
-        videos: [
-          { id: 'bqcGc6XG7vo', title: 'DE TU CONSUELO…NUESTRA FE-FE Y CONSUELO MARTOS 2024-LA PIEDAD BAILÉN-VIERNES SANTO' },
-          { id: 'dmXXq_HU2X0', title: 'Spot Semana Santa de Fe y Consuelo 2018' }
-        ]
-      },
-      {
-        name: 'Pop',
-        videos: [
-          { id: '3JZ_D3ELwOQ', title: 'Ed Sheeran - Shape of You' },
-          { id: 'y6Sxv-sUYtM', title: 'Pharrell Williams - Happy' }
-        ]
-      },
-      {
-        name: 'Rock',
-        videos: [
-          { id: 'L_jWHffIx5E', title: 'Linkin Park - In the End' },
-          { id: 'oRdxUFDoQe0', title: 'Queen - Bohemian Rhapsody' }
-        ]
-      },
-      {
-        name: 'Dance',
-        videos: [
-          { id: '9bZkp7q19f0', title: 'PSY - Gangnam Style' },
-          { id: 'fRh_vgS2dFE', title: 'Justin Bieber - Sorry' }
-        ]
-      }
-    ];
-  }*/
 
   /*******************************************************/
   /********************* VIDEOS **************************/

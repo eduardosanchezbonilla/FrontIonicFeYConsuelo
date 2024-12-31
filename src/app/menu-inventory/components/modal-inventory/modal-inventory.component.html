@@ -71,6 +71,33 @@
       <ion-text color="danger" *ngIf="nameInput.errors && nameInput.errors['maxlength']">El nombre no puede exceder los 100 caracteres.</ion-text>
     </div>
 
+    <!-- UINIDADES -->
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+      <ion-label color="primary" position="floating">
+        Unidades
+      </ion-label>
+      <ion-icon name="list-outline" slot="end"></ion-icon>
+      <ion-input
+            name="units"
+            placeholder="Introduzca las unidades"
+            type="text" 
+            required
+            [(ngModel)]="inventory.units"
+            #unitsInput="ngModel"
+            inputmode="numeric" 
+            pattern="^\d{1,4}$" 
+            maxlength="4" 
+      >
+      </ion-input>
+    </ion-item>
+
+    <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(unitsInput.invalid && unitsInput.touched)">
+      <ion-text color="danger" *ngIf="unitsInput.errors && unitsInput.errors['required']">Las unidades son obligatorias.</ion-text>
+      <ion-text color="danger" *ngIf="unitsInput.errors && unitsInput.errors['pattern']">Introduzca solo digitos numericos.</ion-text>
+      <ion-text color="danger" *ngIf="unitsInput.errors && unitsInput.errors['minlength']">Las unidades deben tener al menos 1 caracter..</ion-text>
+      <ion-text color="danger" *ngIf="unitsInput.errors && unitsInput.errors['maxlength']">Las unidades no pueden exceder los 4 caracteres.</ion-text>
+    </div>
+    
     
     <!-- IMAGEN -->
     <ion-item class="ion-margin-start ion-no-padding background-transparent image-selector custom-item">

@@ -35,7 +35,12 @@
             </ion-avatar>
             <ion-label class="role-header-label">
               {{ userGroupByRole.roleName }}
-            </ion-label>                
+            </ion-label>  
+            <div class="voice-header-buttons" class="role-header-div-fab" > 
+              <ion-fab-button fill="solid" color="tertiary" size="small" class="user-header-fab-text">
+                {{ userGroupByRole.users ? userGroupByRole.users.length:0 }}
+              </ion-fab-button>                
+            </div>              
           </ion-item-divider>
         </ion-item>
 
@@ -93,7 +98,7 @@
   <div class="spacer-super-small"></div>  
 
   <!-- botones finales -->    
-  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end" style="margin-right: 70px;">
     <ion-fab-button>
       <ion-icon name="apps-outline"></ion-icon>
     </ion-fab-button>  
@@ -109,6 +114,12 @@
         <ion-icon name="chevron-collapse-outline"></ion-icon>
       </ion-fab-button>
     </ion-fab-list>
+  </ion-fab>
+
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button fill="solid" color="success"  class="user-total-header-fab-text">
+      {{totalUsers}}
+    </ion-fab-button>   
   </ion-fab>
 
 </ion-content>

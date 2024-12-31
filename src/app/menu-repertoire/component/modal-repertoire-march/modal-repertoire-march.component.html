@@ -1,0 +1,154 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="medium" (click)="cancel()">Cancelar</ion-button>
+    </ion-buttons>    
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="false">
+
+  <div class="spacer-super-small"></div>    
+
+  <ion-refresher slot="fixed" (ionRefresh)="refreshRepertoireMarchsGroupByType($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div class="spacer-super-small"></div>  
+
+  <h2 class="fancy-title">
+    {{categoryName}}
+  </h2>
+
+  <div class="spacer-small"></div>    
+
+  <ion-searchbar [(ngModel)]="filter.name" (ionChange)="onSearchTextChanged($event)" placeholder="Buscar"></ion-searchbar>
+  
+  <ion-accordion-group *ngIf="repertoireMarchsGroupByType" #accordionGroup [multiple]="true" [value]="expandTypeList" (ionChange)="accordionGroupChange($event)">
+
+    <ion-list *ngFor="let repertoireMarchGroupByType of repertoireMarchsGroupByType; trackBy: trackByTypeFn" class="ion-no-padding background-transparent" >
+
+      <ion-accordion value="{{ repertoireMarchGroupByType.type.id }}" >
+
+        <!---------------------------->
+        <!-- Repite para cada tipo --->
+        <!---------------------------->
+        <ion-item slot="header" >                   
+          <ion-item-divider class="ion-no-padding type-header">
+            <ion-avatar slot="start" class="type-avatar">
+              <ion-img 
+                [src]="repertoireMarchGroupByType.type.image ? 'data:image/jpeg;base64,' + repertoireMarchGroupByType.type.image : 'data:image/jpeg;base64,' + defaultRepertoireMarchTypeImage">
+              </ion-img>              
+            </ion-avatar>
+            <ion-label class="type-header-label">
+              {{ repertoireMarchGroupByType.type.name }}
+            </ion-label>    
+            <div *ngIf="showTotalMarchs" class="type-header-buttons" class="type-header-div-fab" > 
+              <ion-fab-button fill="solid" color="tertiary" size="small" class="march-header-fab-text">
+                {{ repertoireMarchGroupByType.marchs ? repertoireMarchGroupByType.marchs.length:0 }}
+              </ion-fab-button>                                  
+            </div>
+          </ion-item-divider>
+        </ion-item>
+
+
+        <!------------------------->
+        <!---- Para cada march ---->
+        <!------------------------->
+        <div class="div-accordion-padding" slot="content">
+          <ion-item-sliding *ngFor="let march of repertoireMarchGroupByType.marchs; trackBy: trackByRepertoireMarchFn" #marchSliding>
+            <ion-card class="march-card background-white">
+              <ion-item lines="none" class="march-ion-item">
+                <!--<ion-avatar slot="start" class="march-avatar">                  
+                  <ion-img 
+                    [src]="march.image ? 'data:image/jpeg;base64,' + march.image : 'data:image/jpeg;base64,' + defaultRepertoireMarchImage">
+                  </ion-img>                              
+                </ion-avatar>-->
+                <ion-label class="march-card-label">
+                  <p class="march-name">{{ march.name }} </p>                  
+                  <p class="march-email">{{ march.author }}</p>
+                </ion-label>                    
+                <!--<ion-icon 
+                  *ngIf="march.youtubeId"
+                  name="eye-outline"    
+                  class="march-header-fab-icon"
+                >
+                </ion-icon>-->
+                
+                
+                <!--<ion-fab-button *ngIf="march.youtubeId" fill="clear" color="success" size="small" class="march-header-fab" (click)="viewVideo(march,march.youtubeId)">
+                  <ion-icon name="eye-outline" class="march-header-fab-icon"></ion-icon>        
+                </ion-fab-button>
+                -->     
+
+                <div *ngIf="march.youtubeId" class="march-header-fab" (click)="viewVideo(march,march.youtubeId)">
+                  <ion-icon name="eye-outline" class="march-header-fab-icon"></ion-icon>        
+                </div>   
+              </ion-item>
+            </ion-card> 
+            
+            <ion-item-options *ngIf="profile == 'SUPER_ADMIN' || profile == 'ADMIN'">             
+              <ion-item-option color="warning" (click)="updateRepertoireMarch(march, marchSliding)" >
+                <ion-icon color="light" slot="icon-only" name="pencil-outline"></ion-icon>
+              </ion-item-option>        
+              <ion-item-option color="danger"  class="rounded-right" (click)="confirmDeleteRepertoireMarch(march, marchSliding)">
+                <ion-icon color="light" slot="icon-only" name="trash-outline"></ion-icon>
+              </ion-item-option>
+            </ion-item-options>
+          </ion-item-sliding>
+        </div>      
+      </ion-accordion>
+    </ion-list>   
+  </ion-accordion-group>    
+
+  <!-- separador -->
+  <div class="spacer"></div>  
+  <div class="spacer-small"></div>  
+  <div class="spacer-small"></div>  
+  <div class="spacer-small"></div>     
+  <div class="spacer-super-small"></div>  
+  <div class="spacer-super-small"></div>  
+  <div class="spacer-super-small"></div>  
+
+  <!-- botones finales -->    
+  <ion-fab     
+    slot="fixed" 
+    vertical="bottom" 
+    horizontal="end" 
+    [ngStyle]="{ 'margin-right': showTotalMarchs ? '70px' : null }"    
+  >  
+    <ion-fab-button>
+      <ion-icon name="apps-outline"></ion-icon>
+    </ion-fab-button>  
+  
+    <ion-fab-list side="start">
+      <ion-fab-button *ngIf="profile == 'SUPER_ADMIN' || profile == 'ADMIN'" class="buttons-fab" color="warning" (click)="createRepertoireMarch()">
+        <div class="fab-content">
+          <ion-icon name="duplicate-outline" class="fab-button-icon"></ion-icon>
+          <span>Marcha</span>
+        </div>
+      </ion-fab-button> 
+      <ion-fab-button class="buttons-fab"  color="warning" (click)="expandAll()">
+        <div class="fab-content">
+          <ion-icon name="chevron-expand-outline" class="fab-button-icon"></ion-icon>
+          <span>Expandir</span>
+        </div>
+      </ion-fab-button>
+
+      <ion-fab-button class="buttons-fab"  color="warning" (click)="collapseAll()">
+        <div class="fab-content">
+          <ion-icon name="chevron-collapse-outline" class="fab-button-icon"></ion-icon>
+          <span>Contraer</span>
+        </div>
+      </ion-fab-button>
+
+    </ion-fab-list>
+  </ion-fab>
+
+  <ion-fab *ngIf="showTotalMarchs" slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button fill="solid" color="success"  class="march-total-header-fab-text">
+      {{totalMarchs}}
+    </ion-fab-button>   
+  </ion-fab>
+
+</ion-content>

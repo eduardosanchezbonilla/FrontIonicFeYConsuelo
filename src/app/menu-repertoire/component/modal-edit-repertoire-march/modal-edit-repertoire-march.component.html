@@ -1,0 +1,203 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="medium" (click)="cancel()">Cancelar</ion-button>
+    </ion-buttons>    
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form (ngSubmit)="confirm()" #repertoireMarchForm="ngForm">    
+    <!--------------------------->
+    <!------ DATOS MARCH -------->
+    <!--------------------------->
+    <h2 class="fancy-title">
+      Datos marcha
+    </h2>
+
+    <!-- NOMBRE -->
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+      <ion-label color="primary" position="floating">
+          Nombre
+      </ion-label>
+      <ion-icon name="copy-outline" slot="end"></ion-icon>      
+      <ion-input                                                        
+            autocomplete="name"       
+            minlength="1"                     
+            maxlength="300"
+            name="name"
+            placeholder="Introduzca el nombre de la marcha"
+            type="text"
+            required="true"            
+            [(ngModel)]="repertoireMarch.name"                                                 
+            #nameInput="ngModel"            
+      >
+      </ion-input>
+    </ion-item>
+    
+    <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(nameInput.invalid && nameInput.touched)">
+      <ion-text color="danger" *ngIf="nameInput.errors && nameInput.errors['required']">El nombre es obligatorio.</ion-text>
+      <ion-text color="danger" *ngIf="nameInput.errors && nameInput.errors['minlength']">El nombre debe tener al menos 1 caracter..</ion-text>
+      <ion-text color="danger" *ngIf="nameInput.errors && nameInput.errors['maxlength']">El nombre no puede exceder los 300 caracteres.</ion-text>
+    </div>
+
+    <!-- AUTOR -->
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+      <ion-label color="primary" position="floating">
+          Autor
+      </ion-label>
+      <ion-icon name="person-outline" slot="end"></ion-icon>      
+      <ion-input                                                        
+            autocomplete="autor"       
+            minlength="1"                     
+            maxlength="300"
+            name="autor"
+            placeholder="Introduzca el nombre del autor"
+            type="text"
+            required="true"            
+            [(ngModel)]="repertoireMarch.author"                                                 
+            #authorInput="ngModel"            
+      >
+      </ion-input>
+    </ion-item>
+    
+    <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(authorInput.invalid && authorInput.touched)">
+      <ion-text color="danger" *ngIf="authorInput.errors && authorInput.errors['required']">El autor es obligatorio.</ion-text>
+      <ion-text color="danger" *ngIf="authorInput.errors && authorInput.errors['minlength']">El autor debe tener al menos 1 caracter..</ion-text>
+      <ion-text color="danger" *ngIf="authorInput.errors && authorInput.errors['maxlength']">El autor no puede exceder los 300 caracteres.</ion-text>
+    </div>
+
+    <!-- CATEGORIA -->
+    <div *ngIf="!categoryId" >
+      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item">
+        <ion-label color="primary" class="custom-label-category-type">Categoria</ion-label>
+        <ion-select  class="custom-select"              
+          okText="Aceptar"
+          cancelText="Cancelar"
+          name="category"
+          placeHolder="Seleccionar categoria"        
+          [compareWith]="compareWithRepertoireCategories"
+          [(ngModel)] = "repertoireMarch.category"
+          required
+          #categoryInput="ngModel" 
+        >              
+            <ion-select-option *ngFor="let category of repertoireCategories" [value]="category">{{category.name}}</ion-select-option>
+        </ion-select>      
+      </ion-item>
+
+      <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(categoryInput.invalid && categoryInput.touched)">
+        <ion-text color="danger" *ngIf="categoryInput.errors && categoryInput.errors['required']">La categoria es obligatoria.</ion-text>      
+      </div>
+    </div>
+
+    <!-- TIPO -->
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item">
+      <ion-label color="primary" class="custom-label-category-type">Tipo</ion-label>
+      <ion-select  class="custom-select"              
+        okText="Aceptar"
+        cancelText="Cancelar"
+        name="type"
+        placeHolder="Seleccionar tipo"        
+        [compareWith]="compareWithRepertoireMarchTypes"
+        [(ngModel)] = "repertoireMarch.type"
+        required
+        #typeInput="ngModel"         
+      >              
+          <ion-select-option *ngFor="let type of repertoireMarchTypes" [value]="type">{{type.name}}</ion-select-option>
+      </ion-select>      
+    </ion-item>
+
+    <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(typeInput.invalid && typeInput.touched)">
+      <ion-text color="danger" *ngIf="typeInput.errors && typeInput.errors['required']">El tipo es obligatorio.</ion-text>      
+    </div>
+
+    <!-- DESCRIPCION -->    
+    <ion-item lines="none">  
+      <ion-label color="primary" position="stacked" class="custom-label-textarea">
+        Descripción
+      </ion-label>
+      <ion-textarea 
+          name="description"
+          placeholder="Escriba aquí la descripción de la marcha ..."           
+          class="custom-textarea focus-style"
+          minlength="0"                     
+          maxlength="1000"          
+          [(ngModel)]="repertoireMarch.description"            
+      >
+      </ion-textarea>
+    </ion-item>
+
+    <!-- IMAGEN -->
+    <ion-item class="ion-margin-start ion-no-padding background-transparent image-selector custom-item">
+      <ion-label color="primary"  class="image-label">
+        Foto
+        <img *ngIf="showImage" [src]="showImage" alt="Vista previa de la imagen" class="preview-image"/>
+      </ion-label>
+            
+      <ion-button class="no-margin-right" (click)="selectImage()" class="custom-ion-button-image">
+        <ion-icon name="image-outline"></ion-icon>
+      </ion-button>
+          
+      <ion-button class="margin-left" color="warning" (click)="clearImage()" *ngIf="showImage" class="custom-ion-button-image">
+        <ion-icon name="trash-outline"></ion-icon>
+      </ion-button>      
+    </ion-item>
+
+    <!-- ID YOUTUBE -->
+    <ion-grid class="no-padding-grid">
+      <ion-row class="no-padding-row">
+        <!-- Campo de entrada de YouTube ID (80%) -->
+        <ion-col size="9" class="no-padding-col">
+          <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+            <ion-label color="primary" position="floating">
+              Id Youtube
+            </ion-label>
+            <ion-icon name="logo-youtube" slot="end"></ion-icon>
+            <ion-input
+              autocomplete="youtubeId"
+              minlength="5"
+              maxlength="50"
+              name="youtubeId"
+              placeholder="Introduzca el id de la marcha en youtube"
+              type="text"              
+              [(ngModel)]="repertoireMarch.youtubeId"
+              (ionBlur)="loadThumbnail(repertoireMarch.youtubeId)"
+              #youtubeIdInput="ngModel"
+            ></ion-input>
+          </ion-item>          
+        </ion-col>
+
+        <!-- Thumbnail a la derecha (20%) -->
+        <ion-col size="3" class="no-padding-col thumbnail-preview-container">
+          <ion-img 
+            [src]="thumbnailUrl || defaultThumbnailUrl" 
+            alt="Vista previa del thumbnail" 
+            class="thumbnail-preview">
+          </ion-img>
+        </ion-col>
+      </ion-row>
+
+      <!-- Mensajes de error para YouTube ID -->
+      <ion-row class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+        <ion-col class="no-padding-col" size="12" >
+          <div *ngIf="(youtubeIdInput.invalid && youtubeIdInput.touched)">            
+            <ion-text color="danger" *ngIf="youtubeIdInput.errors && youtubeIdInput.errors['minlength']">El id de youtube debe tener al menos 5 caracteres.</ion-text>
+            <ion-text color="danger" *ngIf="youtubeIdInput.errors && youtubeIdInput.errors['maxlength']">El id de youtube no puede exceder los 50 caracteres.</ion-text>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+
+    <div class="spacer"></div>   
+    <div class="spacer"></div>  
+
+    <ion-button 
+          type="submit"           
+          [disabled]="repertoireMarchForm.invalid"
+          expand="block">
+        {{updating ? 'Actualizar': 'Crear'}} marcha
+    </ion-button>
+
+  </form>
+</ion-content>

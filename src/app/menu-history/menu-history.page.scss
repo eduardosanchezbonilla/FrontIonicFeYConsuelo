@@ -1,0 +1,100 @@
+.custom-modal-title {
+    margin-top:20px !important;    
+    margin-bottom:30px !important;            
+}
+
+.historia-content {
+    padding: 16px;
+    --ion-background-color: #f9f9f9;
+}
+  
+.header {
+    text-align: center;
+    margin-bottom: 24px;
+  
+    h1 {
+      font-size: 2em;
+      color: #333;
+    }
+  
+    .subtitle {
+      font-size: 1.2em;
+      color: #666;
+    }
+}
+  
+.section-title {
+
+    text-align: left; /* Centrar el texto */
+    font-size: 1.25em; /* Tamaño ligeramente menor */
+    margin: 8px 16px; /* Margen para separarlo de los bordes */
+    font-weight: 600; /* Peso medio para más claridad */
+    color: #333; /* Color más oscuro y neutro */
+    text-transform: uppercase; /* Letras en mayúsculas */
+    letter-spacing: 0.05em; /* Espaciado entre letras */
+    border-bottom: 2px solid var(--ion-color-primary); /* Línea inferior con color primario */
+    padding-bottom: 4px; /* Espacio entre el texto y la línea */
+  }
+    
+.timeline-item {
+    margin-bottom: 16px;
+    border-radius: 8px;
+    background: white;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+  
+.timeline-icon {
+    color: var(--ion-color-primary);
+    font-size: 1.5em;
+}
+
+.timeline-description {
+    text-align: justify; /* Justifica el texto */
+    margin: 0;           /* Ajusta márgenes si es necesario */
+    padding: 0;          /* Ajusta el padding si es necesario */
+}  
+
+.timeline-content {
+    display: flex;
+    flex-direction: column; /* Alinea elementos en columna */
+    align-items: center;    /* Centra horizontalmente */
+}
+  
+.timeline-image {
+    margin-top: 15px;
+    max-width: 100%;
+    border-radius: 8px;    
+}
+
+.uniforms {
+    margin-top: 24px;
+}
+  
+.uniform-image {
+    width: 100%;
+    border-radius: 16px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.directors ion-list {
+    margin-left:10px;
+    margin-right:10px;
+    padding-top:0px;
+}
+
+.directors ion-item {
+    --background: #fff;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  
+    h3 {
+      font-weight: bold;
+      color: #333;
+    }
+  
+    p {
+      color: #666;
+    }
+}
+  

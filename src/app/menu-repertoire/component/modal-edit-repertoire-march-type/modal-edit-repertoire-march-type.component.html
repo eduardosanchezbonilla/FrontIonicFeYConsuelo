@@ -1,0 +1,98 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="medium" (click)="cancel()">Cancelar</ion-button>
+    </ion-buttons>    
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form (ngSubmit)="confirm()" #repertoireMarchTypeForm="ngForm">    
+    <!-------------------------------->
+    <!------ DATOS MARCH TYPE -------->
+    <!-------------------------------->
+    <h2 class="fancy-title">
+      Datos tipo marcha
+    </h2>
+
+    <!-- NOMBRE -->
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+      <ion-label color="primary" position="floating">
+          Nombre
+      </ion-label>
+      <ion-icon name="copy-outline" slot="end"></ion-icon>      
+      <ion-input                                                        
+            autocomplete="name"       
+            minlength="1"                     
+            maxlength="300"
+            name="name"
+            placeholder="Introduzca el nombre del tipo de marcha"
+            type="text"
+            required="true"            
+            [(ngModel)]="repertoireMarchType.name"                                                 
+            #nameInput="ngModel"            
+      >
+      </ion-input>
+    </ion-item>
+    
+    <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(nameInput.invalid && nameInput.touched)">
+      <ion-text color="danger" *ngIf="nameInput.errors && nameInput.errors['required']">El nombre es obligatorio.</ion-text>
+      <ion-text color="danger" *ngIf="nameInput.errors && nameInput.errors['minlength']">El nombre debe tener al menos 1 caracter..</ion-text>
+      <ion-text color="danger" *ngIf="nameInput.errors && nameInput.errors['maxlength']">El nombre no puede exceder los 300 caracteres.</ion-text>
+    </div>
+
+    <!-- ORDEN -->
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+      <ion-label color="primary" position="floating">
+        Orden
+      </ion-label>
+      <ion-icon name="list-outline" slot="end"></ion-icon>
+      <ion-input
+            name="order"
+            placeholder="Introduzca el orden"
+            type="text" 
+            required
+            [(ngModel)]="repertoireMarchType.order"
+            #orderInput="ngModel"
+            inputmode="numeric" 
+            pattern="^\d{1,4}$" 
+            maxlength="4" 
+      >
+      </ion-input>
+    </ion-item>
+
+    <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(orderInput.invalid && orderInput.touched)">
+      <ion-text color="danger" *ngIf="orderInput.errors && orderInput.errors['required']">El orden es obligatorio.</ion-text>
+      <ion-text color="danger" *ngIf="orderInput.errors && orderInput.errors['pattern']">Introduzca solo digitos numericos.</ion-text>
+      <ion-text color="danger" *ngIf="orderInput.errors && orderInput.errors['minlength']">El orden debe tener al menos 1 caracter..</ion-text>
+      <ion-text color="danger" *ngIf="orderInput.errors && orderInput.errors['maxlength']">El orden no puede exceder los 4 caracteres.</ion-text>
+    </div>
+    
+    <!-- IMAGEN -->
+    <ion-item class="ion-margin-start ion-no-padding background-transparent image-selector custom-item">
+      <ion-label color="primary"  class="image-label">
+        Foto
+        <img *ngIf="showImage" [src]="showImage" alt="Vista previa de la imagen" class="preview-image"/>
+      </ion-label>
+            
+      <ion-button class="no-margin-right" (click)="selectImage()" class="custom-ion-button-image">
+        <ion-icon name="image-outline"></ion-icon>
+      </ion-button>
+          
+      <ion-button class="margin-left" color="warning" (click)="clearImage()" *ngIf="showImage" class="custom-ion-button-image">
+        <ion-icon name="trash-outline"></ion-icon>
+      </ion-button>      
+    </ion-item>
+
+    <div class="spacer"></div>   
+    <div class="spacer"></div>  
+
+    <ion-button 
+          type="submit"           
+          [disabled]="repertoireMarchTypeForm.invalid"
+          expand="block">
+        {{updating ? 'Actualizar': 'Crear'}} tipo marcha
+    </ion-button>
+
+  </form>
+</ion-content>

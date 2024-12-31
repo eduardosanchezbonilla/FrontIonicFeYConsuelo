@@ -2,10 +2,16 @@ import { Injectable } from '@angular/core';
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { EventService } from 'src/app/services/event/event.service';
 import { Event } from 'src/app/models/event/event';
-import { CreateEvent, DeleteEvent, GetEvents, ResetEvent, UpdateEvent } from './event.actions';
+import { CreateEvent, DeleteEvent, GetEventMusicianAssistance, GetEventRepertoire, GetEvents, GetEventsGroupByAnyo, ResetEvent, ResetEventMusicianAssistance, ResetEventRepertoire, UpdateEvent } from './event.actions';
+import { EventMusicianAssistance } from 'src/app/models/event/event-musician-assistance';
+import { EventGroupByAnyo } from 'src/app/models/event/event-group-by-anyo';
+import { EventRepertoire } from 'src/app/models/event/event-repertoire';
 
 export class EventStateModel {
   public events: Event[];
+  public eventsGroupByAnyo: EventGroupByAnyo[];
+  public eventMusicianAssistance: EventMusicianAssistance;
+  public eventRepertoire: EventRepertoire;
   finish: boolean;
   success: boolean;
   errorStatusCode: number;
@@ -14,6 +20,9 @@ export class EventStateModel {
 
 const defaults = {
   events: [],  
+  eventsGroupByAnyo: [],  
+  eventMusicianAssistance: null,
+  eventRepertoire: null,
   finish: false,
   success: false,
   errorStatusCode: null,
@@ -44,6 +53,22 @@ export class EventState {
   @Selector()
   static events(state:EventStateModel):Event[] {
     return state.events;
+  }
+
+  @Selector()
+  static eventsGroupByAnyo(state:EventStateModel):EventGroupByAnyo[] {
+    return state.eventsGroupByAnyo;
+  }
+
+
+  @Selector()
+  static eventMusicianAssistance(state:EventStateModel):EventMusicianAssistance {
+    return state.eventMusicianAssistance;
+  }
+
+  @Selector()
+  static eventRepertoire(state:EventStateModel):EventRepertoire {
+    return state.eventRepertoire;
   }
 
   @Selector()
@@ -162,7 +187,7 @@ export class EventState {
 
   
   @Action(DeleteEvent)
-  deleteMusician(
+  deleteEvent(
       { patchState }: StateContext<EventStateModel>,
       { payload }: DeleteEvent
   ) {
@@ -198,6 +223,66 @@ export class EventState {
       });     
   }
 
+  @Action(GetEventMusicianAssistance)
+  getEventMusicianAssistance(
+      { patchState }: StateContext<EventStateModel>,
+      { payload }: GetEventMusicianAssistance
+  ) {
+    return this.eventService.getEventMusicianAssistance(payload.eventType, payload.eventId)
+      .then(
+        (eventMusicianAssistance:EventMusicianAssistance) => {
+          patchState({
+            finish: true,
+            success: true,            
+            eventMusicianAssistance: eventMusicianAssistance,
+            errorStatusCode: 200,
+            errorMessage: null
+          })
+        }
+      )
+      .catch(
+        async (error) => {          
+          patchState({
+            finish: true,
+            success: false,            
+            eventMusicianAssistance: null,
+            errorStatusCode: error.status,
+            errorMessage: error.message
+          })
+        }
+      );
+  }
+
+  @Action(GetEventsGroupByAnyo)
+  getEventsGroupByAnyo(
+      { patchState }: StateContext<EventStateModel>,
+      { payload }: GetEventsGroupByAnyo
+  ) {
+    return this.eventService.getEventsGroupByAnyo(payload.eventType, payload.startDate, payload.endDate, payload.name)
+    .then(
+      (eventsGroupByAnyo:EventGroupByAnyo[]) => {
+        patchState({
+          finish: true,
+          success: true,
+          eventsGroupByAnyo: eventsGroupByAnyo,
+          errorStatusCode: 200,
+          errorMessage: null
+        })
+      }
+    )
+    .catch(
+      async (error) => {          
+        patchState({
+          finish: true,
+          success: false,
+          eventsGroupByAnyo: [],
+          errorStatusCode: error.status,
+          errorMessage: error.message
+        })
+      }
+    );
+  }
+
   @Action(ResetEvent)
   resetMusician(
       { patchState }: StateContext<EventStateModel>,
@@ -210,5 +295,64 @@ export class EventState {
       errorMessage: null
     })
   }
+
+  @Action(ResetEventMusicianAssistance)
+  resetEventMusicianAssistance(
+      { patchState }: StateContext<EventStateModel>,
+      { payload }: ResetEventMusicianAssistance
+  ) {
+    patchState({
+      finish: false,
+      success: true,
+      eventMusicianAssistance: null,
+      errorStatusCode: null,
+      errorMessage: null
+    })
+  }
+
+  @Action(GetEventRepertoire)
+  getEventRepertoire(
+      { patchState }: StateContext<EventStateModel>,
+      { payload }: GetEventRepertoire
+  ) {
+    return this.eventService.getEventRepertoire(payload.eventType, payload.eventId)
+      .then(
+        (eventRepertoire:EventRepertoire) => {
+          patchState({
+            finish: true,
+            success: true,            
+            eventRepertoire: eventRepertoire,
+            errorStatusCode: 200,
+            errorMessage: null
+          })
+        }
+      )
+      .catch(
+        async (error) => {          
+          patchState({
+            finish: true,
+            success: false,            
+            eventRepertoire: null,
+            errorStatusCode: error.status,
+            errorMessage: error.message
+          })
+        }
+      );
+  }
+
+  @Action(ResetEventRepertoire)
+  resetEventRepertoire(
+      { patchState }: StateContext<EventStateModel>,
+      { payload }: ResetEventRepertoire
+  ) {
+    patchState({
+      finish: false,
+      success: true,
+      eventRepertoire: null,
+      errorStatusCode: null,
+      errorMessage: null
+    })
+  }
+
 
 }

@@ -23,6 +23,9 @@ import {  ModalMusicianInventoryComponent } from './components/modal-inventory/m
 import { StorageService } from '../services/storage/storage.service';
 import { UserRequest } from '../models/user/user-request';
 import { ModalMusicianEventComponent } from './components/modal-event/modal-musician-event.component';
+import { CreateMusicianEvent, DeleteMusicianEvent } from '../state/musicien-event/musician-event.actions';
+import { MusicianEventState } from '../state/musicien-event/musician-event.state';
+import { MusicianEvent } from '../models/musician-event/musician-event';
 
 @Component({
   selector: 'app-menu-musician',
@@ -46,6 +49,8 @@ export class MenuMusicianPage implements OnDestroy {
   public profile: string;  
   public initScreen = false;
   public initSearchFinish = false;
+  public totalMusicians: number = 0;
+
 
   constructor(
     private modalController:ModalController,
@@ -68,8 +73,17 @@ export class MenuMusicianPage implements OnDestroy {
       });      
   }
 
+  getToday(){
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0'); // Mes (0-11) + 1, con cero inicial
+    const day = String(today.getDate()).padStart(2, '0'); // Día del mes, con cero inicial
+
+    return `${year}-${month}-${day}`;
+  }
+
   async ionViewWillEnter(){      
-    this.profile = await this.storage.getItem('profile');         
+    this.profile = await this.storage.getItem('profile');             
     this.getMusiciansGroupByVoice();      
     this.filterMusicians();    
   }
@@ -292,9 +306,25 @@ export class MenuMusicianPage implements OnDestroy {
             this.isSearching = false;  
             this.initSearchFinish = true;    
             this.dismissInitialLoading();                 
-          }          
+          }   
+          this.calculateTotalMusicians();      
         }
       })
+  }
+
+  calculateTotalMusicians(){
+    // en el array this.musiciansGroupByVoice te go que filtrar todas las voces que no contengan ANTIGUO, y sumar todos los musicos del array musicians
+    this.totalMusicians = 0;
+    if(this.musiciansGroupByVoice){
+      this.musiciansGroupByVoice.forEach(musicianGroupByVoice => {
+        // si la voz no contiene la palabra ANTIGUO
+        if(musicianGroupByVoice.voice.name.toUpperCase().indexOf("ANTIGUO") == -1){
+          if(musicianGroupByVoice.musicians){
+            this.totalMusicians += musicianGroupByVoice.musicians.length;
+          }
+        }        
+      });
+    }    
   }
 
   trackByVoiceFn(index, voice) {    
@@ -305,7 +335,7 @@ export class MenuMusicianPage implements OnDestroy {
     return musician.dni; // Utiliza un identificador único de tu elemento
   }
 
-  async filterMusicians(showLoading:boolean=true){
+  async filterMusicians(showLoading:boolean=true){    
     if(showLoading){
       await this.loadingService.presentLoading('Loading...');
     }    
@@ -569,4 +599,79 @@ export class MenuMusicianPage implements OnDestroy {
     });
     modal.present();
   }
+
+  updateMusicianRehearsal(musician:Musician){
+        
+    if(musician.assistLastRehearsal){
+      // eliminamos
+      musician.assistLastRehearsal = false;
+
+      let musicianEvent = new MusicianEvent(
+        musician.id,
+        'REHEARSAL',
+        musician.idLastRehearsal,
+        musician.assistLastRehearsal,
+        false
+      ); 
+      
+      this.store.dispatch(new DeleteMusicianEvent({musicianEvent: musicianEvent}))
+        .subscribe({
+          next: async () => {
+            const success = this.store.selectSnapshot(MusicianEventState.success);
+            if(success){
+              this.toast.presentToast("Ensayo actualizado correctamente");              
+            }
+            else{
+              musician.assistLastRehearsal = true;
+              const errorStatusCode = this.store.selectSnapshot(MusicianEventState.errorStatusCode);
+              const errorMessage = this.store.selectSnapshot(MusicianEventState.errorMessage);        
+              // si el token ha caducado (403) lo sacamos de la aplicacion
+              if(errorStatusCode==403){            
+                this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
+              }
+              else{
+                this.toast.presentToast(errorMessage);
+              }    
+              await this.loadingService.dismissLoading();      
+            }          
+          }
+        }
+      )
+    }
+    else{
+      // asociamos
+      musician.assistLastRehearsal = true;
+      let musicianEvent = new MusicianEvent(
+        musician.id,
+        'REHEARSAL',
+        musician.idLastRehearsal,
+        musician.assistLastRehearsal,
+        false
+      ); 
+
+      this.store.dispatch(new CreateMusicianEvent({musicianEvent: musicianEvent}))        
+        .subscribe({
+          next: async ()=> {
+            const success = this.store.selectSnapshot(MusicianEventState.success);
+            if(success){
+              this.toast.presentToast("Ensayo actualizado correctamente");                        
+            }
+            else{
+              musician.assistLastRehearsal = false;
+              const errorStatusCode = this.store.selectSnapshot(MusicianEventState.errorStatusCode);
+              const errorMessage = this.store.selectSnapshot(MusicianEventState.errorMessage);        
+              // si el token ha caducado (403) lo sacamos de la aplicacion
+              if(errorStatusCode==403){            
+                this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
+              }
+              else{
+                this.toast.presentToast(errorMessage);
+              }                 
+            }          
+          }
+        }
+      )    
+    }    
+  }
+  
 }

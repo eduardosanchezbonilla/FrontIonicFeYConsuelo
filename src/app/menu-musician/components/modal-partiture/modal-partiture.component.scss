@@ -32,20 +32,30 @@ ion-item p {
 }
 
 .custom-label-partiture-group {
-    margin-top:12px;
+    margin-bottom:0px;
+    margin-top:3px;
     margin-left: 10px;
 }
 
 .partiture-group-avatar {
+    margin-top:0px;
+    margin-bottom:0px;
     margin-right: 10px;
-    width: 35px;
-    height: 35px;
+    width: 30px;
+    height: 30px;
     border: 1px solid #000000; 
     border-radius: 0 !important;
     background-color: #f7f7f7; 
 }
 
 .custom-ion-item-user-partiture-group {    
+    --min-height: 40px !important;
     margin-left: -3px;
     margin-right:12px;
+}
+
+
+.custom-partiture-check {
+    margin-top:0px;
+    margin-bottom:0px;
 }

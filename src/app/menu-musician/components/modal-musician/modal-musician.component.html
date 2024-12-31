@@ -113,6 +113,7 @@
               [(ngModel)]="musician.birthDate"
               [ngModelOptions]="{standalone: true}"              
               [showDefaultButtons]="true"
+              [firstDayOfWeek]="1"
           >
           </ion-datetime>
         </ng-template>
@@ -244,6 +245,7 @@
               [(ngModel)]="musician.registrationDate"
               [ngModelOptions]="{standalone: true}"              
               [showDefaultButtons]="true"
+              [firstDayOfWeek]="1"
               required
           >
           </ion-datetime>

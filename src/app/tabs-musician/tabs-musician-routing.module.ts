@@ -21,6 +21,14 @@ const routes: Routes = [
         loadChildren: () => import('../menu-event/menu-event.module').then( m => m.MenuEventPageModule)
       },
       {
+        path: 'menu-history',
+        loadChildren: () => import('../menu-history/menu-history.module').then( m => m.MenuHistoryPageModule)
+      },
+      {
+        path: 'menu-repertoire',
+        loadChildren: () => import('../menu-repertoire/menu-repertoire.module').then( m => m.MenuRepertoirePageModule)
+      },
+      {
         path: '',
         redirectTo: '/tabs-musician/menu-partiture',
         pathMatch: 'full'

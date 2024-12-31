@@ -1,0 +1,67 @@
+.custom-modal-title {
+    margin-top:10px !important;    
+    margin-bottom:15px !important;             
+}
+
+.repertoire-march-type-header {    
+    font-size: 0.92rem; 
+    font-weight: bold; 
+    display: flex;
+    align-items: center;   
+    color: #B22222;   
+    text-shadow: 1px 1px 2px #FFFFFF;  
+}
+
+.repertoire-march-type-header-label {
+    margin-top:10px;    
+}
+
+.repertoire-march-type-header ion-label {
+    padding-right: 5px;     
+}
+
+.repertoire-march-type-header-div-fab {
+    position: absolute;
+    right: 10px;
+    display: flex; 
+}
+
+.repertoire-march-type-header-fab {
+    width: 30px;
+    height: 30px; 
+    margin-right: 3px;    
+}
+
+.repertoire-march-type-header-fab-icon {
+    width: 15px;
+    height: 15px;     
+}
+
+.repertoire-march-type-avatar {
+    margin-right: 15px;
+    width: 30px;
+    height: 30px;
+    border: 1px solid #000000; 
+    border-radius: 0 !important;
+    background-color: #f7f7f7; 
+}
+
+ion-img {
+    border-radius: 0 !important;
+}
+
+ion-accordion-group ion-item-divider {
+    border: 0px solid;
+    border-image-width: 0px;
+}
+
+ion-accordion ion-item[slot="header"] {
+    --border-width: 0 0 1px 0;    
+}
+
+.div-accordion-padding {
+    padding-top: 1px;
+    padding-bottom: 12px;
+    padding-left: 5px;
+    padding-right: 5px;
+}

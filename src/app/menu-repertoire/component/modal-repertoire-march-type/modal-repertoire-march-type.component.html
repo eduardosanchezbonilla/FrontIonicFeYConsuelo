@@ -1,0 +1,78 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="medium" (click)="cancel()">Cancelar</ion-button>
+    </ion-buttons>    
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="false">
+  
+  <div class="spacer-super-small"></div>  
+
+  <h2  class="fancy-title custom-modal-title">
+    Tipos de marcha
+  </h2>
+
+  <ion-refresher slot="fixed" (ionRefresh)="refreshRepertoireMarchTypes($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+
+  <ion-accordion-group #accordionGroup>
+
+    <ion-list *ngFor="let repertoireMarchType of repertoireMarchTypes;" class="ion-no-padding background-transparent" >
+
+      <ion-accordion value="{{ repertoireMarchType.id }}" >
+
+        <!-------------------------------->
+        <!-- Repite para cada elemento  -->
+        <!-------------------------------->
+        <ion-item slot="header" >                   
+          <ion-item-divider class="ion-no-padding repertoire-march-type-header">
+            <ion-avatar slot="start" class="repertoire-march-type-avatar">
+              <ion-img 
+                [src]="repertoireMarchType.image ? 'data:image/jpeg;base64,' + repertoireMarchType.image : 'data:image/jpeg;base64,' + defaultRepertoireMarchTypeImage">
+              </ion-img>                     
+            </ion-avatar>
+            <ion-label class="repertoire-march-type-header-label">
+              {{ repertoireMarchType.name }}               
+            </ion-label>    
+            <div  class="repertoire-march-type-header-div-fab" >                             
+              <ion-fab-button fill="clear" color="warning" size="small" (click)="updateRepertoireMarchType($event,repertoireMarchType)" class="repertoire-march-type-header-fab">
+                <ion-icon name="pencil-outline" class="repertoire-march-type-header-fab-icon"></ion-icon>        
+              </ion-fab-button>   
+              <ion-fab-button fill="clear" color="warning" size="small" (click)="confirmDeleteRepertoireMarchType($event,repertoireMarchType)" class="repertoire-march-type-header-fab">
+                <ion-icon name="trash-outline" class="repertoire-march-type-header-fab-icon"></ion-icon>        
+              </ion-fab-button>                                          
+            </div>
+          </ion-item-divider>
+        </ion-item>
+        
+      </ion-accordion>
+    </ion-list>
+  </ion-accordion-group>
+
+  <!-- separador -->
+  <div class="spacer"></div>  
+  <div class="spacer-small"></div>  
+  <div class="spacer-small"></div>  
+  <div class="spacer-small"></div>     
+  <div class="spacer-super-small"></div>  
+  <div class="spacer-super-small"></div>  
+  <div class="spacer-super-small"></div>  
+
+  <!-- botones finales -->    
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button>
+      <ion-icon name="apps-outline"></ion-icon>
+    </ion-fab-button>  
+  
+    <ion-fab-list side="start">
+      <ion-fab-button *ngIf="profile=='SUPER_ADMIN' || profile=='ADMIN'" color="warning" (click)="createRepertoireMarchType()">            
+        <ion-icon name="add-outline"></ion-icon>
+      </ion-fab-button>         
+    </ion-fab-list>
+  </ion-fab>
+
+</ion-content>

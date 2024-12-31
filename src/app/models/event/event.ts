@@ -18,8 +18,9 @@ export class Event {
     province: string;    
     clsClass: string;
     image?: string;
-    bus?: boolean;
-    assist?: boolean;
+    musicianBus?: boolean;
+    musicianAssist?: boolean;
+    displacementBus?: boolean;
 
     constructor(
         id: number, 
@@ -38,8 +39,9 @@ export class Event {
         province: string,
         clsClass: string,
         image?: string,
-        bus?: boolean,
-        assist?: boolean
+        musicianBus?: boolean,
+        musicianAssist?: boolean,
+        displacementBus?: boolean
     ){
         this.id = id;
         this.type = type;
@@ -57,7 +59,8 @@ export class Event {
         this.province = province;
         this.clsClass = clsClass;
         this.image = image;
-        this.bus = bus;
-        this.assist = assist;
+        this.musicianBus = musicianBus;
+        this.musicianAssist = musicianAssist;
+        this.displacementBus = displacementBus;
     }
 }

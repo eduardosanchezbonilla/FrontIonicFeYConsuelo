@@ -1,0 +1,98 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="medium" (click)="cancel()">Cancelar</ion-button>
+    </ion-buttons>    
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <form (ngSubmit)="confirm()" #eventRepertoireForm="ngForm">    
+
+    <!-------------------------------->
+    <!------ DATOS REPERTORIO -------->
+    <!-------------------------------->
+    <h2 class="fancy-title custom-modal-title">
+      Repertorio 
+    </h2>
+
+    <!-- CABECERA -->    
+    <ion-card class="event-card background-white">
+      <ion-item lines="none">
+        <ion-avatar slot="start" class="event-avatar">                  
+          <ion-img 
+            [src]="showImage">
+          </ion-img> 
+        </ion-avatar>
+        <ion-label>
+          <h2>{{ showTextEvent }} </h2>
+          <p>{{ showDateTextEvent }}</p>          
+        </ion-label>
+      </ion-item>
+    </ion-card> 
+  
+    <!-- DATOS -->    
+    <div *ngIf="eventRepertoire.repertoireMarchGroupByType">            
+      <ion-accordion-group #accordionGroup [multiple]="true" [value]="expandedAccordionValues" >
+        <ion-list *ngFor="let repertoireMarchGroupByType of eventRepertoire.repertoireMarchGroupByType; trackBy: trackByTypeFn" class="ion-no-padding background-transparent" >
+                  
+          <ion-accordion value="{{repertoireMarchGroupByType.type.id}}" >
+
+            <!---------------------------->
+            <!-- Repite para cada type -->
+            <!---------------------------->
+            <ion-item slot="header" >                   
+              <ion-item-divider class="ion-no-padding type-header">              
+                <ion-label class="type-header-label">
+                  {{ repertoireMarchGroupByType.type.name }}
+                </ion-label>                  
+              </ion-item-divider>
+            </ion-item>
+
+            <!-------------------------->
+            <!---- Para cada marcha ---->
+            <!-------------------------->
+            <div class="div-accordion-padding" slot="content">   
+              <ion-item-sliding *ngFor="let march of repertoireMarchGroupByType.marchs; trackBy: trackByMarchFn" #marchSliding>
+                <ion-card class="march-card background-white">
+                  <ion-item  class="march-ion-item">                
+                    <ion-label class="march-card-label">
+                      <p class="march-name">{{ march.name }}  </p>                                      
+                    </ion-label>
+
+                    <ion-checkbox                       
+                      name="marchChecked"
+                      (ionChange)="updateEventRepertoire(march)"                                           
+                      [checked]="march.checked"
+                      class="custom-check"
+                    >
+                    </ion-checkbox>                       
+                  </ion-item>
+                </ion-card>                          
+              </ion-item-sliding>        
+            </div>                
+          </ion-accordion>
+        </ion-list>
+      </ion-accordion-group>
+    </div>
+
+    <div class="spacer"></div>  
+
+    <ion-button 
+          type="submit"           
+          [disabled]="eventRepertoireForm.invalid"
+          expand="block"         
+    >
+          Volver
+    </ion-button>
+  </form>
+
+  <!-- FAB BUTTONS --> 
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end" > 
+    <ion-fab-button fill="solid" color="success"  class="total-header-fab-text">
+      {{totalMarch}}
+    </ion-fab-button>   
+  </ion-fab>
+  
+</ion-content>

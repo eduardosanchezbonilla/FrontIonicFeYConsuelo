@@ -1,0 +1,96 @@
+<ion-header [translucent]="true" >
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>   
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <div class="spacer-super-small"></div>  
+
+  <h2  class="fancy-title custom-modal-title">
+    Repertorio
+  </h2>
+
+  <ion-refresher slot="fixed" (ionRefresh)="refreshRepertoireCategories($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+   <!-- Texto explicativo -->
+   <div class="cards-explanation">
+    <p>Nuestro repertorio experimenta cambios cada año, debido a la incorporación de nuevas marchas, peticiones de nuestras hermandades o recuperaciones de marchas antiguas.</p>
+    <p>A continuación mostramos toda la información.</p>      
+  </div>
+
+  <!-- Mostramos las cards de repertorio -->
+  <ion-list *ngFor="let repertoireCategory of repertoireCategories; trackBy: trackByRepertoireCategoryFn" class="ion-no-padding background-transparent" >
+    <ion-card class="custom-card" (click)="openModalRepertoireCategory($event,repertoireCategory)">
+      <div class="image-container">            
+        <ion-img 
+          class="blurred-image" 
+          [src]="repertoireCategory.image ? 'data:image/jpeg;base64,' + repertoireCategory.image : 'data:image/jpeg;base64,' + defaultRepertoireCategoryImage">
+        </ion-img>   
+        
+        <!-- Botones flotantes para Editar y Eliminar -->
+        <div *ngIf="profile=='SUPER_ADMIN' || profile=='ADMIN'" class="floating-buttons">
+          <ion-button color="warning" size="small" (click)="updateRepertoireCategory($event,repertoireCategory)">
+            <ion-icon name="create-outline"></ion-icon>
+          </ion-button>
+          <ion-button color="warning" size="small" (click)="confirmDeleteRepertoireCategory($event,repertoireCategory)">
+            <ion-icon name="trash-outline"></ion-icon>
+          </ion-button>
+        </div>
+
+        <div class="fancy-title overlay-text">{{repertoireCategory.name}}</div>
+      </div>      
+    </ion-card>
+  </ion-list>
+
+  <!-- separador -->
+  <div class="spacer"></div>  
+  <div class="spacer-small"></div>  
+  <div class="spacer-small"></div>  
+  <div class="spacer-small"></div>     
+  <div class="spacer-super-small"></div>  
+  <div class="spacer-super-small"></div>  
+  <div class="spacer-super-small"></div>  
+ 
+  <!-- botones finales -->    
+  <ion-fab *ngIf="profile=='SUPER_ADMIN' || profile=='ADMIN'" slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button>
+      <ion-icon name="apps-outline"></ion-icon>
+    </ion-fab-button>  
+  
+    <ion-fab-list side="start">
+      <!--<ion-fab-button *ngIf="profile=='SUPER_ADMIN' || profile=='ADMIN'" color="warning" (click)="createVideo()">
+        <ion-icon name="videocam-outline"></ion-icon>         
+      </ion-fab-button>-->
+
+      <ion-fab-button class="buttons-fab" color="warning" (click)="createRepertoireCategory()">
+        <div class="fab-content">
+          <ion-icon name="duplicate-outline" class="fab-button-icon"></ion-icon>
+          <span>Categoria</span>
+        </div>
+      </ion-fab-button>
+
+      <ion-fab-button class="buttons-fab" color="warning" (click)="openModalRepertoireMarchTypes()">
+        <div class="fab-content">
+          <ion-icon name="newspaper-outline" class="fab-button-icon"></ion-icon>
+          <span>Tipo marcha</span>
+        </div>
+      </ion-fab-button>
+
+      <ion-fab-button class="buttons-fab" color="warning" (click)="createRepertoireMarch()">
+        <div class="fab-content">
+          <ion-icon name="duplicate-outline" class="fab-button-icon"></ion-icon>
+          <span>Marcha</span>
+        </div>
+      </ion-fab-button>
+
+    </ion-fab-list>
+  </ion-fab>
+   
+
+</ion-content>

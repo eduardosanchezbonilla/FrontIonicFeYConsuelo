@@ -1,6 +1,11 @@
 <ion-tabs #tabs>
 
   <ion-tab-bar slot="bottom" >
+    <ion-tab-button tab="menu-history" href="/tabs-super-admin/menu-history" class="hide-tab">
+      <ion-icon name="information-circle-outline"></ion-icon>
+      <ion-label>¿Quienes somos?</ion-label>
+    </ion-tab-button> 
+
     <ion-tab-button tab="menu-user" href="/tabs-super-admin/menu-user" >
       <ion-icon name="person-circle-outline"></ion-icon>
       <ion-label>Usuarios</ion-label>
@@ -10,6 +15,11 @@
       <ion-icon name="people-outline"></ion-icon>
       <ion-label>Musicos</ion-label>
     </ion-tab-button>
+
+    <ion-tab-button tab="menu-repertoire" href="/tabs-super-admin/menu-repertoire" class="hide-tab">
+      <ion-icon name="musical-notes-outline"></ion-icon>
+      <ion-label>Repertorio</ion-label>
+    </ion-tab-button> 
 
     <ion-tab-button tab="menu-partiture" href="/tabs-super-admin/menu-partiture" >
       <ion-icon name="albums-outline"></ion-icon>

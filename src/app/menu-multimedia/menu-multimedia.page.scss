@@ -1,3 +1,11 @@
+.custom-modal-title {
+    margin-top:10px !important;
+    //margin-top:0.625rem !important;
+    margin-bottom:10px !important;        
+    //margin-bottom:0.9375rem !important;        
+}
+
+
 .video-category-header {
     display: flex;
     align-items: center;
@@ -125,7 +133,7 @@ ion-card {
 
 ion-card img {
     width: 100%;
-    height: auto;
+    height: auto;    
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
 }
@@ -141,6 +149,12 @@ ion-card-header {
     padding-top: 8px;
     padding-bottom: 8px;
     background: var(--ion-color-light);
+    height: 35px;
+
+    display: flex; /* Activa Flexbox */
+    align-items: center; /* Centra verticalmente */
+    justify-content: center; /* Opcional: centra también horizontalmente */    
+    text-align: center; /* Centra el texto en el interior */
 }
 
 /* Para reducir el padding entre columnas */

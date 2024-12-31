@@ -25,3 +25,27 @@ export class ResetEvent {
   constructor(public payload: {}) { }
 }
 
+export class GetEventMusicianAssistance{
+  static readonly type = '[Event] GetEventMusicianAssistance';
+  constructor(public payload: {eventType:string, eventId:number}) { }
+}
+
+export class GetEventsGroupByAnyo{
+  static readonly type = '[Event] GetEventsGroupByAnyo';
+  constructor(public payload: {eventType:string, startDate:string, endDate:string,name:string,}) { }
+}
+
+export class ResetEventMusicianAssistance {
+  static readonly type = '[Event] ResetEventMusicianAssistance';
+  constructor(public payload: {}) { }
+}
+
+export class GetEventRepertoire{
+  static readonly type = '[Event] GetEventRepertoire';
+  constructor(public payload: {eventType:string, eventId:number}) { }
+}
+
+export class ResetEventRepertoire {
+  static readonly type = '[Event] ResetEventRepertoire';
+  constructor(public payload: {}) { }
+}

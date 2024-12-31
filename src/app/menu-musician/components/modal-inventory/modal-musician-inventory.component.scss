@@ -32,24 +32,81 @@ ion-item p {
 }
 
 .custom-label-musician-inventory {
-    margin-top:12px;
+    margin-bottom:0px;
+    margin-top:3px;
     margin-left: 10px;
 }
 
 .custom-ion-item-musician-inventory {    
+    --min-height: 40px !important;
     margin-left: -3px;
     margin-right:12px;
 }
 
 .musician-inventory-avatar {
+    margin-top:0px;
+    margin-bottom:0px;
     margin-right: 10px;
-    width: 35px;
-    height: 35px;
+    width: 30px;
+    height: 30px;
     border: 1px solid #000000; 
     border-radius: 0 !important;
     background-color: #f7f7f7; 
 }
 
-ion-img {
+.musician-inventory-avatar ion-img {
     border-radius: 0 !important;
+}
+
+.custom-inventory-check {
+    margin-top:0px;
+    margin-bottom:0px;
+}
+
+ion-label.ion-color-primary {
+    color: #B22222;
+    font-size: 1rem;
+    font-weight: bold;  
+    text-shadow: 1px 1px 2px #FFFFFF; /* Sombra leve */
+}
+
+.custom-label-textarea {
+    font-size: 1.1em !important;
+}
+  
+.custom-textarea {
+    //margin-top:20px;   
+    margin-top:0px; 
+    margin-right:2px;
+    margin-left:0px;
+    border: 2px solid #4d4d4d; 
+    border-radius: 10px;        
+    padding: 10px;             
+    background-color: #f9f9f9; 
+    font-size: 16px;                
+    box-shadow: 0 0 10px rgba(77, 77, 77, 0.2);      
+    display: block;              
+    width: 100%;                
+    min-height: 100px;           
+    visibility: visible;        
+    opacity: 1;                 
+}
+
+.observations-fab {
+    margin-right:5px;
+    width: 32px;
+    height: 32px;     
+}
+
+.observations-fab-icon {    
+    width: 18px;
+    height: 18px;     
+}
+
+.custom-ion-item-musician-inventory-observations {    
+    margin-left: -3px;    
+}
+
+.custom-ion-item-musician-inventory-observations-text-area {    
+    margin-left: -5px;    
 }

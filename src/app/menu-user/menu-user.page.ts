@@ -42,6 +42,7 @@ export class MenuUserPage implements OnDestroy {
   public initSearchFinish = false;
   public updateDetail=false;
   public updateRoles=false;
+  public totalUsers: number = 0;
   
  
   constructor(
@@ -375,10 +376,25 @@ export class MenuUserPage implements OnDestroy {
             this.isSearching = false;  
             this.initSearchFinish = true;    
             this.dismissInitialLoading();                 
-          }          
+          }  
+          this.calculateTotalUsers();       
         }
       })
   }
+
+  calculateTotalUsers(){
+    // en el array this.musiciansGroupByVoice te go que filtrar todas las voces que no contengan ANTIGUO, y sumar todos los musicos del array musicians
+    this.totalUsers = 0;
+    if(this.usersGroupByRole){
+      this.usersGroupByRole.forEach(usersGroupByRole => {
+        // si la voz no contiene la palabra ANTIGUO        
+        if(usersGroupByRole.users){
+          this.totalUsers += usersGroupByRole.users.length;
+        }        
+      });
+    }    
+  }
+
 
   trackByRoleFn(index, role) {      
     return role.role; // Utiliza un identificador único de tu elemento

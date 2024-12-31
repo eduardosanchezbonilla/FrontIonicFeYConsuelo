@@ -16,6 +16,12 @@ import { EventService } from '../services/event/event.service';
 import { MenuEventPage } from './menu-event.page';
 import { MusicianEventService } from '../services/musician-event/musician-event.service';
 import { MusicianEventState } from '../state/musicien-event/musician-event.state';
+import { ModalMusicianAssistanceComponent } from './component/modal-musician-assistance/modal-musician-assistance.component';
+import { ModalRepertoireEventComponent } from './component/modal-repertoire-event/modal-repertoire-event.component';
+import { RepertoireMarchState } from '../state/repertoire/repertoire-march.state';
+import { RepertoireMarchService } from '../services/repertoire/repertoire-march.service';
+import { RepertoireEventState } from '../state/repertoire-event/repertoire-event.state';
+import { RepertoireEventService } from '../services/repertoire-event/repertoire-event.service';
 
 @NgModule({
   imports: [
@@ -24,12 +30,14 @@ import { MusicianEventState } from '../state/musicien-event/musician-event.state
     IonicModule,
     MenuEventPageRoutingModule,
     CalendarModule,
-    NgxsModule.forFeature([EventState, MusicianEventState]),
+    NgxsModule.forFeature([EventState, MusicianEventState, RepertoireMarchState, RepertoireEventState]),
   ],
-  declarations: [MenuEventPage, ModalEditEventComponent],
+  declarations: [MenuEventPage, ModalEditEventComponent, ModalMusicianAssistanceComponent, ModalRepertoireEventComponent],
   providers:[
     EventService,
-    MusicianEventService    
+    MusicianEventService,
+    RepertoireMarchService,
+    RepertoireEventService
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA] 
 })

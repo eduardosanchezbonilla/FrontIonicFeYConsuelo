@@ -93,6 +93,11 @@
         <ion-label class="section-label">Menu</ion-label>
         <div class="spacer-small"></div>   
 
+        <ion-item button (click)="onTabSelect('menu-history')" >
+          <ion-icon slot="start" name="information-circle-outline"></ion-icon>
+          <ion-label>¿Quienes somos?</ion-label>
+        </ion-item>
+
         <ion-item button (click)="onTabSelect('menu-user')" >
           <ion-icon slot="start" name="person-circle-outline"></ion-icon>
           <ion-label>Usuarios</ion-label>
@@ -101,6 +106,11 @@
         <ion-item button (click)="onTabSelect('menu-musician')" >
           <ion-icon slot="start" name="people-outline"></ion-icon>
           <ion-label>Musicos</ion-label>
+        </ion-item>
+
+        <ion-item button (click)="onTabSelect('menu-repertoire')" >
+          <ion-icon slot="start" name="musical-notes-outline"></ion-icon>
+          <ion-label>Repertorio</ion-label>
         </ion-item>
 
         <ion-item button (click)="onTabSelect('menu-partiture')" >
@@ -162,11 +172,21 @@
     <!-- Opciones del menú -->
     <ion-list>
       <ion-label class="section-label">Menu</ion-label>
-      <div class="spacer-small"></div>   
+      <div class="spacer-small"></div>  
+
+      <ion-item button (click)="onTabSelect('menu-history')" >
+        <ion-icon slot="start" name="information-circle-outline"></ion-icon>
+        <ion-label>¿Quienes somos?</ion-label>
+      </ion-item> 
 
       <ion-item button (click)="onTabSelect('menu-musician')" >
         <ion-icon slot="start" name="people-outline"></ion-icon>
         <ion-label>Musicos</ion-label>
+      </ion-item>
+
+      <ion-item button (click)="onTabSelect('menu-repertoire')" >
+        <ion-icon slot="start" name="musical-notes-outline"></ion-icon>
+        <ion-label>Repertorio</ion-label>
       </ion-item>
 
       <ion-item button (click)="onTabSelect('menu-partiture')" >

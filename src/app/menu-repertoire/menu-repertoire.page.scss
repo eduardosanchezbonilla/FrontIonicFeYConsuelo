@@ -1,0 +1,119 @@
+.custom-modal-title {
+    margin-top:10px !important;    
+    margin-bottom:15px !important;             
+}
+
+.cards-explanation {
+    text-align: justify; /* Justifica el texto */
+    margin: 10px 15px; /* Espaciado uniforme alrededor */
+    margin-bottom:10px;
+    font-size: 0.9rem; /* Tamaño de fuente pequeño */
+    font-weight: 300; /* Fuente ligera */
+    color: #555; /* Gris oscuro */
+    letter-spacing: 0.02rem; /* Espaciado sutil entre letras */
+    line-height: 1.6; /* Altura de línea para legibilidad */
+}
+  
+.cards-explanation p {
+    margin-left: 8px; 
+    margin-right: 8px; 
+    margin-bottom:0px;
+    padding: 0; 
+}
+
+.custom-card {
+    position: relative;
+    overflow: hidden; /* Asegura que el contenido no se salga del card */
+    margin:15px;
+    margin-bottom: 4px;
+    margin-top:5px;
+    
+    border: 1px solid #e0e0e0; /* Borde sutil */
+    border-radius: 12px;
+    background-color: #f9f9f9; /* Fondo claro */
+    box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra interna y externa */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.image-container {
+    position: relative;
+    width: 100%;
+    height: 170px; /* Ajusta según el tamaño deseado */
+}
+  
+.image-container ion-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Asegura que la imagen se ajuste correctamente */
+}
+  
+.overlay-text {
+    position: absolute;
+    top: 66%; /* Centra verticalmente */
+    left: 2%; /* Centra horizontalmente */
+    //transform: translate(-25%, -50%); /* Ajusta para centrar el texto */
+    color: white;
+    font-size: 1.5rem;
+    //font-weight: bold;
+    text-align: center;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Sombra para mejor visibilidad */
+    background-color: rgba(0, 0, 0, 0.6); /* Fondo semitransparente (opcional) */
+    padding-top: 5px;
+    padding-bottom: 8px;
+    padding-left: 10px; 
+    padding-right: 13px;
+    border-radius: 5px; 
+}
+
+.blurred-image {
+    opacity: 0.8; /* Reduce la opacidad para que sea más tenue */
+}
+
+/* Botones flotantes */
+.floating-buttons {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    display: flex;
+    gap: 4px;
+    z-index: 10;
+}
+  
+.floating-buttons ion-button {
+    --padding-start: 0;
+    --padding-end: 0;
+    --icon-size: 12px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+/*********** Botones inferioes flotantes  ****************/
+.buttons-fab {
+    width: 60px;
+    height: 45px;
+    border-radius: 0%; /* Mantiene la forma circular */
+    --border-radius: 8px !important;
+}
+  
+.fab-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+  
+.fab-content ion-icon {
+    font-size: 1.4em; /* Ajusta el tamaño del icono */
+}
+  
+.fab-content span {
+    font-size: 0.6em; /* Tamaño del texto */
+    margin-top: 4px; /* Espacio entre el icono y el texto */   
+}
+
+.fab-button-icon {
+    margin-top: 1px;
+}

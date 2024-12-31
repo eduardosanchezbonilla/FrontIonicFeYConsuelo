@@ -96,7 +96,7 @@ export class LoginPage {
     else{
       this.subscribeToRoleTopics('INVITADO');
       this.storage.setItem('profile', 'INVITADO');
-      this.navController.navigateForward('tabs-guest/menu-multimedia');   
+      this.navController.navigateForward('tabs-guest/menu-history');   
     }
   }
 

@@ -67,6 +67,7 @@ export class ModalEditEventComponent implements OnInit {
       this.event = new Event(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);      
       this.event.date = this.date ? this.date:new Date().toISOString();       
       this.event.endDate = this.date ? this.date:new Date().toISOString();       
+      this.event.displacementBus = false;
 
       if(this.type==='REHEARSAL'){       
         this.event.startTime = '21:00';     
@@ -136,10 +137,23 @@ export class ModalEditEventComponent implements OnInit {
 
   getVoices(){
     this.voicesSubscription = this.voices$.subscribe({
-      next: async ()=> {
+      next: async ()=> {        
         this.voices = this.store.selectSnapshot(VoiceState.voices).map(({ image, ...rest }) => rest);     
+                        
         if(!this.updating){
-          this.event.voiceList = this.voices;
+          if(this.type==='REHEARSAL'){       
+            this.event.voiceList = this.voices .filter(
+              voice => !voice.name.toLowerCase().includes('antiguo') && !voice.name.toLowerCase().includes('banderin') && !voice.name.toLowerCase().includes('escolta')
+            );
+          }
+          else if(this.type==='PERFORMANCE'){       
+            this.event.voiceList = this.voices .filter(
+              voice => !voice.name.toLowerCase().includes('antiguo')
+            );
+          }
+          else{
+            this.event.voiceList = this.voices;
+          }
         }
         this.initSearchFinish = true;    
         this.dismissInitialLoading();      
@@ -177,7 +191,7 @@ export class ModalEditEventComponent implements OnInit {
     return `${year}-${month}-${day}`;
   }
 
-  confirm(){
+  confirm(){    
     this.event.image = this.selectedImage;    
     this.event.date = this.formatDate(this.event.date);
     this.event.endDate = this.event.endDate ? this.formatDate(this.event.endDate):null; 

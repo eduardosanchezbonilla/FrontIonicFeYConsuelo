@@ -1,19 +1,25 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CalendarComponentOptions } from 'ion2-calendar';
 import { StorageService } from '../services/storage/storage.service';
 import { LoadingService } from '../services/loading/loading.service';
-import { AlertController, ModalController } from '@ionic/angular';
+import { AlertController, IonItemSliding, ModalController } from '@ionic/angular';
 import { ModalEditEventComponent } from './component/modal-edit-event/modal-edit-event.component';
 import { Select, Store } from '@ngxs/store';
 import { EventState } from '../state/event/event.state';
 import { Event } from '../models/event/event';
-import { Observable, Subscription } from 'rxjs';
-import { CreateEvent, DeleteEvent, GetEvents, ResetEvent, UpdateEvent } from '../state/event/event.actions';
+import { debounceTime, Observable, Subject, Subscription } from 'rxjs';
+import { CreateEvent, DeleteEvent, GetEvents, GetEventsGroupByAnyo, ResetEvent, UpdateEvent } from '../state/event/event.actions';
 import { UsersService } from '../services/user/users.service';
 import { ToastService } from '../services/toast/toast.service';
 import { CreateMusicianEvent, DeleteMusicianEvent, ResetMusicianEvent } from '../state/musicien-event/musician-event.actions';
 import { MusicianEvent } from '../models/musician-event/musician-event';
 import { MusicianEventState } from '../state/musicien-event/musician-event.state';
+import { ModalMusicianAssistanceComponent } from './component/modal-musician-assistance/modal-musician-assistance.component';
+import { EventGroupByAnyo } from '../models/event/event-group-by-anyo';
+import { FilterEvents } from '../models/event/filter-events';
+import { DEFAULT_ANYO_IMAGE, DEFAULT_EVENT_IMAGE } from '../constants/constants';
+import { IonFab } from '@ionic/angular';
+import { ModalRepertoireEventComponent } from './component/modal-repertoire-event/modal-repertoire-event.component';
 
 @Component({
   selector: 'app-menu-event',
@@ -22,10 +28,28 @@ import { MusicianEventState } from '../state/musicien-event/musician-event.state
 })
 export class MenuEventPage implements OnDestroy {
 
+  @ViewChild('fabEvents', { static: false }) fabEvents!: IonFab;
+
   public eventSubscription: Subscription;
   @Select(EventState.events)
   public events$: Observable<Event[]>;
   public events: Event[];
+
+  public eventGroupByAnyoSubscription: Subscription;
+  @Select(EventState.eventsGroupByAnyo)
+  public eventsGroupByAnyo$: Observable<EventGroupByAnyo[]>;
+  public eventsGroupByAnyo: EventGroupByAnyo[];
+  public expandAnyoList: string[];
+  public expandAnyoMap: Map<string, boolean> = new Map();
+  public filter: FilterEvents;
+  public searchTextChanged = new Subject<string>();
+  public isSearching: boolean = false;
+  public defaultAnyoImage: string = DEFAULT_ANYO_IMAGE;
+  public defaultEventImage: string = DEFAULT_EVENT_IMAGE;   
+  public oldPerformances: boolean;   
+  public oldPerformancesValue: boolean=false;  
+  public firstOldPerformances: boolean;
+  public clickOldPerformances: boolean;
   
   public selectedDate: Date;    
   public selectedMonthDate: Date;   
@@ -35,7 +59,8 @@ export class MenuEventPage implements OnDestroy {
     from: new Date(2000, 0, 1),
     weekStart: 1,
     weekdays: ['Dom','Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
-    monthPickerFormat: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'], // Configuración de los meses   
+    monthFormat: 'MMM YYYY', // Configura el formato del mes    
+    monthPickerFormat: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'], // Configuración de los meses           
   };  
   
   public profile: string;  
@@ -43,6 +68,9 @@ export class MenuEventPage implements OnDestroy {
   public initSearchFinish = false;
 
   selectedSegment: string = 'calendar'; // Valor inicial del segmento
+
+  public viewCalendar: boolean = true;
+  public viewPerformance: boolean = false;
 
   constructor(
     private loadingService: LoadingService,
@@ -52,7 +80,18 @@ export class MenuEventPage implements OnDestroy {
     private userService: UsersService,
     private toast:ToastService,
     private alertController: AlertController
-  ) { }
+  ) {    
+    this.expandAnyoList = null;
+    this.expandAnyoMap = null;
+    this.filter = new FilterEvents();
+    this.filter.filter = '';
+    this.isSearching = false;
+    this.searchTextChanged
+      .pipe(debounceTime(300)) // 200 milisegundos de espera
+      .subscribe(value => {
+        this.searchEventsGroupByAnyo(value);
+      });    
+   }
 
 
   getFirstDayOfMonth(date: Date){
@@ -71,7 +110,11 @@ export class MenuEventPage implements OnDestroy {
     return `${year}-${month}-${day}`;    
   }
 
-  async ionViewWillEnter(){
+  async ionViewWillEnter(){    
+    this.firstOldPerformances = true;
+    this.clickOldPerformances = false;
+    this.viewCalendar = true;
+    this.viewPerformance = false;
     this.selectedSegment = 'calendar';
     this.selectedDate = new Date();          
     this.selectedMonthDate = new Date();          
@@ -81,6 +124,7 @@ export class MenuEventPage implements OnDestroy {
       this.getFirstDayOfMonth(new Date()),
       this.getLastDayOfMonth(new Date())
     );   
+    this.getEventsGroupByAnyo();
   }
 
   async dismissInitialLoading(){
@@ -103,9 +147,13 @@ export class MenuEventPage implements OnDestroy {
   }
 
   private doDestroy(){
-    console.log("ngOnDestroy calendar");
+    this.eventsGroupByAnyo = [];
+    this.viewCalendar = true;    
     if (this.eventSubscription) {      
       this.eventSubscription.unsubscribe();  // Cancelar la suscripción al destruir el componente
+    }
+    if (this.eventGroupByAnyoSubscription) {      
+      this.eventGroupByAnyoSubscription.unsubscribe();  // Cancelar la suscripción al destruir el componente
     }
     this.store.dispatch(new ResetEvent({})).subscribe({ next: async () => { } })  
     this.store.dispatch(new ResetMusicianEvent({})).subscribe({ next: async () => { } })  
@@ -116,7 +164,8 @@ export class MenuEventPage implements OnDestroy {
   /*******************************************************************/   
   async showModalExistsEvent(selectedDateString: any,selectedEvent: Event){
     const alert = await this.alertController.create({
-      header: 'Evento',
+      //header: 'Evento',
+      header: selectedEvent.title?selectedEvent.title:(selectedEvent.description?selectedEvent.description:'Evento'),
       inputs: [
         {
           name: 'edit',
@@ -131,7 +180,20 @@ export class MenuEventPage implements OnDestroy {
           label: 'Eliminar',
           value: 'delete',
         },
+        {
+          name: 'musicianAssistance',
+          type: 'radio',
+          label: 'Asistencia musicos',
+          value: 'musicianAssistance',
+        },
+        {
+          name: 'repertoire',
+          type: 'radio',
+          label: 'Repertorio',
+          value: 'repertoire',
+        },
       ],
+      cssClass: 'custom-alert-width', // Agregar la clase personalizada
       buttons: [
         {
           text: 'Cancelar',
@@ -146,9 +208,17 @@ export class MenuEventPage implements OnDestroy {
             if('edit'===selectedType){ 
               this.createUpdateEvent(selectedEvent.type,  selectedEvent, selectedDateString);                      
             }
-            else{
+            if('delete'===selectedType){ 
               this.selectedDate = null; 
               this.confirmDeleteEvent( selectedEvent);            
+            }
+            if('musicianAssistance'===selectedType){ 
+              this.selectedDate = null; 
+              this.eventMusicianAssistance( selectedEvent.type,  selectedEvent, selectedDateString);              
+            }
+            if('repertoire'===selectedType){ 
+              this.selectedDate = null; 
+              this.eventRepertoire( selectedEvent.type,  selectedEvent, selectedDateString);              
             }
           },
         },
@@ -200,7 +270,7 @@ export class MenuEventPage implements OnDestroy {
 
   async showModalNewEvent(selectedDateString: any){
     const alert = await this.alertController.create({
-      header: 'Tipo de Evento',
+      header: 'Tipo de Evento',      
       inputs: [
         {
           name: 'rehearsal',
@@ -236,52 +306,122 @@ export class MenuEventPage implements OnDestroy {
   }
 
   async showModalMusicianEvent(event: Event){    
-    const alert = await this.alertController.create({
-      header: 'Tipo de Evento',
-      inputs: [
-        {
-          name: 'assistBus',
-          type: 'radio',
-          label: 'Asistiré (bus)',
-          value: 'ASSIST_BUS',
-          checked: (event.assist && event.bus) || !event.assist, 
-        },
-        {
-          name: 'assistOther',
-          type: 'radio',
-          label: 'Asistiré (por mi cuenta)',
-          value: 'ASSIST_BUS_OTHER',
-          checked: (event.assist && !event.bus)
-        },        
-        {
-          name: 'notAssist',
-          type: 'radio',
-          label: 'No asistiré',
-          value: 'NOT_ASSIST',
-        }
-      ],
-      buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel',
-          handler: () => {
-            this.selectedDate = null; 
+    if(event.displacementBus){
+      const alert = await this.alertController.create({
+        //header: 'Tipo de Evento',
+        header: event.title?event.title:(event.description?event.description:'Evento'),
+        inputs: [
+          {
+            name: 'assistBus',
+            type: 'radio',
+            label: 'Asistiré (bus)',
+            value: 'ASSIST_BUS',
+            checked: (event.musicianAssist && event.musicianBus), 
           },
-        },
-        {
-          text: 'OK',
-          handler: async (selectedType) => {      
-            this.updateOrDeleteMusicianEvent(event, selectedType);            
+          {
+            name: 'assistOther',
+            type: 'radio',
+            label: 'Asistiré (por mi cuenta)',
+            value: 'ASSIST_BUS_OTHER',
+            checked: (event.musicianAssist && !event.musicianBus)
+          },        
+          {
+            name: 'notAssist',
+            type: 'radio',
+            label: 'No asistiré',
+            value: 'NOT_ASSIST',
+            checked: !event.musicianAssist,
+          }
+        ],
+        buttons: [
+          {
+            text: 'Cancelar',
+            role: 'cancel',
+            handler: () => {
+              this.selectedDate = null; 
+            },
           },
-        },
-      ],
-      cssClass: 'custom-alert-width' // Agregar la clase personalizada
-    });  
-    await alert.present();      
+          {
+            text: 'OK',
+            handler: async (selectedType) => {      
+              this.updateOrDeleteMusicianEvent(event, selectedType);            
+            },
+          },
+        ],
+        cssClass: 'custom-alert-width' // Agregar la clase personalizada
+      });  
+      await alert.present();      
+    }
+    else{
+      const alert = await this.alertController.create({
+        //header: 'Tipo de Evento',
+        header: event.title?event.title:(event.description?event.description:'Evento'),
+        inputs: [
+          {
+            name: 'assistBus',
+            type: 'radio',
+            label: 'Asistiré',
+            value: 'ASSIST',
+            checked: event.musicianAssist , 
+          },          
+          {
+            name: 'notAssist',
+            type: 'radio',
+            label: 'No asistiré',
+            value: 'NOT_ASSIST',
+            checked: !event.musicianAssist,
+          }
+        ],
+        buttons: [
+          {
+            text: 'Cancelar',
+            role: 'cancel',
+            handler: () => {
+              this.selectedDate = null; 
+            },
+          },
+          {
+            text: 'OK',
+            handler: async (selectedType) => {      
+              this.updateOrDeleteMusicianEvent(event, selectedType);            
+            },
+          },
+        ],
+        cssClass: 'custom-alert-width' // Agregar la clase personalizada
+      });  
+      await alert.present();      
+    }
+  
   }
 
   isRehearsalDay(eventList: Event[]){
     return eventList.some(event => event.type === 'REHEARSAL');
+  }
+
+  showModalAssistanceMusician(selectedEvents: Event){
+    const selectedDateString = selectedEvents.date;    
+    this.showModalAssistanceMusicianArray([selectedEvents],selectedDateString);
+  }
+
+  showModalAssistanceMusicianArray(selectedEvents: Event[], selectedDateString: any){    
+    // un musico solo puede tocar las casillas que son actuaciones, para indicar si asiste, o no asiste, en bus o coche
+    if(!this.isRehearsalDay(selectedEvents)){
+
+      let currentDate = new Date();
+      currentDate.setHours(0,0,0,0);
+      if(new Date(selectedDateString)<currentDate){
+        this.toast.presentToast("No se puede modificar eventos de dias anteriores.<br> Contacta con el administrador");
+        return;
+      }
+
+      if (selectedEvents?.length>1) {
+        this.showModalExistsMultipleEvent(selectedDateString,selectedEvents);
+      }
+      else if (selectedEvents?.length ==1) {      
+        // si habia solo un evento, entonces damos opcion a modificar o eliminar          
+        this.showModalMusicianEvent(selectedEvents[0]);          
+      }         
+    }
   }
   
   async onDateChange(selectedDateString: any) {    
@@ -293,17 +433,8 @@ export class MenuEventPage implements OnDestroy {
       return selectedDate === configDate; // Compara las fechas normalizadas
     });
     
-    if(this.profile==='MUSICO'){
-      // un musico solo puede tocar las casillas que son actuaciones, para indicar si asiste, o no asiste, en bus o coche
-      if(!this.isRehearsalDay(selectedEvents)){
-        if (selectedEvents?.length>1) {
-          this.showModalExistsMultipleEvent(selectedDateString,selectedEvents);
-        }
-        else if (selectedEvents?.length ==1) {      
-          // si habia solo un evento, entonces damos opcion a modificar o eliminar          
-          this.showModalMusicianEvent(selectedEvents[0]);          
-        }         
-      }
+    if(this.profile==='MUSICO'){      
+      this.showModalAssistanceMusicianArray(selectedEvents, selectedDateString);
     }
     else{      
       
@@ -406,7 +537,7 @@ export class MenuEventPage implements OnDestroy {
     )
   }
 
-  async filterEvents(startDate:string ,endDate: string,showLoading:boolean=true){
+  async filterEvents(startDate:string ,endDate: string,showLoading:boolean=true){    
     if(showLoading){
       await this.loadingService.presentLoading('Loading...');
     }       
@@ -488,12 +619,18 @@ export class MenuEventPage implements OnDestroy {
         next: async ()=> {
           const success = this.store.selectSnapshot(EventState.success);
           if(success){
-            this.toast.presentToast("Evento creado correctamente");            
-            this.filterEvents(
-              this.getFirstDayOfMonth(this.selectedMonthDate),
-              this.getLastDayOfMonth(this.selectedMonthDate),
-              false
-            );          
+            this.toast.presentToast("Evento creado correctamente");       
+            
+            if(this.viewPerformance){
+              this.filterEventsGroupByAnyo(false);   
+            }
+            if(this.viewCalendar){              
+              this.filterEvents(
+                this.getFirstDayOfMonth(this.selectedMonthDate),
+                this.getLastDayOfMonth(this.selectedMonthDate),
+                false
+              );         
+            }            
           }
           else{
             const errorStatusCode = this.store.selectSnapshot(EventState.errorStatusCode);
@@ -512,6 +649,30 @@ export class MenuEventPage implements OnDestroy {
     )    
   }
 
+  async updatePerformance(event: Event, userSliding: IonItemSliding){
+    // cerramos el sliding 
+    userSliding.close();
+
+    // abrimos la modal
+    this.createUpdateEvent("PERFORMANCE",event,event.date);
+  }
+
+  async confirmDeletePerformance(event: Event, userSliding: IonItemSliding){
+    // cerramos el sliding 
+    userSliding.close();
+
+    // abrimos la modal
+    this.confirmDeleteEvent(event);
+  }
+
+  async updateMusicianAssistance(event: Event, userSliding: IonItemSliding){
+    // cerramos el sliding 
+    userSliding.close();
+
+    // abrimos la modal
+    this.eventMusicianAssistance( "PERFORMANCE",  event, event.date);                  
+  }
+
   async doUpdateEvent(event: Event){
     event.voiceIdList = this.getVoiceList(event);     
     event.voiceList = null;
@@ -523,11 +684,17 @@ export class MenuEventPage implements OnDestroy {
           const success = this.store.selectSnapshot(EventState.success);
           if(success){
             this.toast.presentToast("Evento modificado correctamente");
-            this.filterEvents(
-              this.getFirstDayOfMonth(this.selectedMonthDate),
-              this.getLastDayOfMonth(this.selectedMonthDate),
-              false
-            );       
+
+            if(this.viewPerformance){
+              this.filterEventsGroupByAnyo(false);   
+            }
+            if(this.viewCalendar){              
+              this.filterEvents(
+                this.getFirstDayOfMonth(this.selectedMonthDate),
+                this.getLastDayOfMonth(this.selectedMonthDate),
+                false
+              );         
+            }        
           }
           else{
             const errorStatusCode = this.store.selectSnapshot(EventState.errorStatusCode);
@@ -580,11 +747,17 @@ export class MenuEventPage implements OnDestroy {
           const success = this.store.selectSnapshot(EventState.success);
           if(success){
             this.toast.presentToast("Evento eliminado correctamente");
-            this.filterEvents(
-              this.getFirstDayOfMonth(this.selectedMonthDate),
-              this.getLastDayOfMonth(this.selectedMonthDate),
-              false
-            );   
+
+            if(this.viewPerformance){
+              this.filterEventsGroupByAnyo(false);   
+            }
+            if(this.viewCalendar){              
+              this.filterEvents(
+                this.getFirstDayOfMonth(this.selectedMonthDate),
+                this.getLastDayOfMonth(this.selectedMonthDate),
+                false
+              );         
+            }                    
           }
           else{
             const errorStatusCode = this.store.selectSnapshot(EventState.errorStatusCode);
@@ -635,12 +808,17 @@ export class MenuEventPage implements OnDestroy {
         next: async ()=> {
           const success = this.store.selectSnapshot(MusicianEventState.success);
           if(success){
-            this.toast.presentToast("Evento actualizado correctamente");            
-            this.filterEvents(
-              this.getFirstDayOfMonth(this.selectedMonthDate),
-              this.getLastDayOfMonth(this.selectedMonthDate),
-              false
-            );          
+            this.toast.presentToast("Evento actualizado correctamente");     
+            if(this.viewPerformance){      
+              this.filterEventsGroupByAnyo(false);   
+            }
+            if(this.viewCalendar){
+              this.filterEvents(
+                this.getFirstDayOfMonth(this.selectedMonthDate),
+                this.getLastDayOfMonth(this.selectedMonthDate),
+                false
+              );      
+            }            
           }
           else{
             const errorStatusCode = this.store.selectSnapshot(MusicianEventState.errorStatusCode);
@@ -668,11 +846,16 @@ export class MenuEventPage implements OnDestroy {
           const success = this.store.selectSnapshot(MusicianEventState.success);
           if(success){
             this.toast.presentToast("Evento actualizado correctamente");
-            this.filterEvents(
-              this.getFirstDayOfMonth(this.selectedMonthDate),
-              this.getLastDayOfMonth(this.selectedMonthDate),
-              false
-            );   
+            if(this.viewPerformance){      
+              this.filterEventsGroupByAnyo(false);   
+            }
+            if(this.viewCalendar){
+              this.filterEvents(
+                this.getFirstDayOfMonth(this.selectedMonthDate),
+                this.getLastDayOfMonth(this.selectedMonthDate),
+                false
+              );      
+            }                    
           }
           else{
             const errorStatusCode = this.store.selectSnapshot(MusicianEventState.errorStatusCode);
@@ -691,12 +874,213 @@ export class MenuEventPage implements OnDestroy {
     )
   }
 
+  async eventMusicianAssistance(type:string, event: Event, date: string){
+
+    // mostramos spinner
+    await this.loadingService.presentLoading('Loading...');   
+
+    // mostramos la modal
+    const modal = await this.modalController.create({
+      component: ModalMusicianAssistanceComponent,
+      componentProps: {
+        date: date,
+        type: this.translateEventType(type),
+        event: event
+      }
+    });
+    modal.present();
+  }
+
+  async showEventRepertoire(event: Event, userSliding: IonItemSliding){
+    // cerramos el sliding 
+    userSliding.close();
+
+    // abrimos la modal
+    this.eventRepertoire( event.type,  event, event.date);                  
+  }
+
+  async eventRepertoire(type:string, event: Event, date: string){
+
+    // mostramos spinner
+    await this.loadingService.presentLoading('Loading...');   
+
+    // mostramos la modal
+    const modal = await this.modalController.create({
+      component: ModalRepertoireEventComponent,
+      componentProps: {
+        date: date,
+        type: this.translateEventType(type),
+        event: event
+      }
+    });
+    modal.present();
+  }
+
   /*******************************************************************/
 
   async onSegmentChanged(event: any) {
-    //await this.loadingService.presentLoading('Loading...');
-    //this.filterAllNotifications = event.detail.value==='all';    
-    //this.filterRequest();    
+    
+    if(this.viewCalendar && event.detail.value==='calendar'){
+      return;
+    }
+
+    if(this.viewPerformance && event.detail.value==='performance'){
+      return;
+    }
+
+    this.viewCalendar = event.detail.value==='calendar';
+    this.viewPerformance = event.detail.value==='performance';
+
+    if (this.fabEvents) {
+      this.fabEvents.close(); // Cierra el FAB programáticamente
+    }
+
+    if(this.viewPerformance){      
+      this.filterEventsGroupByAnyo();   
+    }
+    if(this.viewCalendar){
+      this.eventsGroupByAnyo = [];
+      this.selectedDate = this.selectedMonthDate;                          
+    
+      this.filterEvents(
+        this.getFirstDayOfMonth(this.selectedMonthDate),
+        this.getLastDayOfMonth(this.selectedMonthDate)
+      );         
+    }
+  }
+
+  async getEventsGroupByAnyo(){            
+    this.eventGroupByAnyoSubscription = this.eventsGroupByAnyo$     
+      .subscribe(
+        {
+          next: async ()=> {      
+            const finish = this.store.selectSnapshot(EventState.finish);          
+            const errorStatusCode = this.store.selectSnapshot(EventState.errorStatusCode);          
+            const errorMessage = this.store.selectSnapshot(EventState.errorMessage);                
+            if(finish){                          
+              if(errorStatusCode==200){                   
+                this.eventsGroupByAnyo = this.store.selectSnapshot(EventState.eventsGroupByAnyo);              
+                if(!this.eventsGroupByAnyo){
+                  this.eventsGroupByAnyo = [];
+                }                  
+                if(this.expandAnyoList===null || (this.clickOldPerformances && this.firstOldPerformances)){                              
+                  this.expandAnyoMap = new Map(); 
+                  this.eventsGroupByAnyo.map(eventGroupByAnyo => eventGroupByAnyo.anyo+"").forEach(element => {                   
+                    this.expandAnyoMap.set(element, true);
+                  });
+                  this.updateExpandAnyoList();              
+                }
+                else{                        
+                  this.updateExpandAnyoList();
+                }        
+                if(this.clickOldPerformances && this.firstOldPerformances){                 
+                  this.firstOldPerformances = false;
+                }
+              }
+              else{
+                if(this.expandAnyoList===null){                             
+                  this.expandAnyoMap = new Map(); 
+                }
+                this.eventsGroupByAnyo = [];     
+                this.eventsGroupByAnyo.map(eventGroupByAnyo => eventGroupByAnyo.anyo+"").forEach(element => {
+                  this.expandAnyoMap.set(element, false);
+                });  
+                this.updateExpandAnyoList();           
+                // si el token ha caducado (403) lo sacamos de la aplicacion
+                if(errorStatusCode==403){            
+                  this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
+                }
+                else{
+                  this.toast.presentToast(errorMessage);
+                }   
+
+              }   
+              this.isSearching = false;                       
+              this.initSearchFinish = true;    
+              await this.loadingService.dismissLoading();                 
+            }          
+        }
+      }
+    )
+  }
+
+  async filterEventsGroupByAnyo( showLoading:boolean=true){    
+    if(showLoading){
+      await this.loadingService.presentLoading('Loading...');
+    }       
+    let startDate = this.oldPerformances ? '' : new Date().toISOString().split('T')[0];    
+    this.store.dispatch(new GetEventsGroupByAnyo({eventType: 'PERFORMANCE', startDate:startDate, endDate:'', name: this.filter.filter})).subscribe({ next: async () => { } });    
+  }
+
+  refreshEventsGroupByAnyo($event){       
+    this.filterEventsGroupByAnyo();   
+    $event.target.complete();
+  }
+
+  searchEventsGroupByAnyo(searchText: string) {
+    if(this.isSearching == false){
+      this.isSearching = true;
+      this.filterEventsGroupByAnyo();      
+    }
+  }
+
+  onSearchTextChanged(event: any) {
+    this.searchTextChanged.next(event.detail.value);
+  }
+
+  updateExpandAnyoList(){
+    this.expandAnyoList = Array.from(this.expandAnyoMap)
+        .filter(([key, value]) => value === true)
+        .map(([key]) => key);    
+  }
+
+  trackByAnyoFn(index, anyo) {      
+    return anyo;
+  }
+
+  trackByPerformanceFn(index, performance) {    
+    return performance.id;
+  }
+
+  accordionGroupChange = (ev: any) => {
+    this.expandAnyoMap.forEach((value, key) => {
+      this.expandAnyoMap.set(key, false);
+    });
+    ev.detail.value.forEach(element => {
+      this.expandAnyoMap.set(element, true);
+    }); 
+    this.updateExpandAnyoList();    
+  };
+
+  onOldPerformancesChanged(event: any){
+    if(this.oldPerformances!=this.oldPerformancesValue){
+      this.oldPerformancesValue=this.oldPerformances;
+      this.clickOldPerformances = true;
+      this.filterEventsGroupByAnyo();       
+    }    
+  }
+
+  expandAll(){    
+    this.expandAnyoMap.forEach((value, key) => {
+      this.expandAnyoMap.set(key, true);
+    }); 
+    this.updateExpandAnyoList();    
+  }
+
+  collapseAll(){    
+    this.expandAnyoMap.forEach((value, key) => {
+      this.expandAnyoMap.set(key, false);
+    });
+    this.updateExpandAnyoList();    
+  }
+
+  getMunicipalityProvinceAndLocation(event: Event): string {
+    if (event.location) {
+      return `${event.municipality} - ${event.province} (${event.location})`;
+    }
+    else{
+      return `${event.municipality} - ${event.province}`;
+    }
   }
 
 

@@ -9,13 +9,14 @@
 <ion-content class="ion-padding">
   <form (ngSubmit)="confirm()" #inventaryForm="ngForm">    
 
-    <!------------------------->
+    <!-------------------------------->
     <!------ DATOS INVENTARIO -------->
-    <!------------------------->
+    <!-------------------------------->
     <h2 class="fancy-title custom-modal-title">
       Inventario Musico
     </h2>
 
+    <!-- MUSICO -->    
     <ion-card class="musician-card background-white">
       <ion-item lines="none">
         <ion-avatar slot="start" class="musician-avatar">                  
@@ -30,6 +31,7 @@
       </ion-item>
     </ion-card> 
   
+    <!-- ELEMENTOS INVENTARIO -->    
     <ion-item *ngFor="let inventory of musicianInventories" class="custom-ion-item-musician-inventory">                  
       <ion-avatar slot="start" class="musician-inventory-avatar">
         <ion-img 
@@ -39,7 +41,35 @@
       <ion-label class="custom-label-musician-inventory">
         <h2>{{inventory.name}}</h2>        
       </ion-label>     
-      <ion-checkbox (ionChange)="associateDisassociateMusicianInventory(musician.id,inventory)" [checked]="inventory.assigned"> </ion-checkbox>      
+      <ion-checkbox (ionChange)="associateDisassociateMusicianInventory(musician.id,inventory)" [checked]="inventory.assigned" class="custom-inventory-check"> </ion-checkbox>      
+    </ion-item>
+
+    <!-- OBVSERVACIONES -->   
+    <div class="spacer-super-small"></div>  
+
+    <ion-item lines="none" class="custom-ion-item-musician-inventory-observations">  
+      <ion-label color="primary" class="custom-label-textarea">
+        Observaciones
+      </ion-label>
+      <ion-fab-button 
+        fill="clear" 
+        color="warning" 
+        size="small" 
+        class="observations-fab"
+        (click)="saveObservations()">
+        <ion-icon name="save-outline" class="observations-fab-icon"></ion-icon>
+      </ion-fab-button>
+    </ion-item>
+    <ion-item lines="none" class="custom-ion-item-musician-inventory-observations-text-area">  
+      <ion-textarea 
+          name="observations"
+          placeholder="Escriba aquí las observaciones sobre el inventario de este músico ..."           
+          class="custom-textarea"
+          minlength="1"                     
+          maxlength="1000"         
+          [(ngModel)]="musician.inventoryObservations"            
+      >
+      </ion-textarea>
     </ion-item>
         
     <div class="spacer"></div>  

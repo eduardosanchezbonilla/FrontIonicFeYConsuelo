@@ -43,15 +43,21 @@
               </ion-img>                     
             </ion-avatar>
             <ion-label class="inventory-header-label">
-              {{ inventory.name }}
+              {{ inventory.name }}               
             </ion-label>    
-            <div class="inventory-header-buttons" class="inventory-header-div-fab" > 
+            <div class="inventory-header-buttons" class="inventory-header-div-fab" >               
+              <ion-fab-button fill="solid" color="success" size="small" class="musician-header-fab-text">
+                {{ (inventory.units?inventory.units:0) - inventory.musicianWithElement }}
+              </ion-fab-button>   
+              <ion-fab-button fill="solid" color="tertiary" size="small" class="musician-header-fab-text">
+                {{ inventory.musicianWithElement }}
+              </ion-fab-button>   
               <ion-fab-button fill="clear" color="warning" size="small" (click)="updateInventory($event,inventory)" class="inventory-header-fab">
                 <ion-icon name="pencil-outline" class="inventory-header-fab-icon"></ion-icon>        
               </ion-fab-button>   
               <ion-fab-button fill="clear" color="warning" size="small" (click)="confirmDeleteInventory($event,inventory)" class="inventory-header-fab">
                 <ion-icon name="trash-outline" class="inventory-header-fab-icon"></ion-icon>        
-              </ion-fab-button>                            
+              </ion-fab-button>                                          
             </div>
           </ion-item-divider>
         </ion-item>

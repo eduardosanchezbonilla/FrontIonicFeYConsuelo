@@ -30,46 +30,165 @@
     </ion-segment>
   </div>
 
-  <!-- Contenedor de calendario con estilo de tarjeta -->
-  <div class="calendar-container">
-    <ion-calendar
-      [(ngModel)]="selectedDate"
-      [type]="'string'"
-      [format]="'YYYY-MM-DD'"
-      [options]="calendarOptions"
-      (change)="onDateChange($event)"
-      (monthChange)="onMonthChange($event)"
-    >
-    </ion-calendar>
+  <!-------------------------->
+  <!---- Vista calendario ---->   
+  <!--------------------------> 
+  <div *ngIf="viewCalendar">
+    <!-- Contenedor de calendario con estilo de tarjeta -->
+    <div class="calendar-container">
+      <ion-calendar
+        [(ngModel)]="selectedDate"
+        [type]="'string'"
+        [format]="'YYYY-MM-DD'"
+        [options]="calendarOptions"
+        (change)="onDateChange($event)"
+        (monthChange)="onMonthChange($event)"
+      >
+      </ion-calendar>
+    </div>
+
+    <!-- Leyenda -->
+    <!--<div class="calendar-legend">
+      <h3 class="legend-title">Leyenda</h3>
+      <div class="legend-item">
+        <span class="color-box ensayo-general-day"></span> <span>Ensayo Ko</span>
+      </div>   
+      <div class="legend-item">
+        <span class="color-box actuacion-day"></span> <span>Actuación Ko</span>
+      </div>    
+      <div class="legend-item">
+        <span class="color-box ensayo-general-day-ok"></span> <span>Ensayo Ok</span>
+      </div>   
+      <div class="legend-item">
+        <span class="color-box actuacion-day-ok"></span> <span>Actuación Ok</span>
+      </div>    
+    </div>-->
   </div>
 
-  <!-- Leyenda -->
-  <!--<div class="calendar-legend">
-    <h3 class="legend-title">Leyenda</h3>
-    <div class="legend-item">
-      <span class="color-box ensayo-general-day"></span> <span>Ensayo Ko</span>
-    </div>   
-    <div class="legend-item">
-      <span class="color-box actuacion-day"></span> <span>Actuación Ko</span>
-    </div>    
-    <div class="legend-item">
-      <span class="color-box ensayo-general-day-ok"></span> <span>Ensayo Ok</span>
-    </div>   
-    <div class="legend-item">
-      <span class="color-box actuacion-day-ok"></span> <span>Actuación Ok</span>
-    </div>    
-  </div>-->
+  <!-------------------------->
+  <!--- Vista actuaciones ---->   
+  <!--------------------------> 
+  <div *ngIf="viewPerformance">
+    
+    <!--<div class="spacer-super-small"></div>  -->
+
+    <ion-refresher slot="fixed" (ionRefresh)="refreshEventsGroupByAnyo($event)">
+      <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+    
+    <!--<ion-searchbar [(ngModel)]="filter.filter" (ionChange)="onSearchTextChanged($event)" placeholder="Buscar" class="custom-searchbar"></ion-searchbar>-->
+
+    <div class="searchbar-container">
+      <ion-searchbar 
+        [(ngModel)]="filter.filter" 
+        (ionChange)="onSearchTextChanged($event)" 
+        placeholder="Buscar" 
+        class="custom-searchbar">
+      </ion-searchbar>
+    
+      <ion-item lines="none" class="custom-checkbox-item-old-performances">     
+        <div class="custom-checkbox-item-old-performances-div">
+          <ion-checkbox slot="start" [(ngModel)]="oldPerformances" (ionChange)="onOldPerformancesChanged($event)" class="custom-checkbox-old-performances"></ion-checkbox>
+          <ion-label>Actuaciones anteriores</ion-label>
+        </div>   
+      </ion-item>
+    </div>
+    
+    <ion-accordion-group #accordionGroup [multiple]="true" [value]="expandAnyoList" (ionChange)="accordionGroupChange($event)">
+
+      <ion-list *ngFor="let eventGroupByAnyo of eventsGroupByAnyo; trackBy: trackByAnyoFn" class="ion-no-padding background-transparent" >
+
+        <ion-accordion value="{{ eventGroupByAnyo.anyo}}" >
+
+          <!---------------------------->
+          <!-- Repite para cada anyo --->
+          <!---------------------------->
+          <ion-item slot="header" >                   
+            <ion-item-divider class="ion-no-padding anyo-header">
+              <ion-avatar slot="start" class="anyo-avatar">
+                <ion-img 
+                  [src]="'data:image/jpeg;base64,' + defaultAnyoImage">
+                </ion-img>              
+              </ion-avatar>
+              <ion-label class="anyo-header-label">
+                {{ eventGroupByAnyo.anyo }}
+              </ion-label>  
+              <!--<div class="voice-header-buttons" class="anyo-header-div-fab" > 
+                <ion-fab-button fill="solid" color="tertiary" size="small" class="performance-header-fab-text">
+                  {{ eventGroupByAnyo.events ? eventGroupByAnyo.events.length:0 }}
+                </ion-fab-button>                
+              </div>              -->
+            </ion-item-divider>
+          </ion-item>
+
+          <!--------------------------------->
+          <!------ Para cada actuacion ------>
+          <!--------------------------------->
+          <div class="div-accordion-padding" slot="content">
+            <ion-item-sliding *ngFor="let performance of eventGroupByAnyo.events; trackBy: trackByPerformanceFn" #performanceSliding>
+              <ion-card 
+                class="performance-card background-white"
+                (click)="profile !== 'SUPER_ADMIN' && profile !== 'ADMIN' ? showModalAssistanceMusician(performance) : null"
+              >
+                <ion-item lines="none" class="performance-ion-item">
+                  <ion-avatar slot="start" class="performance-avatar">                  
+                    <ion-img 
+                      [src]="performance.image ? 'data:image/jpeg;base64,' + performance.image : 'data:image/jpeg;base64,' + defaultEventImage">
+                    </ion-img>                              
+                  </ion-avatar>
+                  <ion-label class="performance-card-label">
+                    <p class="performance-name">{{ performance.title }}</p>                                       
+                    <p class="performance-email">{{ getMunicipalityProvinceAndLocation(performance) }}</p>
+                    <p class="performance-email">{{ performance.date | date: 'dd-MM-yyyy'}} ({{ performance.startTime}} - {{ performance.endTime}})</p>
+                  </ion-label>
+                  <ion-icon 
+                    *ngIf="(profile=='MUSICO')"
+                    [name]="performance.musicianAssist ? 'checkmark-circle' : 'close-circle'" 
+                    [ngClass]="{'assist-icon': performance.musicianAssist, 'notAssist-icon': !performance.musicianAssist}">
+                  </ion-icon>
+                </ion-item>
+              </ion-card> 
+              
+              <ion-item-options *ngIf="profile=='SUPER_ADMIN' || profile=='ADMIN'">
+                <ion-item-option color="tertiary" (click)="showEventRepertoire(performance, performanceSliding)" >
+                  <ion-icon color="light" slot="icon-only" name="musical-notes-outline"></ion-icon>
+                </ion-item-option>   
+                <ion-item-option color="success" (click)="updateMusicianAssistance(performance, performanceSliding)" >
+                  <ion-icon color="light" slot="icon-only" name="checkbox-outline"></ion-icon>
+                </ion-item-option>        
+                <ion-item-option color="warning" (click)="updatePerformance(performance, performanceSliding)" >
+                  <ion-icon color="light" slot="icon-only" name="pencil-outline"></ion-icon>
+                </ion-item-option>        
+                <ion-item-option color="danger"  class="rounded-right" (click)="confirmDeletePerformance(performance, performanceSliding)">
+                  <ion-icon color="light" slot="icon-only" name="trash-outline"></ion-icon>
+                </ion-item-option>                
+              </ion-item-options>
+            </ion-item-sliding>
+          </div>      
+        </ion-accordion>
+      </ion-list>   
+    </ion-accordion-group>    
+
+    <!-- separador -->
+    <div class="spacer"></div>  
+    <div class="spacer-small"></div>  
+    <div class="spacer-small"></div>  
+    <div class="spacer-small"></div>     
+    <div class="spacer-super-small"></div>  
+    <div class="spacer-super-small"></div>  
+    <div class="spacer-super-small"></div>  
+  </div>
 
   <!-- Botones finales -->    
-  <ion-fab slot="fixed" vertical="bottom" horizontal="end" *ngIf="profile=='SUPER_ADMIN' || profile=='ADMIN'">
+  <ion-fab #fabEvents  slot="fixed" vertical="bottom" horizontal="end" *ngIf="profile=='SUPER_ADMIN' || profile=='ADMIN'">
     <ion-fab-button>
       <div class="fab-content">
         <ion-icon name="apps-outline"></ion-icon>    
       </div>
     </ion-fab-button>  
   
-    <ion-fab-list side="start">
-      <ion-fab-button class="buttons-fab" *ngIf="profile=='SUPER_ADMIN' || profile=='ADMIN'" color="warning" (click)="createUpdateEvent('REHEARSAL',null, null)">
+    <ion-fab-list side="start">      
+      <ion-fab-button class="buttons-fab" *ngIf="viewCalendar && (profile=='SUPER_ADMIN' || profile=='ADMIN')" color="warning" (click)="createUpdateEvent('REHEARSAL',null, null)">
         <div class="fab-content">
           <ion-icon name="duplicate-outline" class="fab-button-icon"></ion-icon>
           <span>Ensayo</span>
@@ -82,6 +201,21 @@
           <span>Actuación</span>
         </div>
       </ion-fab-button>
+
+      <ion-fab-button class="buttons-fab" *ngIf="viewPerformance && (profile=='SUPER_ADMIN' || profile=='ADMIN')" color="warning" (click)="expandAll()">
+        <div class="fab-content">
+          <ion-icon name="chevron-expand-outline" class="fab-button-icon"></ion-icon>
+          <span>Expandir</span>
+        </div>
+      </ion-fab-button>
+
+      <ion-fab-button class="buttons-fab" *ngIf="viewPerformance && (profile=='SUPER_ADMIN' || profile=='ADMIN')" color="warning" (click)="collapseAll()">
+        <div class="fab-content">
+          <ion-icon name="chevron-collapse-outline" class="fab-button-icon"></ion-icon>
+          <span>Contraer</span>
+        </div>
+      </ion-fab-button>
+
     </ion-fab-list>
   </ion-fab>
   

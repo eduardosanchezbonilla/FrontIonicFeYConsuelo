@@ -1,5 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
-import { AlertController, ModalController } from '@ionic/angular';
+import { AlertController,  ModalController } from '@ionic/angular';
 import { Select, Store } from '@ngxs/store';
 import { ToastService } from '../services/toast/toast.service';
 import { UsersService } from '../services/user/users.service';
@@ -39,7 +39,8 @@ export class MenuPartiturePage implements OnDestroy {
   public profile: string;  
   public initScreen = false;
   public initSearchFinish = false;
-
+  public flagLoading = false;
+  
   constructor(
       private modalController:ModalController,
       private store:Store,
@@ -53,7 +54,8 @@ export class MenuPartiturePage implements OnDestroy {
       this.isSearching = false;   
   }
 
-  async ionViewWillEnter(){         
+  async ionViewWillEnter(){   
+    this.flagLoading = false;      
     this.profile = await this.storage.getItem('profile');    
     this.accordionValue = [];
     this.getPartitureGroups();         
@@ -186,7 +188,7 @@ export class MenuPartiturePage implements OnDestroy {
           const errorStatusCode = this.store.selectSnapshot(PartitureGroupState.errorStatusCode);          
           const errorMessage = this.store.selectSnapshot(PartitureGroupState.errorMessage);                         
           if(finish){
-            if(errorStatusCode==200){      
+            if(errorStatusCode==200){                   
               this.partitureGroups = this.store.selectSnapshot(PartitureGroupState.partitureGroups);
               if(!this.partitureGroups){
                 this.partitureGroups = [];
@@ -202,11 +204,22 @@ export class MenuPartiturePage implements OnDestroy {
                 this.toast.presentToast(errorMessage);
               }          
             }                                                     
-            // cara vez que recagamos la lista de grupos de partituras, collapsamos todos los acordeones
-            this.accordionValue = [];  
+            // cara vez que recagamos la lista de grupos de partituras, collapsamos todos los acordeones            
             this.isSearching = false;     
             this.initSearchFinish = true;    
-            this.dismissInitialLoading();  
+
+            // si solo hay un grupo de partituras, lo expandimos
+            if(this.partitureGroups && this.partitureGroups.length==1){
+              setTimeout(() => {  
+                  this.accordionValue = [this.partitureGroups[0].id.toString()];                  
+                  this.flagLoading = true;
+                }
+              );
+            }
+            else{
+              this.accordionValue = [];  
+              this.dismissInitialLoading();  
+            }            
           }          
         }
       })    
@@ -219,7 +232,8 @@ export class MenuPartiturePage implements OnDestroy {
     this.store.dispatch(new GetPartitureGroups({/*name: this.filter.name*/}));    
   }
 
-  refreshPartitureGroups($event){          
+  refreshPartitureGroups($event){    
+    this.accordionValue = [];        
     this.filterPartitureGroups();    
     $event.target.complete();
   }
@@ -327,8 +341,11 @@ export class MenuPartiturePage implements OnDestroy {
           [partiture]
       );
     }
-    else{            
-      await this.loadingService.presentLoading('Loading...');          
+    else{           
+      if(!this.flagLoading){
+        await this.loadingService.presentLoading('Loading...');          
+      }
+      this.flagLoading=false;
         
       this.store.dispatch(new GetPartitures({partitureGroupGoogleId: partitureGroupGoogleId}))        
         .subscribe({

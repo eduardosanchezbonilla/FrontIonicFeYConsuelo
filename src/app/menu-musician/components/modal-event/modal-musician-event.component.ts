@@ -213,48 +213,91 @@ export class ModalMusicianEventComponent implements OnInit {
   }
 
   async showModalMusicianEvent(event: Event){   
-    const alert = await this.alertController.create({
-      header: 'Tipo de Evento',
-      inputs: [
-        {
-          name: 'assistBus',
-          type: 'radio',
-          label: 'Asistiré (bus)',
-          value: 'ASSIST_BUS',
-          checked: (event.assist && event.bus) || !event.assist, 
-        },
-        {
-          name: 'assistOther',
-          type: 'radio',
-          label: 'Asistiré (por mi cuenta)',
-          value: 'ASSIST_BUS_OTHER',
-          checked: (event.assist && !event.bus)
-        },        
-        {
-          name: 'notAssist',
-          type: 'radio',
-          label: 'No asistiré',
-          value: 'NOT_ASSIST',
-        }
-      ],
-      buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel',
-          handler: () => {
-            this.selectedDate = null; 
+
+    if(event.displacementBus){
+      const alert = await this.alertController.create({
+        //header: 'Tipo de Evento',
+        header: event.title?event.title:(event.description?event.description:'Evento'),
+        inputs: [
+          {
+            name: 'assistBus',
+            type: 'radio',
+            label: 'Asistiré (bus)',
+            value: 'ASSIST_BUS',
+            checked: (event.musicianAssist && event.musicianBus) , 
           },
-        },
-        {
-          text: 'OK',
-          handler: async (selectedType) => {      
-            this.updateOrDeleteMusicianPerformance(event, selectedType);            
+          {
+            name: 'assistOther',
+            type: 'radio',
+            label: 'Asistiré (por mi cuenta)',
+            value: 'ASSIST_BUS_OTHER',
+            checked: (event.musicianAssist && !event.musicianBus)
+          },        
+          {
+            name: 'notAssist',
+            type: 'radio',
+            label: 'No asistiré',
+            value: 'NOT_ASSIST',
+            checked: !event.musicianAssist, 
+          }
+        ],
+        buttons: [
+          {
+            text: 'Cancelar',
+            role: 'cancel',
+            handler: () => {
+              this.selectedDate = null; 
+            },
           },
-        },
-      ],
-      cssClass: 'custom-alert-width' // Agregar la clase personalizada
-    });  
-    await alert.present();      
+          {
+            text: 'OK',
+            handler: async (selectedType) => {      
+              this.updateOrDeleteMusicianPerformance(event, selectedType);            
+            },
+          },
+        ],
+        cssClass: 'custom-alert-width' // Agregar la clase personalizada
+      });  
+      await alert.present();   
+    }
+    else{
+      const alert = await this.alertController.create({
+        header: event.title?event.title:(event.description?event.description:'Evento'),
+        inputs: [
+          {
+            name: 'assist',
+            type: 'radio',
+            label: 'Asistiré',
+            value: 'ASSIST',
+            checked: event.musicianAssist , 
+          },        
+          {
+            name: 'notAssist',
+            type: 'radio',
+            label: 'No asistiré',
+            value: 'NOT_ASSIST',
+            checked: !event.musicianAssist, 
+          }
+        ],
+        buttons: [
+          {
+            text: 'Cancelar',
+            role: 'cancel',
+            handler: () => {
+              this.selectedDate = null; 
+            },
+          },
+          {
+            text: 'OK',
+            handler: async (selectedType) => {      
+              this.updateOrDeleteMusicianPerformance(event, selectedType);            
+            },
+          },
+        ],
+        cssClass: 'custom-alert-width' // Agregar la clase personalizada
+      });  
+      await alert.present();   
+    }   
   }
 
   async showModalExistsMultipleEvent(selectedDateString: any, events: Event[]) {
@@ -341,7 +384,7 @@ export class ModalMusicianEventComponent implements OnInit {
     musicianEvent.bus = false;    
 
     // si estaba marcado como asistido, lo debo eliminar
-    if(event.assist){
+    if(event.musicianAssist){
       this.deleteMusicianEvent(musicianEvent);
     }
     else{ // sino insertarlo
@@ -382,9 +425,11 @@ export class ModalMusicianEventComponent implements OnInit {
               this.getFirstDayOfMonth(this.selectedMonthDate),
               this.getLastDayOfMonth(this.selectedMonthDate),
               false
-            );          
+            );   
+            this.updateMusicianEventRehearsal(musicianEvent, true);       
           }
           else{
+            this.updateMusicianEventRehearsal(musicianEvent, false);
             const errorStatusCode = this.store.selectSnapshot(MusicianEventState.errorStatusCode);
             const errorMessage = this.store.selectSnapshot(MusicianEventState.errorMessage);        
             // si el token ha caducado (403) lo sacamos de la aplicacion
@@ -415,8 +460,10 @@ export class ModalMusicianEventComponent implements OnInit {
               this.getLastDayOfMonth(this.selectedMonthDate),
               false
             );   
+            this.updateMusicianEventRehearsal(musicianEvent, false);
           }
           else{
+            this.updateMusicianEventRehearsal(musicianEvent, true);
             const errorStatusCode = this.store.selectSnapshot(MusicianEventState.errorStatusCode);
             const errorMessage = this.store.selectSnapshot(MusicianEventState.errorMessage);        
             // si el token ha caducado (403) lo sacamos de la aplicacion
@@ -431,6 +478,15 @@ export class ModalMusicianEventComponent implements OnInit {
         }
       }
     )
+  }
+
+  updateMusicianEventRehearsal(musicianEvent: MusicianEvent, assist:boolean){
+    // si hemos actualizado un envayo, debemos mirar en el musico, por si debemos actualizar esos datos
+    if(musicianEvent.eventType==='REHEARSAL'){
+      if(this.musician.idLastRehearsal===musicianEvent.eventId){
+        this.musician.assistLastRehearsal = assist;        
+      }
+    }
   }
 
 

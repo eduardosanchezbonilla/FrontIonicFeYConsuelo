@@ -1,0 +1,103 @@
+ion-label.ion-color-primary {
+    color: #B22222;
+    font-size: 1rem;
+    font-weight: bold;  
+    text-shadow: 1px 1px 2px #FFFFFF; /* Sombra leve */
+}
+
+ion-item.image-selector {
+    display: flex;
+    align-items: center;
+}
+
+.image-label {
+    display: flex;
+    align-items: center;
+    padding-bottom:7px;
+}
+
+.preview-image {
+    width: 40px;  
+    height: 40px; 
+    border-radius: 50%;
+    object-fit: cover; 
+    margin-left: 30px;   
+}
+
+.no-margin-right {
+    margin-right: 0px;
+}
+
+.margin-left {
+    margin-left: 6px;
+}
+
+.custom-item {
+    margin-top: 7px;  
+}
+
+.custom-label-category-type {
+    padding-bottom: 5px;  
+}
+
+.custom-ion-button-image {
+    margin-bottom: 11px;  
+}
+
+.custom-select {
+    padding-bottom: 17px;    
+    min-width: 80%;  
+    text-align: right;
+}
+
+::ng-deep .alert-wrapper {
+    width: 400px !important;  
+    max-width: 90% !important; 
+}
+
+
+.custom-label-textarea {
+    font-size: 1.3em !important;
+}
+  
+.custom-textarea {
+    margin-top:25px;
+    border: 2px solid #4d4d4d; 
+    border-radius: 10px;        
+    padding: 10px;              
+    background-color: #f9f9f9; 
+    font-size: 16px;            
+  
+    /* Sombra suave en gris oscuro */
+    box-shadow: 0 0 10px rgba(77, 77, 77, 0.2); /* Sombra en gris oscuro, sutil */
+  
+    /* Asegurando visibilidad */
+    display: block;              
+    width: 100%;                
+    min-height: 100px;           
+    visibility: visible;        
+    opacity: 1;                 
+}
+
+/* Elimina padding y margen en la grid */
+.no-padding-grid,
+.no-padding-row,
+.no-padding-col {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Alineación del contenedor de la vista previa */
+.thumbnail-preview-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Estilo de la vista previa del thumbnail */
+.thumbnail-preview {
+  width: 100%; /* Ocupa el ancho completo del contenedor */
+  height: auto;
+  max-width: 80px; /* Tamaño máximo ajustado */
+  border-radius: 8px;
+}

@@ -10,6 +10,10 @@
   
   <div class="spacer-super-small"></div>  
 
+  <h2 class="fancy-title custom-modal-title">
+    Galería multimedia
+  </h2>
+
   <ion-refresher slot="fixed" (ionRefresh)="refreshVideos($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
@@ -36,6 +40,7 @@
             <ion-label class="video-category-header-label">              
               <div class="vide-category-info">
                 <ion-icon 
+                  *ngIf="(profile=='SUPER_ADMIN' || profile=='ADMIN')"
                   [name]="videoGroupByCategory.category.isPublic ? 'checkmark-circle' : 'close-circle'" 
                   [ngClass]="{'published-icon': videoGroupByCategory.category.isPublic, 'unpublished-icon': !videoGroupByCategory.category.isPublic}">
                 </ion-icon>

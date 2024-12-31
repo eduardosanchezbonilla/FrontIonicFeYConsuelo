@@ -5,6 +5,8 @@ export class Inventory {
     order: number;
     name: string;
     image?: string;
+    units: number;
+    musicianWithElement: number;
     musicians?: Musician[];
 
 }

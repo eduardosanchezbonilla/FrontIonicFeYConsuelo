@@ -13,7 +13,12 @@ export class Musician {
     email?: string;
     image?: string;
     voice: Voice;    
-    voiceId: number;      
+    voiceId: number;    
+    inventoryObservations: string;  
+    idLastRehearsal: number;
+    assistLastRehearsal: boolean;
+    assistBus: boolean;
+    dateLastRehearsal: string;
     
     constructor(name?: string) {        
         this.name = name;        

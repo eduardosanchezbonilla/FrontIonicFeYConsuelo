@@ -8,11 +8,6 @@ const routes: Routes = [
     loadChildren: () => import('./users/users.module').then(m => m.UsersModule)
   },
   {
-    path: 'tabs',
-    loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule),
-    canActivate: [AuthGuard] 
-  },
-  {
     path: 'tabs-super-admin',
     loadChildren: () => import('./tabs-super-admin/tabs-super-admin.module').then( m => m.TabsSuperAdminPageModule)
   },

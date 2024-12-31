@@ -26,8 +26,7 @@ export class MenuInventoryPage implements OnDestroy {
   @Select(InventoryState.inventorioes)
   inventories$: Observable<Inventory[]>;
 
-  public inventories: Inventory[];
-  public isSearching: boolean = false;
+  public inventories: Inventory[];  
   public defaultInventoryImage: string = DEFAULT_INVENTORY_IMAGE;  
   public previousExpandedInventories: string[] = [];
   public accordionValue: string[] = [];
@@ -44,8 +43,7 @@ export class MenuInventoryPage implements OnDestroy {
       private userService: UsersService,
       private loadingService: LoadingService,
       private storage: StorageService
-  ) {
-      this.isSearching = false;   
+  ) {  
   }
 
   async ionViewWillEnter(){         
@@ -198,8 +196,7 @@ export class MenuInventoryPage implements OnDestroy {
               }          
             }                             
             // cara vez que recagamos la lista de grupos de partituras, collapsamos todos los acordeones            
-            this.accordionValue = [];  
-            this.isSearching = false;                             
+            this.accordionValue = [];                                     
             this.initSearchFinish = true;    
             this.dismissInitialLoading();  
           }          

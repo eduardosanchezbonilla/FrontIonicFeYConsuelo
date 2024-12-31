@@ -87,6 +87,7 @@
               [ngModelOptions]="{standalone: true}"              
               [showDefaultButtons]="true"
               [readonly]="updating"
+              [firstDayOfWeek]="1"
               required
           >
           </ion-datetime>
@@ -220,7 +221,8 @@
                 presentation="date"
                 [(ngModel)]="event.endDate"
                 [ngModelOptions]="{standalone: true}"              
-                [showDefaultButtons]="true"           
+                [showDefaultButtons]="true"  
+                [firstDayOfWeek]="1"         
             >
             </ion-datetime>
           </ng-template>
@@ -304,6 +306,19 @@
         <ion-text color="danger" *ngIf="provinceInput.errors && provinceInput.errors['minlength']">La provincia debe tener al menos 1 caracter..</ion-text>
         <ion-text color="danger" *ngIf="provinceInput.errors && provinceInput.errors['maxlength']">La provincia no puede exceder los 100 caracteres.</ion-text>
       </div>
+    </div>
+
+    <!-- DESPLAZAMIENTO EN BUS -->
+    <div *ngIf="type=='PERFORMANCE'" >
+      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+        <ion-label color="primary" class="custom-label-displacement-bus">Desplazamiento Bus</ion-label>            
+        <ion-checkbox 
+          name="displacementBus"     
+          [(ngModel)]="event.displacementBus"                                                               
+          class="custom-check"
+        >
+        </ion-checkbox>          
+      </ion-item>
     </div>
 
     <!-- IMAGEN -->

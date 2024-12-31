@@ -1,0 +1,64 @@
+<ion-header [translucent]="true" >
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>   
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  
+  <h2 class="fancy-title custom-modal-title">
+    Un recorrido por nuestra trayectoria
+  </h2>
+
+  <!-- Sección: Historia Cronológica -->
+  <div class="section timeline">
+    <h2 class="fancy-title section-title">Historia Cronológica</h2>
+    <ion-card class="timeline-item" *ngFor="let etapa of historia">
+      <ion-card-header>
+        <ion-icon name="time-outline" slot="start" class="timeline-icon"></ion-icon>
+        <ion-card-title>{{ etapa.fecha }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content class="timeline-content">
+        <p class="timeline-description">{{ etapa.descripcion }}</p>
+        <img *ngIf="etapa.imagen" [src]="etapa.imagen" class="timeline-image" alt="Imagen de {{ etapa.fecha }}" style="width: {{etapa.widthImage }}"/>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <div class="spacer-small"></div>  
+
+  <!-- Sección: Uniformes -->  
+  <div class="section timeline">
+    <h2 class="fancy-title section-title">Uniformes</h2>
+    <ion-card class="timeline-item" *ngFor="let uniforme of uniformes">
+      <ion-card-header>
+        <ion-icon name="time-outline" slot="start" class="timeline-icon"></ion-icon>
+        <ion-card-title>{{ uniforme.nombre }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content class="timeline-content">
+        <p class="timeline-description">{{ uniforme.descripcion }}</p>
+        <img *ngIf="uniforme.imagen" [src]="uniforme.imagen" class="timeline-image" style="width: {{uniforme.widthImage }}"/>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+
+  <div class="spacer-small"></div>  
+  
+  
+  <!-- Sección: Dirección Musical -->
+  <div class="section directors">
+    <h2 class="fancy-title section-title">Dirección Musical</h2>
+    <ion-list class="">
+      <ion-item *ngFor="let director of direccionMusical">
+        <ion-icon name="musical-notes-outline" slot="start"></ion-icon>
+        <ion-label>
+          <h3>{{ director.nombre }}</h3>
+          <p>{{ director.periodo }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </div>
+</ion-content>

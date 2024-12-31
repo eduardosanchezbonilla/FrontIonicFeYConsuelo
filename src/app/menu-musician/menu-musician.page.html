@@ -8,14 +8,13 @@
 
 <ion-content [fullscreen]="false">
 
-  <div class="spacer-super-small"></div>  
+  <div class="spacer-super-small"></div>    
 
   <ion-refresher slot="fixed" (ionRefresh)="refreshMusicians($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
   <ion-searchbar [(ngModel)]="filter.name" (ionChange)="onSearchTextChanged($event)" placeholder="Buscar"></ion-searchbar>
-
   
   <ion-accordion-group #accordionGroup [multiple]="true" [value]="expandVoiceList" (ionChange)="accordionGroupChange($event)">
 
@@ -37,6 +36,9 @@
               {{ musicianGroupByVoice.voice.name }}
             </ion-label>    
             <div class="voice-header-buttons" class="voice-header-div-fab" > 
+              <ion-fab-button fill="solid" color="tertiary" size="small" class="musician-header-fab-text">
+                {{ musicianGroupByVoice.musicians ? musicianGroupByVoice.musicians.length:0 }}
+              </ion-fab-button>  
               <ion-fab-button fill="clear" color="warning" size="small" (click)="updateVoice($event,musicianGroupByVoice.voice)" class="voice-header-fab">
                 <ion-icon name="pencil-outline" class="voice-header-fab-icon"></ion-icon>        
               </ion-fab-button>   
@@ -64,6 +66,22 @@
                   <p class="musician-name">{{ musician.name }} {{ musician.surname }}</p>                  
                   <p class="musician-email">{{ musician.email?musician.email:'Sin email'  }}</p>
                 </ion-label>
+                
+                <!-- botyon ensayo diario -->                
+                <div *ngIf="musician.idLastRehearsal" class="musician-header-div-fab"> 
+                  <div *ngIf="musician.assistLastRehearsal" fill="solid" color="success" class="musician-rehearsal-fab-success" (click)="updateMusicianRehearsal(musician)">
+                    <div class="fab-text">
+                      <span class="fab-line">ENSAYO</span>
+                      <span class="fab-line">{{ musician.dateLastRehearsal | date: 'dd-MM-yyyy' }}</span>
+                    </div>
+                  </div>
+                  <div *ngIf="!musician.assistLastRehearsal" fill="solid" color="danger" class="musician-rehearsal-fab-danger" (click)="updateMusicianRehearsal(musician)">
+                    <div class="fab-text">
+                      <span class="fab-line">ENSAYO</span>
+                      <span class="fab-line">{{ musician.dateLastRehearsal | date: 'dd-MM-yyyy' }}</span>
+                    </div>
+                  </div>
+                </div>
               </ion-item>
             </ion-card> 
             
@@ -100,7 +118,7 @@
   <div class="spacer-super-small"></div>  
 
   <!-- botones finales -->    
-  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end" style="margin-right: 70px;">
     <ion-fab-button>
       <ion-icon name="apps-outline"></ion-icon>
     </ion-fab-button>  
@@ -119,6 +137,12 @@
         <ion-icon name="chevron-collapse-outline"></ion-icon>
       </ion-fab-button>
     </ion-fab-list>
+  </ion-fab>
+
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button fill="solid" color="success"  class="musician-total-header-fab-text">
+      {{totalMusicians}}
+    </ion-fab-button>   
   </ion-fab>
 
 </ion-content>
