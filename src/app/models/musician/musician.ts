@@ -19,6 +19,7 @@ export class Musician {
     assistLastRehearsal: boolean;
     assistBus: boolean;
     dateLastRehearsal: string;
+    phoneNumber: string;
     
     constructor(name?: string) {        
         this.name = name;        

@@ -169,5 +169,45 @@ export class VideoCategoryService {
     });
   }
 
+  async getVideoCategoryImage(videoCategoryId:number){
+    const token = await this.storage.getItem('token');  
+    return Http.get(
+      {
+        url:environment.host + '/video-category/'+ videoCategoryId + '/image',
+        params:{},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        }
+      }
+    ).then(async response => {     
+      const newToken = response.headers['Authorization'] || response.headers['authorization'];      
+      if(newToken){        
+        await this.storage.setItem('token', newToken.replace('Bearer ', ''));
+      }     
+      if(response.status==200 || response.status==204){
+        const data = await response.data as VideoCategory;
+        return data;
+      }
+      else{                
+        return Promise.reject({
+          status: response.status,
+          message: response.data?.message || 'Error al obtener el la imagen de la categoria'
+        });
+      }    
+    })
+    .catch((error) => {    
+      if(error.status){
+        return Promise.reject(error);
+      }
+      else {
+        return Promise.reject({
+          status: 403,
+          message: null
+        });                
+      }           
+    });
+  }
+
 }
 

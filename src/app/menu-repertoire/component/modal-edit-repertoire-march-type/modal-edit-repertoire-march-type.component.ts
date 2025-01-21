@@ -1,8 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { ModalController } from '@ionic/angular';
 import { DEFAULT_REPERTOIRE_MARCH_TYPE_IMAGE } from 'src/app/constants/constants';
 import { RepertoireMarchType } from 'src/app/models/repertoire-march-type/repertoire-march-type';
+import { CameraService } from 'src/app/services/camera/camera.service';
 import { LoadingService } from 'src/app/services/loading/loading.service';
 
 @Component({
@@ -19,7 +19,8 @@ export class ModalEditRepertoireMarchTypeComponent implements OnInit {
   
   constructor(    
     private modalController: ModalController,
-    private loadingService: LoadingService
+    private loadingService: LoadingService,
+    private cameraService: CameraService
   ) { }
 
   async ngOnInit() {
@@ -54,16 +55,8 @@ export class ModalEditRepertoireMarchTypeComponent implements OnInit {
   }
 
   async selectImage() {    
-    const image = await Camera.getPhoto({
-      quality: 90,
-      allowEditing: false,
-      correctOrientation: true,
-      resultType: CameraResultType.Base64, 
-      source: CameraSource.Prompt 
-    });
-
-    this.showImage = `data:image/jpeg;base64,${image.base64String}`;
-    this.selectedImage = image.base64String;
+    this.selectedImage =  await this.cameraService.getPhotoBase64(90);
+    this.showImage = `data:image/jpeg;base64,${this.selectedImage}`;    
   }
 
   clearImage() {

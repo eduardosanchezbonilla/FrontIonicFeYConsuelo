@@ -1,20 +1,41 @@
 <ion-tabs>
 
-  <ion-tab-bar slot="bottom" >
-    <ion-tab-button tab="menu-history" href="/tabs-guest/menu-history">
-      <ion-icon name="information-circle-outline"></ion-icon>
-      <ion-label>¿Quienes somos?</ion-label>
-    </ion-tab-button> 
+  <ion-tab-bar slot="bottom" #tabBar>
+    
+    <!-- Flecha izquierda -->
+    <ion-icon 
+      *ngIf="showLeftArrow" 
+      name="chevron-back-outline" 
+      class="scroll-arrow left" 
+      (click)="scrollLeft()">
+    </ion-icon>
 
-    <ion-tab-button tab="menu-repertoire" href="/tabs-guest/menu-repertoire">
-      <ion-icon name="musical-notes-outline"></ion-icon>
-      <ion-label>Repertorio</ion-label>
-    </ion-tab-button> 
+    <!-- Botones del tab bar -->
+    <div class="scrollable-tab-buttons" #scrollContainer (scroll)="onScroll()">
+      <ion-tab-button tab="menu-history" href="/tabs-guest/menu-history">
+        <ion-icon name="information-circle-outline"></ion-icon>
+        <ion-label>¿Quienes somos?</ion-label>
+      </ion-tab-button> 
 
-    <ion-tab-button tab="menu-multimedia" href="/tabs-guest/menu-multimedia" >      
-      <ion-icon name="images-outline"></ion-icon>      
-      <ion-label>Multimedia</ion-label>
-    </ion-tab-button> 
+      <ion-tab-button tab="menu-repertoire" href="/tabs-guest/menu-repertoire">
+        <ion-icon name="musical-notes-outline"></ion-icon>
+        <ion-label>Repertorio</ion-label>
+      </ion-tab-button> 
+
+      <ion-tab-button tab="menu-multimedia" href="/tabs-guest/menu-multimedia" >      
+        <ion-icon name="images-outline"></ion-icon>      
+        <ion-label>Multimedia</ion-label>
+      </ion-tab-button> 
+
+    </div>
+
+    <!-- Flecha derecha -->
+    <ion-icon 
+      *ngIf="showRightArrow" 
+      name="chevron-forward-outline" 
+      class="scroll-arrow right" 
+      (click)="scrollRight()">
+    </ion-icon>
+
   </ion-tab-bar>
-
 </ion-tabs>

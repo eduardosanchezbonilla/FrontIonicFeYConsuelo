@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { VideoCategory } from 'src/app/models/video-category/video-category';
 import { VideoCategoryService } from 'src/app/services/video-category/video-category.service';
-import { CreateVideoCategory, DeleteVideoCategory, GetVideoCategories, ResetVideoCategory, UpdateVideoCategory } from './video-category.actions';
+import { CreateVideoCategory, DeleteVideoCategory, GetVideoCategories, GetVideoCategoryImage, ResetVideoCategory, UpdateVideoCategory } from './video-category.actions';
 
 export class VideoCategoryStateModel {
   public videoCategories: VideoCategory[];
+  public videoCategory: VideoCategory;
   finish: boolean;
   success: boolean;
   errorStatusCode: number;
@@ -14,6 +15,7 @@ export class VideoCategoryStateModel {
 
 const defaults = {
   videoCategories: [],
+  videoCategory: null,
   finish: false,
   success: false,
   errorStatusCode: null,
@@ -44,6 +46,11 @@ export class VideoCategoryState {
   @Selector()
   static videoCategories(state:VideoCategoryStateModel):VideoCategory[] {
     return state.videoCategories;
+  }
+
+  @Selector()
+  static videoCategory(state:VideoCategoryStateModel):VideoCategory {
+    return state.videoCategory;
   }
 
   @Selector()
@@ -208,6 +215,36 @@ export class VideoCategoryState {
       errorStatusCode: null,
       errorMessage: null
     })
+  }
+
+  @Action(GetVideoCategoryImage)
+  getVideoCategoryImage(
+      { patchState }: StateContext<VideoCategoryStateModel>,
+      { payload }: GetVideoCategoryImage
+  ) {
+    return this.videoCategoryService.getVideoCategoryImage(payload.id)
+      .then(
+          (videoCategory:VideoCategory) => {
+            patchState({
+              finish: true,
+              success: true,
+              videoCategory: videoCategory,
+              errorStatusCode: 200,
+              errorMessage: null
+            })
+          }
+      )
+      .catch(
+        async (error) => {          
+          patchState({
+            finish: true,
+            success: false,
+            videoCategory: null,
+            errorStatusCode: error.status,
+            errorMessage: error.message
+          })
+        }
+      );
   }
 
 }

@@ -67,3 +67,13 @@ export class UpdateUserRoles {
   static readonly type = '[User] Update UserRoles';
   constructor(public payload: {user: UserRequest}) { }
 }
+
+export class UpdateUserPassword {
+  static readonly type = '[User] Update UserPassword';
+  constructor(public payload: {user: ChangePasswordDto}) { }
+}
+
+export class GetUser {
+  static readonly type = '[User] GetUser';
+  constructor(public payload: {username: string}) { }
+}

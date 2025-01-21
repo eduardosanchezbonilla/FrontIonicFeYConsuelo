@@ -27,6 +27,7 @@ export class StorageService {
     this._storage.remove('user');
     this._storage.remove('token');
     this._storage.remove('profile');
+    this._storage.remove('userRewriteData');
     //this._storage.clear();
   }
 

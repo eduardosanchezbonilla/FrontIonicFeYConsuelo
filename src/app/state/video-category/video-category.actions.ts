@@ -24,3 +24,8 @@ export class ResetVideoCategory {
   static readonly type = '[VideoCategory] Rest VideoCategory';
   constructor(public payload: {}) { }
 }
+
+export class GetVideoCategoryImage {
+  static readonly type = '[VideoCategory] GetVideoCategoryImage';
+  constructor(public payload: {id:number}) { }
+}

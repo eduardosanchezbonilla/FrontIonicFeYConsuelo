@@ -58,29 +58,12 @@
         <div class="div-accordion-padding" slot="content">
           <ion-item-sliding *ngFor="let march of repertoireMarchGroupByType.marchs; trackBy: trackByRepertoireMarchFn" #marchSliding>
             <ion-card class="march-card background-white">
-              <ion-item lines="none" class="march-ion-item">
-                <!--<ion-avatar slot="start" class="march-avatar">                  
-                  <ion-img 
-                    [src]="march.image ? 'data:image/jpeg;base64,' + march.image : 'data:image/jpeg;base64,' + defaultRepertoireMarchImage">
-                  </ion-img>                              
-                </ion-avatar>-->
+              <ion-item lines="none" class="march-ion-item">                
                 <ion-label class="march-card-label">
                   <p class="march-name">{{ march.name }} </p>                  
                   <p class="march-email">{{ march.author }}</p>
                 </ion-label>                    
-                <!--<ion-icon 
-                  *ngIf="march.youtubeId"
-                  name="eye-outline"    
-                  class="march-header-fab-icon"
-                >
-                </ion-icon>-->
                 
-                
-                <!--<ion-fab-button *ngIf="march.youtubeId" fill="clear" color="success" size="small" class="march-header-fab" (click)="viewVideo(march,march.youtubeId)">
-                  <ion-icon name="eye-outline" class="march-header-fab-icon"></ion-icon>        
-                </ion-fab-button>
-                -->     
-
                 <div *ngIf="march.youtubeId" class="march-header-fab" (click)="viewVideo(march,march.youtubeId)">
                   <ion-icon name="eye-outline" class="march-header-fab-icon"></ion-icon>        
                 </div>   

@@ -1,5 +1,4 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { IonModal, ModalController } from '@ionic/angular';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subscription } from 'rxjs';
@@ -7,6 +6,7 @@ import { DEFAULT_USER_IMAGE } from 'src/app/constants/constants';
 import { Role } from 'src/app/models/role/role';
 import { User } from 'src/app/models/user/user';
 import { UserRequest } from 'src/app/models/user/user-request';
+import { CameraService } from 'src/app/services/camera/camera.service';
 import { LoadingService } from 'src/app/services/loading/loading.service';
 import { GetAllRoles } from 'src/app/state/user/users.actions';
 import { UsersState } from 'src/app/state/user/users.state';
@@ -33,7 +33,8 @@ export class ModalUserComponent  implements OnInit, OnDestroy {
   constructor(
     private store:Store,
     private modalController: ModalController,
-    private loadingService: LoadingService
+    private loadingService: LoadingService,
+    private cameraService: CameraService
   ) { }
 
   async ngOnInit() {    
@@ -113,16 +114,8 @@ export class ModalUserComponent  implements OnInit, OnDestroy {
   }
 
   async selectImage() {    
-    const image = await Camera.getPhoto({
-      quality: 90,
-      allowEditing: false,
-      correctOrientation: true,        
-      resultType: CameraResultType.Base64, 
-      source: CameraSource.Prompt 
-    });
-
-    this.showImage = `data:image/jpeg;base64,${image.base64String}`;
-    this.selectedImage = image.base64String;
+    this.selectedImage =  await this.cameraService.getPhotoBase64(90);
+    this.showImage = `data:image/jpeg;base64,${this.selectedImage}`;    
   }
 
   clearImage() {

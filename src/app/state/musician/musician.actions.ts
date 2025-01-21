@@ -36,3 +36,7 @@ export class ResetPassword {
   constructor(public payload: {resetPassword: ResetPasswordDto}) { }
 }
 
+export class GetMusicianFromDni {
+  static readonly type = '[Musicians] Get GetMusicianFromDni';
+  constructor(public payload: {dni:string}) { }
+}

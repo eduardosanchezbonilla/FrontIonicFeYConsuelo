@@ -2,16 +2,22 @@ import { Injectable } from '@angular/core';
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { EventService } from 'src/app/services/event/event.service';
 import { Event } from 'src/app/models/event/event';
-import { CreateEvent, DeleteEvent, GetEventMusicianAssistance, GetEventRepertoire, GetEvents, GetEventsGroupByAnyo, ResetEvent, ResetEventMusicianAssistance, ResetEventRepertoire, UpdateEvent } from './event.actions';
+import { CreateEvent, DeleteEvent, GetEvent, GetEventMusicianAssistance, GetEventRepertoire, GetEventReportAssistance, GetEvents, GetEventsGroupByAnyo, ResetEvent, ResetEventMusicianAssistance, ResetEventRepertoire, UpdateEvent } from './event.actions';
 import { EventMusicianAssistance } from 'src/app/models/event/event-musician-assistance';
 import { EventGroupByAnyo } from 'src/app/models/event/event-group-by-anyo';
 import { EventRepertoire } from 'src/app/models/event/event-repertoire';
+import { EventReportAssistance } from 'src/app/models/event/event-report-assistance';
+import { MusicianEventListResponse } from 'src/app/models/musician-event/musician-event-list-response';
+import { EventListResponse } from 'src/app/models/event/event-list-response';
 
 export class EventStateModel {
-  public events: Event[];
+  //public events: Event[];
   public eventsGroupByAnyo: EventGroupByAnyo[];
   public eventMusicianAssistance: EventMusicianAssistance;
+  public eventReportAssistance: EventReportAssistance;
   public eventRepertoire: EventRepertoire;
+  public eventListResponse: EventListResponse;
+  public event: Event;
   finish: boolean;
   success: boolean;
   errorStatusCode: number;
@@ -19,10 +25,13 @@ export class EventStateModel {
 }
 
 const defaults = {
-  events: [],  
+  //events: [],  
   eventsGroupByAnyo: [],  
   eventMusicianAssistance: null,
+  eventReportAssistance: null,
   eventRepertoire: null,
+  eventListResponse:null,
+  event: null,
   finish: false,
   success: false,
   errorStatusCode: null,
@@ -50,9 +59,14 @@ export class EventState {
     return state.finish;
   }
   
-  @Selector()
+  /*@Selector()
   static events(state:EventStateModel):Event[] {
     return state.events;
+  }*/
+
+  @Selector()
+  static eventListResponse(state:EventStateModel):EventListResponse {
+    return state.eventListResponse;
   }
 
   @Selector()
@@ -60,15 +74,24 @@ export class EventState {
     return state.eventsGroupByAnyo;
   }
 
-
   @Selector()
   static eventMusicianAssistance(state:EventStateModel):EventMusicianAssistance {
     return state.eventMusicianAssistance;
   }
 
   @Selector()
+  static eventReportAssistance(state:EventStateModel):EventReportAssistance {
+    return state.eventReportAssistance;
+  }
+
+  @Selector()
   static eventRepertoire(state:EventStateModel):EventRepertoire {
     return state.eventRepertoire;
+  }
+
+  @Selector()
+  static event(state:EventStateModel):Event {
+    return state.event;
   }
 
   @Selector()
@@ -162,11 +185,11 @@ export class EventState {
   ) {
     return this.eventService.getEvents(payload.startDate, payload.endDate)
       .then(
-        (events:Event[]) => {
+        (eventListResponse:EventListResponse) => {
           patchState({
             finish: true,
             success: true,
-            events: events,
+            eventListResponse: eventListResponse,
             errorStatusCode: 200,
             errorMessage: null
           })
@@ -177,7 +200,7 @@ export class EventState {
           patchState({
             finish: true,
             success: false,
-            events: [],
+            eventListResponse: null,
             errorStatusCode: error.status,
             errorMessage: error.message
           })
@@ -352,6 +375,66 @@ export class EventState {
       errorStatusCode: null,
       errorMessage: null
     })
+  }
+
+  @Action(GetEventReportAssistance)
+  getEventReportAssistance(
+      { patchState }: StateContext<EventStateModel>,
+      { payload }: GetEventReportAssistance
+  ) {
+    return this.eventService.getEventReportAssistance(payload.eventType, payload.eventId)
+      .then(
+        (eventReportAssistance:EventReportAssistance) => {
+          patchState({
+            finish: true,
+            success: true,            
+            eventReportAssistance: eventReportAssistance,
+            errorStatusCode: 200,
+            errorMessage: null
+          })
+        }
+      )
+      .catch(
+        async (error) => {          
+          patchState({
+            finish: true,
+            success: false,            
+            eventReportAssistance: null,
+            errorStatusCode: error.status,
+            errorMessage: error.message
+          })
+        }
+      );
+  }
+
+  @Action(GetEvent)
+  getEvent(
+      { patchState }: StateContext<EventStateModel>,
+      { payload }: GetEvent
+  ) {
+    return this.eventService.getEvent(payload.eventType, payload.eventId)
+      .then(
+        (event:Event) => {
+          patchState({
+            finish: true,
+            success: true,            
+            event: event,
+            errorStatusCode: 200,
+            errorMessage: null
+          })
+        }
+      )
+      .catch(
+        async (error) => {          
+          patchState({
+            finish: true,
+            success: false,            
+            event: null,
+            errorStatusCode: error.status,
+            errorMessage: error.message
+          })
+        }
+      );
   }
 
 

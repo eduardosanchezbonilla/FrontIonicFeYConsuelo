@@ -11,6 +11,7 @@ import { UpdateFirebaseTokenDto } from './models/user/update-firebase-token-dto'
 import { Store } from '@ngxs/store';
 import { UpdateFirebaseToken } from './state/user/users.actions';
 import { UsersState } from './state/user/users.state';
+import { UserResponse } from './models/user/user-response';
 
 @Component({
   selector: 'app-root',
@@ -20,6 +21,7 @@ import { UsersState } from './state/user/users.state';
 export class AppComponent {
 
   public user:User;
+  public userRewriteData:UserResponse;
   
   constructor(
     private store: Store,
@@ -30,8 +32,34 @@ export class AppComponent {
     this.initializeApp();
   }
 
-  async openMenu(){
-      this.user = JSON.parse(await this.storage.getItem('user'));      
+  async openMenu(){      
+      this.user = JSON.parse(await this.storage.getItem('user'));     
+      this.userRewriteData = JSON.parse(await this.storage.getItem('userRewriteData'));     
+
+      if(this.userRewriteData && this.userRewriteData.name){
+        this.user.userDetail.name = this.userRewriteData.name;
+      }
+      if(this.userRewriteData && this.userRewriteData.surname){
+        this.user.userDetail.surname = this.userRewriteData.surname;
+      }
+      if(this.userRewriteData && this.userRewriteData.direction){
+        this.user.userDetail.direction = this.userRewriteData.direction;
+      }
+      if(this.userRewriteData && this.userRewriteData.municipality){
+        this.user.userDetail.municipality = this.userRewriteData.municipality;
+      }
+      if(this.userRewriteData && this.userRewriteData.province){
+        this.user.userDetail.province = this.userRewriteData.province;
+      }
+      if(this.userRewriteData && this.userRewriteData.email){
+        this.user.userDetail.email = this.userRewriteData.email;
+      }
+      if(this.userRewriteData && this.userRewriteData.image){
+        this.user.userDetail.image = this.userRewriteData.image;
+      }
+      if(this.userRewriteData && this.userRewriteData.description){
+        this.user.userDetail.description = this.userRewriteData.description;
+      }
   }
 
   initializeApp() {

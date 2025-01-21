@@ -3,9 +3,11 @@ import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { MusicianEventService } from 'src/app/services/musician-event/musician-event.service';
 import { CreateMusicianEvent, DeleteMusicianEvent, GetMusicianEvents, ResetMusicianEvent } from './musician-event.actions';
 import { Event } from 'src/app/models/event/event';
+import { MusicianEventListResponse } from 'src/app/models/musician-event/musician-event-list-response';
 
 export class MusicianEventStateModel {
   public events: Event[];
+  musicianEventListResponse: MusicianEventListResponse;
   finish: boolean;
   success: boolean;
   errorStatusCode: number;
@@ -14,6 +16,7 @@ export class MusicianEventStateModel {
 
 const defaults = {
   events: [],  
+  musicianEventListResponse: null,
   finish: false,
   success: false,
   errorStatusCode: null,
@@ -56,6 +59,10 @@ export class MusicianEventState {
     return state.events;
   }
 
+  @Selector()
+  static musicianEventListResponse(state:MusicianEventStateModel):MusicianEventListResponse {
+    return state.musicianEventListResponse;
+  }
 
   @Action(CreateMusicianEvent)
   createMusicianEvent(
@@ -138,11 +145,11 @@ export class MusicianEventState {
   ) {
     return this.musicianEventService.getEvents(payload.musicianId, payload.startDate, payload.endDate)
       .then(
-        (events:Event[]) => {          
+        (musicianEventListResponse:MusicianEventListResponse) => {          
           patchState({
             finish: true,
             success: true,
-            events: events,
+            musicianEventListResponse: musicianEventListResponse,
             errorStatusCode: 200,
             errorMessage: null
           })

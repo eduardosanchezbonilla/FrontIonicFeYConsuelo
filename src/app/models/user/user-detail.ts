@@ -8,7 +8,8 @@ export class UserDetail {
     province?: string;    
     email?: string;    
     image?: string;    
-    description?: string;    
+    description?: string;   
+    phoneNumber?: string; 
 
     constructor(dni?: string,  
                 name?: string,
@@ -18,7 +19,8 @@ export class UserDetail {
                 province?: string,
                 email?: string, 
                 image?: string,    
-                description?: string
+                description?: string,
+                phoneNumber?: string
             ) {
         this.dni = dni;
         this.name = name;
@@ -29,5 +31,6 @@ export class UserDetail {
         this.email = email;
         this.image = image;
         this.description = description;        
+        this.phoneNumber = phoneNumber;
     }
 }

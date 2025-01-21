@@ -13,6 +13,8 @@ import { StorageService } from '../storage/storage.service';
 import { UserGroupByRole } from 'src/app/models/user/user-group-by-role';
 import { Role } from 'src/app/models/role/role';
 import { UserRequest } from 'src/app/models/user/user-request';
+import { UserResponse } from 'src/app/models/user/user-response';
+import { User } from 'src/app/models/user/user';
 
 @Injectable({
   providedIn: 'root'
@@ -48,7 +50,7 @@ export class UsersService {
       }
     )
     .then(async response => {
-      if(response.status==200){
+      if(response.status==200){        
         const data = await response.data;      
         return data;
       }
@@ -346,8 +348,7 @@ export class UsersService {
         params:{},
         data:user,
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + token
+          'Content-Type': 'application/json'
         }
       }
     ).then(async response => {
@@ -418,5 +419,87 @@ export class UsersService {
     });
   }
 
+  async updateUserPassword(user:ChangePasswordDto){
+    const token = await this.storage.getItem('token');
+    return Http.put(
+      {
+        url:environment.host + '/user/' + user.username + '/password',
+        params:{},
+        data:user,
+        headers: {
+          'Content-Type': 'application/json'/*,
+          'Authorization': 'Bearer ' + token*/
+        }
+      }
+    ).then(async response => {
+      const newToken = response.headers['Authorization'] || response.headers['authorization'];
+      if(newToken){            
+        await this.storage.setItem('token', newToken.replace('Bearer ', ''));
+      }
+      if(response.status==200){        
+        return true;
+      }
+      else{                
+        return Promise.reject({
+          status: response.status,
+          message: response.data?.message || 'Error al modificar la contraseña del usuario'
+        });
+      }      
+    })
+    .catch((error) => {    
+      if(error.status){
+        return Promise.reject(error);
+      }
+      else {
+        return Promise.reject({
+          status: 403,
+          message: null
+        });                
+      }           
+    });
+  }
+
+  async getUser(username:string){    
+    const token = await this.storage.getItem('token');          
+    return Http.get(
+      {
+        url:environment.host + '/user/'+username,   
+        params:{},     
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        }
+      }
+    ).then(async response => {            
+      const newToken = response.headers['Authorization'] || response.headers['authorization'];      
+      if(newToken){             
+        await this.storage.setItem('token', newToken.replace('Bearer ', ''));
+      }    
+      if(response.status==200 ){        
+        const data = await response.data as UserResponse;
+        return data;
+      }
+      else if( response.status==204){        
+        return new UserResponse(null,null,null,null,null,null,null,null,null,null,null,null);
+      }
+      else{    
+        return Promise.reject({
+          status: response.status,
+          message: response.data?.message || 'Error al obtener el usuario'
+        });
+      }   
+    })
+    .catch((error) => {         
+      if(error.status){
+        return Promise.reject(error);
+      }
+      else {
+        return Promise.reject({
+          status: 403,
+          message: null
+        });                
+      }           
+    });
+  }
 
 }

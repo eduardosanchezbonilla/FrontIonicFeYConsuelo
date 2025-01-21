@@ -1,0 +1,199 @@
+.custom-h2{
+    margin-top: 12px;
+  }
+  
+  ion-label.ion-color-primary {
+    color: #B22222;
+    font-size: 1rem;
+    font-weight: bold;  
+    text-shadow: 1px 1px 2px #FFFFFF; /* Sombra leve */
+  }
+  
+  ion-item.image-selector {
+    display: flex;
+    align-items: center;
+  }
+
+  .image-label {
+    display: flex;
+    align-items: center;
+    padding-bottom:7px;
+  }
+  
+  .preview-image {
+    width: 40px;  
+    height: 40px; 
+    border-radius: 50%;
+    object-fit: cover; 
+    margin-left: 30px;   
+  }
+  
+  .custom-datetime-button {
+    border: 1px solid var(--ion-color-primary); 
+    border-bottom: 3px solid var(--ion-color-primary); 
+    border-radius: 8px;
+    padding: 0px 0px;  
+    margin-bottom: 5px;  
+  }
+  
+  .custom-item {
+    margin-top: 7px;  
+  }
+  
+  .custom-label {
+    padding-bottom: 3px;  
+  }
+  
+  .custom-label-role {
+    padding-bottom: 5px;  
+  }
+  
+  .custom-select {
+    padding-bottom: 17px;   
+    min-width: 80%;  
+    text-align: right;
+  }
+  
+  .custom-icon {
+    padding-bottom: 5px;  
+  }
+  
+  .custom-ion-button-image {
+    margin-bottom: 11px;  
+  }
+  
+  /*********************************************************************/
+  /************ Estilos para el selecct ********************************/
+  /*********************************************************************/
+  ::ng-deep .alert-wrapper {
+    width: 400px !important;  
+    max-width: 90% !important; 
+  }
+
+  .custom-label-textarea {
+    font-size: 1.5rem !important;
+  }
+  
+  .custom-textarea {
+    margin-top:25px;
+    border: 2px solid #4d4d4d; 
+    border-radius: 10px;        
+    padding: 10px;              
+    background-color: #f9f9f9; 
+    font-size: 16px;            
+    
+    /* Sombra suave en gris oscuro */
+    box-shadow: 0 0 10px rgba(77, 77, 77, 0.2); /* Sombra en gris oscuro, sutil */
+    
+    /* Asegurando visibilidad */
+    display: block;              
+    width: 100%;                
+    min-height: 200px;           
+    visibility: visible;        
+    opacity: 1;                 
+}
+ 
+.custom-textarea:focus {
+    box-shadow: 0 0 10px rgba(77, 77, 77, 0.4); /* Sombra más pronunciada al hacer foco */
+}
+
+.no-pointer {
+  pointer-events: none;
+}
+
+/* Contenedor principal */
+.profile-container {
+  display: flex;
+  flex-direction: column; /* Apilar imagen y botones verticalmente */
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 0px;
+}
+
+/* Contenedor de la imagen */
+.image-wrapper {
+  position: relative; /* Necesario para el posicionamiento absoluto del Skeleton Loader */
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid transparent;
+  background: linear-gradient(135deg, #333333, #999999);
+  padding: 2px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Contenedor del Spinner con fondo blanco */
+.spinner-container {
+  position: absolute; /* Posicionamiento absoluto para superponerse al avatar */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Centrar el contenedor */
+  width: 160px; /* Tamaño del contenedor */
+  height: 160px;
+  background-color: white; /* Fondo blanco */
+  border-radius: 50%; /* Forma circular */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); /* Sombra opcional para dar profundidad */  
+}
+
+/* Spinner personalizado */
+.spinner-avatar {
+  --spinner-color: #ff4d4d; /* Color rojo para el Spinner */
+  color: var(--ion-color-primary); 
+  width: 60px; /* Tamaño del Spinner */
+  height: 60px;
+}
+
+/* Opcional: Ajustar el color del spinner cuando está activo */
+ion-spinner.spinner-avatar {
+  --spinner-color: #ff4d4d; /* Rojo */
+}
+
+/* Imagen del perfil */
+.profile-image {
+  position: absolute; /* Posicionamiento absoluto para superponerse al Skeleton Loader */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  background: white;
+  opacity: 0; /* Invisible inicialmente */
+  transition: opacity 0.5s ease-in-out;
+  z-index: 2; /* Asegura que la imagen esté por encima del Skeleton */
+}
+
+.profile-image.loaded {
+  opacity: 1; /* Visible una vez cargada */
+}
+
+/* Botones alineados horizontalmente debajo de la imagen */
+.image-actions {
+  display: flex;
+  gap: 12px; /* Espacio entre los botones */
+  margin-top: 10px;
+}
+
+/* Botones de acción */
+.action-button {  
+  --padding-start: 0px;
+  --padding-end: 0px;
+  --min-height: 40px;
+  width: 35px;
+  height: 25px;
+  font-size: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); /* Sombra ligera */
+  background-color: #f0f0f0; /* Color de fondo opcional */
+}
+
+.action-button ion-icon {
+  font-size: 20px; /* Tamaño del icono */
+  color: #333333; /* Color del icono */
+}

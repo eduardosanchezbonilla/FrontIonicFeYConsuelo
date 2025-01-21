@@ -1,0 +1,42 @@
+ion-tab-bar {
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding: 0;
+    overflow: hidden;
+  }
+  
+  .scrollable-tab-buttons {
+    display: flex;
+    overflow-x: auto; /* Habilita el scroll horizontal */
+    white-space: nowrap;
+    scroll-behavior: smooth;
+    flex: 1;
+    justify-content: space-between;    
+    height: 100%;
+  }
+  
+  ion-tab-button {
+    flex: 1 1 auto; /* Distribuye uniformemente los botones */
+    text-align: center;
+    max-width: 2000px; 
+  }
+  
+  .scroll-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 24px;
+    color: var(--ion-color-primary);
+    z-index: 1;
+    cursor: pointer;
+  }
+  
+  .scroll-arrow.left {
+    left: 0;
+  }
+  
+  .scroll-arrow.right {
+    right: 0;
+  }
+  

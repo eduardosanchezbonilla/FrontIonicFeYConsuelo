@@ -225,6 +225,30 @@
       <ion-text color="danger" *ngIf="provinceInput.errors && provinceInput.errors['minlength']">La provincia debe tener al menos 1 caracter..</ion-text>
       <ion-text color="danger" *ngIf="provinceInput.errors && provinceInput.errors['maxlength']">La provincia no puede exceder los 200 caracteres.</ion-text>
     </div>
+
+    <!-- NUMERO DE TELEFONO -->
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+      <ion-label color="primary" position="floating">
+          Teléfono
+      </ion-label>
+      <ion-icon name="call-outline" slot="end"></ion-icon>
+      <ion-input                                                        
+            autocomplete="phoneNumber"       
+            minlength="6"                     
+            maxlength="10"
+            name="phoneNumber"
+            placeholder="Introduzca el teléfono del músico"
+            type="tel"                                 
+            [(ngModel)]="user.phoneNumber"                                                 
+            #phoneNumberInput="ngModel"            
+      >
+      </ion-input>
+    </ion-item>
+
+    <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(phoneNumberInput.invalid && phoneNumberInput.touched)">      
+      <ion-text color="danger" *ngIf="phoneNumberInput.errors && phoneNumberInput.errors['minlength']">El número de teléfono debe tener al menos 6 caracter..</ion-text>
+      <ion-text color="danger" *ngIf="phoneNumberInput.errors && phoneNumberInput.errors['maxlength']">El número de teléfono no puede exceder los 10 caracteres.</ion-text>
+    </div>
     
     <!-- EMAIL -->
     <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">

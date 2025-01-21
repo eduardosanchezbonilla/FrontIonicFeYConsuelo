@@ -73,6 +73,11 @@ export class MenuMusicianPage implements OnDestroy {
       });      
   }
 
+  logout(){
+    this.userService.logout();
+  }
+
+
   getToday(){
     const today = new Date();
     const year = today.getFullYear();
@@ -181,7 +186,7 @@ export class MenuMusicianPage implements OnDestroy {
         updating: true
       }
     });
-    modal.present();
+    modal.present();    
 
     const {data, role} = await modal.onWillDismiss();
 
@@ -233,7 +238,9 @@ export class MenuMusicianPage implements OnDestroy {
       musician.province,
       musician.email, 
       musician.image,    
-      null);
+      null,
+      musician.phoneNumber
+    );
 
     // abrimos modal    
     const modal = await this.modalController.create({

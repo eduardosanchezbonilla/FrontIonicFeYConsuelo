@@ -5,6 +5,11 @@ export class CreateRepertoireEvent {
   constructor(public payload: {repertoireEvent: RepertoireEvent}) { }
 }
 
+export class UpdateRepertoireEventOrderNumbers {
+  static readonly type = '[RepertoireEvent] UpdateRepertoireEventOrderNumbers';
+  constructor(public payload: {repertoireEvent: RepertoireEvent}) { }
+}
+
 export class DeleteRepertoireEvent {
   static readonly type = '[RepertoireEvent] Delete RepertoireEvent';
   constructor(public payload: {repertoireEvent: RepertoireEvent}) { }

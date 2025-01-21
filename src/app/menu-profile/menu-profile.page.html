@@ -1,0 +1,351 @@
+<ion-header [translucent]="true" >
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>   
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()" class="logout-button">
+        <ion-icon name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <form (ngSubmit)="updateUserMusician()" #userForm="ngForm">    
+    <!------------------------->
+    <!------ DATOS USUARIO ---->
+    <!------------------------->
+    <h2 class="fancy-title custom-h2">
+      Datos usuario
+    </h2>
+
+    <div class="spacer-small"></div>  
+
+    <!-- AVATAR DEL USUARIO -->   
+    <div class="profile-container">      
+      <div class="image-wrapper">
+        <div *ngIf="!imageLoaded" class="spinner-container">
+          <ion-spinner name="crescent" class="spinner-avatar"></ion-spinner>
+        </div>
+        
+        <img *ngIf="showImage" 
+             [src]="showImage" 
+             alt="Foto del usuario" 
+             class="profile-image loaded" 
+             (load)="onImageLoad()" />
+      </div>
+      
+      <div class="image-actions">
+        <ion-button           
+          size="small" 
+          (click)="selectImage()" 
+          class="action-button">
+          <ion-icon name="image-outline"></ion-icon>
+        </ion-button>
+        <ion-button           
+          size="small" 
+          color="warning" 
+          (click)="clearImage()" 
+          *ngIf="showImage" 
+          class="action-button">
+          <ion-icon name="trash-outline"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+   
+    <!-- USERNAME -->
+    <div *ngIf="user"> 
+      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+        <ion-label color="primary" position="floating">
+            Username
+        </ion-label>
+        <ion-icon name="person-circle-outline" slot="end"></ion-icon>
+        <ion-input                      
+              autocomplete="dni"       
+              minlength="5"                     
+              maxlength="50"
+              name="username"
+              placeholder="Introduzca el username del usuario"
+              type="text"
+              required="true"                      
+              [(ngModel)]="user.username"                                                 
+              #usernameInput="ngModel"  
+              [attr.readonly]="true"          
+        >
+        </ion-input>
+      </ion-item>
+
+      <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(usernameInput.invalid && usernameInput.touched)">      
+        <ion-text color="danger" *ngIf="usernameInput.errors && usernameInput.errors['required']">El username es obligatorio.</ion-text>
+        <ion-text color="danger" *ngIf="usernameInput.errors && usernameInput.errors['minlength']">El username debe tener al menos 5 caracteres.</ion-text>
+        <ion-text color="danger" *ngIf="usernameInput.errors && usernameInput.errors['maxlength']">El username no puede exceder los 50 caracteres.</ion-text>
+      </div>
+    
+      <!-- DNI -->
+      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+        <ion-label color="primary" position="floating">
+            Dni
+        </ion-label>
+        <ion-icon name="id-card-outline" slot="end"></ion-icon>
+        <ion-input                      
+              autocomplete="dni"       
+              minlength="5"                     
+              maxlength="9"
+              name="dni"
+              placeholder="Introduzca el dni del usuario"
+              type="text"
+              required="false"
+              (ionInput)="inputUpperCase($event,user.dni)"
+              [(ngModel)]="user.dni"                                                 
+              #dniInput="ngModel"            
+        >
+        </ion-input>
+      </ion-item>
+      
+      <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(dniInput.invalid && dniInput.touched)">            
+        <ion-text color="danger" *ngIf="dniInput.errors && dniInput.errors['minlength']">El dni debe tener al menos 5 caracteres.</ion-text>
+        <ion-text color="danger" *ngIf="dniInput.errors && dniInput.errors['maxlength']">El dni no puede exceder los 9 caracteres.</ion-text>
+      </div>
+
+      <!-- ANGIGUEDAD -->
+      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent no-pointer" *ngIf="profile=='MUSICO'">
+        <ion-label color="primary" position="floating">
+            Antigüedad
+        </ion-label>
+        <ion-icon name="alarm-outline" slot="end"></ion-icon>
+        <ion-input                      
+              autocomplete="antiguedad"                     
+              name="antiguedad"            
+              type="text"
+              required="false"            
+              [(ngModel)]="musicianAntiquity"                                                       
+        >
+        </ion-input>
+      </ion-item>
+      
+      <!-- NOMBRE -->
+      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+        <ion-label color="primary" position="floating">
+            Nombre
+        </ion-label>
+        <ion-icon name="person-outline" slot="end"></ion-icon>
+        <ion-input                                                        
+              autocomplete="name"       
+              minlength="1"                     
+              maxlength="50"
+              name="name"
+              placeholder="Introduzca el nombre del usuario"
+              type="text"
+              required="false"
+              (ionInput)="inputUpperCase($event,user.name)"
+              [(ngModel)]="user.name"                                                 
+              #nameInput="ngModel"            
+        >
+        </ion-input>
+      </ion-item>
+      
+      <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(nameInput.invalid && nameInput.touched)">      
+        <ion-text color="danger" *ngIf="nameInput.errors && nameInput.errors['minlength']">El nombre debe tener al menos 1 caracter..</ion-text>
+        <ion-text color="danger" *ngIf="nameInput.errors && nameInput.errors['maxlength']">El nombre no puede exceder los 50 caracteres.</ion-text>
+      </div>
+
+      <!-- APELLIDOS -->
+      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+        <ion-label color="primary" position="floating">
+            Apellidos
+        </ion-label>
+        <ion-icon name="person-outline" slot="end"></ion-icon>
+        <ion-input                                                        
+              autocomplete="surname"       
+              minlength="1"                     
+              maxlength="200"
+              name="surname"
+              placeholder="Introduzca los apellidos del usuario"
+              type="text"
+              required="false"
+              (ionInput)="inputUpperCase($event,user.surname)"
+              [(ngModel)]="user.surname"                                                 
+              #surnameInput="ngModel"            
+        >
+        </ion-input>
+      </ion-item>
+
+      <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(surnameInput.invalid && surnameInput.touched)">      
+        <ion-text color="danger" *ngIf="surnameInput.errors && surnameInput.errors['minlength']">Los apellidos deben tener al menos 1 caracter..</ion-text>
+        <ion-text color="danger" *ngIf="surnameInput.errors && surnameInput.errors['maxlength']">Los apellidos no pueden exceder los 200 caracteres.</ion-text>
+      </div>
+
+    
+      <!-- DIRECCION -->
+      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+        <ion-label color="primary" position="floating">
+            Dirección
+        </ion-label>
+        <ion-icon name="home-outline" slot="end"></ion-icon>
+        <ion-input                                                        
+              autocomplete="direction"       
+              minlength="1"                     
+              maxlength="200"
+              name="direction"
+              placeholder="Introduzca la dirección del usuario"
+              type="text"
+              required="false"
+              (ionInput)="inputUpperCase($event,user.direction)"
+              [(ngModel)]="user.direction"                                                 
+              #directionInput="ngModel"            
+        >
+        </ion-input>
+      </ion-item>
+
+      <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(directionInput.invalid && directionInput.touched)">      
+        <ion-text color="danger" *ngIf="directionInput.errors && directionInput.errors['minlength']">La dirección debe tener al menos 1 caracter..</ion-text>
+        <ion-text color="danger" *ngIf="directionInput.errors && directionInput.errors['maxlength']">La dirección no puede exceder los 200 caracteres.</ion-text>
+      </div>
+
+      <!-- MUNICIPIO -->
+      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+        <ion-label color="primary" position="floating">
+            Municipio
+        </ion-label>
+        <ion-icon name="earth-outline" slot="end"></ion-icon>
+        <ion-input                                                        
+              autocomplete="municipality"       
+              minlength="1"                     
+              maxlength="100"
+              name="municipality"
+              placeholder="Introduzca el municipio del usuario"
+              type="text"
+              required="false"
+              (ionInput)="inputUpperCase($event,user.municipality)"
+              [(ngModel)]="user.municipality"                                                 
+              #municipalityInput="ngModel"            
+        >
+        </ion-input>
+      </ion-item>
+
+      <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(municipalityInput.invalid && municipalityInput.touched)">      
+        <ion-text color="danger" *ngIf="municipalityInput.errors && municipalityInput.errors['minlength']">El municipio debe tener al menos 1 caracter..</ion-text>
+        <ion-text color="danger" *ngIf="municipalityInput.errors && municipalityInput.errors['maxlength']">El municipio no puede exceder los 200 caracteres.</ion-text>
+      </div>
+
+      <!-- PROVINCIA -->
+      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+        <ion-label color="primary" position="floating">
+            Provincia
+        </ion-label>
+        <ion-icon name="earth-outline" slot="end"></ion-icon>
+        <ion-input                                                        
+              autocomplete="province"       
+              minlength="1"                     
+              maxlength="100"
+              name="province"
+              placeholder="Introduzca la provincia del usuario"
+              type="text"
+              required="false"
+              (ionInput)="inputUpperCase($event,user.province)"
+              [(ngModel)]="user.province"                                                 
+              #provinceInput="ngModel"            
+        >
+        </ion-input>
+      </ion-item>
+
+      <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(provinceInput.invalid && provinceInput.touched)">      
+        <ion-text color="danger" *ngIf="provinceInput.errors && provinceInput.errors['minlength']">La provincia debe tener al menos 1 caracter..</ion-text>
+        <ion-text color="danger" *ngIf="provinceInput.errors && provinceInput.errors['maxlength']">La provincia no puede exceder los 200 caracteres.</ion-text>
+      </div>
+
+      <!-- NUMERO DE TELEFONO -->
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+      <ion-label color="primary" position="floating">
+          Teléfono
+      </ion-label>
+      <ion-icon name="call-outline" slot="end"></ion-icon>
+      <ion-input                                                        
+            autocomplete="phoneNumber"       
+            minlength="6"                     
+            maxlength="10"
+            name="phoneNumber"
+            placeholder="Introduzca el teléfono del músico"
+            type="tel"                                 
+            [(ngModel)]="user.phoneNumber"                                                 
+            #phoneNumberInput="ngModel"            
+      >
+      </ion-input>
+    </ion-item>
+
+    <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(phoneNumberInput.invalid && phoneNumberInput.touched)">      
+      <ion-text color="danger" *ngIf="phoneNumberInput.errors && phoneNumberInput.errors['minlength']">El número de teléfono debe tener al menos 6 caracter..</ion-text>
+      <ion-text color="danger" *ngIf="phoneNumberInput.errors && phoneNumberInput.errors['maxlength']">El número de teléfono no puede exceder los 10 caracteres.</ion-text>
+    </div>
+      
+      <!-- EMAIL -->
+      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+        <ion-label color="primary" position="floating">
+            Email
+        </ion-label>
+        <ion-icon name="at-outline" slot="end"></ion-icon>
+        <ion-input                                                        
+              autocomplete="email"       
+              minlength="1"                     
+              maxlength="100"
+              name="email"
+              placeholder="Introduzca el email del usuario"
+              type="email"
+              required="false"
+              pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" 
+              [(ngModel)]="user.email"                                                 
+              #emailInput="ngModel"            
+        >
+        </ion-input>
+      </ion-item>
+
+      <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(emailInput.invalid && emailInput.touched)">      
+        <ion-text color="danger" *ngIf="emailInput.errors && emailInput.errors['pattern']">Introduzca un email válido.</ion-text>
+        <ion-text color="danger" *ngIf="emailInput.errors && emailInput.errors['minlength']">El mail debe tener al menos 1 caracter..</ion-text>
+        <ion-text color="danger" *ngIf="emailInput.errors && emailInput.errors['maxlength']">El mail no puede exceder los 200 caracteres.</ion-text>
+      </div>
+      
+      <!-- DESCRIPCION -->
+      <ion-item lines="none">      
+          <ion-label color="primary" position="stacked" class="custom-label-textarea">
+            Descripción
+          </ion-label>
+          <ion-textarea 
+              name="description"
+              placeholder="Escribe la descripcion asociada al usuario..." 
+              class="custom-textarea focus-style"
+              minlength="1"                     
+              maxlength="1000"
+              required="false"
+              [(ngModel)]="user.description"              
+          >
+          </ion-textarea>
+      </ion-item>
+    </div>
+    
+
+    <div class="spacer"></div>       
+
+    <ion-button 
+          type="submit"           
+          [disabled]="userForm.invalid"
+          expand="block">
+        Actualizar datos
+    </ion-button>
+
+    <div class="spacer-small"></div>   
+
+    <ion-button 
+      type="button" 
+      (click)="openModalChangePassword()" 
+      color="secondary" 
+      expand="block" 
+      class="update-password-button">
+      <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+      Actualizar Contraseña
+    </ion-button>
+
+  </form>
+</ion-content>

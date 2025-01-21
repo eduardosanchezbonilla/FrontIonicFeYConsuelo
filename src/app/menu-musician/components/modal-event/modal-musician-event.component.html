@@ -46,6 +46,66 @@
       </ion-calendar>
     </div>
   
+    <!-- PORCENTAJES DE ASISTENCIA -->    
+    <ion-card class="attendance-card background-white" *ngIf="musicianEventListResponse && musicianEventListResponse.events && musicianEventListResponse.events.length>0 && musicianEventListResponse.musicianEventAssistStatistic"> 
+      <ion-card-header>
+        <ion-card-title>Estadísticas de Asistencia</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-grid>
+          <ion-row>
+            <!-- Asistencia mes actual -->
+            <ion-col size="12" size-md="4" *ngIf="musicianEventListResponse.musicianEventAssistStatistic.musicianCurrentMonthPercentageAssistEvents>=0">
+              <div class="statistic-container">
+                <div class="stat-header">                  
+                  <ion-icon name="stats-chart" class="stat-icon success"></ion-icon>
+                  <ion-text class="stat-title">Mes Actual ({{strSelectedMonth}})</ion-text>
+                  <ion-text class="stat-percentage">{{ musicianEventListResponse.musicianEventAssistStatistic.musicianCurrentMonthPercentageAssistEvents }}%</ion-text>
+                </div>
+                <ion-progress-bar 
+                  [value]="musicianEventListResponse.musicianEventAssistStatistic.musicianCurrentMonthPercentageAssistEvents / 100" 
+                  [color]="getProgressColorMusicianPercentageAssistEvents(musicianEventListResponse.musicianEventAssistStatistic.musicianCurrentMonthPercentageAssistEvents)"
+                  class="attendance-progress">
+                </ion-progress-bar>                
+              </div>
+            </ion-col>
+
+            <!-- Asistencia año actual -->
+            <ion-col size="12" size-md="4" *ngIf="musicianEventListResponse.musicianEventAssistStatistic.musicianCurrentYearPercentageAssistEvents>=0">
+              <div class="statistic-container">
+                <div class="stat-header">
+                  <ion-icon name="stats-chart" class="stat-icon warning"></ion-icon>
+                  <ion-text class="stat-title">Año Actual ({{strSelectedYear}})</ion-text>
+                  <ion-text class="stat-percentage">{{ musicianEventListResponse.musicianEventAssistStatistic.musicianCurrentYearPercentageAssistEvents }}%</ion-text>
+                </div>
+                <ion-progress-bar 
+                  [value]="musicianEventListResponse.musicianEventAssistStatistic.musicianCurrentYearPercentageAssistEvents / 100" 
+                  [color]="getProgressColorMusicianPercentageAssistEvents(musicianEventListResponse.musicianEventAssistStatistic.musicianCurrentYearPercentageAssistEvents)"
+                  class="attendance-progress">
+                </ion-progress-bar>                
+              </div>
+            </ion-col>
+
+            <!-- Asistencia historica -->
+            <ion-col size="12" size-md="4" *ngIf="musicianEventListResponse.musicianEventAssistStatistic.musicianHistoricPercentageAssistEvents>=0">
+              <div class="statistic-container">
+                <div class="stat-header">
+                  <ion-icon name="stats-chart" class="stat-icon danger"></ion-icon>
+                  <ion-text class="stat-title">Histórica</ion-text>
+                  <ion-text class="stat-percentage">{{ musicianEventListResponse.musicianEventAssistStatistic.musicianHistoricPercentageAssistEvents }}%</ion-text>
+                </div>
+                <ion-progress-bar 
+                  [value]="musicianEventListResponse.musicianEventAssistStatistic.musicianHistoricPercentageAssistEvents / 100" 
+                  [color]="getProgressColorMusicianPercentageAssistEvents(musicianEventListResponse.musicianEventAssistStatistic.musicianHistoricPercentageAssistEvents)"
+                  class="attendance-progress">
+                </ion-progress-bar>                
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
+
     <div class="spacer"></div>  
 
     <ion-button 

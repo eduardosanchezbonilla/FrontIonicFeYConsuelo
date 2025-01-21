@@ -1,15 +1,18 @@
 import { Injectable } from '@angular/core';
 import { State, Action, StateContext, Selector } from '@ngxs/store';
-import { ChangeExpiredPassword, CreateUser, DeleteUser, GetAllRoles, GetUsersGroupByRole, Login, Logout,  ResetPasswordUser, ResetUser, UpdateFirebaseToken, UpdateLassAccessDate, UpdateUserDetail, UpdateUserRoles } from './users.actions';
+import { ChangeExpiredPassword, CreateUser, DeleteUser, GetAllRoles, GetUser, GetUsersGroupByRole, Login, Logout,  ResetPasswordUser, ResetUser, UpdateFirebaseToken, UpdateLassAccessDate, UpdateUserDetail, UpdateUserPassword, UpdateUserRoles } from './users.actions';
 import { UsersService } from '../../services/user/users.service';
 import { TokenUser } from '../../models/user/token-user';
 import { StorageService } from 'src/app/services/storage/storage.service';
 import { User } from '../../models/user/user';
 import { UserGroupByRole } from 'src/app/models/user/user-group-by-role';
 import { Role } from 'src/app/models/role/role';
+import { UserResponse } from 'src/app/models/user/user-response';
+import { ToastService } from 'src/app/services/toast/toast.service';
 
 export class UsersStateModel {
   usersGroupByRole: UserGroupByRole[];
+  user: UserResponse;
   roles: Role[];
   finish: boolean;
   success: boolean;
@@ -19,6 +22,7 @@ export class UsersStateModel {
 
 const defaults = {
   usersGroupByRole: [],
+  user: null,
   roles: [],
   finish: false,
   success: false,
@@ -59,13 +63,19 @@ export class UsersState {
   }
 
   @Selector()
+  static user(state:UsersStateModel):UserResponse {
+    return state.user;
+  }
+
+  @Selector()
   static roles(state:UsersStateModel):Role[] {
     return state.roles;
   }
 
   constructor(
     private storage: StorageService, 
-    private userService: UsersService
+    private userService: UsersService,
+    private toast:ToastService,
   ){}
 
   private getProfile(roles:string[]):string{
@@ -261,6 +271,7 @@ export class UsersState {
     
     setState({
       usersGroupByRole: [],
+      user: null,
       roles: [],
       finish: false,
       success:false,
@@ -490,6 +501,71 @@ export class UsersState {
       });
   }
 
+  @Action(UpdateUserPassword)
+  updatePassword(
+      { patchState }: StateContext<UsersStateModel>,
+      { payload }: UpdateUserPassword
+  ) {
+    return this.userService.updateUserPassword(payload.user)
+      .then( 
+        async (success:Boolean) => {       
+          if(success){
+            patchState({
+              finish: true,
+              success: true,
+              errorStatusCode: 200,
+              errorMessage: null
+            })
+          }
+          else{
+            patchState({
+              finish: true,
+              success: false,
+              errorStatusCode: 500,
+              errorMessage: 'Error al modificar el password del usuario'
+            })
+          }
+        }
+      )
+      .catch(
+        async (error) => {          
+          patchState({
+            finish: true,
+            success: false,
+            errorStatusCode: error.status,
+            errorMessage: error.message
+          })
+      });
+  }
 
+  @Action(GetUser)
+  getUser(
+      { patchState }: StateContext<UsersStateModel>,
+      { payload }: GetUser
+  ) {        
+    return this.userService.getUser(payload.username)
+      .then(
+          (user:UserResponse) => {            
+            patchState({
+              finish: true,
+              success: true,
+              user: user,
+              errorStatusCode: 200,
+              errorMessage: null
+            })
+          }
+      )
+      .catch(
+        async (error) => {    
+          patchState({
+            finish: true,
+            success: false,
+            user: new UserResponse(null,null,null,null),
+            errorStatusCode: error.status,
+            errorMessage: error.message
+          })
+        }
+      );
+  }
 
 }

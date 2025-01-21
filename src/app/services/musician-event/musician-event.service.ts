@@ -4,6 +4,7 @@ import { Http } from '@capacitor-community/http';
 import { environment } from 'src/environments/environment';
 import { MusicianEvent } from 'src/app/models/musician-event/musician-event';
 import { Event } from 'src/app/models/event/event';
+import { MusicianEventListResponse } from 'src/app/models/musician-event/musician-event-list-response';
 
 @Injectable()
 export class MusicianEventService {
@@ -110,12 +111,9 @@ export class MusicianEventService {
         await this.storage.setItem('token', newToken.replace('Bearer ', ''));
       }
       if(response.status==200){        
-        const data = await response.data as Event[];
+        const data = await response.data as MusicianEventListResponse;
         return data;
-      }
-      else if(response.status==204){
-        return [];
-      }
+      }      
       else{                
         return Promise.reject({
           status: response.status,

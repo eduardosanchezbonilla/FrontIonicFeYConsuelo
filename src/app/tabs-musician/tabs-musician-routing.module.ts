@@ -9,6 +9,10 @@ const routes: Routes = [
     component: TabsMusicianPage,
     children: [
       {
+        path: 'menu-profile',       
+        loadChildren: () => import('../menu-profile/menu-profile.module').then(m => m.MenuProfilePageModule)
+      },
+      {
         path: 'menu-partiture',        
         loadChildren: () => import('../menu-partiture/menu-partiture.module').then(m => m.MenuPartiturePageModule)
       },      

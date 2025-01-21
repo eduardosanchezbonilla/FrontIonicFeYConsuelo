@@ -5,6 +5,15 @@
     text-shadow: 1px 1px 2px #FFFFFF;  
 }
 
+.custom-modal-subtitle {
+    margin-top:-10px !important;
+    margin-bottom:10px !important;
+    margin-left:5px !important;    
+    font-size: 1.4rem; 
+    text-align: left; 
+    text-shadow: 1px 1px 2px #FFFFFF;  
+}
+
 .event-card {
     width: calc(100%);
     max-height: 70px; 
@@ -91,6 +100,10 @@ ion-img {
     height: 100%;
 }
 
+.custom-ion-item-type-padding {
+    --padding-start: 5px !important;
+}
+
 ion-avatar img {
     border-radius: 50%;
     width: 30px;
@@ -142,6 +155,12 @@ ion-accordion ion-item[slot="header"] {
     //--padding-start:0px 
 }
 
+.march-ion-item-order {    
+    --min-height: 38px !important;       
+    --inner-padding-end: 5px;
+    --padding-start:10px 
+}
+
 .march-card-label {
     padding-top: 1px;
     padding-bottom: 0px;
@@ -168,4 +187,44 @@ ion-accordion ion-item[slot="header"] {
     color: gray;
     margin: 0;
     margin-top:-2px
+}
+
+.no-data-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    color: #888;
+}
+
+.no-data-icon {
+    font-size: 48px;
+    color: #ff9800; 
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+  
+.no-data-text {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    color: #333;
+}
+
+/* Estilos para el contenedor del filtro */
+.filter-container {
+    padding: 0px 0px;  /* Espaciado alrededor del filtro */
+    background-color: #FFFFFF; /* Fondo suave */
+    border-bottom: 1px solid #e0e0e0; /* Línea separadora debajo */
+    margin-bottom: 15px;
+    margin-left:0px;
+    margin-right:0px;
+    border-radius: 5px; // Bordes redondeados
+}
+
+.custom-ion-segment-button{
+    min-height:30px;
+    height:30px;
 }

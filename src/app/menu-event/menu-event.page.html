@@ -3,6 +3,11 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()" class="logout-button">
+        <ion-icon name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -47,22 +52,141 @@
       </ion-calendar>
     </div>
 
-    <!-- Leyenda -->
-    <!--<div class="calendar-legend">
-      <h3 class="legend-title">Leyenda</h3>
-      <div class="legend-item">
-        <span class="color-box ensayo-general-day"></span> <span>Ensayo Ko</span>
-      </div>   
-      <div class="legend-item">
-        <span class="color-box actuacion-day"></span> <span>Actuación Ko</span>
-      </div>    
-      <div class="legend-item">
-        <span class="color-box ensayo-general-day-ok"></span> <span>Ensayo Ok</span>
-      </div>   
-      <div class="legend-item">
-        <span class="color-box actuacion-day-ok"></span> <span>Actuación Ok</span>
-      </div>    
-    </div>-->
+    <!-- PORCENTAJES DE ASISTENCIA PARA MUSICOS -->    
+    <ion-card class="attendance-card background-white" *ngIf="eventListResponse && eventListResponse.events && eventListResponse.events.length>0 && eventListResponse.musicianEventAssistStatistic"> 
+      <ion-card-header>
+        <ion-card-title>Estadísticas de Asistencia</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-grid>
+          <ion-row>
+            <!-- Asistencia mes actual -->
+            <ion-col size="12" size-md="4" *ngIf="eventListResponse.musicianEventAssistStatistic.musicianCurrentMonthPercentageAssistEvents>=0">
+              <div class="statistic-container">
+                <div class="stat-header">                  
+                  <ion-icon name="stats-chart" class="stat-icon success"></ion-icon>
+                  <ion-text class="stat-title">Mes Actual ({{strSelectedMonth}})</ion-text>
+                  <ion-text class="stat-percentage">{{ eventListResponse.musicianEventAssistStatistic.musicianCurrentMonthPercentageAssistEvents }}%</ion-text>
+                </div>
+                <ion-progress-bar 
+                  [value]="eventListResponse.musicianEventAssistStatistic.musicianCurrentMonthPercentageAssistEvents / 100" 
+                  [color]="getProgressColorMusicianPercentageAssistEvents(eventListResponse.musicianEventAssistStatistic.musicianCurrentMonthPercentageAssistEvents)"
+                  class="attendance-progress">
+                </ion-progress-bar>                
+              </div>
+            </ion-col>
+
+            <!-- Asistencia año actual -->
+            <ion-col size="12" size-md="4" *ngIf="eventListResponse.musicianEventAssistStatistic.musicianCurrentYearPercentageAssistEvents>=0">
+              <div class="statistic-container">
+                <div class="stat-header">                  
+                  <ion-icon name="stats-chart" class="stat-icon warning"></ion-icon>
+                  <ion-text class="stat-title">Año Actual ({{strSelectedYear}})</ion-text>
+                  <ion-text class="stat-percentage">{{ eventListResponse.musicianEventAssistStatistic.musicianCurrentYearPercentageAssistEvents }}%</ion-text>
+                </div>
+                <ion-progress-bar 
+                  [value]="eventListResponse.musicianEventAssistStatistic.musicianCurrentYearPercentageAssistEvents / 100" 
+                  [color]="getProgressColorMusicianPercentageAssistEvents(eventListResponse.musicianEventAssistStatistic.musicianCurrentYearPercentageAssistEvents)"
+                  class="attendance-progress">
+                </ion-progress-bar>                
+              </div>
+            </ion-col>
+
+            <!-- Asistencia historica -->
+            <ion-col size="12" size-md="4" *ngIf="eventListResponse.musicianEventAssistStatistic.musicianHistoricPercentageAssistEvents>=0">
+              <div class="statistic-container">
+                <div class="stat-header">                  
+                  <ion-icon name="stats-chart" class="stat-icon danger"></ion-icon>
+                  <ion-text class="stat-title">Histórica</ion-text>
+                  <ion-text class="stat-percentage">{{ eventListResponse.musicianEventAssistStatistic.musicianHistoricPercentageAssistEvents }}%</ion-text>
+                </div>
+                <ion-progress-bar 
+                  [value]="eventListResponse.musicianEventAssistStatistic.musicianHistoricPercentageAssistEvents / 100" 
+                  [color]="getProgressColorMusicianPercentageAssistEvents(eventListResponse.musicianEventAssistStatistic.musicianHistoricPercentageAssistEvents)"
+                  class="attendance-progress">
+                </ion-progress-bar>                
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- ESTADÍSTICAS PARA NO MUSICOS -->    
+    <ion-card class="attendance-card background-white" *ngIf="(profile == 'SUPER_ADMIN' || profile == 'ADMIN') && eventListResponse && eventListResponse.events && eventListResponse.events.length>0 && eventListResponse.eventAssistStatistic && eventListResponse.eventAssistStatistic.averageAssitsNumber"> 
+      <ion-card-header>
+        <ion-card-title>Estadísticas de Ensayos</ion-card-title>
+      </ion-card-header>
+      <ion-card-content class="custom-ion-card-content">
+        <ion-grid>
+          <ion-row>
+            <!-- Media de asistentes al mes -->
+            <ion-col size="12" size-md="4" *ngIf="eventListResponse.eventAssistStatistic.averageAssitsNumber !== null" class="ion-text-left">
+              <div class="statistic-container">
+                <div class="stat-header ion-align-items-start">                  
+                  <ion-icon name="people" class="stat-icon success"></ion-icon>
+                  <ion-text class="stat-title">Media Asistentes ({{ strSelectedMonth }})</ion-text>
+                  <ion-text class="stat-percentage">{{ eventListResponse.eventAssistStatistic.averageAssitsNumber }}</ion-text>
+                </div>                
+              </div>
+            </ion-col>
+
+            <!-- Día con mayor asistencia -->
+            <ion-col size="12" size-md="4" *ngIf="eventListResponse.eventAssistStatistic.maxDateAssitsNumber">
+              <div class="statistic-container">
+                <div class="stat-header">                  
+                  <ion-icon name="trending-up" class="stat-icon success"></ion-icon>
+                  <ion-text class="stat-title">Mayor Asistencia ({{ formatDate(eventListResponse.eventAssistStatistic.maxDateAssitsNumber) }})</ion-text>
+                  <ion-text class="stat-percentage">{{ eventListResponse.eventAssistStatistic.maxAssitsNumber }}</ion-text>
+                </div>               
+              </div>
+            </ion-col>
+
+            <!-- Día con menor asistencia -->
+            <ion-col size="12" size-md="4" *ngIf="eventListResponse.eventAssistStatistic.minDateAssitsNumber">
+              <div class="statistic-container">
+                <div class="stat-header">                  
+                  <ion-icon name="trending-down" class="stat-icon danger"></ion-icon>
+                  <ion-text class="stat-title">Menor Asistencia ({{ formatDate(eventListResponse.eventAssistStatistic.minDateAssitsNumber) }})</ion-text>
+                  <ion-text class="stat-percentage">{{ eventListResponse.eventAssistStatistic.minAssitsNumber }}</ion-text>
+                </div>               
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- TARJETA PARA LA LISTA DE ASISTENCIA DE MÚSICOS -->
+    <ion-card class="attendance-card background-white" *ngIf="(profile == 'SUPER_ADMIN' || profile == 'ADMIN') && eventListResponse && eventListResponse.events && eventListResponse.events.length>0 && eventListResponse.musiciansAssistInformation && eventListResponse.musiciansAssistInformation.length>0"> 
+      <ion-card-header>
+        <ion-card-title>Resumen Asistencia de Músicos</ion-card-title>
+      </ion-card-header>
+      <ion-card-content class="custom-ion-card-content">
+        <ion-list>
+          <ion-list-header>
+            <ion-label><strong>Lista de Músicos</strong></ion-label>
+          </ion-list-header>
+          <ion-item *ngFor="let musician of eventListResponse.musiciansAssistInformation && eventListResponse.musiciansAssistInformation">
+            <ion-label>
+              <h2>{{ musician.name }} {{ musician.surname }}</h2>
+            </ion-label>
+            <ion-note slot="end" [color]="getProgressColorMusicianPercentageAssistEvents(musician.musicianPercentageAssistsRehearsal)">
+              {{ musician.musicianPercentageAssistsRehearsal }}%
+            </ion-note>
+          </ion-item>          
+        </ion-list>
+      </ion-card-content>
+    </ion-card>    
+
+    <!-- separador -->
+    <div class="spacer" *ngIf="(profile == 'SUPER_ADMIN' || profile == 'ADMIN')"></div>  
+    <div class="spacer-small" *ngIf="(profile == 'SUPER_ADMIN' || profile == 'ADMIN')"></div>  
+    <div class="spacer-small" *ngIf="(profile == 'SUPER_ADMIN' || profile == 'ADMIN')"></div>  
+    <div class="spacer-small" *ngIf="(profile == 'SUPER_ADMIN' || profile == 'ADMIN')"></div>     
+    <div class="spacer-super-small" *ngIf="(profile == 'SUPER_ADMIN' || profile == 'ADMIN')"></div>  
+    <div class="spacer-super-small" *ngIf="(profile == 'SUPER_ADMIN' || profile == 'ADMIN')"></div>  
+    <div class="spacer-super-small" *ngIf="(profile == 'SUPER_ADMIN' || profile == 'ADMIN')"></div>  
   </div>
 
   <!-------------------------->
@@ -93,6 +217,15 @@
         </div>   
       </ion-item>
     </div>
+
+    <!-- Mensaje vistoso cuando no hay datos -->
+    <div *ngIf="finishSearchEvents && (!eventsGroupByAnyo || eventsGroupByAnyo.length==0)" class="no-data-container">
+      <div class="spacer"></div>   
+      <ion-icon name="alert-circle-outline" class="no-data-icon"></ion-icon>
+      <p class="no-data-text">No existen actuaciónes para las próximas fechas.<br/><br/>Si quiere ver el histórico de actuaciones <br/> marque el check situado en la parte superior.</p>     
+      <div class="spacer"></div>   
+      <div class="spacer"></div> 
+    </div>
     
     <ion-accordion-group #accordionGroup [multiple]="true" [value]="expandAnyoList" (ionChange)="accordionGroupChange($event)">
 
@@ -107,7 +240,8 @@
             <ion-item-divider class="ion-no-padding anyo-header">
               <ion-avatar slot="start" class="anyo-avatar">
                 <ion-img 
-                  [src]="'data:image/jpeg;base64,' + defaultAnyoImage">
+                  [src]="'data:image/jpeg;base64,' + defaultAnyoImage"                  
+                >
                 </ion-img>              
               </ion-avatar>
               <ion-label class="anyo-header-label">
@@ -133,7 +267,9 @@
                 <ion-item lines="none" class="performance-ion-item">
                   <ion-avatar slot="start" class="performance-avatar">                  
                     <ion-img 
-                      [src]="performance.image ? 'data:image/jpeg;base64,' + performance.image : 'data:image/jpeg;base64,' + defaultEventImage">
+                      [src]="performance.image ? 'data:image/jpeg;base64,' + performance.image : 'data:image/jpeg;base64,' + defaultEventImage"
+                      (click)="profile === 'SUPER_ADMIN' || profile === 'ADMIN' ? viewPerformanceImage(performance) : null"
+                    >
                     </ion-img>                              
                   </ion-avatar>
                   <ion-label class="performance-card-label">

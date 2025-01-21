@@ -8,7 +8,7 @@ import { Select, Store } from '@ngxs/store';
 import { EventState } from '../state/event/event.state';
 import { Event } from '../models/event/event';
 import { debounceTime, Observable, Subject, Subscription } from 'rxjs';
-import { CreateEvent, DeleteEvent, GetEvents, GetEventsGroupByAnyo, ResetEvent, UpdateEvent } from '../state/event/event.actions';
+import { CreateEvent, DeleteEvent, GetEvent, GetEvents, GetEventsGroupByAnyo, ResetEvent, UpdateEvent } from '../state/event/event.actions';
 import { UsersService } from '../services/user/users.service';
 import { ToastService } from '../services/toast/toast.service';
 import { CreateMusicianEvent, DeleteMusicianEvent, ResetMusicianEvent } from '../state/musicien-event/musician-event.actions';
@@ -20,6 +20,9 @@ import { FilterEvents } from '../models/event/filter-events';
 import { DEFAULT_ANYO_IMAGE, DEFAULT_EVENT_IMAGE } from '../constants/constants';
 import { IonFab } from '@ionic/angular';
 import { ModalRepertoireEventComponent } from './component/modal-repertoire-event/modal-repertoire-event.component';
+import { VideoCategory } from '../models/video-category/video-category';
+import { ModalViewCategoryImageComponent } from '../menu-multimedia/component/modal-view-category-image/modal-view-category-image.component';
+import { EventListResponse } from '../models/event/event-list-response';
 
 @Component({
   selector: 'app-menu-event',
@@ -30,10 +33,10 @@ export class MenuEventPage implements OnDestroy {
 
   @ViewChild('fabEvents', { static: false }) fabEvents!: IonFab;
 
-  public eventSubscription: Subscription;
-  @Select(EventState.events)
-  public events$: Observable<Event[]>;
-  public events: Event[];
+  public eventListResponseSubscription: Subscription;
+  @Select(EventState.eventListResponse)
+  public eventListResponse$: Observable<EventListResponse>;
+  public eventListResponse: EventListResponse;
 
   public eventGroupByAnyoSubscription: Subscription;
   @Select(EventState.eventsGroupByAnyo)
@@ -53,6 +56,8 @@ export class MenuEventPage implements OnDestroy {
   
   public selectedDate: Date;    
   public selectedMonthDate: Date;   
+  public strSelectedMonth: string;
+  public strSelectedYear: string;
   public calendarOptions: CalendarComponentOptions = {    
     //pickMode: 'multi',
     defaultTitle: '',
@@ -66,6 +71,7 @@ export class MenuEventPage implements OnDestroy {
   public profile: string;  
   public initScreen = false;
   public initSearchFinish = false;
+  public finishSearchEvents = false;
 
   selectedSegment: string = 'calendar'; // Valor inicial del segmento
 
@@ -111,6 +117,7 @@ export class MenuEventPage implements OnDestroy {
   }
 
   async ionViewWillEnter(){    
+    this.finishSearchEvents = false;
     this.firstOldPerformances = true;
     this.clickOldPerformances = false;
     this.viewCalendar = true;
@@ -118,7 +125,9 @@ export class MenuEventPage implements OnDestroy {
     this.selectedSegment = 'calendar';
     this.selectedDate = new Date();          
     this.selectedMonthDate = new Date();          
-    this.profile = await this.storage.getItem('profile');         
+    this.profile = await this.storage.getItem('profile');     
+    this.selectedMonthDate  = new Date();
+    this.updateSelectedStrMonthAndYear();    
     this.getEvents();      
     this.filterEvents(
       this.getFirstDayOfMonth(new Date()),
@@ -149,8 +158,8 @@ export class MenuEventPage implements OnDestroy {
   private doDestroy(){
     this.eventsGroupByAnyo = [];
     this.viewCalendar = true;    
-    if (this.eventSubscription) {      
-      this.eventSubscription.unsubscribe();  // Cancelar la suscripción al destruir el componente
+    if (this.eventListResponseSubscription) {      
+      this.eventListResponseSubscription.unsubscribe();  // Cancelar la suscripción al destruir el componente
     }
     if (this.eventGroupByAnyoSubscription) {      
       this.eventGroupByAnyoSubscription.unsubscribe();  // Cancelar la suscripción al destruir el componente
@@ -163,36 +172,57 @@ export class MenuEventPage implements OnDestroy {
   /**************************  CALENDAR  *****************************/
   /*******************************************************************/   
   async showModalExistsEvent(selectedDateString: any,selectedEvent: Event){
+
+    let inputs = [];
+    inputs.push(
+      {
+        name: 'edit',
+        type: 'radio',
+        label: 'Modificar',
+        value: 'edit',
+        checked: true, 
+      }
+    );     
+    inputs.push(
+      {
+        name: 'delete',
+        type: 'radio',
+        label: 'Eliminar',
+        value: 'delete',
+      }
+    );
+    inputs.push(
+      {
+        name: 'musicianAssistance',
+        type: 'radio',
+        label: 'Asistencia musicos',
+        value: 'musicianAssistance',
+      }
+    );
+    inputs.push(
+      {
+        name: 'repertoire',
+        type: 'radio',
+        label: 'Repertorio',
+        value: 'repertoire',
+      }
+    );
+    if(!this.isRehearsalDay([selectedEvent]) && selectedEvent.image){
+      inputs.push(
+        {
+          name: 'viewPerformanceImage',
+          type: 'radio',
+          label: 'Ver cartel',
+          value: 'viewPerformanceImage',
+        }
+      );
+
+    }
+
     const alert = await this.alertController.create({
       //header: 'Evento',
       header: selectedEvent.title?selectedEvent.title:(selectedEvent.description?selectedEvent.description:'Evento'),
-      inputs: [
-        {
-          name: 'edit',
-          type: 'radio',
-          label: 'Modificar',
-          value: 'edit',
-          checked: true, 
-        },
-        {
-          name: 'delete',
-          type: 'radio',
-          label: 'Eliminar',
-          value: 'delete',
-        },
-        {
-          name: 'musicianAssistance',
-          type: 'radio',
-          label: 'Asistencia musicos',
-          value: 'musicianAssistance',
-        },
-        {
-          name: 'repertoire',
-          type: 'radio',
-          label: 'Repertorio',
-          value: 'repertoire',
-        },
-      ],
+      inputs: inputs,      
       cssClass: 'custom-alert-width', // Agregar la clase personalizada
       buttons: [
         {
@@ -219,6 +249,10 @@ export class MenuEventPage implements OnDestroy {
             if('repertoire'===selectedType){ 
               this.selectedDate = null; 
               this.eventRepertoire( selectedEvent.type,  selectedEvent, selectedDateString);              
+            }
+            if('viewPerformanceImage'===selectedType){ 
+              this.selectedDate = null; 
+              this.viewPerformanceImage( selectedEvent);              
             }
           },
         },
@@ -306,6 +340,73 @@ export class MenuEventPage implements OnDestroy {
   }
 
   async showModalMusicianEvent(event: Event){    
+    const selectedDateString = event.date;
+    let currentDate = new Date();
+    currentDate.setHours(0,0,0,0);
+    
+    const alert = await this.alertController.create({
+      header: event.title?event.title:(event.description?event.description:'Evento'),
+      inputs: [
+        {
+          name: 'assist',
+          type: 'radio',
+          label: 'Asistencia',
+          value: 'ASSIST',
+          checked: !(new Date(selectedDateString)<currentDate),
+          disabled: (new Date(selectedDateString)<currentDate), 
+        },
+        {
+          name: 'repertoire',
+          type: 'radio',
+          label: 'Repertorio',
+          checked: (new Date(selectedDateString)<currentDate),
+          value: 'REPERTOIRE',            
+        },        
+        {
+          name: 'information',
+          type: 'radio',
+          label: 'Informacion detallada',
+          value: 'INFORMATION'            
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          handler: () => {
+            this.selectedDate = null; 
+          },
+        },
+        {
+          text: 'OK',
+          handler: async (selectedType) => {      
+
+            if('ASSIST'===selectedType){ 
+              this.showModalMusicianAssistanceEvent(event);        
+            }
+            if('REPERTOIRE'===selectedType){ 
+              this.showEventRepertoire(event, null);        
+            }
+            if('INFORMATION'===selectedType){ 
+              this.createUpdateEvent(event.type,  event, selectedDateString);
+            }          
+          },
+        },
+      ],
+      cssClass: 'custom-alert-width' // Agregar la clase personalizada
+    });  
+    await alert.present();            
+  }
+
+  async showModalMusicianAssistanceEvent(event: Event){    
+    const selectedDateString = event.date;
+    let currentDate = new Date();
+    currentDate.setHours(0,0,0,0);
+    if(new Date(selectedDateString)<currentDate){
+      this.toast.presentToast("No se puede modificar eventos de dias anteriores.<br> Contacta con el administrador");
+      return;
+    }
+
     if(event.displacementBus){
       const alert = await this.alertController.create({
         //header: 'Tipo de Evento',
@@ -405,14 +506,7 @@ export class MenuEventPage implements OnDestroy {
 
   showModalAssistanceMusicianArray(selectedEvents: Event[], selectedDateString: any){    
     // un musico solo puede tocar las casillas que son actuaciones, para indicar si asiste, o no asiste, en bus o coche
-    if(!this.isRehearsalDay(selectedEvents)){
-
-      let currentDate = new Date();
-      currentDate.setHours(0,0,0,0);
-      if(new Date(selectedDateString)<currentDate){
-        this.toast.presentToast("No se puede modificar eventos de dias anteriores.<br> Contacta con el administrador");
-        return;
-      }
+    //if(!this.isRehearsalDay(selectedEvents)){
 
       if (selectedEvents?.length>1) {
         this.showModalExistsMultipleEvent(selectedDateString,selectedEvents);
@@ -421,13 +515,14 @@ export class MenuEventPage implements OnDestroy {
         // si habia solo un evento, entonces damos opcion a modificar o eliminar          
         this.showModalMusicianEvent(selectedEvents[0]);          
       }         
-    }
+    //}
   }
   
   async onDateChange(selectedDateString: any) {    
     this.selectedMonthDate = new Date(selectedDateString);   
+    this.updateSelectedStrMonthAndYear();
 
-    const selectedEvents = this.events?.filter(day => {
+    const selectedEvents = this.eventListResponse.events?.filter(day => {
       const selectedDate = new Date(selectedDateString).toISOString().split('T')[0]; // Normaliza la fecha seleccionada
       const configDate = new Date(day.date).toISOString().split('T')[0]; // Normaliza la fecha configurada
       return selectedDate === configDate; // Compara las fechas normalizadas
@@ -458,7 +553,7 @@ export class MenuEventPage implements OnDestroy {
 
   getTitle(event:Event){
     // si hay varios eventos ese dia devolveremos "Varios", sino devolvemos su hora
-    const dayEvents = this.events?.filter( day => {
+    const dayEvents = this.eventListResponse.events?.filter( day => {
       const configDate = new Date(day.date).toISOString().split('T')[0]; // Normaliza la fecha configurada
       return configDate === event.date; // Compara las fechas normalizadas
     });
@@ -491,17 +586,24 @@ export class MenuEventPage implements OnDestroy {
   onMonthChange(event: any) {        
     this.selectedDate = null;  
     this.selectedMonthDate = event.newMonth.dateObj;
+    this.updateSelectedStrMonthAndYear();
     this.filterEvents(
       this.getFirstDayOfMonth(this.selectedMonthDate),
       this.getLastDayOfMonth(this.selectedMonthDate)
     );      
   }
 
+  updateSelectedStrMonthAndYear(){
+    this.strSelectedMonth = this.selectedMonthDate.toLocaleDateString('es-ES', { month: 'long' });
+    this.strSelectedMonth = this.strSelectedMonth.charAt(0).toUpperCase() + this.strSelectedMonth.slice(1);
+    this.strSelectedYear = this.selectedMonthDate.toLocaleDateString('es-ES', { year: 'numeric' });    
+  }
+
   /*******************************************************************/
   /**************************  EVENTOS  ******************************/
   /*******************************************************************/  
   async getEvents(){            
-    this.eventSubscription = this.events$     
+    this.eventListResponseSubscription = this.eventListResponse$     
       .subscribe(
         {
           next: async ()=> {      
@@ -511,15 +613,15 @@ export class MenuEventPage implements OnDestroy {
             if(finish){             
               this.selectedDate = null; 
               if(errorStatusCode==200){                   
-                this.events = this.store.selectSnapshot(EventState.events);              
-                if(!this.events){
-                  this.events = [];
+                this.eventListResponse = this.store.selectSnapshot(EventState.eventListResponse);                              
+                if(!this.eventListResponse.events){
+                  this.eventListResponse.events = [];
                 }            
-                this.setCalendarDays(this.events);
+                this.setCalendarDays(this.eventListResponse.events);
               }
               else{
-                this.events = [];
-                this.setCalendarDays(this.events);
+                this.eventListResponse.events = [];
+                this.setCalendarDays(this.eventListResponse.events);
                 // si el token ha caducado (403) lo sacamos de la aplicacion
                 if(errorStatusCode==403){            
                   this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
@@ -538,6 +640,7 @@ export class MenuEventPage implements OnDestroy {
   }
 
   async filterEvents(startDate:string ,endDate: string,showLoading:boolean=true){    
+    this.finishSearchEvents = false;    
     if(showLoading){
       await this.loadingService.presentLoading('Loading...');
     }       
@@ -893,7 +996,9 @@ export class MenuEventPage implements OnDestroy {
 
   async showEventRepertoire(event: Event, userSliding: IonItemSliding){
     // cerramos el sliding 
-    userSliding.close();
+    if(userSliding){
+      userSliding.close();
+    }
 
     // abrimos la modal
     this.eventRepertoire( event.type,  event, event.date);                  
@@ -994,7 +1099,8 @@ export class MenuEventPage implements OnDestroy {
                   this.toast.presentToast(errorMessage);
                 }   
 
-              }   
+              }  
+              this.finishSearchEvents = true;
               this.isSearching = false;                       
               this.initSearchFinish = true;    
               await this.loadingService.dismissLoading();                 
@@ -1005,6 +1111,7 @@ export class MenuEventPage implements OnDestroy {
   }
 
   async filterEventsGroupByAnyo( showLoading:boolean=true){    
+    this.finishSearchEvents = false;
     if(showLoading){
       await this.loadingService.presentLoading('Loading...');
     }       
@@ -1083,5 +1190,60 @@ export class MenuEventPage implements OnDestroy {
     }
   }
 
+  logout(){
+    this.userService.logout();
+  }
+
+  async viewPerformanceImage(event: Event){    
+    if(!event.image){
+      this.toast.presentToast("No existe imagen para previsualizar");
+    }
+    else{
+      await this.loadingService.presentLoading('Loading...');    
+      this.store.dispatch(new GetEvent({eventType:event.type,eventId: event.id}))
+        .subscribe({
+          next: async ()=> {
+            const finish = this.store.selectSnapshot(EventState.finish);          
+            const errorStatusCode = this.store.selectSnapshot(EventState.errorStatusCode);          
+            
+            if(finish){                        
+              if(errorStatusCode==200){                                        
+                let videoCategory = new VideoCategory();
+                videoCategory.name = 'Cartel Actuación';
+                videoCategory.image = this.store.selectSnapshot(EventState.event).image;
+                
+                const modal = await this.modalController.create({
+                  component: ModalViewCategoryImageComponent,
+                  componentProps: { videoCategory, loadImage: false },
+                });
+
+                await modal.present();       
+              }
+              else{
+                this.dismissInitialLoading();                 
+              }                                                
+            }      
+          }
+        }
+      )
+    }      
+  }
+
+  getProgressColorMusicianPercentageAssistEvents(percentage: number): string {
+    if (percentage >= 80) {
+      return 'success';
+    } else if (percentage >= 50) {
+      return 'warning';
+    } else {
+      return 'danger';
+    }
+  }
+
+  formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    const opciones: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long' };
+    let fechaFormateada = date.toLocaleString('es-ES', opciones);
+    return fechaFormateada.charAt(0).toUpperCase() + fechaFormateada.slice(1);
+  }
 
 }

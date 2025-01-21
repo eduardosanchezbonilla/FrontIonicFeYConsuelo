@@ -15,6 +15,8 @@ import { VideoService } from '../services/video/video.service';
 import { ModalViewVideoComponent } from './component/modal-view-video/modal-view-video.component';
 import { ModalVideoComponent } from './component/modal-video/modal-video.component';
 import { ModalVideoCategoryComponent } from './component/modal-video-category/modal-video-category.component';
+import { ModalViewCategoryImageComponent } from './component/modal-view-category-image/modal-view-category-image.component';
+import { CameraService } from '../services/camera/camera.service';
 
 @NgModule({
   imports: [
@@ -29,11 +31,13 @@ import { ModalVideoCategoryComponent } from './component/modal-video-category/mo
     MenuMultimediaPage, 
     ModalViewVideoComponent,
     ModalVideoComponent,
-    ModalVideoCategoryComponent
+    ModalVideoCategoryComponent,
+    ModalViewCategoryImageComponent
   ],
   providers:[
     VideoCategoryService,
-    VideoService
+    VideoService,
+    CameraService
   ]
 })
 export class MenuMultimediaPageModule {}

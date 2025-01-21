@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { AuthDto } from '../../../models/user/auth-dto';
 import { Store } from '@ngxs/store';
-import { ChangeExpiredPassword, Login, UpdateFirebaseToken, UpdateLassAccessDate } from '../../../state/user/users.actions';
+import { ChangeExpiredPassword, Login, UpdateFirebaseToken, UpdateLassAccessDate, UpdateUserPassword } from '../../../state/user/users.actions';
 import { ResetPassword } from '../../../state/musician/musician.actions';
 import { UsersState } from '../../../state/user/users.state';
 import { ToastService } from 'src/app/services/toast/toast.service';
@@ -14,6 +14,7 @@ import { FirebaseMessaging } from '@capacitor-firebase/messaging';
 import { Capacitor } from '@capacitor/core';
 import { ADMIN_TOPIC, GENERAL_TOPIC, MUSICO_TOPIC, SUPER_ADMIN_TOPIC } from 'src/app/constants/firebase-topics';
 import { UpdateFirebaseTokenDto } from 'src/app/models/user/update-firebase-token-dto';
+import { MusicianState } from 'src/app/state/musician/musician.state';
 
 @Component({
   selector: 'app-login',
@@ -29,6 +30,9 @@ export class LoginPage {
   public resetPassword: ResetPasswordDto;  
 
   public showPassword = false;
+  public showCurrentPassword: boolean = false;
+  public showNewPassword: boolean = false;
+  public showRepeatNewPassword: boolean = false;
 
   public rememberMe = false;
 
@@ -47,6 +51,11 @@ export class LoginPage {
   }
 
   async ionViewWillEnter(){
+    this.showCurrentPassword = false;
+    this.showNewPassword = false;
+    this.showRepeatNewPassword = false;
+    this.showPassword = false;
+
     const user = JSON.parse(await this.storage.getItem('user'));
     if(user){
       this.redirectAfterLogin();      
@@ -226,7 +235,7 @@ export class LoginPage {
   async changeExpiredPassword() {         
     await this.loadingService.presentLoading('Loading...');
     this.changePassword.username = this.auth.username;
-    this.store.dispatch(new ChangeExpiredPassword({changePassword:this.changePassword})).subscribe({
+    this.store.dispatch(new UpdateUserPassword({user:this.changePassword})).subscribe({
       next: async () => {
         let success = this.store.selectSnapshot(UsersState.success);
         if(success){                              
@@ -247,11 +256,11 @@ export class LoginPage {
   }
 
   async doResetPassword() {         
-    await this.loadingService.presentLoading('Loading...');
+    await this.loadingService.presentLoading('Loading...');    
     this.resetPassword.username = this.auth.username;
     this.store.dispatch(new ResetPassword({resetPassword:this.resetPassword})).subscribe({
-      next: async () => {
-        let success = this.store.selectSnapshot(UsersState.success);
+      next: async () => {        
+        let success = this.store.selectSnapshot(MusicianState.success);          
         if(success){                              
           this.auth.username=null;
           this.auth.password=null;
@@ -260,8 +269,8 @@ export class LoginPage {
           this.showForgotPassword = false;
         }
         else{
-          const errorStatusCode = this.store.selectSnapshot(UsersState.errorStatusCode);
-          const errorMessage = this.store.selectSnapshot(UsersState.errorMessage);
+          const errorStatusCode = this.store.selectSnapshot(MusicianState.errorStatusCode);
+          const errorMessage = this.store.selectSnapshot(MusicianState.errorMessage);
           this.toastService.presentToast(errorMessage);                
         }
         await this.loadingService.dismissLoading();
@@ -271,6 +280,18 @@ export class LoginPage {
 
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
+  }
+
+  toggleCurrentPasswordVisibility() {
+    this.showCurrentPassword = !this.showCurrentPassword;
+  }
+
+  toggleNewPasswordVisibility() {
+    this.showNewPassword = !this.showNewPassword;
+  }
+
+  toggleNewRepeatPasswordVisibility() {
+    this.showRepeatNewPassword = !this.showRepeatNewPassword;
   }
 
 }

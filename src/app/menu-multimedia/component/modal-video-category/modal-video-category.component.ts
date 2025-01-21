@@ -1,8 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { ModalController } from '@ionic/angular';
 import { DEFAULT_CATEGORY_VIDEO_IMAGE } from 'src/app/constants/constants';
 import { VideoCategory } from 'src/app/models/video-category/video-category';
+import { CameraService } from 'src/app/services/camera/camera.service';
 import { LoadingService } from 'src/app/services/loading/loading.service';
 
 @Component({
@@ -19,7 +19,8 @@ export class ModalVideoCategoryComponent implements OnInit {
 
   constructor(    
     private modalController: ModalController,
-    private loadingService: LoadingService
+    private loadingService: LoadingService,
+    private cameraService: CameraService
   ) { }
 
   async ngOnInit() {
@@ -27,6 +28,7 @@ export class ModalVideoCategoryComponent implements OnInit {
       this.videoCategory = new VideoCategory();    
       this.videoCategory.isPublic = true;
       this.videoCategory.order = 10;
+      this.videoCategory.date = new Date().toISOString();
       this.showImage = null;
     }
     else{
@@ -61,16 +63,8 @@ export class ModalVideoCategoryComponent implements OnInit {
   }*/
 
   async selectImage() {    
-    const image = await Camera.getPhoto({
-      quality: 90,
-      allowEditing: false,
-      correctOrientation: true,
-      resultType: CameraResultType.Base64, 
-      source: CameraSource.Prompt 
-    });
-
-    this.showImage = `data:image/jpeg;base64,${image.base64String}`;
-    this.selectedImage = image.base64String;
+    this.selectedImage =  await this.cameraService.getPhotoBase64(90);
+    this.showImage = `data:image/jpeg;base64,${this.selectedImage}`;    
   }
 
   clearImage() {

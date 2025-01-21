@@ -48,7 +48,7 @@
     </ion-item>
     
     <!-- ORDEN -->
-    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+    <!--<ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
       <ion-label color="primary" position="floating">
         Orden
       </ion-label>
@@ -72,7 +72,31 @@
       <ion-text color="danger" *ngIf="orderInput.errors && orderInput.errors['pattern']">Introduzca solo digitos numericos.</ion-text>
       <ion-text color="danger" *ngIf="orderInput.errors && orderInput.errors['minlength']">El orden debe tener al menos 1 caracter..</ion-text>
       <ion-text color="danger" *ngIf="orderInput.errors && orderInput.errors['maxlength']">El orden no puede exceder los 4 caracteres.</ion-text>
-    </div>
+    </div>-->
+
+    <!-- FECHA -->
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item" >
+      <ion-label color="primary" class="custom-label">Fecha</ion-label>
+
+      <ion-datetime-button slot="end" datetime="datetime-register" color="primary" class="custom-datetime-button"></ion-datetime-button>      
+
+      <ion-icon name="calendar-outline" slot="end" class="custom-icon"></ion-icon>
+
+      <ion-modal #modalDatetimeBirth [keepContentsMounted]="true">
+        <ng-template>
+          <ion-datetime 
+              id="datetime-register" 
+              presentation="date"
+              [(ngModel)]="videoCategory.date"
+              [ngModelOptions]="{standalone: true}"              
+              [showDefaultButtons]="true"
+              [firstDayOfWeek]="1"
+              required
+          >
+          </ion-datetime>
+        </ng-template>
+      </ion-modal>              
+    </ion-item>
     
     <!-- IMAGEN -->
     <ion-item class="ion-margin-start ion-no-padding background-transparent image-selector custom-item">

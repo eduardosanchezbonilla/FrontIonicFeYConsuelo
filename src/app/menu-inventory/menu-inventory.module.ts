@@ -10,6 +10,7 @@ import { InventoryService } from '../services/inventory/inventory';
 import { ModalInventoryComponent } from './components/modal-inventory/modal-inventory.component';
 import { MusicianInventoryState } from '../state/musician-inventory/musician-inventory.state';
 import { MusicianInventoryService } from '../services/musician-inventory/musician-inventory.service';
+import { CameraService } from '../services/camera/camera.service';
 
 @NgModule({
   imports: [
@@ -23,7 +24,8 @@ import { MusicianInventoryService } from '../services/musician-inventory/musicia
   declarations: [MenuInventoryPage, ModalInventoryComponent],  
   providers:[
     InventoryService,
-    MusicianInventoryService
+    MusicianInventoryService,
+    CameraService
   ]
 })
 export class MenuInventoryPageModule {}

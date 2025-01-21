@@ -101,13 +101,6 @@ export class ModalVideoComponent implements OnInit, OnDestroy {
     this.modalController.dismiss(null, 'cancel');
   }
 
-  /*inputUpperCase(event: any, element: any) {
-    const input = event.target as HTMLInputElement;
-    input.value = input.value.toUpperCase(); 
-    element = input.value; 
-  }*/
-
-  
   closeModal(modal: IonModal) {
     modal.dismiss();
   }

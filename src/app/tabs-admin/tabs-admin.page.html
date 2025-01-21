@@ -2,45 +2,70 @@
 
   <ion-tab-bar slot="bottom" >
 
-    <ion-tab-button tab="menu-history" href="/tabs-admin/menu-history" class="hide-tab">
-      <ion-icon name="information-circle-outline"></ion-icon>
-      <ion-label>¿Quienes somos?</ion-label>
-    </ion-tab-button> 
+    <!-- Flecha izquierda -->
+    <ion-icon 
+      *ngIf="showLeftArrow" 
+      name="chevron-back-outline" 
+      class="scroll-arrow left" 
+      (click)="scrollLeft()">
+    </ion-icon>
 
-    <ion-tab-button tab="menu-musician" href="/tabs-admin/menu-musician" >
-      <ion-icon name="people-outline"></ion-icon>
-      <ion-label>Musicos</ion-label>
-    </ion-tab-button>
+    <!-- Botones del tab bar -->
+    <div class="scrollable-tab-buttons" #scrollContainer (scroll)="onScroll()">
 
-    <ion-tab-button tab="menu-repertoire" href="/tabs-admin/menu-repertoire"  class="hide-tab">
-      <ion-icon name="musical-notes-outline"></ion-icon>
-      <ion-label>Repertorio</ion-label>
-    </ion-tab-button>
+      <ion-tab-button tab="menu-profile" href="/tabs-admin/menu-profile" >
+        <ion-icon name="person-outline"></ion-icon>
+        <ion-label>Perfil</ion-label>
+      </ion-tab-button>
 
-    <ion-tab-button tab="menu-partiture" href="/tabs-admin/menu-partiture" class="hide-tab">
-      <ion-icon name="albums-outline"></ion-icon>
-      <ion-label>Partituras</ion-label>
-    </ion-tab-button> 
+      <ion-tab-button tab="menu-history" href="/tabs-admin/menu-history" class="hide-tab">
+        <ion-icon name="information-circle-outline"></ion-icon>
+        <ion-label>¿Quienes somos?</ion-label>
+      </ion-tab-button> 
 
-    <ion-tab-button tab="menu-inventory" href="/tabs-admin/menu-inventory" >
-      <ion-icon name="shirt-outline"></ion-icon>
-      <ion-label>Inventario</ion-label>
-    </ion-tab-button> 
+      <ion-tab-button tab="menu-musician" href="/tabs-admin/menu-musician" >
+        <ion-icon name="people-outline"></ion-icon>
+        <ion-label>Musicos</ion-label>
+      </ion-tab-button>
 
-    <ion-tab-button tab="menu-notification" href="/tabs-admin/menu-notification" class="hide-tab" >
-      <ion-icon name="notifications-outline"></ion-icon>
-      <ion-label>Notificaciones</ion-label>
-    </ion-tab-button> 
+      <ion-tab-button tab="menu-repertoire" href="/tabs-admin/menu-repertoire"  class="hide-tab">
+        <ion-icon name="musical-notes-outline"></ion-icon>
+        <ion-label>Repertorio</ion-label>
+      </ion-tab-button>
 
-    <ion-tab-button tab="menu-multimedia" href="/tabs-admin/menu-multimedia" >      
-      <ion-icon name="images-outline"></ion-icon>      
-      <ion-label>Multimedia</ion-label>
-    </ion-tab-button> 
+      <ion-tab-button tab="menu-partiture" href="/tabs-admin/menu-partiture" class="hide-tab">
+        <ion-icon name="albums-outline"></ion-icon>
+        <ion-label>Partituras</ion-label>
+      </ion-tab-button> 
 
-    <ion-tab-button tab="menu-event" href="/tabs-admin/menu-event" >                 
-      <ion-icon name="calendar-outline"></ion-icon>
-      <ion-label>Eventos</ion-label>
-    </ion-tab-button> 
+      <ion-tab-button tab="menu-inventory" href="/tabs-admin/menu-inventory" >
+        <ion-icon name="shirt-outline"></ion-icon>
+        <ion-label>Inventario</ion-label>
+      </ion-tab-button> 
+
+      <ion-tab-button tab="menu-notification" href="/tabs-admin/menu-notification" class="hide-tab" >
+        <ion-icon name="notifications-outline"></ion-icon>
+        <ion-label>Notificaciones</ion-label>
+      </ion-tab-button> 
+
+      <ion-tab-button tab="menu-multimedia" href="/tabs-admin/menu-multimedia" >      
+        <ion-icon name="images-outline"></ion-icon>      
+        <ion-label>Multimedia</ion-label>
+      </ion-tab-button> 
+
+      <ion-tab-button tab="menu-event" href="/tabs-admin/menu-event" >                 
+        <ion-icon name="calendar-outline"></ion-icon>
+        <ion-label>Eventos</ion-label>
+      </ion-tab-button> 
+    </div>
+
+    <!-- Flecha derecha -->
+    <ion-icon 
+      *ngIf="showRightArrow" 
+      name="chevron-forward-outline" 
+      class="scroll-arrow right" 
+      (click)="scrollRight()">
+    </ion-icon>
 
   </ion-tab-bar>
 

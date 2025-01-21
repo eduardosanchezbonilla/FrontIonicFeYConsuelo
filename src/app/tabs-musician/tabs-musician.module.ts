@@ -17,4 +17,5 @@ import { TabsMusicianPage } from './tabs-musician.page';
   ],
   declarations: [TabsMusicianPage]
 })
-export class TabsMusicianPageModule {}
+export class TabsMusicianPageModule {
+}

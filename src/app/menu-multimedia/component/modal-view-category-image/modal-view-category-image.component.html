@@ -1,0 +1,25 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="medium" (click)="cancel()">Cancelar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="spacer-super-small"></div>
+  <div class="spacer-super-small"></div>
+
+  <h2 *ngIf="videoCategoryImage" class="fancy-title custom-modal-title">
+    {{ videoCategoryImage.name }}
+  </h2>
+
+  <div *ngIf="videoCategoryImage" class="image-container">
+    <img
+      [src]="'data:image/jpeg;base64,' + videoCategoryImage.image"
+      class="styled-image"
+      (load)="onImageLoad()"
+      [hidden]="loading"
+    />
+  </div>
+</ion-content>

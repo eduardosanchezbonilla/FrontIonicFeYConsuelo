@@ -22,6 +22,7 @@ import { RepertoireMarchState } from '../state/repertoire/repertoire-march.state
 import { RepertoireMarchService } from '../services/repertoire/repertoire-march.service';
 import { RepertoireEventState } from '../state/repertoire-event/repertoire-event.state';
 import { RepertoireEventService } from '../services/repertoire-event/repertoire-event.service';
+import { CameraService } from '../services/camera/camera.service';
 
 @NgModule({
   imports: [
@@ -37,7 +38,8 @@ import { RepertoireEventService } from '../services/repertoire-event/repertoire-
     EventService,
     MusicianEventService,
     RepertoireMarchService,
-    RepertoireEventService
+    RepertoireEventService,
+    CameraService
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA] 
 })

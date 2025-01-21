@@ -43,6 +43,10 @@ export class MenuNotificationPage implements OnInit {
     private userService: UsersService
   ) { }
 
+  logout(){
+    this.userService.logout();
+  }
+  
   async ngOnInit() {     
     ;        
   }

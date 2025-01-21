@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { State, Action, StateContext, Selector } from '@ngxs/store';
-import { CreateRepertoireEvent, DeleteRepertoireEvent, ResetRepertoireEvent } from './repertoire-event.actions';
+import { CreateRepertoireEvent, DeleteRepertoireEvent, ResetRepertoireEvent, UpdateRepertoireEventOrderNumbers } from './repertoire-event.actions';
 import { Event } from 'src/app/models/event/event';
 import { RepertoireEventService } from 'src/app/services/repertoire-event/repertoire-event.service';
 
@@ -71,6 +71,43 @@ export class RepertoireEventState {
               success: false,
               errorStatusCode: 500,
               errorMessage: 'Error al persistir la marcha asociada al evento'
+            })
+          }
+        }
+      )
+      .catch(
+        async (error) => {          
+          patchState({
+            finish: true,
+            success: false,
+            errorStatusCode: error.status,
+            errorMessage: error.message
+          })
+      });
+  }
+
+  @Action(UpdateRepertoireEventOrderNumbers)
+  updateRepertoireEventOrder(
+      { patchState }: StateContext<RepertoireEventStateModel>,
+      { payload }: UpdateRepertoireEventOrderNumbers
+  ) {
+    return this.repertoireEventService.updateRepertoireEventOrderNumbers(payload.repertoireEvent)
+      .then( 
+        async (success:Boolean) => {
+          if(success){
+            patchState({
+              finish: true,
+              success: true,
+              errorStatusCode: 200,
+              errorMessage: null
+            })
+          }
+          else{
+            patchState({
+              finish: true,
+              success: false,
+              errorStatusCode: 500,
+              errorMessage: 'Error al actualizar el orden de la marcha asociada al evento'
             })
           }
         }

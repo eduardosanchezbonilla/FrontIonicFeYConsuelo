@@ -6,6 +6,7 @@ import { Observable, Subscription } from 'rxjs';
 import { DEFAULT_MUSICIAN_IMAGE } from 'src/app/constants/constants';
 import { Event } from 'src/app/models/event/event';
 import { MusicianEvent } from 'src/app/models/musician-event/musician-event';
+import { MusicianEventListResponse } from 'src/app/models/musician-event/musician-event-list-response';
 import { Musician } from 'src/app/models/musician/musician';
 import { LoadingService } from 'src/app/services/loading/loading.service';
 import { StorageService } from 'src/app/services/storage/storage.service';
@@ -23,10 +24,10 @@ import { MusicianEventState } from 'src/app/state/musicien-event/musician-event.
 })
 export class ModalMusicianEventComponent implements OnInit {
 
-  public eventSubscription: Subscription;
-  @Select(MusicianEventState.events)
-  public events$: Observable<Event[]>;
-  public events: Event[];
+  public musicianEventListResponseSubscription: Subscription;
+  @Select(MusicianEventState.musicianEventListResponse)
+  public musicianEventListResponse$: Observable<MusicianEventListResponse>;
+  public musicianEventListResponse: MusicianEventListResponse;
   
   @Input() musician: Musician;
   public showImage: string;
@@ -37,6 +38,8 @@ export class ModalMusicianEventComponent implements OnInit {
 
   public selectedDate: Date;    
   public selectedMonthDate: Date;   
+  public strSelectedMonth: string;
+  public strSelectedYear: string;
   public calendarOptions: CalendarComponentOptions = {    
     //pickMode: 'multi',
     defaultTitle: '',
@@ -62,7 +65,9 @@ export class ModalMusicianEventComponent implements OnInit {
     }
     else{
       this.showImage = `data:image/jpeg;base64,${DEFAULT_MUSICIAN_IMAGE}`;      
-    }       
+    }     
+    this.selectedMonthDate  = new Date();
+    this.updateSelectedStrMonthAndYear();
     this.getEvents();      
     this.filterEvents(
       this.getFirstDayOfMonth(new Date()),
@@ -92,8 +97,8 @@ export class ModalMusicianEventComponent implements OnInit {
 
   private doDestroy(){
     console.log("ngOnDestroy musician events");
-    if (this.eventSubscription) {      
-      this.eventSubscription.unsubscribe();  
+    if (this.musicianEventListResponseSubscription) {      
+      this.musicianEventListResponseSubscription.unsubscribe();  
     }     
     this.store.dispatch(new ResetEvent({})).subscribe({ next: async () => { } })  
     this.store.dispatch(new ResetMusicianEvent({})).subscribe({ next: async () => { } })  
@@ -127,7 +132,7 @@ export class ModalMusicianEventComponent implements OnInit {
   }
 
   async getEvents(){            
-    this.eventSubscription = this.events$     
+    this.musicianEventListResponseSubscription = this.musicianEventListResponse$     
       .subscribe(
         {
           next: async ()=> {      
@@ -137,15 +142,15 @@ export class ModalMusicianEventComponent implements OnInit {
             if(finish){             
               this.selectedDate = null; 
               if(errorStatusCode==200){                   
-                this.events = this.store.selectSnapshot(MusicianEventState.events);              
-                if(!this.events){
-                  this.events = [];
+                this.musicianEventListResponse = this.store.selectSnapshot(MusicianEventState.musicianEventListResponse);              
+                if(!this.musicianEventListResponse.events){
+                  this.musicianEventListResponse.events = [];
                 }            
-                this.setCalendarDays(this.events);
+                this.setCalendarDays(this.musicianEventListResponse.events);
               }
               else{
-                this.events = [];
-                this.setCalendarDays(this.events);
+                this.musicianEventListResponse.events = [];
+                this.setCalendarDays(this.musicianEventListResponse.events);
                 // si el token ha caducado (403) lo sacamos de la aplicacion
                 if(errorStatusCode==403){            
                   this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
@@ -153,8 +158,7 @@ export class ModalMusicianEventComponent implements OnInit {
                 else{
                   this.toast.presentToast(errorMessage);
                 }   
-
-              }                        
+              }                   
               this.initSearchFinish = true;    
               this.dismissInitialLoading();                 
             }          
@@ -180,7 +184,7 @@ export class ModalMusicianEventComponent implements OnInit {
 
   getTitle(event:Event){
     // si hay varios eventos ese dia devolveremos "Varios", sino devolvemos su hora
-    const dayEvents = this.events?.filter( day => {
+    const dayEvents = this.musicianEventListResponse.events?.filter( day => {
       const configDate = new Date(day.date).toISOString().split('T')[0]; // Normaliza la fecha configurada
       return configDate === event.date; // Compara las fechas normalizadas
     });
@@ -335,9 +339,10 @@ export class ModalMusicianEventComponent implements OnInit {
   }
 
   async onDateChange(selectedDateString: any) {    
-    this.selectedMonthDate = new Date(selectedDateString);
+    this.selectedMonthDate = new Date(selectedDateString);    
+    this.updateSelectedStrMonthAndYear();
     
-    const selectedEvents = this.events?.filter(day => {
+    const selectedEvents = this.musicianEventListResponse.events?.filter(day => {
       const selectedDate = new Date(selectedDateString).toISOString().split('T')[0]; // Normaliza la fecha seleccionada
       const configDate = new Date(day.date).toISOString().split('T')[0]; // Normaliza la fecha configurada
       return selectedDate === configDate; // Compara las fechas normalizadas
@@ -367,10 +372,17 @@ export class ModalMusicianEventComponent implements OnInit {
   onMonthChange(event: any) {        
     this.selectedDate = null;  
     this.selectedMonthDate = event.newMonth.dateObj;
+    this.updateSelectedStrMonthAndYear();
     this.filterEvents(
       this.getFirstDayOfMonth(this.selectedMonthDate),
       this.getLastDayOfMonth(this.selectedMonthDate)
     );      
+  }
+
+  updateSelectedStrMonthAndYear(){
+    this.strSelectedMonth = this.selectedMonthDate.toLocaleDateString('es-ES', { month: 'long' });
+    this.strSelectedMonth = this.strSelectedMonth.charAt(0).toUpperCase() + this.strSelectedMonth.slice(1);
+    this.strSelectedYear = this.selectedMonthDate.toLocaleDateString('es-ES', { year: 'numeric' });    
   }
 
   /*******************************************************************/
@@ -489,6 +501,15 @@ export class ModalMusicianEventComponent implements OnInit {
     }
   }
 
+  getProgressColorMusicianPercentageAssistEvents(percentage: number): string {
+    if (percentage >= 80) {
+      return 'success';
+    } else if (percentage >= 50) {
+      return 'warning';
+    } else {
+      return 'danger';
+    }
+  }
 
 
 }

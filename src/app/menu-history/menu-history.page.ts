@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { UsersService } from '../services/user/users.service';
 
 @Component({
   selector: 'app-menu-history',
@@ -104,9 +105,15 @@ export class MenuHistoryPage implements OnInit {
     loop: true, // Repite las imágenes en bucle
   };
 
-  constructor() { }
+  constructor(
+    private userService: UsersService
+  ) { }
 
   ngOnInit() {
+  }
+
+  logout(){
+    this.userService.logout();
   }
 
 }

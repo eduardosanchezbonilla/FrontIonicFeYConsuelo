@@ -44,6 +44,10 @@ export class MenuRepertoirePage implements OnDestroy {
   ) {  
   }
 
+  logout(){
+    this.userService.logout();
+  }
+
   async ionViewWillEnter(){         
     this.profile = await this.storage.getItem('profile');      
     this.getRepertoireCategories();         

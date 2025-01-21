@@ -97,12 +97,7 @@ ion-tab-bar {
 }
 
 ion-tab-bar{
-    //--background: linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.0)), url('/assets/images/trama.jpeg') center / contain;    
-    --background: linear-gradient(rgba(255, 255, 255, 0.87), rgba(255, 255, 255, 0.95)), url('/assets/images/fondoPie.jpeg') center / contain;         
-    //--ion-background-color:#ededed; 
-    //--background: linear-gradient(135deg, #f7f7f7, #e0e0e0); /* Gradiente de gris claro */
-    //background-size: cover;
-    //filter: brightness(1.1); /* Aumenta el brillo ligeramente */
+    --background: linear-gradient(rgba(255, 255, 255, 0.87), rgba(255, 255, 255, 0.95)), url('/assets/images/fondoPie.jpeg') center / contain;             
 }
 
 ion-modal {
@@ -144,3 +139,12 @@ ion-modal {
     --width:70% !important; /* Ajusta el ancho a un 80% de la pantalla */
 }
 
+/***********************************************************************/
+/*********************  BOTOIN LOGOUT **********************************/
+/***********************************************************************/
+.logout-button ion-icon {
+    //font-size: 20px; /* Tamaño intermedio */
+    width: 27px;
+    height: 27px;
+  }
+  

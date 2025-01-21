@@ -3,6 +3,11 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>   
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()" class="logout-button">
+        <ion-icon name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -34,7 +39,9 @@
           <ion-item-divider class="ion-no-padding video-category-header">
             <ion-avatar slot="start" class="video-category-avatar">
               <ion-img 
-                [src]="videoGroupByCategory.category.image ? 'data:image/jpeg;base64,' + videoGroupByCategory.category.image : 'data:image/jpeg;base64,' + defaultVideoCategoryImage">
+                [src]="videoGroupByCategory.category.image ? 'data:image/jpeg;base64,' + videoGroupByCategory.category.image : 'data:image/jpeg;base64,' + defaultVideoCategoryImage"
+                (click)="openCategoryImage($event,videoGroupByCategory.category)"
+              >
               </ion-img>              
             </ion-avatar>
             <ion-label class="video-category-header-label">              

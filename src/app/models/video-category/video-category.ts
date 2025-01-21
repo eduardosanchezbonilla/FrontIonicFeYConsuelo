@@ -3,5 +3,6 @@ export class VideoCategory {
     name: string;
     isPublic: boolean;
     order: number;        
-    image?: string;    
+    image?: string; 
+    date: string;   
 }

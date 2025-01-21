@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { ModalController } from '@ionic/angular';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subscription } from 'rxjs';
@@ -7,6 +6,7 @@ import { DEFAULT_REPERTOIRE_MARCH_IMAGE } from 'src/app/constants/constants';
 import { RepertoireCategory } from 'src/app/models/repertoire-category/repertoire-category';
 import { RepertoireMarchType } from 'src/app/models/repertoire-march-type/repertoire-march-type';
 import { RepertoireMarch } from 'src/app/models/repertoire/repertoire-march';
+import { CameraService } from 'src/app/services/camera/camera.service';
 import { LoadingService } from 'src/app/services/loading/loading.service';
 import { GetRepertoireCategories } from 'src/app/state/repertoire-category/repertoire-category.actions';
 import { RepertoireCategoryState } from 'src/app/state/repertoire-category/repertoire-category.state';
@@ -46,7 +46,8 @@ export class ModalEditRepertoireMarchComponent implements OnInit {
   constructor(    
     private store:Store,
     private modalController: ModalController,
-    private loadingService: LoadingService
+    private loadingService: LoadingService,
+    private cameraService: CameraService
   ) { }
 
   async ngOnInit() {
@@ -153,17 +154,9 @@ export class ModalEditRepertoireMarchComponent implements OnInit {
     this.modalController.dismiss(null, 'cancel');
   }
 
-  async selectImage() {    
-    const image = await Camera.getPhoto({
-      quality: 90,
-      allowEditing: false,
-      correctOrientation: true,
-      resultType: CameraResultType.Base64, 
-      source: CameraSource.Prompt 
-    });
-
-    this.showImage = `data:image/jpeg;base64,${image.base64String}`;
-    this.selectedImage = image.base64String;
+  async selectImage() {        
+    this.selectedImage =  await this.cameraService.getPhotoBase64(90);
+    this.showImage = `data:image/jpeg;base64,${this.selectedImage}`;        
   }
 
   clearImage() {

@@ -5,6 +5,7 @@ import { LoadingService } from 'src/app/services/loading/loading.service';
 import { Inventory } from 'src/app/models/inventory/inventory';
 import { DEFAULT_INVENTORY_IMAGE} from '../../../constants/constants';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { CameraService } from 'src/app/services/camera/camera.service';
 
 @Component({
   selector: 'app-modal-inventory',
@@ -19,7 +20,7 @@ export class ModalInventoryComponent implements OnInit {
   public selectedImage: string;
   
   constructor(    
-    private store:Store,
+    private cameraService:CameraService,
     private modalController: ModalController,
     private loadingService: LoadingService
   ) { }
@@ -61,16 +62,8 @@ export class ModalInventoryComponent implements OnInit {
   }
 
   async selectImage() {    
-    const image = await Camera.getPhoto({
-      quality: 90,
-      allowEditing: false,
-      correctOrientation: true,
-      resultType: CameraResultType.Base64, 
-      source: CameraSource.Prompt 
-    });
-
-    this.showImage = `data:image/jpeg;base64,${image.base64String}`;
-    this.selectedImage = image.base64String;
+    this.selectedImage =  await this.cameraService.getPhotoBase64(90);
+    this.showImage = `data:image/jpeg;base64,${this.selectedImage}`;
   }
 
   clearImage() {

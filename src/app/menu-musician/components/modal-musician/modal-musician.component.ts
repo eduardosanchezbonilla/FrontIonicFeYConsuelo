@@ -5,10 +5,10 @@ import { IonModal, ModalController } from '@ionic/angular';
 import { Voice } from '../../../models/voice/voice';
 import { Observable, Subscription } from 'rxjs';
 import { GetVoices } from '../../../state/voice/voice.actions';
-import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { VoiceState } from '../../../state/voice/voice.state';
 import { DEFAULT_MUSICIAN_IMAGE } from '../../../constants/constants';
 import { LoadingService } from 'src/app/services/loading/loading.service';
+import { CameraService } from 'src/app/services/camera/camera.service';
 
 @Component({
   selector: 'app-modal-musician',
@@ -32,7 +32,8 @@ export class ModalMusicianComponent implements OnInit, OnDestroy {
   constructor(
     private store:Store,
     private modalController: ModalController,
-    private loadingService: LoadingService
+    private loadingService: LoadingService,
+    private cameraService: CameraService
   ) { }
 
   async ngOnInit() {
@@ -112,18 +113,8 @@ export class ModalMusicianComponent implements OnInit, OnDestroy {
   }
 
   async selectImage() {    
-    const image = await Camera.getPhoto({
-      quality: 90,
-      allowEditing: false,
-      correctOrientation: true,
-      //width: 200,
-      //height: 200,      
-      resultType: CameraResultType.Base64, 
-      source: CameraSource.Prompt 
-    });
-
-    this.showImage = `data:image/jpeg;base64,${image.base64String}`;
-    this.selectedImage = image.base64String;
+    this.selectedImage =  await this.cameraService.getPhotoBase64(90);
+    this.showImage = `data:image/jpeg;base64,${this.selectedImage}`;    
   }
 
   clearImage() {

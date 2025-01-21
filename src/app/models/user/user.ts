@@ -4,6 +4,7 @@ import { UserDetail } from "./user-detail";
 export class User {
     _id?: string;    
     username: string;
+    password: string;
     roles: string[];
     profile: string;
     passwordExpired: boolean;

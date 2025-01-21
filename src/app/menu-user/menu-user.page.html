@@ -3,6 +3,11 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>   
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()" class="logout-button">
+        <ion-icon name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -75,7 +80,7 @@
               <ion-item-option *ngIf="profile=='SUPER_ADMIN'" color="success" (click)="asignPartituresUser(user, userSliding)" >
                 <ion-icon color="light" slot="icon-only" name="albums-outline"></ion-icon>
               </ion-item-option>        
-              <ion-item-option color="warning" (click)="updateUser(user, userSliding)" >
+              <ion-item-option color="warning" (click)="updateUserOrMusician(user, userSliding)" >
                 <ion-icon color="light" slot="icon-only" name="pencil-outline"></ion-icon>
               </ion-item-option>        
               <ion-item-option color="danger"  class="rounded-right" (click)="confirmDeleteUser(user, userSliding)">

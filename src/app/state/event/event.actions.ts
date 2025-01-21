@@ -49,3 +49,13 @@ export class ResetEventRepertoire {
   static readonly type = '[Event] ResetEventRepertoire';
   constructor(public payload: {}) { }
 }
+
+export class GetEventReportAssistance{
+  static readonly type = '[Event] GetEventReportAssistance';
+  constructor(public payload: {eventType:string, eventId:number}) { }
+}
+
+export class GetEvent{
+  static readonly type = '[Event] GetEvent';
+  constructor(public payload: {eventType:string, eventId:number}) { }
+}

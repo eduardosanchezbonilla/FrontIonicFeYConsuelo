@@ -39,3 +39,19 @@ ion-item.image-selector {
 .custom-ion-button-image {
     margin-bottom: 11px;  
 }
+
+.custom-label {
+    padding-bottom: 3px;  
+}
+
+.custom-datetime-button {
+    border: 1px solid var(--ion-color-primary); 
+    border-bottom: 3px solid var(--ion-color-primary); 
+    border-radius: 8px;
+    padding: 0px 0px;  
+    margin-bottom: 5px;  
+}
+
+.custom-icon {
+    padding-bottom: 5px;  
+}

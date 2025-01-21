@@ -35,4 +35,29 @@ export class Profile  {
     this.user = null;  
   }
 
+  calculateAntiquity(startDate: string | null | undefined): string {
+    if (!startDate) return 'Sin antigüedad';
+
+    const start = new Date(startDate);
+    const now = new Date();
+
+    let years = now.getFullYear() - start.getFullYear();
+    let months = now.getMonth() - start.getMonth();
+    let days = now.getDate() - start.getDate();
+
+    // Ajustar años y meses si el mes/día actual es menor que el mes/día de inicio
+    if (days < 0) {
+        months--; // Restar un mes
+        const lastMonth = new Date(now.getFullYear(), now.getMonth(), 0); // Último día del mes anterior
+        days += lastMonth.getDate(); // Sumar los días del mes anterior
+    }
+
+    if (months < 0) {
+        years--; // Restar un año
+        months += 12; // Ajustar meses
+    }
+
+    return `${years} años, ${months} meses y ${days} días`;
+  } 
+
 }

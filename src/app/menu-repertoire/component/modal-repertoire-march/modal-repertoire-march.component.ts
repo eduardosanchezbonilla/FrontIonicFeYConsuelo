@@ -626,15 +626,13 @@ export class ModalRepertoireMarchComponent implements OnDestroy {
 
   async viewVideo(march: RepertoireMarch, youtubeId: string) {    
     await this.loadingService.presentLoading('Loading...');    
-    let video = new Video();
-    console.log(march);
+    let video = new Video();    
     video.videoCategory = new VideoCategory();
     video.videoCategory.name = march.category.name;
     video.videoCategory.id = march.category.id;
     console
     video.description = march.description;
-    video.name = march.name;
-    console.log(video);
+    video.name = march.name;    
     const videoLink = this.sanitizer.bypassSecurityTrustResourceUrl(`https://www.youtube.com/embed/${youtubeId}`);
     const modal = await this.modalController.create({
       component: ModalViewVideoComponent,

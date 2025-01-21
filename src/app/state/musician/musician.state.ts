@@ -2,11 +2,12 @@ import { Injectable } from '@angular/core';
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { MusicianService } from '../../services/musician/musician.service';
 import { Musician } from '../../models/musician/musician';
-import { CreateMusician, DeleteMusician, GetMusicians, GetMusiciansGroupByVoice, ResetMusician, ResetPassword, UpdateMusician } from './musician.actions';
+import { CreateMusician, DeleteMusician, GetMusicianFromDni, GetMusicians, GetMusiciansGroupByVoice, ResetMusician, ResetPassword, UpdateMusician } from './musician.actions';
 import { MusicianGroupByVoice } from '../../models/musician/musician-group-by-voice';
 
 export class MusicianStateModel {
   public musicians: Musician[];
+  public musician: Musician;
   public musiciansGroupByVoice: MusicianGroupByVoice[];
   finish: boolean;
   success: boolean;
@@ -16,6 +17,7 @@ export class MusicianStateModel {
 
 const defaults = {
   musicians: [],
+  musician: null,
   musiciansGroupByVoice: [],
   finish: false,
   success: false,
@@ -47,6 +49,11 @@ export class MusicianState {
   @Selector()
   static musicians(state:MusicianStateModel):Musician[] {
     return state.musicians;
+  }
+
+  @Selector()
+  static musician(state:MusicianStateModel):Musician {
+    return state.musician;
   }
 
   @Selector()
@@ -255,7 +262,7 @@ export class MusicianState {
   ) {
     return this.musicianService.resetPassword(payload.resetPassword)
       .then( 
-        async (success:Boolean) => {       
+        async (success:Boolean) => {                
             if(success)   {
               patchState({
                 success: true,
@@ -280,6 +287,36 @@ export class MusicianState {
             errorMessage: error.message
           })
       });
+  }
+
+  @Action(GetMusicianFromDni)
+  getMusicianFromDni(
+      { patchState }: StateContext<MusicianStateModel>,
+      { payload }: GetMusicianFromDni
+  ) {
+    return this.musicianService.getMusicianFromDni(payload.dni)
+      .then(
+        (musician:Musician) => {
+          patchState({
+            finish: true,
+            success: true,
+            musician: musician,
+            errorStatusCode: 200,
+            errorMessage: null
+          })
+        }
+      )
+      .catch(
+        async (error) => {          
+          patchState({
+            finish: true,
+            success: false,
+            musician: null,
+            errorStatusCode: error.status,
+            errorMessage: error.message
+          })
+        }
+      );
   }
 
 }

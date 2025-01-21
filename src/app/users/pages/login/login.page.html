@@ -60,7 +60,7 @@
                         </ion-input>                      
                         <ion-icon 
                             slot="end"                             
-                            [name]="showPassword ? 'eye-off' : 'eye'"       
+                            [name]="showPassword ? 'eye' : 'eye-off'"       
                             (click)="togglePasswordVisibility()"                     
                             data-action="show-hide"
                             class="toggle-password-icon"
@@ -135,13 +135,18 @@
                               maxlength="50"
                               name="currentPassword"
                               placeholder="Introduzca la contraseña actual"
-                              type="password"
+                              [type]="showCurrentPassword ? 'text' : 'password'"   
                               required="true"
                               [(ngModel)]="changePassword.currentPassword"
                               #currentPasswordInput="ngModel"     
                         >
                         </ion-input>
-                        <ion-icon name="eye" slot="end" data-action="show-hide"></ion-icon>
+                        <ion-icon 
+                            [name]="showCurrentPassword ? 'eye' : 'eye-off'"       
+                            (click)="toggleCurrentPasswordVisibility()"                
+                            slot="end"
+                            data-action="show-hide">
+                        </ion-icon>
                     </ion-item>
                     <ion-item class="ion-no-padding background-transparent">
                         <ion-label color="primary" position="floating">
@@ -152,13 +157,18 @@
                               maxlength="50"
                               name="newPassword"
                               placeholder="Introduzca la nueva contraseña"
-                              type="password"
+                              [type]="showNewPassword ? 'text' : 'password'"
                               required="true"
                               [(ngModel)]="changePassword.newPassword"
                               #newPasswordInput="ngModel"     
                         >
                         </ion-input>                      
-                        <ion-icon name="eye" slot="end" data-action="show-hide"></ion-icon>
+                        <ion-icon 
+                            [name]="showNewPassword ? 'eye' : 'eye-off'"       
+                            (click)="toggleNewPasswordVisibility()"                
+                            slot="end"
+                            data-action="show-hide">
+                        </ion-icon>      
                     </ion-item>
                     <ion-item class="ion-no-padding background-transparent">
                         <ion-label color="primary" position="floating">
@@ -169,13 +179,18 @@
                               maxlength="50"
                               name="repeatNewPassword"
                               placeholder="Repita la nueva contraseña"
-                              type="password"
+                              [type]="showRepeatNewPassword ? 'text' : 'password'"     
                               required="true"
                               [(ngModel)]="changePassword.repeatNewPassword"
                               #repeatNewPasswordInput="ngModel"     
                             >
                         </ion-input>                      
-                        <ion-icon name="eye" slot="end" data-action="show-hide"></ion-icon>
+                        <ion-icon 
+                            [name]="showRepeatNewPassword ? 'eye' : 'eye-off'"       
+                            (click)="toggleNewRepeatPasswordVisibility()"                
+                            slot="end"
+                            data-action="show-hide">
+                        </ion-icon>     
                     </ion-item>
 
                     <!-- Mostrar errores -->

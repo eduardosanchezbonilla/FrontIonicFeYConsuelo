@@ -24,9 +24,23 @@
 
     <div class="spacer-small"></div>   
 
+    <!-- IMAGEN PARA LA VISTA MUSICO -->
+    <div 
+      *ngIf="event && event.image && (profile!== 'SUPER_ADMIN' && profile!== 'ADMIN')"
+      class="image-container"
+    >
+      <img        
+        [src]="'data:image/jpeg;base64,' + originalImage"
+        class="styled-image"
+        (load)="onImageLoad()"
+        [hidden]="loading"
+        (click)="openEventImage($event,event)"
+      />
+    </div>
+
     <!-- TITLE -->
     <div *ngIf="type=='PERFORMANCE'" >
-      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent" [ngClass]="{ 'no-pointer': isReadonly }">
         <ion-label color="primary" position="floating">
             Título
         </ion-label>
@@ -54,7 +68,7 @@
 
     <!-- TIPO DE ACTUACION -->
     <div *ngIf="type=='PERFORMANCE'" >
-      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item">
+      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item" [ngClass]="{ 'no-pointer': isReadonly }">
         <ion-label color="primary" class="custom-label">Tipo de actuación</ion-label>
         <ion-select  class="custom-select-2" 
           name="performanceType"
@@ -70,7 +84,7 @@
     </div>
 
     <!-- FECHA -->
-    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item" >
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item" [ngClass]="{ 'no-pointer': isReadonly }">
       <ion-label color="primary" class="custom-label">Fecha</ion-label>
 
       <ion-datetime-button slot="end" datetime="datetime-event" color="primary" class="custom-datetime-button"></ion-datetime-button>      
@@ -96,7 +110,7 @@
     </ion-item>
 
     <!-- HORA DE INICIO -->
-    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item">
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item" [ngClass]="{ 'no-pointer': isReadonly }">
       <ion-label color="primary" class="custom-label">Hora inicio</ion-label>
 
       <ion-datetime-button slot="end" datetime="time-start-event" color="primary" class="custom-datetime-button"></ion-datetime-button>      
@@ -122,7 +136,7 @@
     </ion-item>
 
     <!-- HORA DE FIN -->
-    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item">
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item" [ngClass]="{ 'no-pointer': isReadonly }">
       <ion-label color="primary" class="custom-label">Hora fin</ion-label>
 
       <ion-datetime-button slot="end" datetime="time-end-event" color="primary" class="custom-datetime-button"></ion-datetime-button>      
@@ -148,7 +162,7 @@
     </ion-item>  
 
     <!-- DESCRIPCION -->    
-    <ion-item lines="none">  
+    <ion-item lines="none" [ngClass]="{ 'no-pointer': isReadonly }">  
       <ion-label color="primary" position="stacked" class="custom-label-textarea">
         Descripción
       </ion-label>
@@ -166,30 +180,57 @@
 
 
     <!-- VOZ -->
-    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item">
-      <ion-label color="primary" class="custom-label-voice">Voces</ion-label>
-      <ion-select  class="custom-select"      
-        okText="Aceptar"
-        cancelText="Cancelar"
-        name="voice"
-        placeHolder="Seleccionar Voces"        
-        [compareWith]="compareWith"
-        [(ngModel)] = "event.voiceList"
-        required
-        multiple
-        #voiceInput="ngModel"         
-      >              
-          <ion-select-option *ngFor="let voice of voices" [value]="voice">{{voice.name}}</ion-select-option>
-      </ion-select>      
-    </ion-item>
+    <!--<div *ngIf="profile=== 'SUPER_ADMIN' || profile=== 'ADMIN'">-->
+    <div>
+      <!--<ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item" [ngClass]="{ 'no-pointer': isReadonly }" >-->
+      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item" >
+        <ion-label color="primary" class="custom-label-voice">Voces</ion-label>
+        <ion-select  
+          class="custom-select"           
+          okText="Aceptar"
+          cancelText="Cancelar"
+          name="voice"
+          placeHolder="Seleccionar Voces"        
+          [compareWith]="compareWith"
+          [(ngModel)] = "event.voiceList"
+          required
+          multiple          
+          #voiceInput="ngModel"         
+        >              
+            <ion-select-option 
+                  *ngFor="let voice of voices" 
+                  [value]="voice"                  
+                  [disabled]="isReadonly"
+            >
+              {{voice.name}}
+            </ion-select-option>
+        </ion-select>      
+      </ion-item>
 
-    <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(voiceInput.invalid && voiceInput.touched)">
-      <ion-text color="danger" *ngIf="voiceInput.errors && voiceInput.errors['required']">La voz es obligatoria.</ion-text>      
+      <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(voiceInput.invalid && voiceInput.touched)">
+        <ion-text color="danger" *ngIf="voiceInput.errors && voiceInput.errors['required']">La voz es obligatoria.</ion-text>      
+      </div>
     </div>
+
+    <!-- Mostrar lista de voces seleccionadas si no se permite editar -->
+    <!-- Encabezado de Voces -->
+    <!--<div class="custom-label-container-voices" *ngIf="(profile !== 'SUPER_ADMIN' && profile !== 'ADMIN')">
+      <ion-label color="primary" class="custom-label-voice">Voces</ion-label>
+    </div>
+
+    <div class="ion-margin-start ion-margin-end ion-no-padding selected-voices" *ngIf="(profile !== 'SUPER_ADMIN' && profile !== 'ADMIN')">
+      <ion-chip *ngFor="let voice of selectedVoicesForMusicianView">
+        <ion-label class="chip-label">{{ voice.name }}</ion-label>
+      </ion-chip>
+    </div>
+
+    <ion-item-divider class="custom-divider" *ngIf="(profile !== 'SUPER_ADMIN' && profile !== 'ADMIN')">
+
+    </ion-item-divider>-->
 
     <!-- PERIODO DE REPETICION PARA ENSAYOS -->
     <div *ngIf="type=='REHEARSAL' && !updating" >
-      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item">
+      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item" [ngClass]="{ 'no-pointer': isReadonly }">
         <ion-label color="primary" class="custom-label">Periodo de Repeticion</ion-label>
         <ion-select
           name="repetitionPeriod"
@@ -206,7 +247,7 @@
 
     <!-- FECHA FINAL -->
     <div *ngIf="event.repetitionPeriod === 'SEMANAL'">
-      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item" >
+      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item" [ngClass]="{ 'no-pointer': isReadonly }">
         <ion-label color="primary" class="custom-label">Fecha final</ion-label>
 
         <ion-datetime-button slot="end" datetime="datetime-end-event" color="primary" class="custom-datetime-button"></ion-datetime-button>      
@@ -231,7 +272,7 @@
     </div>
 
     <!-- LOCATION -->
-    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent" [ngClass]="{ 'no-pointer': isReadonly }">
       <ion-label color="primary" position="floating">
           Localización
       </ion-label>
@@ -254,7 +295,7 @@
 
     <!-- MUNICIPIO -->
     <div *ngIf="type=='PERFORMANCE'" >
-      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent" [ngClass]="{ 'no-pointer': isReadonly }">
         <ion-label color="primary" position="floating">
             Municipio
         </ion-label>
@@ -282,7 +323,7 @@
 
     <!-- PROVINCIA -->
     <div *ngIf="type=='PERFORMANCE'" >
-      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent" [ngClass]="{ 'no-pointer': isReadonly }">
         <ion-label color="primary" position="floating">
             Provincia
         </ion-label>
@@ -310,7 +351,7 @@
 
     <!-- DESPLAZAMIENTO EN BUS -->
     <div *ngIf="type=='PERFORMANCE'" >
-      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent" [ngClass]="{ 'no-pointer': isReadonly }">
         <ion-label color="primary" class="custom-label-displacement-bus">Desplazamiento Bus</ion-label>            
         <ion-checkbox 
           name="displacementBus"     
@@ -322,18 +363,24 @@
     </div>
 
     <!-- IMAGEN -->
-    <div *ngIf="type=='PERFORMANCE'" >
+    <div *ngIf="type=='PERFORMANCE' && (profile=== 'SUPER_ADMIN' || profile=== 'ADMIN')">
       <ion-item class="ion-margin-start ion-no-padding background-transparent image-selector custom-item">
         <ion-label color="primary"  class="image-label">
           Foto
-          <img *ngIf="showImage" [src]="showImage" alt="Vista previa de la imagen" class="preview-image"/>
+          <img 
+              *ngIf="showImage" 
+              [src]="showImage" 
+              alt="Vista previa de la imagen"
+              class="preview-image"
+              (click)="openEventImage($event,event)"
+          />
         </ion-label>
               
-        <ion-button  (click)="selectImage()" class="custom-ion-button-image">
+        <ion-button  (click)="selectImage()" class="custom-ion-button-image" *ngIf="(profile=== 'SUPER_ADMIN' || profile=== 'ADMIN')">
           <ion-icon name="image-outline"></ion-icon>
         </ion-button>
             
-        <ion-button color="warning" (click)="clearImage()" *ngIf="showImage" class="custom-ion-button-image">
+        <ion-button color="warning" (click)="clearImage()" *ngIf="showImage && (profile=== 'SUPER_ADMIN' || profile=== 'ADMIN')" class="custom-ion-button-image" >
           <ion-icon name="trash-outline"></ion-icon>
         </ion-button>      
       </ion-item>
@@ -343,10 +390,20 @@
     <div class="spacer"></div>  
 
     <ion-button 
+          *ngIf="(profile==='SUPER_ADMIN' || this.profile==='ADMIN')"
           type="submit"           
           [disabled]="eventForm.invalid"
-          expand="block">
+          expand="block"
+    >
         {{updating ? 'Actualizar': 'Crear'}} evento
+    </ion-button>
+
+    <ion-button 
+          *ngIf="(profile!=='SUPER_ADMIN' && this.profile!=='ADMIN')"
+          type="submit"                     
+          expand="block"
+    >
+        Volver
     </ion-button>
   </form>
 

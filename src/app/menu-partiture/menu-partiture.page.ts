@@ -54,6 +54,10 @@ export class MenuPartiturePage implements OnDestroy {
       this.isSearching = false;   
   }
 
+  logout(){
+    this.userService.logout();
+  }
+
   async ionViewWillEnter(){   
     this.flagLoading = false;      
     this.profile = await this.storage.getItem('profile');    
@@ -209,7 +213,7 @@ export class MenuPartiturePage implements OnDestroy {
             this.initSearchFinish = true;    
 
             // si solo hay un grupo de partituras, lo expandimos
-            if(this.partitureGroups && this.partitureGroups.length==1){
+            if(this.partitureGroups && this.partitureGroups.length==1 && this.partitureGroups[0].id){
               setTimeout(() => {  
                   this.accordionValue = [this.partitureGroups[0].id.toString()];                  
                   this.flagLoading = true;

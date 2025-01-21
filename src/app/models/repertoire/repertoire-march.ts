@@ -13,4 +13,6 @@ export class RepertoireMarch {
     image: string;    
     youtubeId: string; 
     checked: boolean;   
+    order: number;
+    numbers: number;
 }

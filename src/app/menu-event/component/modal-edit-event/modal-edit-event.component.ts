@@ -8,7 +8,13 @@ import { LoadingService } from 'src/app/services/loading/loading.service';
 import { GetVoices } from 'src/app/state/voice/voice.actions';
 import { VoiceState } from 'src/app/state/voice/voice.state';
 import { DEFAULT_EVENT_IMAGE } from '../../../constants/constants';
-import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { StorageService } from 'src/app/services/storage/storage.service';
+import { ToastService } from 'src/app/services/toast/toast.service';
+import { ModalViewCategoryImageComponent } from 'src/app/menu-multimedia/component/modal-view-category-image/modal-view-category-image.component';
+import { VideoCategory } from 'src/app/models/video-category/video-category';
+import { GetEvent } from 'src/app/state/event/event.actions';
+import { EventState } from 'src/app/state/event/event.state';
+import { CameraService } from 'src/app/services/camera/camera.service';
 
 @Component({
   selector: 'app-modal-edit-event',
@@ -24,21 +30,33 @@ export class ModalEditEventComponent implements OnInit {
   
   public initScreen = false;
   public initSearchFinish = false;
+  public initImageReadonly = false;
   public selectedType: string = null;
+  public profile: string; 
 
   public showImage: string;
   public selectedImage: string;
+  public isReadonly:boolean = false;
 
   @Select(VoiceState.voices)
   voices$: Observable<Voice[]>;
   voicesSubscription: Subscription;
   public voices: Voice[];
+  public selectedVoicesForMusicianView: Voice[]; 
+
+  public imageLoaded = false;
+  public loading: boolean = true; // Estado de carga de la imagen
+
+  public originalImage: string;
 
 
   constructor(
     private store:Store,
     private modalController: ModalController,
     private loadingService: LoadingService,
+    private storage: StorageService,
+    private toast:ToastService,   
+    private cameraService: CameraService,
   ) { }
 
   getTime(time: string){
@@ -61,7 +79,7 @@ export class ModalEditEventComponent implements OnInit {
   
 
   async ngOnInit() {  
-   
+       
     if(!this.event){
       this.showImage = null;
       this.event = new Event(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);      
@@ -83,7 +101,7 @@ export class ModalEditEventComponent implements OnInit {
         this.event.repetitionPeriod = '';
         this.event.performanceType = 'CONCIERTO';
         this.event.type = 'PERFORMANCE';
-      }
+      }      
     }
     else{
       if(this.event.type==='PERFORMANCE'){
@@ -98,15 +116,35 @@ export class ModalEditEventComponent implements OnInit {
       }      
     }
     
-    this.initSearchFinish = true;   
-    await this.loadingService.dismissLoading();    
+    //this.initSearchFinish = true;   
+    //await this.loadingService.dismissLoading();    
 
+    this.profile = await this.storage.getItem('profile');      
+
+    if(this.profile==='SUPER_ADMIN' || this.profile==='ADMIN'){
+      this.isReadonly = false;      
+      this.initImageReadonly = true;
+      this.originalImage = null;
+    }
+    else{
+      this.isReadonly = true;
+      this.initImageReadonly  = false;
+    }
+    
     this.store.dispatch(new GetVoices({}));
-    this.getVoices();   
+    this.getVoices();    
+
+    // si es readonly, ademas voy a obtener la imagen original para poder motrarla
+    if(this.isReadonly && this.event.image){
+      this.getEvent(this.event);      
+    }
+    else{
+      this.initImageReadonly  = true;
+    }
   }
 
   async dismissInitialLoading(){
-    if(this.initScreen && this.initSearchFinish){
+    if(this.initScreen && this.initSearchFinish && this.initImageReadonly){
       await this.loadingService.dismissLoading();         
     }
   }
@@ -135,6 +173,31 @@ export class ModalEditEventComponent implements OnInit {
     return o1 && o2 ? o1.id == o2.id : o1===o2;
   }
 
+  async getEvent(event: Event){
+    
+    this.store.dispatch(new GetEvent({eventType:event.type,eventId: event.id}))
+      .subscribe({
+        next: async ()=> {
+          const success = this.store.selectSnapshot(EventState.success);
+          const finish = this.store.selectSnapshot(EventState.finish);          
+          const errorStatusCode = this.store.selectSnapshot(EventState.errorStatusCode);          
+          const errorMessage = this.store.selectSnapshot(EventState.errorMessage);               
+
+          if(finish){                        
+            if(errorStatusCode==200){                    
+              this.originalImage = this.store.selectSnapshot(EventState.event).image;              
+            }
+            else{
+              this.originalImage = null;
+            }                        
+            this.initImageReadonly  = true; 
+            this.dismissInitialLoading();                 
+          }      
+        }
+      }
+    )
+  }
+
   getVoices(){
     this.voicesSubscription = this.voices$.subscribe({
       next: async ()=> {        
@@ -155,6 +218,12 @@ export class ModalEditEventComponent implements OnInit {
             this.event.voiceList = this.voices;
           }
         }
+
+        // de todas las voices, seleccionamos las que estén en el evento
+        this.selectedVoicesForMusicianView =  this.voices .filter(
+          voice => voice.id === this.event.voiceList.find(voiceEvent => voiceEvent.id === voice.id)?.id
+        );
+
         this.initSearchFinish = true;    
         this.dismissInitialLoading();      
       }
@@ -162,16 +231,8 @@ export class ModalEditEventComponent implements OnInit {
   }
 
   async selectImage() {    
-    const image = await Camera.getPhoto({
-      quality: 90,
-      allowEditing: false,
-      correctOrientation: true,
-      resultType: CameraResultType.Base64, 
-      source: CameraSource.Prompt 
-    });
-
-    this.showImage = `data:image/jpeg;base64,${image.base64String}`;
-    this.selectedImage = image.base64String;
+    this.selectedImage =  await this.cameraService.getPhotoBase64(90);
+    this.showImage = `data:image/jpeg;base64,${this.selectedImage}`;    
   }
 
   clearImage() {
@@ -192,10 +253,45 @@ export class ModalEditEventComponent implements OnInit {
   }
 
   confirm(){    
-    this.event.image = this.selectedImage;    
-    this.event.date = this.formatDate(this.event.date);
-    this.event.endDate = this.event.endDate ? this.formatDate(this.event.endDate):null; 
-    this.modalController.dismiss(this.event, 'confirm');
+    if(this.profile==='SUPER_ADMIN' || this.profile==='ADMIN'){
+      this.event.image = this.selectedImage;    
+      this.event.date = this.formatDate(this.event.date);
+      this.event.endDate = this.event.endDate ? this.formatDate(this.event.endDate):null; 
+      this.modalController.dismiss(this.event, 'confirm');
+    }
+    else{
+      this.modalController.dismiss(null, 'cancel');
+    }    
+  }
+
+  onImageLoad() {
+    this.imageLoaded = true; // Oculta el loader cuando la imagen termina de cargarse
+    this.loading = false;
+    this.dismissInitialLoading();    
+  }
+
+  async openEventImage(event: any, objectEvent: Event){
+    event.stopPropagation(); 
+
+    if(this.isReadonly){
+
+      if(!objectEvent.image){
+        this.toast.presentToast("No existe imagen para previsualizar");
+      }
+      else{      
+        let videoCategory = new VideoCategory();
+        videoCategory.name = 'Cartel Actuación';
+        videoCategory.image = this.originalImage;
+
+        await this.loadingService.presentLoading('Loading...');    
+        const modal = await this.modalController.create({
+          component: ModalViewCategoryImageComponent,
+          componentProps: { videoCategory, loadImage: false },
+        });
+
+        await modal.present();
+      }    
+    }
   }
 
 }

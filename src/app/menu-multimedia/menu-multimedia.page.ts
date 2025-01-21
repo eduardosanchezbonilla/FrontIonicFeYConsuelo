@@ -19,6 +19,7 @@ import { VideoCategory } from '../models/video-category/video-category';
 import { ModalVideoCategoryComponent } from './component/modal-video-category/modal-video-category.component';
 import { VideoCategoryState } from '../state/video-category/video-category.state';
 import { ModalVideoComponent } from './component/modal-video/modal-video.component';
+import { ModalViewCategoryImageComponent } from './component/modal-view-category-image/modal-view-category-image.component';
 
 @Component({
   selector: 'app-menu-multimedia',
@@ -65,6 +66,10 @@ export class MenuMultimediaPage  implements OnDestroy {
       .subscribe(value => {
         this.searchVideos(value);
       });      
+  }
+
+  logout(){
+    this.userService.logout();
   }
 
   async ionViewWillEnter(){      
@@ -212,7 +217,8 @@ export class MenuMultimediaPage  implements OnDestroy {
               if(this.expandVideoCategoryList===null){                              
                 this.expandVideoCategoryMap = new Map(); 
                 this.videosGroupByCategory.map(video => video.category.id+"").forEach(element => {
-                  this.expandVideoCategoryMap.set(element, true);
+                  //this.expandVideoCategoryMap.set(element, true);
+                  this.expandVideoCategoryMap.set(element, false);
                 });
                 this.updateExpandVideoCategoryList();              
               }
@@ -513,5 +519,22 @@ export class MenuMultimediaPage  implements OnDestroy {
       }
     })
   }  
+
+  async openCategoryImage(event: Event,videoCategory: VideoCategory){
+    event.stopPropagation(); 
+
+    if(!videoCategory.image){
+      this.toast.presentToast("No existe imagen para previsualizar");
+    }
+    else{      
+      await this.loadingService.presentLoading('Loading...');    
+      const modal = await this.modalController.create({
+        component: ModalViewCategoryImageComponent,
+        componentProps: { videoCategory, loadImage: true },
+      });
+
+      await modal.present();
+    }    
+  }
 
 }

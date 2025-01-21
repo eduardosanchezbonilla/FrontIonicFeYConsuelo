@@ -19,6 +19,7 @@ import { ModalEditRepertoireMarchComponent } from './component/modal-edit-repert
 import { ModalRepertoireMarchComponent } from './component/modal-repertoire-march/modal-repertoire-march.component';
 import { RepertoireMarchState } from '../state/repertoire/repertoire-march.state';
 import { RepertoireMarchService } from '../services/repertoire/repertoire-march.service';
+import { CameraService } from '../services/camera/camera.service';
 
 @NgModule({
   imports: [
@@ -41,7 +42,8 @@ import { RepertoireMarchService } from '../services/repertoire/repertoire-march.
   providers:[
     RepertoireCategoryService,
     RepertoireMarchTypeService,
-    RepertoireMarchService
+    RepertoireMarchService,
+    CameraService
   ]
 })
 export class MenuRepertoirePageModule {}

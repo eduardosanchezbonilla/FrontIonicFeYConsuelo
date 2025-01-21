@@ -10,11 +10,12 @@ import { Musician } from 'src/app/models/musician/musician';
 import { LoadingService } from 'src/app/services/loading/loading.service';
 import { ToastService } from 'src/app/services/toast/toast.service';
 import { UsersService } from 'src/app/services/user/users.service';
-import { GetEventMusicianAssistance, ResetEvent, ResetEventMusicianAssistance } from 'src/app/state/event/event.actions';
+import { GetEventMusicianAssistance, GetEventReportAssistance, ResetEvent, ResetEventMusicianAssistance } from 'src/app/state/event/event.actions';
 import { EventState } from 'src/app/state/event/event.state';
 import { CreateMusicianEvent, DeleteMusicianEvent } from 'src/app/state/musicien-event/musician-event.actions';
 import { MusicianEventState } from 'src/app/state/musicien-event/musician-event.state';
 import { ChangeDetectorRef } from '@angular/core';
+import { FileManagerService } from 'src/app/services/filemanager/file-manager.service';
 
 @Component({
   selector: 'app-modal-musician-assistance',
@@ -53,7 +54,8 @@ export class ModalMusicianAssistanceComponent implements OnInit {
     private toast:ToastService,
     private userService: UsersService,
     private loadingService: LoadingService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private fileManagerService: FileManagerService
   ) { }
 
   convertDateFormat(dateString: string): string {
@@ -373,13 +375,43 @@ export class ModalMusicianAssistanceComponent implements OnInit {
     return 'notAssist';
   }
 
-
-
   trackByMusicianFn(index, musician) {        
     return musician.id; // Utiliza un identificador único de tu elemento
   }
 
   trackByVoiceFn(index, musicianGroupByVoice) {        
     return musicianGroupByVoice.voice.id; // Utiliza un identificador único de tu elemento
+  }
+
+  async showAssiatanceInfo(){
+    await this.loadingService.presentLoading('Loading...');
+
+    this.store.dispatch(new GetEventReportAssistance({eventType: this.type, eventId: this.event.id}))
+        .subscribe({
+          next: async () => {
+            const finish = this.store.selectSnapshot(EventState.finish)        
+            if(finish){       
+              
+              const success = this.store.selectSnapshot(EventState.success);
+              if(success){
+                let eventReportAssistance = this.store.selectSnapshot(EventState.eventReportAssistance);  
+                this.fileManagerService.showFile(this.event.id+".pdf", eventReportAssistance.report);           
+              }
+              else{             
+                const errorStatusCode = this.store.selectSnapshot(MusicianEventState.errorStatusCode);
+                const errorMessage = this.store.selectSnapshot(MusicianEventState.errorMessage);        
+                // si el token ha caducado (403) lo sacamos de la aplicacion
+                if(errorStatusCode==403){            
+                  this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
+                }
+                else{
+                  this.toast.presentToast(errorMessage);
+                }                   
+              }  
+              await this.loadingService.dismissLoading();                              
+            }              
+          }
+        }
+      )
   }
 }

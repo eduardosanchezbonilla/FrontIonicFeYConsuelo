@@ -109,20 +109,24 @@
     </ion-button>
   </form>
 
+  <div class="spacer"></div>  
+  <div class="spacer"></div>    
+  <div class="spacer"></div>  
+
   <!-- FAB BUTTONS --> 
-  <ion-fab *ngIf="type!=='PERFORMANCE' || !event.displacementBus" slot="fixed" vertical="bottom" horizontal="end" style="margin-right: 70px;"> 
+  <ion-fab *ngIf="type!=='PERFORMANCE' || !event.displacementBus" slot="fixed" vertical="bottom" horizontal="end" style="margin-right: 140px;"> 
     <ion-fab-button fill="solid" color="success"  class="total-header-fab-text">
       {{totalAssist}}
     </ion-fab-button>   
   </ion-fab>
-  <ion-fab *ngIf="type!=='PERFORMANCE' || !event.displacementBus" slot="fixed" vertical="bottom" horizontal="end">
+  <ion-fab *ngIf="type!=='PERFORMANCE' || !event.displacementBus" slot="fixed" vertical="bottom" horizontal="end" style="margin-right: 70px;">
     <ion-fab-button fill="solid" color="tertiary"  class="total-header-fab-text">
       {{totalNotAssist}}
     </ion-fab-button>   
   </ion-fab>
 
 
-  <ion-fab *ngIf="type=='PERFORMANCE' && event.displacementBus"   slot="fixed" vertical="bottom" horizontal="end" style="margin-right: 140px;"> 
+  <ion-fab *ngIf="type=='PERFORMANCE' && event.displacementBus"   slot="fixed" vertical="bottom" horizontal="end" style="margin-right: 210px;"> 
     <ion-fab-button class="buttons-fab" color="success">
       <div class="fab-content">
         <ion-icon name="bus" class="fab-button-icon"></ion-icon>
@@ -130,7 +134,7 @@
       </div>
     </ion-fab-button>
   </ion-fab>
-  <ion-fab *ngIf="type=='PERFORMANCE' && event.displacementBus"   slot="fixed" vertical="bottom" horizontal="end" style="margin-right: 70px;"> 
+  <ion-fab *ngIf="type=='PERFORMANCE' && event.displacementBus"   slot="fixed" vertical="bottom" horizontal="end" style="margin-right: 140px;"> 
     <ion-fab-button class="buttons-fab" color="success">
       <div class="fab-content">
         <ion-icon name="car" class="fab-button-icon"></ion-icon>
@@ -138,14 +142,20 @@
       </div>
     </ion-fab-button>
   </ion-fab>
-  <ion-fab  *ngIf="type=='PERFORMANCE' && event.displacementBus" slot="fixed" vertical="bottom" horizontal="end">
+  <ion-fab  *ngIf="type=='PERFORMANCE' && event.displacementBus" slot="fixed" vertical="bottom" horizontal="end" style="margin-right: 70px;">
     <ion-fab-button class="buttons-fab" color="tertiary">
       <div class="fab-content">
         <ion-icon name="close" class="fab-button-icon"></ion-icon>
         <span>{{totalNotAssist}}</span>
       </div>
     </ion-fab-button>
-  </ion-fab>
+  </ion-fab>  
+  
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button color="warning" (click)="showAssiatanceInfo()">
+      <ion-icon name="reader-outline" size="large"></ion-icon>        
+    </ion-fab-button>
+  </ion-fab>  
   
 
 </ion-content>

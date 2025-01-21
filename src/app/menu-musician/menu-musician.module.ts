@@ -23,6 +23,7 @@ import { MusicianEventState } from '../state/musicien-event/musician-event.state
 import { CalendarModule } from 'ion2-calendar';
 import { EventState } from '../state/event/event.state';
 import { EventService } from '../services/event/event.service';
+import { CameraService } from '../services/camera/camera.service';
 
 @NgModule({
   imports: [
@@ -52,7 +53,8 @@ import { EventService } from '../services/event/event.service';
     UserPartitureGroupService,
     MusicianInventoryService,
     MusicianEventService,
-    EventService
+    EventService,
+    CameraService
   ]
 })
 export class MenuMusicianPageModule {}

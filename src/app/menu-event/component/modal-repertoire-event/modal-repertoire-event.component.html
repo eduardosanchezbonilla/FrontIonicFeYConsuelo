@@ -31,9 +31,39 @@
         </ion-label>
       </ion-item>
     </ion-card> 
+
+    <div class="spacer"></div>  
+
+    <!-- Selector de ordern o selection -->
+    <div class="filter-container" *ngIf="profile=='SUPER_ADMIN' || profile=='ADMIN'">
+      <ion-segment name="segmentViewRepertoire" [(ngModel)]="selectedSegment" (ionChange)="onSegmentChanged($event)" value="selection">
+        <ion-segment-button value="selection" class="custom-ion-segment-button">
+          <ion-label>Seleccionar</ion-label>
+        </ion-segment-button>
+
+        <ion-segment-button value="order" class="custom-ion-segment-button">
+          <ion-label>Ordenar</ion-label>
+        </ion-segment-button>          
+
+        <ion-segment-button value="stats" class="custom-ion-segment-button" >
+          <ion-label>Estadísticas</ion-label>
+        </ion-segment-button>     
+      </ion-segment>
+    </div>
+
+    <!-- Mensaje vistoso cuando no hay datos -->
+    <div *ngIf="!existsRepertoire && viewSelection" class="no-data-container">
+      <div class="spacer"></div>   
+      <ion-icon name="alert-circle-outline" class="no-data-icon"></ion-icon>
+      <p class="no-data-text">Aún no existe repertorio disponible<br/> para este evento.</p>     
+      <div class="spacer"></div>   
+      <div class="spacer"></div> 
+    </div>
   
-    <!-- DATOS -->    
-    <div *ngIf="eventRepertoire.repertoireMarchGroupByType">            
+    <!-------------------------------------------------------->
+    <!---------- VISTA: SELECCION DE MARCHAS ----------------->    
+    <!-------------------------------------------------------->
+    <div *ngIf="eventRepertoire && eventRepertoire.repertoireMarchGroupByType && viewSelection">            
       <ion-accordion-group #accordionGroup [multiple]="true" [value]="expandedAccordionValues" >
         <ion-list *ngFor="let repertoireMarchGroupByType of eventRepertoire.repertoireMarchGroupByType; trackBy: trackByTypeFn" class="ion-no-padding background-transparent" >
                   
@@ -42,8 +72,13 @@
             <!---------------------------->
             <!-- Repite para cada type -->
             <!---------------------------->
-            <ion-item slot="header" >                   
-              <ion-item-divider class="ion-no-padding type-header">              
+            <ion-item slot="header" class="custom-ion-item-type-padding" >                   
+              <ion-item-divider class="ion-no-padding type-header">   
+                <ion-avatar slot="start" class="type-avatar">
+                  <ion-img 
+                    [src]="repertoireMarchGroupByType.type.image ? 'data:image/jpeg;base64,' + repertoireMarchGroupByType.type.image : 'data:image/jpeg;base64,' + defaultRepertoireMarchTypeImage">
+                  </ion-img>              
+                </ion-avatar>           
                 <ion-label class="type-header-label">
                   {{ repertoireMarchGroupByType.type.name }}
                 </ion-label>                  
@@ -61,7 +96,8 @@
                       <p class="march-name">{{ march.name }}  </p>                                      
                     </ion-label>
 
-                    <ion-checkbox                       
+                    <ion-checkbox      
+                      *ngIf="profile=='SUPER_ADMIN' || profile=='ADMIN'"                 
                       name="marchChecked"
                       (ionChange)="updateEventRepertoire(march)"                                           
                       [checked]="march.checked"
@@ -75,6 +111,85 @@
           </ion-accordion>
         </ion-list>
       </ion-accordion-group>
+    </div>
+
+
+    <!-- Mensaje vistoso cuando no hay datos -->
+    <div *ngIf="!existsMarchOrder && viewOrder" class="no-data-container">
+      <div class="spacer"></div>   
+      <ion-icon name="alert-circle-outline" class="no-data-icon"></ion-icon>
+      <p class="no-data-text">No hay marchas seleccionadas<br/> para este evento.</p>     
+      <div class="spacer"></div>   
+      <div class="spacer"></div> 
+    </div>
+
+    <!--------------------------------------------------------->
+    <!---------- VISTA: ORDENACION DE MARCHAS ----------------->    
+    <!--------------------------------------------------------->
+    <div *ngIf="repertoireMarchsOrder && viewOrder && existsMarchOrder">     
+      
+      <h3 class="fancy-title custom-modal-subtitle" *ngIf="profile!=='SUPER_ADMIN' && profile!='ADMIN'">
+        Marchas y orden a interpretar
+      </h3>
+
+      <!-------------------------->
+      <!---- Para cada marcha ---->
+      <!-------------------------->
+      <div class="div-accordion-padding" slot="content">   
+        <ion-reorder-group [disabled]="isUpdatingOrder" (ionItemReorder)="doReorderMarchs($event)"> 
+          <ion-card class="march-card background-white" *ngFor="let march of repertoireMarchsOrder; trackBy: trackByMarchFn">
+            <ion-item  class="march-ion-item-order">    
+              <ion-avatar slot="start" class="type-avatar">
+                <ion-img 
+                  [src]="march.type.image ? 'data:image/jpeg;base64,' + march.type.image : 'data:image/jpeg;base64,' + defaultRepertoireMarchTypeImage">
+                </ion-img>              
+              </ion-avatar>                  
+              <ion-label class="march-card-label">
+                <p class="march-name">{{ march.name }}  </p>                                      
+              </ion-label>
+              <ion-reorder slot="end"></ion-reorder>
+            </ion-item>
+          </ion-card>                       
+        </ion-reorder-group>
+      </div>  
+    </div>
+
+    <!------------------------------------------------>
+    <!---------- VISTA: ESTADISTICAS ----------------->    
+    <!------------------------------------------------>
+    <div *ngIf="repertoireMarchsStats && repertoireMarchsStats.length>0 && viewStats && existsRepertoire">     
+      
+      <h3 class="fancy-title custom-modal-subtitle" *ngIf="profile!=='SUPER_ADMIN' && profile!='ADMIN'">
+        Marchas y orden a interpretar
+      </h3>
+
+      <!-------------------------->
+      <!---- Para cada marcha ---->
+      <!-------------------------->
+      <div class="div-accordion-padding" slot="content">           
+          <ion-card class="march-card background-white" *ngFor="let march of repertoireMarchsStats; trackBy: trackByMarchFn">
+            <ion-item  class="march-ion-item-order">    
+              <ion-avatar slot="start" class="type-avatar">
+                <ion-img 
+                  [src]="march.type.image ? 'data:image/jpeg;base64,' + march.type.image : 'data:image/jpeg;base64,' + defaultRepertoireMarchTypeImage">
+                </ion-img>              
+              </ion-avatar>                  
+              <ion-label class="march-card-label">
+                <p class="march-name">{{ march.name }}  </p>                     
+              </ion-label>
+              
+              <ion-select                    
+                [ngModelOptions]="{standalone: true}"                       
+                placeholder="Cantidad"                        
+                [(ngModel)] = "march.numbers"                                
+                interface="popover"  
+                (ionChange)="onNumberChange(march)"                                             
+              >              
+                  <ion-select-option *ngFor="let num of numbersArray" [value]="num">{{num}}</ion-select-option>
+              </ion-select>                    
+            </ion-item>
+          </ion-card>                               
+      </div>  
     </div>
 
     <div class="spacer"></div>  

@@ -13,7 +13,8 @@ export class UserRequest {
     province?: string;    
     email?: string;    
     image?: string;    
-    description?: string;    
+    description?: string;   
+    phoneNumber?: string; 
 
     constructor(username:string, 
                 password:string,
@@ -27,7 +28,8 @@ export class UserRequest {
                 province?: string,
                 email?: string, 
                 image?: string,    
-                description?: string
+                description?: string,
+                phoneNumber?: string
             ) {
         this.username = username;
         this.password = password;
@@ -42,5 +44,6 @@ export class UserRequest {
         this.email = email;
         this.image = image;
         this.description = description;        
+        this.phoneNumber = phoneNumber;
     }
 }

@@ -449,3 +449,93 @@ ion-item-option {
     //margin-right: 8px; 
 }
 
+.attendance-card {
+    margin-top: 0px;
+    margin-left: 16px;
+    margin-right: 16px;
+    --padding-start: 0px !important; 
+    --padding-end: 0px; 
+}
+
+ion-card-header {
+    //--padding-bottom: 50px !important;
+    padding-bottom: 0px !important;
+}
+
+.custom-ion-card-content {
+    padding-top: 5px !important;
+    padding-bottom: 0px !important;
+}
+  
+.statistic-container {    
+    width: 100%;
+    padding: 0px;
+    text-align: center; /* Centra el contenido dentro del contenedor */
+}
+  
+.stat-header {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Centra horizontalmente los elementos dentro de la cabecera */
+    margin-bottom: 5px;
+}
+  
+.stat-icon {
+    font-size: 24px;
+    margin-right: 10px;
+}
+  
+.stat-icon.success {
+    color: var(--ion-color-success);
+}
+  
+.stat-icon.warning {
+    color: var(--ion-color-warning);
+}
+  
+.stat-icon.danger {
+    color: var(--ion-color-danger);
+}
+  
+.stat-title {
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.stat-percentage {
+    font-weight: bold;
+    font-size: 1rem;
+    margin-left: 10px;
+    color: #000;
+}
+  
+.attendance-progress {
+    height: 15px;
+    border-radius: 10px;
+    transition: width 1s ease-in-out;
+}
+  
+.percentage-text {
+    margin-top: 5px;
+    font-weight: bold;
+    color: #000;
+}
+  
+/* Estilos Responsivos */
+@media (min-width: 768px) {
+    .statistic-container {
+      padding: 15px;
+    }
+  
+    .stat-icon {
+      font-size: 28px;
+    }
+  
+    .stat-title {
+      font-size: 18px;
+    }
+  
+    .percentage-text {
+      font-size: 16px;
+    }
+  }

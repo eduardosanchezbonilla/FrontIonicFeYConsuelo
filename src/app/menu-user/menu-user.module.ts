@@ -12,6 +12,9 @@ import { UsersState, UsersStateModel } from '../state/user/users.state';
 import { ModalUserComponent } from './components/modal-user/modal-user.component';
 import { UsersService } from '../services/user/users.service';
 import { ModalResetPasswordComponent } from './components/modal-reset-password/modal-reset-password.component';
+import { MusicianState } from '../state/musician/musician.state';
+import { MusicianService } from '../services/musician/musician.service';
+import { CameraService } from '../services/camera/camera.service';
 
 @NgModule({
   imports: [
@@ -19,11 +22,11 @@ import { ModalResetPasswordComponent } from './components/modal-reset-password/m
     FormsModule,
     IonicModule,
     MenuUserPageRoutingModule,
-    NgxsModule.forFeature([UsersState])
+    NgxsModule.forFeature([UsersState,MusicianState])
   ],
   declarations: [MenuUserPage,ModalUserComponent,ModalResetPasswordComponent],
   providers:[
-    UsersService
+    UsersService, MusicianService, CameraService
   ]
 })
 export class MenuUserPageModule {}

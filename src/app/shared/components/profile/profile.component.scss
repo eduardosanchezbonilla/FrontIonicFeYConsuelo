@@ -30,6 +30,21 @@ musician-menu-content {
     text-align: center; 
     letter-spacing: 1px;    
     text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+    text-transform: capitalize;
+}
+
+.initcap {
+    text-transform: capitalize;
+}
+
+.guest-name {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0;
+    font-family: 'Dancing Script', cursive;     
+    text-align: center; 
+    letter-spacing: 1px;    
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
 }
 
 .user-description {
@@ -81,6 +96,7 @@ ion-item[button] {
 ion-avatar {
     width: 60px;
     height: 60px;
+    flex-shrink: 0; /* Evita que el avatar se reduzca */
     margin-right: 16px;
     border-radius: 50%; 
     object-fit: cover;
@@ -90,8 +106,10 @@ ion-avatar {
 }
   
 .user-details {
-    display: flex;
-    flex-direction: column;
+    //display: flex;
+    //flex-direction: column;
+    flex-grow: 1; /* Permite que los detalles ocupen el espacio restante */
+    overflow: hidden; /* Evita que el contenido se desborde */
 }
   
 .user-details h2 {

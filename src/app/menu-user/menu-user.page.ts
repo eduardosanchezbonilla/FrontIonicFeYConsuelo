@@ -17,6 +17,9 @@ import { UserRequest } from '../models/user/user-request';
 import { Role } from '../models/role/role';
 import { ModalPartitureComponent } from '../menu-musician/components/modal-partiture/modal-partiture.component';
 import { ModalResetPasswordComponent } from './components/modal-reset-password/modal-reset-password.component';
+import { GetMusicianFromDni, UpdateMusician } from '../state/musician/musician.actions';
+import { MusicianState } from '../state/musician/musician.state';
+import { Musician } from '../models/musician/musician';
 
 @Component({
   selector: 'app-menu-user',
@@ -64,6 +67,10 @@ export class MenuUserPage implements OnDestroy {
       .subscribe(value => {
         this.searchUsers(value);
       });    
+  }
+
+  logout(){
+    this.userService.logout();
   }
 
   async ionViewWillEnter(){      
@@ -148,12 +155,50 @@ export class MenuUserPage implements OnDestroy {
     }
   }
 
-  async updateUser(user:User, userSliding: IonItemSliding){   
+  async updateUserOrMusician(user:User, userSliding: IonItemSliding){   
     // cerramos el sliding 
     userSliding.close();
+
+    let musicianId=null;
+
+    // miramos si el usuario es musico (a partir del username)
+    await this.loadingService.presentLoading('Loading...');    
+      this.store.dispatch(new GetMusicianFromDni({dni:user.username}))
+        .subscribe({
+          next: async ()=> {
+            const finish = this.store.selectSnapshot(MusicianState.finish);          
+            const errorStatusCode = this.store.selectSnapshot(MusicianState.errorStatusCode);          
+            
+            if(finish){                        
+              if(errorStatusCode==200){     
+                musicianId = this.store.selectSnapshot(MusicianState.musician).id;
+                
+                if(musicianId){                                    
+                  this.doUpdateUserOrMusician(user, musicianId,this.store.selectSnapshot(MusicianState.musician),false);
+                }
+                else{                  
+                  this.doUpdateUserOrMusician(user, musicianId,null,false);
+                }        
+              }
+              else if(errorStatusCode==204){                
+                this.doUpdateUserOrMusician(user, musicianId,null,false);
+              }else{
+                this.toast.presentToast("Error al obtener la informacion del usuario");
+                this.dismissInitialLoading();                 
+              }                                                
+            }      
+          }
+        }
+      )  
+    
+  }
+
+  async doUpdateUserOrMusician(user:User, musicianId:number, musician: Musician, showLoading:boolean=true){   
     
     // mostramos spinner
-    await this.loadingService.presentLoading('Loading...');   
+    if(showLoading){
+      await this.loadingService.presentLoading('Loading...');   
+    }
 
     // creamos el userRequest
     const userRole = new Role(user.roles[0], user.roles[0]);
@@ -171,6 +216,7 @@ export class MenuUserPage implements OnDestroy {
       user.userDetail.email,
       user.userDetail.image,
       user.userDetail.description,
+      user.userDetail.phoneNumber
     );
 
     // abrimos modal    
@@ -186,53 +232,153 @@ export class MenuUserPage implements OnDestroy {
     const {data, role} = await modal.onWillDismiss();
 
     // tratamos el resultado de la modal
+    if(role=='confirm'){       
+      if(musicianId){        
+        this.updateUserMusician(data,musicianId, musician);
+      }
+      else{        
+        this.updateUser(data);
+      }
+    }
+  }
+
+  async updateUser(data:UserRequest, showLoading:boolean=true){     
+    
+    // tratamos el resultado de la modal
     this.updateDetail=false;
     this.updateRoles=false;
-    if(role=='confirm'){      
+    
+    if(showLoading){
       await this.loadingService.presentLoading('Loading...');         
-      this.store.dispatch(new UpdateUserDetail({user:data})).subscribe({
-        next: async ()=> {
-          const success = this.store.selectSnapshot(UsersState.success);
-          if(success){
-            this.updateDetail=true;
-            this.endUpdateUser();            
-          }
-          else{
-            const errorStatusCode = this.store.selectSnapshot(UsersState.errorStatusCode);
-            const errorMessage = this.store.selectSnapshot(UsersState.errorMessage);        
-            // si el token ha caducado (403) lo sacamos de la aplicacion
-            if(errorStatusCode==403){            
-              this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
-            }
-            else{
-              this.toast.presentToast(errorMessage);
-            }    
-            await this.loadingService.dismissLoading();      
-          }          
-        }
-      })
-      this.store.dispatch(new UpdateUserRoles({user:data})).subscribe({
-        next: async ()=> {
-          const success = this.store.selectSnapshot(UsersState.success);
-          if(success){
-            this.updateRoles=true;
-            this.endUpdateUser();            
-          }
-          else{
-            const errorStatusCode = this.store.selectSnapshot(UsersState.errorStatusCode);
-            const errorMessage = this.store.selectSnapshot(UsersState.errorMessage);        
-            // si el token ha caducado (403) lo sacamos de la aplicacion
-            if(errorStatusCode==403){            
-              this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
-            }
-            else{
-              this.toast.presentToast(errorMessage);
-            }    
-            await this.loadingService.dismissLoading();      
-          }          
-        }
-      })
     }
+
+    this.store.dispatch(new UpdateUserDetail({user:data})).subscribe({
+      next: async ()=> {
+        const success = this.store.selectSnapshot(UsersState.success);
+        if(success){
+          this.updateDetail=true;
+          this.endUpdateUser();            
+        }
+        else{
+          const errorStatusCode = this.store.selectSnapshot(UsersState.errorStatusCode);
+          const errorMessage = this.store.selectSnapshot(UsersState.errorMessage);        
+          // si el token ha caducado (403) lo sacamos de la aplicacion
+          if(errorStatusCode==403){            
+            this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
+          }
+          else{
+            this.toast.presentToast(errorMessage);
+          }    
+          await this.loadingService.dismissLoading();      
+        }          
+      }
+    })
+    this.store.dispatch(new UpdateUserRoles({user:data})).subscribe({
+      next: async ()=> {
+        const success = this.store.selectSnapshot(UsersState.success);
+        if(success){
+          this.updateRoles=true;
+          this.endUpdateUser();            
+        }
+        else{
+          const errorStatusCode = this.store.selectSnapshot(UsersState.errorStatusCode);
+          const errorMessage = this.store.selectSnapshot(UsersState.errorMessage);        
+          // si el token ha caducado (403) lo sacamos de la aplicacion
+          if(errorStatusCode==403){            
+            this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
+          }
+          else{
+            this.toast.presentToast(errorMessage);
+          }    
+          await this.loadingService.dismissLoading();      
+        }          
+      }
+    })
+  }
+
+  async updateUserMusician(data:UserRequest, musicianId:number,musician: Musician,){     
+    
+    // tratamos el resultado de la modal
+    this.updateDetail=false;
+    this.updateRoles=false;
+    
+    await this.loadingService.presentLoading('Loading...');  
+
+    let changeDni = false;
+
+    if(data.dni!==musician.dni){
+      changeDni = true;
+    }
+    
+    // actualizamos los datos del musician
+    musician.dni = data.dni;
+    musician.name = data.name;
+    musician.surname = data.surname;
+    musician.direction = data.direction;
+    musician.municipality = data.municipality;
+    musician.province = data.province;
+    musician.email = data.email;
+    musician.image = data.image;
+    musician.voiceId = musician.voice.id;
+    musician.phoneNumber = data.phoneNumber;
+
+    if(changeDni){
+      await this.loadingService.dismissLoading();  
+      const alert = await this.alertController.create({
+          header: '¡Aviso!',
+          message: 'Ha cambiado el dni del usuario, por tanto se va a regenerar el password, que será la misma del DNI pero con la letra en minuscula. </br> ¿Desea continuar con la actualización?',
+          buttons: [
+            {
+              text: 'No',
+              role: 'cancel',
+              handler: () => {
+                ;
+              }
+            },
+            {
+              text: 'Si',
+              role: 'confirm',
+              handler: () => {
+                this.doConfirmUpdateUserMusician(data,musicianId,musician,true);
+              }
+            }
+          ]
+      });
+      alert.present();
+    }
+    else{
+      this.doConfirmUpdateUserMusician(data,musicianId,musician,false);
+    }        
+  }
+
+  async doConfirmUpdateUserMusician(data:UserRequest, musicianId:number,musician: Musician, showLoading:boolean=true){     
+    if(showLoading){
+      await this.loadingService.presentLoading('Loading...');         
+    }
+
+    this.store.dispatch(new UpdateMusician({id: musicianId, musician:musician})).subscribe({
+      next: async ()=> {
+        const success = this.store.selectSnapshot(MusicianState.success);
+        if(success){
+          this.updateDetail=true;
+
+          data.username = musician.dni;
+          this.updateUser(data,false);                    
+        }
+        else{
+          const errorStatusCode = this.store.selectSnapshot(MusicianState.errorStatusCode);
+          const errorMessage = this.store.selectSnapshot(MusicianState.errorMessage);        
+          // si el token ha caducado (403) lo sacamos de la aplicacion
+          if(errorStatusCode==403){            
+            this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
+          }
+          else{
+            this.toast.presentToast(errorMessage);
+          }    
+          await this.loadingService.dismissLoading();      
+        }             
+      }
+    })   
   }
 
   endUpdateUser(){
@@ -319,7 +465,8 @@ export class MenuUserPage implements OnDestroy {
       user.userDetail.province,
       user.userDetail.email, 
       user.userDetail.image==null?DEFAULT_USER_IMAGE:user.userDetail.image,    
-      user.userDetail.description
+      user.userDetail.description,
+      user.userDetail.phoneNumber
     );
     
     // abrimos modal    
