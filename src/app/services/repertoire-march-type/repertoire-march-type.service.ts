@@ -104,7 +104,7 @@ export class RepertoireMarchTypeService {
       const newToken = response.headers['Authorization'] || response.headers['authorization'];      
       if(newToken){        
         await this.storage.setItem('token', newToken.replace('Bearer ', ''));
-      }    
+      }         
       if(response.status==200){
         const data = await response.data as RepertoireMarchType[];
         return data;
@@ -112,14 +112,14 @@ export class RepertoireMarchTypeService {
       else if(response.status==204){      
         return [];        
       }      
-      else{                
+      else{                     
         return Promise.reject({
           status: response.status,
           message: response.data?.message || 'Error al obtener el listado de tipos de marchas de repertorio'
         });
       }    
     })
-    .catch((error) => {    
+    .catch((error) => {          
       if(error.status){
         return Promise.reject(error);
       }

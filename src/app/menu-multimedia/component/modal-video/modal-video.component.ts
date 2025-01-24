@@ -5,6 +5,8 @@ import { Observable, Subscription } from 'rxjs';
 import { VideoCategory } from 'src/app/models/video-category/video-category';
 import { Video } from 'src/app/models/video/video';
 import { LoadingService } from 'src/app/services/loading/loading.service';
+import { ToastService } from 'src/app/services/toast/toast.service';
+import { UsersService } from 'src/app/services/user/users.service';
 import { GetVideoCategories } from 'src/app/state/video-category/video-category.actions';
 import { VideoCategoryState } from 'src/app/state/video-category/video-category.state';
 
@@ -33,7 +35,9 @@ export class ModalVideoComponent implements OnInit, OnDestroy {
   constructor(
     private store:Store,
     private modalController: ModalController,
-    private loadingService: LoadingService
+    private loadingService: LoadingService,
+    private userService: UsersService,
+    private toast:ToastService,
   ) { }
 
   async ngOnInit() {
@@ -86,9 +90,28 @@ export class ModalVideoComponent implements OnInit, OnDestroy {
   getVideoCategories(){
     this.videoCategoriesSubscription = this.videoCategories$.subscribe({
       next: async ()=> {
-        this.videoCategories = this.store.selectSnapshot(VideoCategoryState.videoCategories);            
-        this.initSearchFinish = true;    
-        this.dismissInitialLoading();      
+        const finish = this.store.selectSnapshot(VideoCategoryState.finish);      
+        if(finish){
+          const errorStatusCode = this.store.selectSnapshot(VideoCategoryState.errorStatusCode);          
+          const errorMessage = this.store.selectSnapshot(VideoCategoryState.errorMessage);  
+          if(errorStatusCode==200){
+            this.videoCategories = this.store.selectSnapshot(VideoCategoryState.videoCategories);            
+            this.initSearchFinish = true;    
+            this.dismissInitialLoading();      
+          }
+          else{
+            if(errorStatusCode==403){   
+              await this.loadingService.dismissLoading();           
+              this.cancel();     
+              this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
+            }
+            else{
+              this.toast.presentToast(errorMessage);
+              this.initSearchFinish = true;    
+              this.dismissInitialLoading();     
+            }
+          }          
+        }        
       }
     })
   }

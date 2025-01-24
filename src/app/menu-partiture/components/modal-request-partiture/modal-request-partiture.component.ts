@@ -118,15 +118,31 @@ export class ModalRequestPartitureComponent implements OnInit {
       next: async ()=> {                
         const finish = this.store.selectSnapshot(UserPartitureRequestState.finish)        
         if(finish){
-          this.userRequestPartitureGroupByUser = this.store.selectSnapshot(UserPartitureRequestState.userRequestPartitureGroupByUser);             
-          if(this.userRequestPartitureGroupByUser.length>0){
-            this.existsRequest = true;
+          const errorStatusCode = this.store.selectSnapshot(UserPartitureRequestState.errorStatusCode);          
+          const errorMessage = this.store.selectSnapshot(UserPartitureRequestState.errorMessage);   
+          if(errorStatusCode==200){
+            this.userRequestPartitureGroupByUser = this.store.selectSnapshot(UserPartitureRequestState.userRequestPartitureGroupByUser);             
+            if(this.userRequestPartitureGroupByUser.length>0){
+              this.existsRequest = true;
+            }
+            else{
+              this.existsRequest = false;
+            }
+            this.initSearchFinish = true;    
+            this.dismissInitialLoading();   
           }
           else{
-            this.existsRequest = false;
+            if(errorStatusCode==403){   
+              await this.loadingService.dismissLoading();           
+              this.cancel();     
+              this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
+            }
+            else{
+              this.toast.presentToast(errorMessage);
+              this.initSearchFinish = true;    
+              this.dismissInitialLoading();     
+            }
           }
-          this.initSearchFinish = true;    
-          this.dismissInitialLoading();   
         }
       }
     })
@@ -212,7 +228,8 @@ export class ModalRequestPartitureComponent implements OnInit {
           const errorStatusCode = this.store.selectSnapshot(UserPartitureRequestState.errorStatusCode);
           const errorMessage = this.store.selectSnapshot(UserPartitureRequestState.errorMessage);        
           // si el token ha caducado (403) lo sacamos de la aplicacion
-          if(errorStatusCode==403){            
+          if(errorStatusCode==403){    
+            this.cancel();             
             this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
           }
           else{

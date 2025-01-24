@@ -23,6 +23,7 @@ import { ModalRepertoireEventComponent } from './component/modal-repertoire-even
 import { VideoCategory } from '../models/video-category/video-category';
 import { ModalViewCategoryImageComponent } from '../menu-multimedia/component/modal-view-category-image/modal-view-category-image.component';
 import { EventListResponse } from '../models/event/event-list-response';
+import { ModalFormationEventComponent } from './component/modal-formation-event/modal-formation-event.component';
 
 @Component({
   selector: 'app-menu-event',
@@ -216,6 +217,16 @@ export class MenuEventPage implements OnDestroy {
           value: 'viewPerformanceImage',
         }
       );
+    }
+    if(!this.isRehearsalDay([selectedEvent]) ){
+      inputs.push(
+        {
+          name: 'formation',
+          type: 'radio',
+          label: 'Formación',
+          value: 'formation',
+        }
+      );
 
     }
 
@@ -249,6 +260,10 @@ export class MenuEventPage implements OnDestroy {
             if('repertoire'===selectedType){ 
               this.selectedDate = null; 
               this.eventRepertoire( selectedEvent.type,  selectedEvent, selectedDateString);              
+            }
+            if('formation'===selectedType){ 
+              this.selectedDate = null; 
+              this.formationRepertoire( selectedEvent.type,  selectedEvent, selectedDateString);              
             }
             if('viewPerformanceImage'===selectedType){ 
               this.selectedDate = null; 
@@ -620,8 +635,15 @@ export class MenuEventPage implements OnDestroy {
                 this.setCalendarDays(this.eventListResponse.events);
               }
               else{
-                this.eventListResponse.events = [];
-                this.setCalendarDays(this.eventListResponse.events);
+                if(this.eventListResponse){
+                  this.eventListResponse.events = [];
+                  this.setCalendarDays(this.eventListResponse.events);
+                }
+                else{
+                  this.eventListResponse = new EventListResponse();
+                  this.eventListResponse.events = [];
+                  this.setCalendarDays(this.eventListResponse.events);
+                }
                 // si el token ha caducado (403) lo sacamos de la aplicacion
                 if(errorStatusCode==403){            
                   this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
@@ -1082,7 +1104,7 @@ export class MenuEventPage implements OnDestroy {
                   this.firstOldPerformances = false;
                 }
               }
-              else{
+              else{                
                 if(this.expandAnyoList===null){                             
                   this.expandAnyoMap = new Map(); 
                 }
@@ -1244,6 +1266,33 @@ export class MenuEventPage implements OnDestroy {
     const opciones: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long' };
     let fechaFormateada = date.toLocaleString('es-ES', opciones);
     return fechaFormateada.charAt(0).toUpperCase() + fechaFormateada.slice(1);
+  }
+
+  async showFormationRepertoire(event: Event, userSliding: IonItemSliding){
+    // cerramos el sliding 
+    if(userSliding){
+      userSliding.close();
+    }
+
+    // abrimos la modal
+    this.formationRepertoire( event.type,  event, event.date);                  
+  }
+
+  async formationRepertoire(type:string, event: Event, date: string){
+
+    // mostramos spinner
+    await this.loadingService.presentLoading('Loading...');   
+
+    // mostramos la modal
+    const modal = await this.modalController.create({
+      component: ModalFormationEventComponent,
+      componentProps: {
+        date: date,
+        type: this.translateEventType(type),
+        event: event
+      }
+    });
+    modal.present();
   }
 
 }

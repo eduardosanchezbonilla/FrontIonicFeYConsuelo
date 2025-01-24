@@ -200,7 +200,7 @@ export class EventState {
           patchState({
             finish: true,
             success: false,
-            eventListResponse: null,
+            eventListResponse: new EventListResponse(),
             errorStatusCode: error.status,
             errorMessage: error.message
           })
@@ -268,7 +268,7 @@ export class EventState {
           patchState({
             finish: true,
             success: false,            
-            eventMusicianAssistance: null,
+            eventMusicianAssistance: new EventMusicianAssistance(),
             errorStatusCode: error.status,
             errorMessage: error.message
           })
@@ -355,7 +355,7 @@ export class EventState {
           patchState({
             finish: true,
             success: false,            
-            eventRepertoire: null,
+            eventRepertoire: new EventRepertoire(),
             errorStatusCode: error.status,
             errorMessage: error.message
           })
@@ -399,7 +399,7 @@ export class EventState {
           patchState({
             finish: true,
             success: false,            
-            eventReportAssistance: null,
+            eventReportAssistance: new EventReportAssistance(),
             errorStatusCode: error.status,
             errorMessage: error.message
           })
@@ -429,7 +429,7 @@ export class EventState {
           patchState({
             finish: true,
             success: false,            
-            event: null,
+            event: new Event(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null),
             errorStatusCode: error.status,
             errorMessage: error.message
           })

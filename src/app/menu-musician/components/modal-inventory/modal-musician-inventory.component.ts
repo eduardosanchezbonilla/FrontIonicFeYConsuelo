@@ -97,17 +97,32 @@ export class ModalMusicianInventoryComponent implements OnInit {
     this.musicianInventoriesSubscription = this.musicianInventories$.subscribe({
       next: async ()=> {                
         const finish = this.store.selectSnapshot(MusicianInventoryState.finish)                
-        if(finish){          
-          this.musicianInventories = this.store.selectSnapshot(MusicianInventoryState.musicianInventories);                  
-          this.initSearchFinish = true;    
-          this.dismissInitialLoading();              
+        if(finish){   
+          const errorStatusCode = this.store.selectSnapshot(MusicianInventoryState.errorStatusCode);          
+          const errorMessage = this.store.selectSnapshot(MusicianInventoryState.errorMessage);  
+          if(errorStatusCode==200){
+            this.musicianInventories = this.store.selectSnapshot(MusicianInventoryState.musicianInventories);                  
+            this.initSearchFinish = true;    
+            this.dismissInitialLoading();              
+          }                  
+          else{
+            if(errorStatusCode==403){   
+              await this.loadingService.dismissLoading();           
+              this.cancel();     
+              this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
+            }
+            else{
+              this.toast.presentToast(errorMessage);
+              this.initSearchFinish = true;    
+              this.dismissInitialLoading();     
+            }
+          }
         }
       }
     })
   }
 
-  associateDisassociateMusicianInventory(musicianId:number, musicianInventory:MusicianInventory){
-    
+  associateDisassociateMusicianInventory(musicianId:number, musicianInventory:MusicianInventory){    
     musicianInventory.musicianId = musicianId;
     if(musicianInventory.assigned){
       // desasociamos
@@ -118,15 +133,15 @@ export class ModalMusicianInventoryComponent implements OnInit {
             if(success){
               this.toast.presentToast("Elemento de inventario eliminado del musico");                          
             }
-            else{
-              musicianInventory.assigned = true;
+            else{              
               const errorStatusCode = this.store.selectSnapshot(MusicianInventoryState.errorStatusCode);
               const errorMessage = this.store.selectSnapshot(MusicianInventoryState.errorMessage);        
               // si el token ha caducado (403) lo sacamos de la aplicacion
-              if(errorStatusCode==403){            
+              if(errorStatusCode==403){    
+                this.cancel();            
                 this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
               }
-              else{
+              else{              
                 this.toast.presentToast(errorMessage);
               }                  
             }              
@@ -142,15 +157,15 @@ export class ModalMusicianInventoryComponent implements OnInit {
             if(success){
               this.toast.presentToast("Elemento de inventario asociado al musico");                               
             }
-            else{
-              musicianInventory.assigned = false;
+            else{              
               const errorStatusCode = this.store.selectSnapshot(MusicianInventoryState.errorStatusCode);
               const errorMessage = this.store.selectSnapshot(MusicianInventoryState.errorMessage);        
               // si el token ha caducado (403) lo sacamos de la aplicacion
-              if(errorStatusCode==403){            
+              if(errorStatusCode==403){   
+                this.cancel();             
                 this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
               }
-              else{
+              else{                
                 this.toast.presentToast(errorMessage);
               }                
             }             
@@ -173,7 +188,8 @@ export class ModalMusicianInventoryComponent implements OnInit {
           const errorStatusCode = this.store.selectSnapshot(MusicianState.errorStatusCode);
           const errorMessage = this.store.selectSnapshot(MusicianState.errorMessage);        
           // si el token ha caducado (403) lo sacamos de la aplicacion
-          if(errorStatusCode==403){            
+          if(errorStatusCode==403){   
+            this.cancel();             
             this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
           }
           else{

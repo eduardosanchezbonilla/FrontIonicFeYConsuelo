@@ -294,7 +294,7 @@ export class EventService {
       else if(response.status==204){
         return null;
       }
-      else{                
+      else{                     
         return Promise.reject({
           status: response.status,
           message: response.data?.message || 'Error al obtener el repertorio asociado al evento'

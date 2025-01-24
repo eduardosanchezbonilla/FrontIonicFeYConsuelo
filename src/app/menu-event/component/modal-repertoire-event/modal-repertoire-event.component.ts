@@ -160,62 +160,76 @@ export class ModalRepertoireEventComponent implements OnInit {
     this.eventRepertoireSubscription = this.eventRepertoire$.subscribe({
       next: async ()=> {                
         const finish = this.store.selectSnapshot(EventState.finish)        
-        if(finish){          
-          this.eventRepertoire = this.store.selectSnapshot(EventState.eventRepertoire);                     
-          this.initSearchFinish = true;    
-          if(this.eventRepertoire){
-            // si el profile es distinto de ADMIN o SUPER_ADMIN, tengo que filtrar solo las marchas que estan asociadas al evento            
-            if(this.profile !== 'ADMIN' && this.profile !== 'SUPER_ADMIN'){
-              this.eventRepertoire.repertoireMarchGroupByType.forEach(group => {
-                group.marchs = group.marchs.filter(march => march.checked);
-              });
-              // si algun grupo de marchas no tiene ninguna marcha deberiamos eliminarlo
-              this.eventRepertoire.repertoireMarchGroupByType = this.eventRepertoire.repertoireMarchGroupByType.filter(group => group.marchs.length > 0);
-            }  
-            
-            this.repertoireMarchsOrder = [];
-            this.repertoireMarchsStats = [];
-            
-            // si no hay repertorio actualizamos la variable existsRepertoire
-            if(this.eventRepertoire.repertoireMarchGroupByType.length === 0){
-              this.existsRepertoire = false;
-              this.existsMarchOrder = false;
-            }
-            else{
-              this.existsRepertoire = true;
-
-              // ahora extraemos todas las marchas existentes y las metemos en un array y lo ordenamos por orden            
-              this.eventRepertoire.repertoireMarchGroupByType.forEach(group => {
-                group.marchs.forEach(march => {
-                  if(march.checked){
-                    march.type.image = group.type.image;
-                    this.repertoireMarchsOrder.push(march);
-                  }
-                  march.type.image = group.type.image;                  
-                  this.repertoireMarchsStats.push(march);
+        const errorStatusCode = this.store.selectSnapshot(EventState.errorStatusCode)        
+        const errorMessage = this.store.selectSnapshot(EventState.errorMessage)        
+        if(finish){       
+          this.initSearchFinish = true;  
+          if(errorStatusCode==200){          
+            this.eventRepertoire = this.store.selectSnapshot(EventState.eventRepertoire);                     
+              
+            if(this.eventRepertoire){
+              // si el profile es distinto de ADMIN o SUPER_ADMIN, tengo que filtrar solo las marchas que estan asociadas al evento            
+              if(this.profile !== 'ADMIN' && this.profile !== 'SUPER_ADMIN'){
+                this.eventRepertoire.repertoireMarchGroupByType.forEach(group => {
+                  group.marchs = group.marchs.filter(march => march.checked);
                 });
-              });
-
-              if(this.repertoireMarchsOrder.length === 0){
+                // si algun grupo de marchas no tiene ninguna marcha deberiamos eliminarlo
+                this.eventRepertoire.repertoireMarchGroupByType = this.eventRepertoire.repertoireMarchGroupByType.filter(group => group.marchs.length > 0);
+              }  
+              
+              this.repertoireMarchsOrder = [];
+              this.repertoireMarchsStats = [];
+              
+              // si no hay repertorio actualizamos la variable existsRepertoire
+              if(this.eventRepertoire.repertoireMarchGroupByType.length === 0){
+                this.existsRepertoire = false;
                 this.existsMarchOrder = false;
               }
               else{
-                this.existsMarchOrder = true;
-                // ordenamos por order de marcha y despues pòr orden de categoria
-                this.repertoireMarchsOrder.sort((a, b) => {
-                  const orderComparison = a.order - b.order;
+                this.existsRepertoire = true;
+
+                // ahora extraemos todas las marchas existentes y las metemos en un array y lo ordenamos por orden            
+                this.eventRepertoire.repertoireMarchGroupByType.forEach(group => {
+                  group.marchs.forEach(march => {
+                    if(march.checked){
+                      march.type.image = group.type.image;
+                      this.repertoireMarchsOrder.push(march);
+                    }
+                    march.type.image = group.type.image;                  
+                    this.repertoireMarchsStats.push(march);
+                  });
+                });
+
+                if(this.repertoireMarchsOrder.length === 0){
+                  this.existsMarchOrder = false;
+                }
+                else{
+                  this.existsMarchOrder = true;
+                  // ordenamos por order de marcha y despues pòr orden de categoria
+                  this.repertoireMarchsOrder.sort((a, b) => {
+                    const orderComparison = a.order - b.order;
+                    
+                    if (orderComparison !== 0) {
+                      return orderComparison; // Si son diferentes, devuelve la comparación por order
+                    }
                   
-                  if (orderComparison !== 0) {
-                    return orderComparison; // Si son diferentes, devuelve la comparación por order
-                  }
-                
-                  // Si son iguales, ordena por category 
-                  return a.category.order-b.category.order;
-                });            
-              }                               
+                    // Si son iguales, ordena por category 
+                    return a.category.order-b.category.order;
+                  });            
+                }                               
+              }
+              this.expandedAccordionValues = this.eventRepertoire.repertoireMarchGroupByType.map(group => group.type.id+"");                
+              this.calculateTotalMarchs();            
             }
-            this.expandedAccordionValues = this.eventRepertoire.repertoireMarchGroupByType.map(group => group.type.id+"");                
-            this.calculateTotalMarchs();            
+          }
+          else{
+            if(errorStatusCode==403){       
+              this.cancel();     
+              this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
+            }
+            else{
+              this.toast.presentToast(errorMessage);
+            }                
           }
           this.dismissInitialLoading();              
         }
@@ -268,7 +282,8 @@ export class ModalRepertoireEventComponent implements OnInit {
               const errorStatusCode = this.store.selectSnapshot(RepertoireEventState.errorStatusCode);
               const errorMessage = this.store.selectSnapshot(RepertoireEventState.errorMessage);        
               // si el token ha caducado (403) lo sacamos de la aplicacion
-              if(errorStatusCode==403){            
+              if(errorStatusCode==403){      
+                this.cancel();       
                 this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
               }
               else{
@@ -303,7 +318,8 @@ export class ModalRepertoireEventComponent implements OnInit {
               const errorStatusCode = this.store.selectSnapshot(RepertoireEventState.errorStatusCode);
               const errorMessage = this.store.selectSnapshot(RepertoireEventState.errorMessage);        
               // si el token ha caducado (403) lo sacamos de la aplicacion
-              if(errorStatusCode==403){            
+              if(errorStatusCode==403){     
+                this.cancel();        
                 this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
               }
               else{
@@ -456,6 +472,7 @@ export class ModalRepertoireEventComponent implements OnInit {
               const errorMessage = this.store.selectSnapshot(RepertoireEventState.errorMessage);
   
               if (errorStatusCode === 403) {
+                this.cancel(); 
                 this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
               } else {
                 this.toast.presentToast(errorMessage);
@@ -502,7 +519,8 @@ export class ModalRepertoireEventComponent implements OnInit {
               const errorStatusCode = this.store.selectSnapshot(RepertoireEventState.errorStatusCode);
               const errorMessage = this.store.selectSnapshot(RepertoireEventState.errorMessage);        
               // si el token ha caducado (403) lo sacamos de la aplicacion
-              if(errorStatusCode==403){            
+              if(errorStatusCode==403){   
+                this.cancel();          
                 this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
               }
               else{
@@ -539,7 +557,8 @@ export class ModalRepertoireEventComponent implements OnInit {
               const errorStatusCode = this.store.selectSnapshot(RepertoireEventState.errorStatusCode);
               const errorMessage = this.store.selectSnapshot(RepertoireEventState.errorMessage);        
               // si el token ha caducado (403) lo sacamos de la aplicacion
-              if(errorStatusCode==403){            
+              if(errorStatusCode==403){      
+                this.cancel();       
                 this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
               }
               else{

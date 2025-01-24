@@ -239,7 +239,7 @@ export class VideoCategoryState {
           patchState({
             finish: true,
             success: false,
-            videoCategory: null,
+            videoCategory: new VideoCategory(),
             errorStatusCode: error.status,
             errorMessage: error.message
           })

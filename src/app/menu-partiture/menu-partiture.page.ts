@@ -61,7 +61,7 @@ export class MenuPartiturePage implements OnDestroy {
   async ionViewWillEnter(){   
     this.flagLoading = false;      
     this.profile = await this.storage.getItem('profile');    
-    this.accordionValue = [];
+    this.accordionValue = [];        
     this.getPartitureGroups();         
     this.filterPartitureGroups();    
   }
@@ -86,7 +86,7 @@ export class MenuPartiturePage implements OnDestroy {
   }
 
   private doDestroy(){
-    console.log("ngOnDestroy");       
+    console.log("ngOnDestroy");                      
     if (this.partitureGroupsSubscription) {      
       this.partitureGroupsSubscription.unsubscribe();  // Cancelar la suscripción al destruir el componente
     }
@@ -349,7 +349,7 @@ export class MenuPartiturePage implements OnDestroy {
       if(!this.flagLoading){
         await this.loadingService.presentLoading('Loading...');          
       }
-      this.flagLoading=false;
+      this.flagLoading=false;      
         
       this.store.dispatch(new GetPartitures({partitureGroupGoogleId: partitureGroupGoogleId}))        
         .subscribe({

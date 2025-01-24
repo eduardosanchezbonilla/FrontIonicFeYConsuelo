@@ -156,11 +156,11 @@ export class MusicianEventState {
         }
       )
       .catch(
-        async (error) => {          
+        async (error) => {                   
           patchState({
             finish: true,
             success: false,
-            events: [],
+            musicianEventListResponse: new MusicianEventListResponse(),
             errorStatusCode: error.status,
             errorMessage: error.message
           })

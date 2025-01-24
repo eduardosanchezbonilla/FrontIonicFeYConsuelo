@@ -9,11 +9,9 @@ import { MusicianEvent } from 'src/app/models/musician-event/musician-event';
 import { MusicianEventListResponse } from 'src/app/models/musician-event/musician-event-list-response';
 import { Musician } from 'src/app/models/musician/musician';
 import { LoadingService } from 'src/app/services/loading/loading.service';
-import { StorageService } from 'src/app/services/storage/storage.service';
 import { ToastService } from 'src/app/services/toast/toast.service';
 import { UsersService } from 'src/app/services/user/users.service';
-import { GetEvents, ResetEvent } from 'src/app/state/event/event.actions';
-import { EventState } from 'src/app/state/event/event.state';
+import { ResetEvent } from 'src/app/state/event/event.actions';
 import { CreateMusicianEvent, DeleteMusicianEvent, GetMusicianEvents, ResetMusicianEvent } from 'src/app/state/musicien-event/musician-event.actions';
 import { MusicianEventState } from 'src/app/state/musicien-event/musician-event.state';
 
@@ -55,8 +53,7 @@ export class ModalMusicianEventComponent implements OnInit {
     private toast:ToastService,
     private userService: UsersService,
     private loadingService: LoadingService,
-    private alertController: AlertController,
-    private storage: StorageService
+    private alertController: AlertController    
   ) { }
 
   async ngOnInit() {    
@@ -147,20 +144,25 @@ export class ModalMusicianEventComponent implements OnInit {
                   this.musicianEventListResponse.events = [];
                 }            
                 this.setCalendarDays(this.musicianEventListResponse.events);
+                this.initSearchFinish = true;    
+                this.dismissInitialLoading();   
               }
               else{
+                this.musicianEventListResponse = this.store.selectSnapshot(MusicianEventState.musicianEventListResponse);  
                 this.musicianEventListResponse.events = [];
                 this.setCalendarDays(this.musicianEventListResponse.events);
-                // si el token ha caducado (403) lo sacamos de la aplicacion
-                if(errorStatusCode==403){            
+                // si el token ha caducado (403) lo sacamos de la aplicacion                
+                if(errorStatusCode==403){   
+                  await this.loadingService.dismissLoading();            
+                  this.cancel();        
                   this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
                 }
                 else{
                   this.toast.presentToast(errorMessage);
+                  this.initSearchFinish = true;    
+                  this.dismissInitialLoading();           
                 }   
-              }                   
-              this.initSearchFinish = true;    
-              this.dismissInitialLoading();                 
+              }                                       
             }          
         }
       }
@@ -445,7 +447,8 @@ export class ModalMusicianEventComponent implements OnInit {
             const errorStatusCode = this.store.selectSnapshot(MusicianEventState.errorStatusCode);
             const errorMessage = this.store.selectSnapshot(MusicianEventState.errorMessage);        
             // si el token ha caducado (403) lo sacamos de la aplicacion
-            if(errorStatusCode==403){            
+            if(errorStatusCode==403){     
+              this.cancel();         
               this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
             }
             else{
@@ -479,7 +482,8 @@ export class ModalMusicianEventComponent implements OnInit {
             const errorStatusCode = this.store.selectSnapshot(MusicianEventState.errorStatusCode);
             const errorMessage = this.store.selectSnapshot(MusicianEventState.errorMessage);        
             // si el token ha caducado (403) lo sacamos de la aplicacion
-            if(errorStatusCode==403){            
+            if(errorStatusCode==403){     
+              this.cancel();         
               this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
             }
             else{

@@ -158,26 +158,32 @@
     </ion-card>
 
     <!-- TARJETA PARA LA LISTA DE ASISTENCIA DE MÚSICOS -->
-    <ion-card class="attendance-card background-white" *ngIf="(profile == 'SUPER_ADMIN' || profile == 'ADMIN') && eventListResponse && eventListResponse.events && eventListResponse.events.length>0 && eventListResponse.musiciansAssistInformation && eventListResponse.musiciansAssistInformation.length>0"> 
+    <ion-card class="attendance-card background-white" *ngIf="(profile === 'SUPER_ADMIN' || profile === 'ADMIN') && eventListResponse?.events?.length > 0 && eventListResponse?.musiciansAssistInformation?.length > 0"> 
       <ion-card-header>
-        <ion-card-title>Resumen Asistencia de Músicos</ion-card-title>
+        <ion-card-title>Asistencia de Músicos ({{strSelectedMonth}})</ion-card-title>
       </ion-card-header>
-      <ion-card-content class="custom-ion-card-content">
-        <ion-list>
-          <ion-list-header>
-            <ion-label><strong>Lista de Músicos</strong></ion-label>
-          </ion-list-header>
-          <ion-item *ngFor="let musician of eventListResponse.musiciansAssistInformation && eventListResponse.musiciansAssistInformation">
-            <ion-label>
-              <h2>{{ musician.name }} {{ musician.surname }}</h2>
-            </ion-label>
-            <ion-note slot="end" [color]="getProgressColorMusicianPercentageAssistEvents(musician.musicianPercentageAssistsRehearsal)">
-              {{ musician.musicianPercentageAssistsRehearsal }}%
-            </ion-note>
-          </ion-item>          
+      <ion-card-content class="custom-ion-card-content-musician-list">
+        <ion-list class="ion-no-padding musician-ion-list">
+          <!-- Tarjeta de cada músico -->
+          <ion-card *ngFor="let musician of eventListResponse.musiciansAssistInformation" class="musician-card">
+            <ion-item lines="none" class="musician-ion-item ion-no-padding">
+              <ion-label class="musician-ion-label">
+                <h2 class="musician-name initcap">{{ musician.name | lowercase }} {{ musician.surname | lowercase }}</h2>
+              </ion-label>
+              <ion-note class="musician-ion-note" slot="end" [color]="getProgressColorMusicianPercentageAssistEvents(musician.musicianPercentageAssistsRehearsal)">
+                {{ musician.musicianPercentageAssistsRehearsal }}%
+              </ion-note>
+            </ion-item>
+            <!-- Barra de Progreso -->
+            <ion-progress-bar 
+              [value]="musician.musicianPercentageAssistsRehearsal / 100" 
+              [color]="getProgressColorMusicianPercentageAssistEvents(musician.musicianPercentageAssistsRehearsal)"
+              class="musician-progress-bar">
+            </ion-progress-bar>
+          </ion-card>
         </ion-list>
       </ion-card-content>
-    </ion-card>    
+    </ion-card>
 
     <!-- separador -->
     <div class="spacer" *ngIf="(profile == 'SUPER_ADMIN' || profile == 'ADMIN')"></div>  
@@ -286,6 +292,12 @@
               </ion-card> 
               
               <ion-item-options *ngIf="profile=='SUPER_ADMIN' || profile=='ADMIN'">
+                <ion-item-option color="formation-custom" (click)="showFormationRepertoire(performance, performanceSliding)" >
+                  <div class="option-content">
+                    <ion-icon class="large-icon" color="light" slot="icon-only" name="keypad-outline"></ion-icon>
+                    <span class="option-text">Formación</span>
+                  </div>                  
+                </ion-item-option>   
                 <ion-item-option color="tertiary" (click)="showEventRepertoire(performance, performanceSliding)" >
                   <ion-icon color="light" slot="icon-only" name="musical-notes-outline"></ion-icon>
                 </ion-item-option>   

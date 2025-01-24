@@ -466,6 +466,11 @@ ion-card-header {
     padding-top: 5px !important;
     padding-bottom: 0px !important;
 }
+
+.custom-ion-card-content-musician-list {    
+    padding-top: 5px !important;
+    padding-bottom: 0px !important;
+}
   
 .statistic-container {    
     width: 100%;
@@ -538,4 +543,149 @@ ion-card-header {
     .percentage-text {
       font-size: 16px;
     }
+}
+
+.musician-card {
+  margin: 8px 0;
+  padding: 10px;
+  padding-top:0px;
+  padding-bottom:5px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
+}
+
+.musician-card:hover {
+  transform: translateY(-2px); /* Efecto de elevación al pasar el cursor */
+}
+
+/* Estilos del Item */
+.musician-ion-item {
+    --min-height: 25px !important;     
+    display: flex;
+    align-items: center;
+    --padding-end: 0px;
+    --inner-padding-end: 8px;
+}
+
+/* Etiquetas del Músico */
+.musician-ion-label {
+  margin-left: 8px;
+  margin-top:4px;
+  margin-bottom:4px;
+}
+
+.musician-name {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #333333;
+}
+
+.musician-email {
+  font-size: 0.85rem;
+  color: gray;
+  margin: 0;
+}
+
+/* Barra de Progreso */
+.musician-progress-bar {
+  margin-top: 0px;
+  height: 8px;
+  border-radius: 4px;
+}
+
+/* Texto del Porcentaje */
+.musician-ion-note {
+    font-size: 0.9rem;
+    font-weight: bold;
+    //color: #333333;
+    padding-top:6px;
+    padding-bottom:2px;
+    margin-left:0px;
+}
+
+/* Responsividad */
+@media (max-width: 767px) { /* Pantallas pequeñas */
+  .musician-name {
+    font-size: 0.9rem;
   }
+
+  .musician-email {
+    font-size: 0.75rem;
+  }
+
+  .musician-progress-bar {
+    height: 6px;
+  }
+
+  .musician-ion-note {
+    font-size: 0.8rem;
+  }
+}
+
+@media (min-width: 768px) { /* Pantallas medianas y grandes */
+  .musician-name {
+    font-size: 1rem;
+  }
+
+  .musician-email {
+    font-size: 0.85rem;
+  }
+
+  .musician-progress-bar {
+    height: 8px;
+  }
+
+  .musician-ion-note {
+    font-size: 0.9rem;
+  }
+}
+
+/* Colores para la Barra de Progreso */
+ion-progress-bar.color-success {
+  --ion-color: var(--ion-color-success);
+}
+
+ion-progress-bar.color-warning {
+  --ion-color: var(--ion-color-warning);
+}
+
+ion-progress-bar.color-danger {
+  --ion-color: var(--ion-color-danger);
+}
+
+/* Ajustes para el ion-note */
+.musician-ion-note {
+  display: flex;
+  align-items: center;
+}
+
+.initcap {
+    text-transform: capitalize;
+}
+
+::ng-deep ion-item-option.ion-color-formation-custom {
+    --ion-color-base: #42A5F5; /* Verde azulado */    
+    --ion-color-contrast: #ffffff; /* Blanco para el ícono */
+    --ion-color-shade: #1E88E5; /* Sombra */
+    --ion-color-tint: #64B5F6; /* Tono claro */
+}
+
+.option-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+  
+.option-text {
+    margin-top: 6px; /* Espacio entre el icono y el texto */
+    font-size: 0.6rem; /* Tamaño de fuente ajustable */
+    color: var(--ion-color-light); /* Ajusta el color según tus necesidades */
+    font-weight: bold;
+}
+
+.large-icon {
+    font-size: 1.7rem; /* Ajusta este valor para mantener el tamaño deseado */
+    /* Puedes también utilizar otras unidades como 'em' o 'rem' */
+}

@@ -10,6 +10,9 @@ export class UserDetail {
     image?: string;    
     description?: string;   
     phoneNumber?: string; 
+    lastAccessDate?: string;
+    appInstalled?: boolean;
+    accessLastHours?: boolean;
 
     constructor(dni?: string,  
                 name?: string,
@@ -20,7 +23,10 @@ export class UserDetail {
                 email?: string, 
                 image?: string,    
                 description?: string,
-                phoneNumber?: string
+                phoneNumber?: string,
+                lastAccessDate?: string,
+                appInstalled?: boolean,
+                accessLastHours?: boolean
             ) {
         this.dni = dni;
         this.name = name;
@@ -32,5 +38,8 @@ export class UserDetail {
         this.image = image;
         this.description = description;        
         this.phoneNumber = phoneNumber;
+        this.lastAccessDate = lastAccessDate;
+        this.appInstalled = appInstalled;
+        this.accessLastHours = accessLastHours;
     }
 }

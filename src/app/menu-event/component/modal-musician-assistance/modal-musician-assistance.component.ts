@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { AlertController, ModalController } from '@ionic/angular';
+import {  ModalController } from '@ionic/angular';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subscription } from 'rxjs';
 import { DEFAULT_EVENT_IMAGE, DEFAULT_VOICE_IMAGE } from 'src/app/constants/constants';
@@ -14,7 +14,6 @@ import { GetEventMusicianAssistance, GetEventReportAssistance, ResetEvent, Reset
 import { EventState } from 'src/app/state/event/event.state';
 import { CreateMusicianEvent, DeleteMusicianEvent } from 'src/app/state/musicien-event/musician-event.actions';
 import { MusicianEventState } from 'src/app/state/musicien-event/musician-event.state';
-import { ChangeDetectorRef } from '@angular/core';
 import { FileManagerService } from 'src/app/services/filemanager/file-manager.service';
 
 @Component({
@@ -47,14 +46,12 @@ export class ModalMusicianAssistanceComponent implements OnInit {
 
   public isChecked : boolean;
 
-  constructor(    
-    private cdr: ChangeDetectorRef,
+  constructor(        
     private store:Store,
     private modalController: ModalController,
     private toast:ToastService,
     private userService: UsersService,
-    private loadingService: LoadingService,
-    private alertController: AlertController,
+    private loadingService: LoadingService,    
     private fileManagerService: FileManagerService
   ) { }
 
@@ -140,13 +137,29 @@ export class ModalMusicianAssistanceComponent implements OnInit {
       next: async ()=> {                
         const finish = this.store.selectSnapshot(EventState.finish)        
         if(finish){          
-          this.eventMusicianAssistance = this.store.selectSnapshot(EventState.eventMusicianAssistance);                     
-          this.initSearchFinish = true;    
-          if(this.eventMusicianAssistance){
-            this.expandedAccordionValues = this.eventMusicianAssistance.musiciansGroupByVoice.map(group => group.voice.id+"");                
-            this.calculateTotalAssist();            
+          const errorStatusCode = this.store.selectSnapshot(EventState.errorStatusCode);          
+          const errorMessage = this.store.selectSnapshot(EventState.errorMessage);             
+          if(errorStatusCode==200){        
+            this.eventMusicianAssistance = this.store.selectSnapshot(EventState.eventMusicianAssistance);                     
+            this.initSearchFinish = true;    
+            if(this.eventMusicianAssistance){
+              this.expandedAccordionValues = this.eventMusicianAssistance.musiciansGroupByVoice.map(group => group.voice.id+"");                
+              this.calculateTotalAssist();            
+            }
+            this.dismissInitialLoading();    
           }
-          this.dismissInitialLoading();              
+          else{
+            if(errorStatusCode==403){   
+              await this.loadingService.dismissLoading();           
+              this.cancel();     
+              this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
+            }
+            else{
+              this.toast.presentToast(errorMessage);
+              this.initSearchFinish = true;    
+              this.dismissInitialLoading();     
+            }
+          }          
         }
       }
     })
@@ -226,7 +239,8 @@ export class ModalMusicianAssistanceComponent implements OnInit {
               const errorStatusCode = this.store.selectSnapshot(MusicianEventState.errorStatusCode);
               const errorMessage = this.store.selectSnapshot(MusicianEventState.errorMessage);        
               // si el token ha caducado (403) lo sacamos de la aplicacion
-              if(errorStatusCode==403){            
+              if(errorStatusCode==403){   
+                this.cancel();              
                 this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
               }
               else{
@@ -261,7 +275,8 @@ export class ModalMusicianAssistanceComponent implements OnInit {
               const errorStatusCode = this.store.selectSnapshot(MusicianEventState.errorStatusCode);
               const errorMessage = this.store.selectSnapshot(MusicianEventState.errorMessage);        
               // si el token ha caducado (403) lo sacamos de la aplicacion
-              if(errorStatusCode==403){            
+              if(errorStatusCode==403){    
+                this.cancel();               
                 this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
               }
               else{
@@ -312,7 +327,8 @@ export class ModalMusicianAssistanceComponent implements OnInit {
               const errorStatusCode = this.store.selectSnapshot(MusicianEventState.errorStatusCode);
               const errorMessage = this.store.selectSnapshot(MusicianEventState.errorMessage);        
               // si el token ha caducado (403) lo sacamos de la aplicacion
-              if(errorStatusCode==403){            
+              if(errorStatusCode==403){    
+                this.cancel();                       
                 this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
               }
               else{
@@ -350,7 +366,8 @@ export class ModalMusicianAssistanceComponent implements OnInit {
               const errorStatusCode = this.store.selectSnapshot(MusicianEventState.errorStatusCode);
               const errorMessage = this.store.selectSnapshot(MusicianEventState.errorMessage);        
               // si el token ha caducado (403) lo sacamos de la aplicacion
-              if(errorStatusCode==403){            
+              if(errorStatusCode==403){    
+                this.cancel();                       
                 this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
               }
               else{
@@ -397,11 +414,12 @@ export class ModalMusicianAssistanceComponent implements OnInit {
                 let eventReportAssistance = this.store.selectSnapshot(EventState.eventReportAssistance);  
                 this.fileManagerService.showFile(this.event.id+".pdf", eventReportAssistance.report);           
               }
-              else{             
-                const errorStatusCode = this.store.selectSnapshot(MusicianEventState.errorStatusCode);
-                const errorMessage = this.store.selectSnapshot(MusicianEventState.errorMessage);        
+              else{                      
+                const errorStatusCode = this.store.selectSnapshot(EventState.errorStatusCode);
+                const errorMessage = this.store.selectSnapshot(EventState.errorMessage);        
                 // si el token ha caducado (403) lo sacamos de la aplicacion
-                if(errorStatusCode==403){            
+                if(errorStatusCode==403){     
+                  this.cancel();             
                   this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
                 }
                 else{

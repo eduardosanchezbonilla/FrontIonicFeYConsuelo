@@ -58,7 +58,10 @@ export class LoginPage {
 
     const user = JSON.parse(await this.storage.getItem('user'));
     if(user){
-      this.redirectAfterLogin();      
+      setTimeout(() => {      
+        this.redirectAfterLogin();      
+      }, 200); // 2000 milise   
+      
     }
     else{
       this.auth = new AuthDto();  

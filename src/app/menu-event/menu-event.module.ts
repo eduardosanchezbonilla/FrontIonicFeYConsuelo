@@ -23,6 +23,7 @@ import { RepertoireMarchService } from '../services/repertoire/repertoire-march.
 import { RepertoireEventState } from '../state/repertoire-event/repertoire-event.state';
 import { RepertoireEventService } from '../services/repertoire-event/repertoire-event.service';
 import { CameraService } from '../services/camera/camera.service';
+import { ModalFormationEventComponent } from './component/modal-formation-event/modal-formation-event.component';
 
 @NgModule({
   imports: [
@@ -33,7 +34,7 @@ import { CameraService } from '../services/camera/camera.service';
     CalendarModule,
     NgxsModule.forFeature([EventState, MusicianEventState, RepertoireMarchState, RepertoireEventState]),
   ],
-  declarations: [MenuEventPage, ModalEditEventComponent, ModalMusicianAssistanceComponent, ModalRepertoireEventComponent],
+  declarations: [MenuEventPage, ModalEditEventComponent, ModalMusicianAssistanceComponent, ModalRepertoireEventComponent, ModalFormationEventComponent],
   providers:[
     EventService,
     MusicianEventService,

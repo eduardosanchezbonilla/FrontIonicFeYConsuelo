@@ -8,6 +8,8 @@ import { RepertoireMarchType } from 'src/app/models/repertoire-march-type/repert
 import { RepertoireMarch } from 'src/app/models/repertoire/repertoire-march';
 import { CameraService } from 'src/app/services/camera/camera.service';
 import { LoadingService } from 'src/app/services/loading/loading.service';
+import { ToastService } from 'src/app/services/toast/toast.service';
+import { UsersService } from 'src/app/services/user/users.service';
 import { GetRepertoireCategories } from 'src/app/state/repertoire-category/repertoire-category.actions';
 import { RepertoireCategoryState } from 'src/app/state/repertoire-category/repertoire-category.state';
 import { GetRepertoireMarchTypes } from 'src/app/state/repertoire-march-type/repertoire-march-type.actions';
@@ -47,7 +49,9 @@ export class ModalEditRepertoireMarchComponent implements OnInit {
     private store:Store,
     private modalController: ModalController,
     private loadingService: LoadingService,
-    private cameraService: CameraService
+    private cameraService: CameraService,
+    private userService: UsersService,
+    private toast:ToastService,   
   ) { }
 
   async ngOnInit() {
@@ -118,12 +122,31 @@ export class ModalEditRepertoireMarchComponent implements OnInit {
   getRepertoireCategories(){
     this.repertoireCategoriesSubscription = this.repertoireCategories$.subscribe({
       next: async ()=> {
-        this.repertoireCategories = this.store.selectSnapshot(RepertoireCategoryState.repertoireCategories).map(({ image, ...rest }) => rest);            
-        this.initSearchCategoriesFinish = true;    
-        if(this.categoryId){      
-          this.repertoireMarch.category = this.repertoireCategories.find(x => x.id == this.categoryId);
-        }
-        this.dismissInitialLoading();      
+        const finish = this.store.selectSnapshot(RepertoireCategoryState.finish);          
+        if(finish){
+          const errorStatusCode = this.store.selectSnapshot(RepertoireCategoryState.errorStatusCode);          
+          const errorMessage = this.store.selectSnapshot(RepertoireCategoryState.errorMessage); 
+          if(errorStatusCode==200){
+            this.repertoireCategories = this.store.selectSnapshot(RepertoireCategoryState.repertoireCategories).map(({ image, ...rest }) => rest);            
+            this.initSearchCategoriesFinish = true;    
+            if(this.categoryId){      
+              this.repertoireMarch.category = this.repertoireCategories.find(x => x.id == this.categoryId);
+            }
+            this.dismissInitialLoading();      
+          }
+          else{
+            if(errorStatusCode==403){   
+              await this.loadingService.dismissLoading();           
+              this.cancel();     
+              this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
+            }
+            else{
+              this.toast.presentToast(errorMessage);
+              this.initSearchCategoriesFinish = true;    
+              this.dismissInitialLoading();     
+            }
+          }
+        }        
       }
     })
   }
@@ -135,9 +158,29 @@ export class ModalEditRepertoireMarchComponent implements OnInit {
   getRepertoireMarchTypes(){
     this.repertoireMarchTypesSubscription = this.repertoireMarchTypes$.subscribe({
       next: async ()=> {
-        this.repertoireMarchTypes = this.store.selectSnapshot(RepertoireMarchTypeState.repertoireMarchTypes).map(({ image, ...rest }) => rest);            
-        this.initSearchTypesFinish = true;    
-        this.dismissInitialLoading();      
+        const finish = this.store.selectSnapshot(RepertoireMarchTypeState.finish);          
+        if(finish){
+          const errorStatusCode = this.store.selectSnapshot(RepertoireMarchTypeState.errorStatusCode);          
+          const errorMessage = this.store.selectSnapshot(RepertoireMarchTypeState.errorMessage); 
+          console.log(errorStatusCode);
+          if(errorStatusCode==200){
+            this.repertoireMarchTypes = this.store.selectSnapshot(RepertoireMarchTypeState.repertoireMarchTypes).map(({ image, ...rest }) => rest);            
+            this.initSearchTypesFinish = true;    
+            this.dismissInitialLoading();      
+          }
+          else{
+            if(errorStatusCode==403){   
+              await this.loadingService.dismissLoading();           
+              this.cancel();     
+              this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
+            }
+            else{
+              this.toast.presentToast(errorMessage);
+              this.initSearchTypesFinish = true;    
+              this.dismissInitialLoading();     
+            }
+          }
+        }
       }
     })
   }

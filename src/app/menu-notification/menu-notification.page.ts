@@ -104,10 +104,25 @@ export class MenuNotificationPage implements OnInit {
       next: async ()=> {        
         const finishToken = this.store.selectSnapshot(NotificationState.finishToken);         
         if(finishToken){
-          this.notificationUserTokenResponseList = this.store.selectSnapshot(NotificationState.notificationUserTokenResponseList);            
-          this.notificationUserTokenResponseList = this.notificationUserTokenResponseList.filter(token => token.name !== null);
-          this.initNotificationUserTokenResponseList = true;    
-          this.dismissInitialLoading();      
+          const errorStatusCode = this.store.selectSnapshot(NotificationState.errorStatusCode);          
+          const errorMessage = this.store.selectSnapshot(NotificationState.errorMessage);             
+          if(errorStatusCode==200){        
+            this.notificationUserTokenResponseList = this.store.selectSnapshot(NotificationState.notificationUserTokenResponseList);            
+            this.notificationUserTokenResponseList = this.notificationUserTokenResponseList.filter(token => token.name !== null);
+            this.initNotificationUserTokenResponseList = true;    
+            this.dismissInitialLoading();      
+          }
+          else{
+            if(errorStatusCode==403){   
+              await this.loadingService.dismissLoading();                          
+              this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
+            }
+            else{
+              this.toast.presentToast(errorMessage);
+              this.initNotificationUserTokenResponseList = true;    
+              this.dismissInitialLoading();     
+            }
+          }
         }
       }
     })
@@ -122,9 +137,24 @@ export class MenuNotificationPage implements OnInit {
       next: async ()=> {
         const finishTopic = this.store.selectSnapshot(NotificationState.finishTopic); 
         if(finishTopic){
-          this.notificationTopicResponseList = this.store.selectSnapshot(NotificationState.notificationTopicResponseList);            
-          this.initNotificationTopicResponseList = true;    
-          this.dismissInitialLoading();
+          const errorStatusCode = this.store.selectSnapshot(NotificationState.errorStatusCode);          
+          const errorMessage = this.store.selectSnapshot(NotificationState.errorMessage);    
+          if(errorStatusCode==200){        
+            this.notificationTopicResponseList = this.store.selectSnapshot(NotificationState.notificationTopicResponseList);            
+            this.initNotificationTopicResponseList = true;    
+            this.dismissInitialLoading();
+          }
+          else{
+            if(errorStatusCode==403){   
+              await this.loadingService.dismissLoading();                          
+              this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
+            }
+            else{
+              this.toast.presentToast(errorMessage);
+              this.initNotificationUserTokenResponseList = true;    
+              this.dismissInitialLoading();     
+            }
+          }
         }      
       }
     })

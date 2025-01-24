@@ -15,6 +15,7 @@ import { VideoCategory } from 'src/app/models/video-category/video-category';
 import { GetEvent } from 'src/app/state/event/event.actions';
 import { EventState } from 'src/app/state/event/event.state';
 import { CameraService } from 'src/app/services/camera/camera.service';
+import { UsersService } from 'src/app/services/user/users.service';
 
 @Component({
   selector: 'app-modal-edit-event',
@@ -57,6 +58,7 @@ export class ModalEditEventComponent implements OnInit {
     private storage: StorageService,
     private toast:ToastService,   
     private cameraService: CameraService,
+    private userService: UsersService,
   ) { }
 
   getTime(time: string){
@@ -177,7 +179,7 @@ export class ModalEditEventComponent implements OnInit {
     
     this.store.dispatch(new GetEvent({eventType:event.type,eventId: event.id}))
       .subscribe({
-        next: async ()=> {
+        next: async ()=> {          
           const success = this.store.selectSnapshot(EventState.success);
           const finish = this.store.selectSnapshot(EventState.finish);          
           const errorStatusCode = this.store.selectSnapshot(EventState.errorStatusCode);          
@@ -188,7 +190,14 @@ export class ModalEditEventComponent implements OnInit {
               this.originalImage = this.store.selectSnapshot(EventState.event).image;              
             }
             else{
-              this.originalImage = null;
+              if(errorStatusCode==403){       
+                this.cancel();     
+                this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
+              }
+              else{
+                this.toast.presentToast(errorMessage);
+                this.originalImage = null;
+              }                   
             }                        
             this.initImageReadonly  = true; 
             this.dismissInitialLoading();                 
@@ -201,31 +210,52 @@ export class ModalEditEventComponent implements OnInit {
   getVoices(){
     this.voicesSubscription = this.voices$.subscribe({
       next: async ()=> {        
-        this.voices = this.store.selectSnapshot(VoiceState.voices).map(({ image, ...rest }) => rest);     
-                        
-        if(!this.updating){
-          if(this.type==='REHEARSAL'){       
-            this.event.voiceList = this.voices .filter(
-              voice => !voice.name.toLowerCase().includes('antiguo') && !voice.name.toLowerCase().includes('banderin') && !voice.name.toLowerCase().includes('escolta')
+        
+        const finish = this.store.selectSnapshot(VoiceState.finish);          
+                      
+        if(finish){
+          const errorStatusCode = this.store.selectSnapshot(VoiceState.errorStatusCode);          
+          const errorMessage = this.store.selectSnapshot(VoiceState.errorMessage);   
+          if(errorStatusCode==200){         
+            this.voices = this.store.selectSnapshot(VoiceState.voices).map(({ image, ...rest }) => rest);     
+            
+            if(!this.updating){
+              if(this.type==='REHEARSAL'){       
+                this.event.voiceList = this.voices .filter(
+                  voice => !voice.name.toLowerCase().includes('antiguo') && !voice.name.toLowerCase().includes('banderin') && !voice.name.toLowerCase().includes('escolta')
+                );
+              }
+              else if(this.type==='PERFORMANCE'){       
+                this.event.voiceList = this.voices .filter(
+                  voice => !voice.name.toLowerCase().includes('antiguo')
+                );
+              }
+              else{
+                this.event.voiceList = this.voices;
+              }
+            }
+
+            // de todas las voices, seleccionamos las que estén en el evento
+            this.selectedVoicesForMusicianView =  this.voices .filter(
+              voice => voice.id === this.event.voiceList.find(voiceEvent => voiceEvent.id === voice.id)?.id
             );
+
+            this.initSearchFinish = true;    
+            this.dismissInitialLoading();     
           }
-          else if(this.type==='PERFORMANCE'){       
-            this.event.voiceList = this.voices .filter(
-              voice => !voice.name.toLowerCase().includes('antiguo')
-            );
-          }
-          else{
-            this.event.voiceList = this.voices;
-          }
+          else{            
+            if(errorStatusCode==403){   
+              await this.loadingService.dismissLoading();           
+              this.cancel();     
+              this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
+            }
+            else{
+              this.toast.presentToast(errorMessage);
+              this.initSearchFinish = true;    
+              this.dismissInitialLoading();     
+            }
+          }           
         }
-
-        // de todas las voices, seleccionamos las que estén en el evento
-        this.selectedVoicesForMusicianView =  this.voices .filter(
-          voice => voice.id === this.event.voiceList.find(voiceEvent => voiceEvent.id === voice.id)?.id
-        );
-
-        this.initSearchFinish = true;    
-        this.dismissInitialLoading();      
       }
     })
   }

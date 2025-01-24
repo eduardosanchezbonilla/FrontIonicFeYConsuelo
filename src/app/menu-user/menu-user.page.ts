@@ -657,4 +657,25 @@ export class MenuUserPage implements OnDestroy {
         .map(([key]) => key);
   }
 
+  dateFormat(fechaISO: string): string {
+    const fecha = new Date(fechaISO);
+    
+    const dia = ('0' + fecha.getDate()).slice(-2);
+    const mes = ('0' + (fecha.getMonth() + 1)).slice(-2); // Los meses en JavaScript son 0-indexados
+    const año = fecha.getFullYear();
+    
+    const horas = ('0' + fecha.getHours()).slice(-2);
+    const minutos = ('0' + fecha.getMinutes()).slice(-2);
+    
+    return `${dia}/${mes}/${año} ${horas}:${minutos}`;
+  }
+
+  getUserLastAccess(userDetail: any): string {    
+    const lastAccess = userDetail.lastAccessDate ? `(${this.dateFormat(userDetail.lastAccessDate)})` : '';
+    if(lastAccess==''){
+      return '';
+    }    
+    return `${lastAccess}`;
+  }
+
 }

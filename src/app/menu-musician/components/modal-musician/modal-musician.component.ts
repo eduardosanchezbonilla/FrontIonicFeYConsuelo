@@ -9,6 +9,8 @@ import { VoiceState } from '../../../state/voice/voice.state';
 import { DEFAULT_MUSICIAN_IMAGE } from '../../../constants/constants';
 import { LoadingService } from 'src/app/services/loading/loading.service';
 import { CameraService } from 'src/app/services/camera/camera.service';
+import { UsersService } from 'src/app/services/user/users.service';
+import { ToastService } from 'src/app/services/toast/toast.service';
 
 @Component({
   selector: 'app-modal-musician',
@@ -33,7 +35,9 @@ export class ModalMusicianComponent implements OnInit, OnDestroy {
     private store:Store,
     private modalController: ModalController,
     private loadingService: LoadingService,
-    private cameraService: CameraService
+    private cameraService: CameraService,
+    private userService: UsersService,
+    private toast:ToastService,    
   ) { }
 
   async ngOnInit() {
@@ -90,9 +94,28 @@ export class ModalMusicianComponent implements OnInit, OnDestroy {
   getVoices(){
     this.voicesSubscription = this.voices$.subscribe({
       next: async ()=> {
-        this.voices = this.store.selectSnapshot(VoiceState.voices).map(({ image, ...rest }) => rest);            
-        this.initSearchFinish = true;    
-        this.dismissInitialLoading();      
+        const finish = this.store.selectSnapshot(VoiceState.finish);          
+        if(finish){
+          const errorStatusCode = this.store.selectSnapshot(VoiceState.errorStatusCode);          
+          const errorMessage = this.store.selectSnapshot(VoiceState.errorMessage);             
+          if(errorStatusCode==200){
+            this.voices = this.store.selectSnapshot(VoiceState.voices).map(({ image, ...rest }) => rest);            
+            this.initSearchFinish = true;    
+            this.dismissInitialLoading();      
+          }
+          else{
+            if(errorStatusCode==403){   
+              await this.loadingService.dismissLoading();           
+              this.cancel();     
+              this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
+            }
+            else{
+              this.toast.presentToast(errorMessage);
+              this.initSearchFinish = true;    
+              this.dismissInitialLoading();     
+            }
+          }
+        }
       }
     })
   }

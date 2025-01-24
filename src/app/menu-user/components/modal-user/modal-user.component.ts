@@ -8,7 +8,9 @@ import { User } from 'src/app/models/user/user';
 import { UserRequest } from 'src/app/models/user/user-request';
 import { CameraService } from 'src/app/services/camera/camera.service';
 import { LoadingService } from 'src/app/services/loading/loading.service';
-import { GetAllRoles } from 'src/app/state/user/users.actions';
+import { ToastService } from 'src/app/services/toast/toast.service';
+import { UsersService } from 'src/app/services/user/users.service';
+import { GetAllRoles, ResetUser } from 'src/app/state/user/users.actions';
 import { UsersState } from 'src/app/state/user/users.state';
 
 @Component({
@@ -34,7 +36,9 @@ export class ModalUserComponent  implements OnInit, OnDestroy {
     private store:Store,
     private modalController: ModalController,
     private loadingService: LoadingService,
-    private cameraService: CameraService
+    private cameraService: CameraService,
+    private userService: UsersService,
+    private toast:ToastService,    
   ) { }
 
   async ngOnInit() {    
@@ -79,7 +83,8 @@ export class ModalUserComponent  implements OnInit, OnDestroy {
     console.log("ngOnDestroy musician");
     if (this.rolesSubscription) {      
       this.rolesSubscription.unsubscribe();  
-    }        
+    }       
+    this.store.dispatch(new ResetUser({})).subscribe({ next: async () => { } })     
   }
 
   compareWith(o1: Role, o2: Role){
@@ -89,9 +94,29 @@ export class ModalUserComponent  implements OnInit, OnDestroy {
   getAllRoles(){
     this.rolesSubscription = this.roles$.subscribe({
       next: async ()=> {
-        this.roles = this.store.selectSnapshot(UsersState.roles);            
-        this.initSearchFinish = true;    
-        this.dismissInitialLoading();      
+
+        const finish = this.store.selectSnapshot(UsersState.finish);          
+        if(finish){
+          const errorStatusCode = this.store.selectSnapshot(UsersState.errorStatusCode);          
+          const errorMessage = this.store.selectSnapshot(UsersState.errorMessage);
+          if(errorStatusCode==200){
+            this.roles = this.store.selectSnapshot(UsersState.roles);            
+            this.initSearchFinish = true;    
+            this.dismissInitialLoading();      
+          }   
+          else{
+            if(errorStatusCode==403){   
+              await this.loadingService.dismissLoading();           
+              this.cancel();     
+              this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
+            }
+            else{
+              this.toast.presentToast(errorMessage);
+              this.initSearchFinish = true;    
+              this.dismissInitialLoading();     
+            }
+          }
+        }
       }
     })
   }

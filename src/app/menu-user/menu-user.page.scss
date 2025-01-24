@@ -67,6 +67,7 @@ ion-avatar img {
     --min-height: 38px !important;     
     //padding-top:3px;
     //padding-bottom:2px;
+    margin-left:10px;
 }
 
 .user-card-label {
@@ -76,13 +77,60 @@ ion-avatar img {
     margin-bottom:3px;
 }
 
-.user-avatar {
+/*.user-avatar {
     width: 30px;
     height: 30px;
     margin-top:0px;
     margin-bottom:0px;
     margin-left: -4px;
-}
+}*/
+
+.avatar-container {
+    position: relative; /* Establece un contexto para el posicionamiento absoluto del punto verde */
+    display: inline-block; /* Asegura que el contenedor ocupe solo el espacio necesario */
+    margin-top:1px;
+    margin-right:15px;
+  }
+  
+  /* Punto Verde Indicador */
+  .installed-dot {
+    position: absolute;
+    bottom: 0; /* Posiciona el punto en la parte inferior */
+    right: 0; /* Posiciona el punto a la derecha */
+    width: 12px; /* Ancho del punto */
+    height: 12px; /* Alto del punto */    
+    border: 2px solid white; /* Borde blanco para resaltar el punto sobre el avatar */
+    border-radius: 50%; /* Hace que el punto sea perfectamente circular */
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.2); /* Opcional: Añade una sombra sutil para mayor visibilidad */
+  }
+
+  .not-installed-color {
+    //background-color: #FF3B30; /* Rojo brillante para indicar error/falta de instalación */
+    // ponme un rojo mas oscuro
+    background-color: #B22222;
+  }
+
+  .installed-and-access-color {
+    background-color: #34C759; /* Verde brillante para indicar éxito/instalación */
+  }
+
+  .installed-and-not-access-color {
+    background-color: #FF9500; /* Naranja brillante para indicar advertencia/instalación pero sin acceso */
+  }
+  
+  /* Ajustar el tamaño del avatar si es necesario */
+  .user-avatar {
+    width: 30px;
+    height: 30px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    
+    /* Opcional: Asegura que las imágenes sean circulares */
+    //border: 1px solid black;
+    border-radius: 50%;
+    overflow: hidden;
+  }
   
 .user-name {
     font-size: 0.9rem !important;

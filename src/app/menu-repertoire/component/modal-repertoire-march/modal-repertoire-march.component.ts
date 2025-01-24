@@ -71,7 +71,7 @@ export class ModalRepertoireMarchComponent implements OnDestroy {
     this.modalController.dismiss(null, 'cancel');
   }
 
-  async ionViewWillEnter(){      
+  async ionViewWillEnter(){          
     this.profile = await this.storage.getItem('profile');       
     
     if(this.profile==='SUPER_ADMIN' || this.profile==='ADMIN'){
@@ -152,7 +152,8 @@ export class ModalRepertoireMarchComponent implements OnDestroy {
               const errorStatusCode = this.store.selectSnapshot(RepertoireMarchState.errorStatusCode);
               const errorMessage = this.store.selectSnapshot(RepertoireMarchState.errorMessage);        
               // si el token ha caducado (403) lo sacamos de la aplicacion
-              if(errorStatusCode==403){            
+              if(errorStatusCode==403){     
+                this.cancel();       
                 this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
               }
               else{
@@ -201,7 +202,8 @@ export class ModalRepertoireMarchComponent implements OnDestroy {
             const errorStatusCode = this.store.selectSnapshot(RepertoireMarchState.errorStatusCode);
             const errorMessage = this.store.selectSnapshot(RepertoireMarchState.errorMessage);        
             // si el token ha caducado (403) lo sacamos de la aplicacion
-            if(errorStatusCode==403){            
+            if(errorStatusCode==403){     
+              this.cancel();       
               this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
             }
             else{
@@ -248,7 +250,8 @@ export class ModalRepertoireMarchComponent implements OnDestroy {
               });  
               this.updateExpandTypeList();
               // si el token ha caducado (403) lo sacamos de la aplicacion
-              if(errorStatusCode==403){            
+              if(errorStatusCode==403){     
+                this.cancel();       
                 this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
               }
               else{
@@ -333,7 +336,8 @@ export class ModalRepertoireMarchComponent implements OnDestroy {
           const errorStatusCode = this.store.selectSnapshot(RepertoireMarchState.errorStatusCode);
           const errorMessage = this.store.selectSnapshot(RepertoireMarchState.errorMessage);        
           // si el token ha caducado (403) lo sacamos de la aplicacion
-          if(errorStatusCode==403){            
+          if(errorStatusCode==403){    
+            this.cancel();             
             this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
           }
           else{
@@ -390,239 +394,6 @@ export class ModalRepertoireMarchComponent implements OnDestroy {
         .filter(([key, value]) => value === true)
         .map(([key]) => key);
   }
-
-  /*******************************************************/
-  /******************* VOICES  ***************************/
-  /*******************************************************/
-  /*async createVoice(){
-    // mostramos spinner
-    await this.loadingService.presentLoading('Loading...');   
-
-    // abrimos la modal
-    const modal = await this.modalController.create({
-      component: ModalVoiceComponent
-    });
-    modal.present();
-
-    const {data, role} = await modal.onWillDismiss();
-
-    if(role=='confirm'){      
-      await this.loadingService.presentLoading('Loading...');          
-      
-      this.store.dispatch(new CreateVoice({voice: data}))        
-        .subscribe({
-          next: async ()=> {
-            const success = this.store.selectSnapshot(VoiceState.success);
-            if(success){
-              this.toast.presentToast("Voz creada correctamente");            
-              this.filterMusicians(false);          
-            }
-            else{
-              const errorStatusCode = this.store.selectSnapshot(VoiceState.errorStatusCode);
-              const errorMessage = this.store.selectSnapshot(VoiceState.errorMessage);        
-              // si el token ha caducado (403) lo sacamos de la aplicacion
-              if(errorStatusCode==403){            
-                this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
-              }
-              else{
-                this.toast.presentToast(errorMessage);
-              }    
-              await this.loadingService.dismissLoading();      
-            }          
-          }
-        }
-      )      
-    }
-  }*/
-
-  /*async updateVoice(event: Event, voice:Voice){  
-    event.stopPropagation(); 
-
-    // mostramos spinner
-    await this.loadingService.presentLoading('Loading...');   
-    
-    // abrimos modal
-    const modal = await this.modalController.create({
-      component: ModalVoiceComponent,
-      componentProps: {
-        voice,
-        updating: true
-      }
-    });
-    modal.present();
-
-    const {data, role} = await modal.onWillDismiss();
-
-    // tratamos el resultado de la modal
-    if(role=='confirm'){      
-      await this.loadingService.presentLoading('Loading...');        
-      this.store.dispatch(new UpdateVoice({id: data.id, voice:data})).subscribe({
-        next: async ()=> {
-          const success = this.store.selectSnapshot(VoiceState.success);
-          if(success){
-            this.toast.presentToast("Voz modificada correctamente");
-            this.filterMusicians(false);          
-          }
-          else{
-            const errorStatusCode = this.store.selectSnapshot(VoiceState.errorStatusCode);
-            const errorMessage = this.store.selectSnapshot(VoiceState.errorMessage);        
-            // si el token ha caducado (403) lo sacamos de la aplicacion
-            if(errorStatusCode==403){            
-              this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
-            }
-            else{
-              this.toast.presentToast(errorMessage);
-            }    
-            await this.loadingService.dismissLoading();      
-          }          
-        }
-      })
-    }
-  }*/
-
-  /*async confirmDeleteVoice(event: Event, voice:Voice) {
-    event.stopPropagation(); // Detener la propagación del evento de clic
-
-    const alert = await this.alertController.create({
-        header: 'Confirmacion',
-        message: '¿Estas seguro de eliminar la voz?',
-        buttons: [
-          {
-            text: 'No',
-            role: 'cancel',
-            handler: () => {}
-          },
-          {
-            text: 'Si',
-            role: 'confirm',
-            handler: () => {
-              this.deleteVoice(voice);
-            }
-          }
-        ]
-    });
-    alert.present();
-  }*/
-
-  /*async deleteVoice(voice:Voice) {    
-    // eliminamos la voz
-    await this.loadingService.presentLoading('Loading...');    
-    this.store.dispatch(new DeleteVoice({id: voice.id})).subscribe({
-      next: async () => {
-        const success = this.store.selectSnapshot(VoiceState.success);
-        if(success){
-          this.toast.presentToast("Voz eliminada correctamente");
-          this.filterMusicians(false);          
-        }
-        else{
-          const errorStatusCode = this.store.selectSnapshot(VoiceState.errorStatusCode);
-          const errorMessage = this.store.selectSnapshot(VoiceState.errorMessage);        
-          // si el token ha caducado (403) lo sacamos de la aplicacion
-          if(errorStatusCode==403){            
-            this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
-          }
-          else{
-            this.toast.presentToast(errorMessage);
-          }    
-          await this.loadingService.dismissLoading();      
-        }          
-      }
-    })
-  }  */
-
-  /*******************************************************/
-  /*********************** EVENT *************************/
-  /*******************************************************/
-  /*async manageMusicianEvent(musician:Musician, musicianSliding: IonItemSliding){   
-    // cerramos el sliding 
-    musicianSliding.close();
-
-    // mostramos spinner
-    await this.loadingService.presentLoading('Loading...');   
-    
-    // abrimos modal
-    const modal = await this.modalController.create({
-      component: ModalMusicianEventComponent,
-      componentProps: {
-        musician
-      }
-    });
-    modal.present();
-  }
-
-  updateMusicianRehearsal(musician:Musician){
-        
-    if(musician.assistLastRehearsal){
-      // eliminamos
-      musician.assistLastRehearsal = false;
-
-      let musicianEvent = new MusicianEvent(
-        musician.id,
-        'REHEARSAL',
-        musician.idLastRehearsal,
-        musician.assistLastRehearsal,
-        false
-      ); 
-      
-      this.store.dispatch(new DeleteMusicianEvent({musicianEvent: musicianEvent}))
-        .subscribe({
-          next: async () => {
-            const success = this.store.selectSnapshot(MusicianEventState.success);
-            if(success){
-              this.toast.presentToast("Ensayo actualizado correctamente");              
-            }
-            else{
-              musician.assistLastRehearsal = true;
-              const errorStatusCode = this.store.selectSnapshot(MusicianEventState.errorStatusCode);
-              const errorMessage = this.store.selectSnapshot(MusicianEventState.errorMessage);        
-              // si el token ha caducado (403) lo sacamos de la aplicacion
-              if(errorStatusCode==403){            
-                this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
-              }
-              else{
-                this.toast.presentToast(errorMessage);
-              }    
-              await this.loadingService.dismissLoading();      
-            }          
-          }
-        }
-      )
-    }
-    else{
-      // asociamos
-      musician.assistLastRehearsal = true;
-      let musicianEvent = new MusicianEvent(
-        musician.id,
-        'REHEARSAL',
-        musician.idLastRehearsal,
-        musician.assistLastRehearsal,
-        false
-      ); 
-
-      this.store.dispatch(new CreateMusicianEvent({musicianEvent: musicianEvent}))        
-        .subscribe({
-          next: async ()=> {
-            const success = this.store.selectSnapshot(MusicianEventState.success);
-            if(success){
-              this.toast.presentToast("Ensayo actualizado correctamente");                        
-            }
-            else{
-              musician.assistLastRehearsal = false;
-              const errorStatusCode = this.store.selectSnapshot(MusicianEventState.errorStatusCode);
-              const errorMessage = this.store.selectSnapshot(MusicianEventState.errorMessage);        
-              // si el token ha caducado (403) lo sacamos de la aplicacion
-              if(errorStatusCode==403){            
-                this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
-              }
-              else{
-                this.toast.presentToast(errorMessage);
-              }                 
-            }          
-          }
-        }
-      )    
-    }    
-  }*/
 
   async viewVideo(march: RepertoireMarch, youtubeId: string) {    
     await this.loadingService.presentLoading('Loading...');    

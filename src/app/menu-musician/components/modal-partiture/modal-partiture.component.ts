@@ -98,9 +98,25 @@ export class ModalPartitureComponent implements OnInit {
       next: async ()=> {                
         const finish = this.store.selectSnapshot(UserPartitureGroupState.finish)        
         if(finish){
-          this.userPartitureGroups = this.store.selectSnapshot(UserPartitureGroupState.userPartitureGroups);                  
-          this.initSearchFinish = true;    
-          this.dismissInitialLoading();   
+          const errorStatusCode = this.store.selectSnapshot(UserPartitureGroupState.errorStatusCode);          
+          const errorMessage = this.store.selectSnapshot(UserPartitureGroupState.errorMessage);   
+          if(errorStatusCode==200){
+            this.userPartitureGroups = this.store.selectSnapshot(UserPartitureGroupState.userPartitureGroups);                  
+            this.initSearchFinish = true;    
+            this.dismissInitialLoading();   
+          }   
+          else{
+            if(errorStatusCode==403){   
+              await this.loadingService.dismissLoading();           
+              this.cancel();     
+              this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
+            }
+            else{
+              this.toast.presentToast(errorMessage);
+              this.initSearchFinish = true;    
+              this.dismissInitialLoading();     
+            }
+          }       
         }
       }
     })
@@ -117,12 +133,12 @@ export class ModalPartitureComponent implements OnInit {
             if(success){             
               this.toast.presentToast("Grupo de partituras eliminado del usuario");                          
             }
-            else{
-              userPartitureGroup.assigned = true;
+            else{              
               const errorStatusCode = this.store.selectSnapshot(UserPartitureGroupState.errorStatusCode);
               const errorMessage = this.store.selectSnapshot(UserPartitureGroupState.errorMessage);        
               // si el token ha caducado (403) lo sacamos de la aplicacion
-              if(errorStatusCode==403){            
+              if(errorStatusCode==403){  
+                this.cancel();              
                 this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
               }
               else{
@@ -142,12 +158,12 @@ export class ModalPartitureComponent implements OnInit {
             if(success){              
               this.toast.presentToast("Grupo de partituras asociado del usuario");                          
             }
-            else{
-              userPartitureGroup.assigned = false;
+            else{              
               const errorStatusCode = this.store.selectSnapshot(UserPartitureGroupState.errorStatusCode);
               const errorMessage = this.store.selectSnapshot(UserPartitureGroupState.errorMessage);        
               // si el token ha caducado (403) lo sacamos de la aplicacion
               if(errorStatusCode==403){            
+                this.cancel();    
                 this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
               }
               else{

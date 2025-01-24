@@ -11,7 +11,6 @@ import { UsersService } from 'src/app/services/user/users.service';
 import { CreateRepertoireMarchType, DeleteRepertoireMarchType, GetRepertoireMarchTypes, ResetRepertoireMarchType, UpdateRepertoireMarchType } from 'src/app/state/repertoire-march-type/repertoire-march-type.actions';
 import { RepertoireMarchTypeState, RepertoireMarchTypeStateModel } from 'src/app/state/repertoire-march-type/repertoire-march-type.state';
 import { ModalEditRepertoireMarchTypeComponent } from '../modal-edit-repertoire-march-type/modal-edit-repertoire-march-type.component';
-import { DeleteRepertoireCategory } from 'src/app/state/repertoire-category/repertoire-category.actions';
 
 @Component({
   selector: 'app-modal-repertoire-march-type',
@@ -105,7 +104,8 @@ export class ModalRepertoireMarchTypeComponent  implements OnDestroy {
               const errorStatusCode = this.store.selectSnapshot(RepertoireMarchTypeState.errorStatusCode);
               const errorMessage = this.store.selectSnapshot(RepertoireMarchTypeState.errorMessage);        
               // si el token ha caducado (403) lo sacamos de la aplicacion
-              if(errorStatusCode==403){            
+              if(errorStatusCode==403){    
+                this.cancel();        
                 this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
               }
               else{
@@ -151,7 +151,8 @@ export class ModalRepertoireMarchTypeComponent  implements OnDestroy {
             const errorStatusCode = this.store.selectSnapshot(RepertoireMarchTypeState.errorStatusCode);
             const errorMessage = this.store.selectSnapshot(RepertoireMarchTypeState.errorMessage);        
             // si el token ha caducado (403) lo sacamos de la aplicacion
-            if(errorStatusCode==403){            
+            if(errorStatusCode==403){     
+              this.cancel();       
               this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
             }
             else{
@@ -181,7 +182,8 @@ export class ModalRepertoireMarchTypeComponent  implements OnDestroy {
             else{              
               this.repertoireMarchTypes = [];
               // si el token ha caducado (403) lo sacamos de la aplicacion
-              if(errorStatusCode==403){            
+              if(errorStatusCode==403){   
+                this.cancel();         
                 this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
               }
               else{
@@ -245,7 +247,8 @@ export class ModalRepertoireMarchTypeComponent  implements OnDestroy {
           const errorStatusCode = this.store.selectSnapshot(RepertoireMarchTypeState.errorStatusCode);
           const errorMessage = this.store.selectSnapshot(RepertoireMarchTypeState.errorMessage);        
           // si el token ha caducado (403) lo sacamos de la aplicacion
-          if(errorStatusCode==403){            
+          if(errorStatusCode==403){   
+            this.cancel();         
             this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
           }
           else{
