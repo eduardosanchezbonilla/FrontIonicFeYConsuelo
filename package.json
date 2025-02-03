@@ -40,7 +40,6 @@
     "@ionic/angular": "^6.7.5",
     "@ionic/storage-angular": "^4.0.0",
     "@ngxs/store": "^3.8.2",
-    "capacitor-plugin-permissions": "^1.0.0",
     "firebase": "^10.14.1",
     "ion2-calendar": "^3.5.0",
     "ionicons": "^7.0.0",
