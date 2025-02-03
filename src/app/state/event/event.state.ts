@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { EventService } from 'src/app/services/event/event.service';
 import { Event } from 'src/app/models/event/event';
-import { CreateEvent, DeleteEvent, GetEvent, GetEventMusicianAssistance, GetEventRepertoire, GetEventReportAssistance, GetEvents, GetEventsGroupByAnyo, ResetEvent, ResetEventMusicianAssistance, ResetEventRepertoire, UpdateEvent } from './event.actions';
+import { CreateEvent, DeleteEvent, GetEvent, GetEventMusicianAssistance, GetEventRepertoire, GetEventReportAssistance, GetEvents, GetEventsGroupByAnyo, ResetEvent, ResetEventMusicianAssistance, ResetEventRepertoire, UpdateEvent, UpdateEventFormation } from './event.actions';
 import { EventMusicianAssistance } from 'src/app/models/event/event-musician-assistance';
 import { EventGroupByAnyo } from 'src/app/models/event/event-group-by-anyo';
 import { EventRepertoire } from 'src/app/models/event/event-repertoire';
@@ -435,6 +435,43 @@ export class EventState {
           })
         }
       );
+  }
+
+  @Action(UpdateEventFormation)
+  updateEventFormation(
+      { patchState }: StateContext<EventStateModel>,
+      { payload }: UpdateEventFormation
+  ) {
+    return this.eventService.updateEventFormation(payload.eventType, payload.eventId, payload.updateEventFormationRequestDto)
+      .then( 
+        async (success:boolean) => {
+          if(success){
+            patchState({
+              finish: true,
+              success: true,
+              errorStatusCode: 200,
+              errorMessage: null
+            })
+          }
+          else{
+            patchState({
+              finish: true,
+              success: false,
+              errorStatusCode: 500,
+              errorMessage: 'Error al modificar el evento'
+            })
+          }
+        }
+      )
+      .catch(
+        async (error) => {          
+          patchState({
+            finish: true,
+            success: false,
+            errorStatusCode: error.status,
+            errorMessage: error.message
+          })
+      });     
   }
 
 

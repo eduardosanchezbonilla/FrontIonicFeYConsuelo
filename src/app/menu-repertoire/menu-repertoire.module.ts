@@ -20,6 +20,12 @@ import { ModalRepertoireMarchComponent } from './component/modal-repertoire-marc
 import { RepertoireMarchState } from '../state/repertoire/repertoire-march.state';
 import { RepertoireMarchService } from '../services/repertoire/repertoire-march.service';
 import { CameraService } from '../services/camera/camera.service';
+import { ModalEditRepertoireMarchSoloistComponent } from './component/modal-edit-repertoire-march-soloist/modal-edit-repertoire-march-soloist.component';
+import { VoiceService } from '../services/voice/voice.service';
+import { MusicianService } from '../services/musician/musician.service';
+import { VoiceState } from '../state/voice/voice.state';
+import { MusicianState } from '../state/musician/musician.state';
+import { ModalViewRepertoireMarchSoloistComponent } from './component/modal-view-repertoire-march-soloist/modal-view-repertoire-march-soloist.component';
 
 @NgModule({
   imports: [
@@ -30,6 +36,8 @@ import { CameraService } from '../services/camera/camera.service';
     NgxsModule.forFeature([RepertoireCategoryState]),
     NgxsModule.forFeature([RepertoireMarchTypeState]),    
     NgxsModule.forFeature([RepertoireMarchState]),    
+    NgxsModule.forFeature([VoiceState]),    
+    NgxsModule.forFeature([MusicianState]),    
   ],
   declarations: [
     MenuRepertoirePage,
@@ -37,9 +45,13 @@ import { CameraService } from '../services/camera/camera.service';
     ModalRepertoireMarchTypeComponent,
     ModalRepertoireMarchComponent,
     ModalEditRepertoireMarchTypeComponent,
-    ModalEditRepertoireMarchComponent
+    ModalEditRepertoireMarchComponent,
+    ModalEditRepertoireMarchSoloistComponent,
+    ModalViewRepertoireMarchSoloistComponent,
   ],
   providers:[
+    VoiceService,
+    MusicianService,
     RepertoireCategoryService,
     RepertoireMarchTypeService,
     RepertoireMarchService,

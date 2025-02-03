@@ -1,0 +1,241 @@
+.custom-modal-title {
+    margin-top:5px;
+    margin-bottom:20px;
+    color: #B22222;   
+    text-shadow: 1px 1px 2px #FFFFFF;  
+}
+  
+.row-container {
+    margin: 2px 0;
+}
+
+.row-card{
+    margin: 0px !important;
+    margin-top:0px !important;
+}
+  
+/* Contenedor principal de cada fila */
+.row-content {
+    display: flex;
+    align-items: center;
+}
+
+/* Botón para añadir músico */
+.row-action {
+    flex: 0 0 auto; /* Los botones no ocupan espacio flexible */
+    margin-right: 1px;
+    display: flex;
+    flex-direction: column; /* Alinea los botones verticalmente */
+    gap: 2px; /* Espaciado entre los botones */
+}
+  
+.add-musician-button,
+.remove-row-button {
+    --padding-start: 5px;
+    --padding-end: 5px;
+    --font-size: 10px;
+    width:23px;
+    height:23px;
+    margin:1px !important;
+    margin-right:1px  !important;
+    margin-left:1px  !important;
+}
+  
+/* Fila de músicos ocupa el resto del espacio */
+.musicians-row {
+  display: flex;
+  flex-wrap: nowrap; 
+  justify-content: space-between;
+  align-items: center; 
+  width: 100%; 
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  transition: background-color 0.3s;
+  padding: 5px;
+  padding-top: 18px;
+  padding-bottom: 10px;
+  min-height: 55px; /* Mantiene la altura estable */
+  max-height: 78px; /* Mantiene la altura estable */
+}
+
+/* Estilos para cada músico */
+.musician-slot {
+  flex: 1;
+  max-width: 100%;
+  //padding: 0.5rem;
+ //border: 1px solid;
+  box-sizing: border-box;
+  position: relative; 
+  display: flex; 
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; 
+  position:relative;
+  transition: none !important;
+  min-height: 55px; /* Mantiene la altura estable */
+  max-height: 55px; /* Mantiene la altura estable */
+}
+
+/* Círculo que contiene la imagen o el ícono del músico */
+.circle {
+  width: 45px; 
+  height: 45px; 
+  background-color: lightgray;
+  border-radius: 50%;
+  border:1px solid;
+  display: flex; 
+  justify-content: center;
+  align-items: center; 
+  overflow: hidden; 
+  position: relative;
+  margin-top:2px;
+  //margin-bottom: 1rem; 
+}
+
+.circle ion-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  //border:1px solid;
+  //padding:1px;
+}
+
+/* Botón de eliminar músico */
+.remove-musician-button {
+  position: absolute;
+  bottom: -10px;
+  width: 40px; 
+  height: 15px;     
+  display: flex; 
+  justify-content: center;
+  align-items: center;   
+}
+  
+.musician-name {
+    position: absolute;
+    top: -13px; 
+    width: 100%;
+    text-align: center;
+    font-size: 10px;
+    font-weight: bold;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Cambia el color de fondo mientras se arrastra */
+.musicians-row.cdk-drop-list-dragging {
+    background-color: #e0e0e0;
+}
+
+.musician-slot:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+  
+.icon-remove-musician-button {
+    width: 20px;   
+    height: 15px;   
+    font-size: 5rem;
+}
+
+.initcap {
+    text-transform: capitalize;
+}
+
+.event-card {
+  width: calc(100%);
+  max-height: 70px; 
+  margin: 0px;    
+  margin-top:20px;
+  margin-bottom:10px;
+}
+
+.event-avatar {
+  margin-top:5px;
+  margin-left: 0px;
+  margin-right: 15px;
+  border-radius: 0 !important;
+}
+
+ion-img {
+  border-radius: 0 !important;
+}
+
+.formation-container {
+  display: grid;
+  gap: 0px;
+}
+
+/* 🔹 Hace que el músico arrastrado flote sobre los demás sin afectar la estructura */
+.cdk-drag-preview {
+  position: fixed !important; /* Hace que flote sobre la UI */
+  z-index: 1000; /* Se asegura de que esté por encima */
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background-color: lightgray;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.4);
+  pointer-events: none; /* Evita interferencias con otros elementos */
+}
+
+/* Ajusta la transición para evitar cambios bruscos */
+.cdk-drag-preview,
+.cdk-drag-placeholder {
+  //transition: transform 0.2s ease-in-out;
+  transition: none;
+}
+
+.cdk-drop-list-dragging .musician-slot {
+  transition: none !important; /* Elimina cualquier animación */
+}
+
+/* 🔹 Mantiene fijo el círculo de destino */
+.cdk-drop-list-dragging .musician-slot:not(.cdk-drag-placeholder) {
+  opacity: 1 !important; /* Se asegura de que no se esconda */
+  transform: none !important; /* Evita que se mueva */
+  position: relative !important; /* Se mantiene fijo */
+}
+
+/* 🔹 Evita que el destino se contraiga cuando se arrastra un elemento */
+.cdk-drop-list {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 55px; /* Mantiene la altura estable */
+}
+
+/* 🔹 Evita que la celda de origen deje un hueco al mover un músico */
+.cdk-drag-placeholder {
+  visibility: hidden; /* Oculta el hueco pero mantiene el espacio */
+  height: 45px;
+  width: 45px;
+}
+
+.no-data-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 180px;
+  text-align: center;
+  color: #888;
+}
+
+.no-data-icon {
+  font-size: 48px;
+  color: #ff9800; 
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+.no-data-text {
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 16px;
+  color: #333;
+}

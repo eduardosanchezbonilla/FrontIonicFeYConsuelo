@@ -44,7 +44,7 @@ export class ModalEditRepertoireMarchComponent implements OnInit {
 
   thumbnailUrl: string | null = 'https://img.youtube.com/vi/notexists/0.jpg';
   defaultThumbnailUrl = 'notexits'; 
-  
+
   constructor(    
     private store:Store,
     private modalController: ModalController,
@@ -57,7 +57,7 @@ export class ModalEditRepertoireMarchComponent implements OnInit {
   async ngOnInit() {
     if(!this.repertoireMarch){
       this.repertoireMarch = new RepertoireMarch();                
-      this.showImage = null;
+      this.showImage = null;      
     }
     else{
       if(this.repertoireMarch.image){
@@ -67,7 +67,7 @@ export class ModalEditRepertoireMarchComponent implements OnInit {
       else{
         this.showImage = `data:image/jpeg;base64,${DEFAULT_REPERTOIRE_MARCH_IMAGE}`;
         this.selectedImage = DEFAULT_REPERTOIRE_MARCH_IMAGE;
-      }      
+      }                    
     }  
 
     if(this.categoryId){      

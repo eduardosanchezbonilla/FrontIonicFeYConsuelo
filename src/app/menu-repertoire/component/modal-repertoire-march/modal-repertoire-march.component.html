@@ -64,13 +64,24 @@
                   <p class="march-email">{{ march.author }}</p>
                 </ion-label>                    
                 
+                <div *ngIf="profile !== 'INVITADO' && march.repertoireMarchSolos && march.repertoireMarchSolos.length>0 && march.repertoireMarchSolos[0].mainSoloists && march.repertoireMarchSolos[0].mainSoloists.length>0" class="march-header-fab-megaphone" (click)="viewRepertoireMarchSolos(march)">
+                  <ion-icon name="megaphone-outline" class="march-header-fab-icon"></ion-icon>        
+                </div>   
+                
                 <div *ngIf="march.youtubeId" class="march-header-fab" (click)="viewVideo(march,march.youtubeId)">
                   <ion-icon name="eye-outline" class="march-header-fab-icon"></ion-icon>        
                 </div>   
+               
               </ion-item>
             </ion-card> 
             
-            <ion-item-options *ngIf="profile == 'SUPER_ADMIN' || profile == 'ADMIN'">             
+            <ion-item-options *ngIf="profile == 'SUPER_ADMIN' || profile == 'ADMIN'">      
+              <ion-item-option color="soloist-custom" (click)="updateRepertoireMarchSolos(march, marchSliding)" >
+                <div class="option-content">
+                  <ion-icon class="large-icon" color="light" slot="icon-only" name="megaphone-outline"></ion-icon>
+                  <span class="option-text">Solos</span>
+                </div>                  
+              </ion-item-option>          
               <ion-item-option color="warning" (click)="updateRepertoireMarch(march, marchSliding)" >
                 <ion-icon color="light" slot="icon-only" name="pencil-outline"></ion-icon>
               </ion-item-option>        

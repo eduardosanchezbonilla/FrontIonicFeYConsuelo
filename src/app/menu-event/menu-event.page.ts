@@ -358,32 +358,49 @@ export class MenuEventPage implements OnDestroy {
     const selectedDateString = event.date;
     let currentDate = new Date();
     currentDate.setHours(0,0,0,0);
-    
+
+    let inputs = [];
+    inputs.push(
+      {
+        name: 'assist',
+        type: 'radio',
+        label: 'Asistencia',
+        value: 'ASSIST',
+        checked: !(new Date(selectedDateString)<currentDate),
+        disabled: (new Date(selectedDateString)<currentDate), 
+      }
+    );     
+    inputs.push(
+      {
+        name: 'repertoire',
+        type: 'radio',
+        label: 'Repertorio',
+        checked: (new Date(selectedDateString)<currentDate),
+        value: 'REPERTOIRE',            
+      }
+    );
+    inputs.push(
+      {
+        name: 'information',
+        type: 'radio',
+        label: 'Informacion detallada',
+        value: 'INFORMATION'            
+      }
+    );        
+    if(!this.isRehearsalDay([event]) ){
+      inputs.push(
+        {
+          name: 'formation',
+          type: 'radio',
+          label: 'Formación',
+          value: 'FORMATION'            
+        }
+      );
+    }
+
     const alert = await this.alertController.create({
       header: event.title?event.title:(event.description?event.description:'Evento'),
-      inputs: [
-        {
-          name: 'assist',
-          type: 'radio',
-          label: 'Asistencia',
-          value: 'ASSIST',
-          checked: !(new Date(selectedDateString)<currentDate),
-          disabled: (new Date(selectedDateString)<currentDate), 
-        },
-        {
-          name: 'repertoire',
-          type: 'radio',
-          label: 'Repertorio',
-          checked: (new Date(selectedDateString)<currentDate),
-          value: 'REPERTOIRE',            
-        },        
-        {
-          name: 'information',
-          type: 'radio',
-          label: 'Informacion detallada',
-          value: 'INFORMATION'            
-        }
-      ],
+      inputs: inputs,
       buttons: [
         {
           text: 'Cancelar',
@@ -404,7 +421,11 @@ export class MenuEventPage implements OnDestroy {
             }
             if('INFORMATION'===selectedType){ 
               this.createUpdateEvent(event.type,  event, selectedDateString);
-            }          
+            }   
+            if('FORMATION'===selectedType){ 
+              this.selectedDate = null; 
+              this.formationRepertoire( event.type,  event, selectedDateString);              
+            }       
           },
         },
       ],

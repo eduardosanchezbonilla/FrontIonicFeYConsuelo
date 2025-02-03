@@ -1,0 +1,65 @@
+.custom-h2{
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+
+.custom-label {
+  color: #B22222;
+  font-size: 1rem;
+  font-weight: bold;  
+  text-shadow: 1px 1px 2px #FFFFFF; /* Sombra leve */
+}
+
+.custom-ion-card-solo{
+  padding-left:12px !important;
+  padding-right:12px !important;
+  padding-bottom:10px !important;
+}
+
+.custom-item-solo{
+  padding-left:5px !important;
+  padding-right:5px !important;
+}
+
+.custom-item-list-solo{
+  padding-left:0px !important;
+  padding-right:20px !important;
+  min-height: 20px;
+  --min-height: 20px;
+}
+
+.solo-card {
+  position: relative;
+  margin:3px !important;
+  background-color: #FFFFFF;
+}
+
+.remove-button {
+  position: absolute;
+  top: 8px;
+  right: 26px;
+  z-index: 10;
+}
+
+/* Opcional: ajustar el tamaño del botón si fuera necesario */
+ion-button[size="small"] {
+  padding: 0;
+  min-width: 0;
+}
+
+.initcap {
+  text-transform: capitalize;
+}
+
+.custom-ion-label-soloist{
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.ion-reorder .ion-icon {
+  height: 20px !important;
+}
+
+.reorder-icon {
+  height: 20px !important;
+}

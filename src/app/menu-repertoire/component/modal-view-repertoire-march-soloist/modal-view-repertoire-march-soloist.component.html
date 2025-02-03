@@ -1,0 +1,64 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="medium" (click)="cancel()">Cancelar</ion-button>
+    </ion-buttons>    
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!------------------------->
+  <!------ DATOS MUSICO ----->
+  <!------------------------->
+  <h2 class="fancy-title custom-h2">
+    {{ repertoireMarch.name }} 
+  </h2>
+  <ion-list>
+    <div *ngFor="let solo of repertoireMarch.repertoireMarchSolos">
+      <ion-card class="solo-card">
+        <ion-card-header class="solo-card-header">
+          <ion-card-title>
+            {{ solo.name }}
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+
+          <!-- Sección para Solistas Principales -->
+          <div class="section-header">
+            <ion-icon name="star-outline" color="primary"></ion-icon>
+            <span class="custom-title">Solistas Principales</span>
+          </div>
+          <ion-list class="ion-list-custom">
+            <ion-item *ngFor="let soloist of solo.mainSoloists" class="ion-no-padding ion-item-custom">
+              <ion-label class="ion-item-label initcap">{{ soloist.musicianName | lowercase }}</ion-label>
+            </ion-item>
+          </ion-list>
+          
+          <div class="spacer-small"></div>
+
+          <!-- Sección para Solistas Secundarios -->
+          <div class="section-header">
+            <ion-icon name="people-outline" color="secondary"></ion-icon>
+            <span>Solistas Suplentes</span>
+          </div>
+          <ion-list class="ion-list-custom">
+            <ion-item *ngFor="let soloist of solo.secondarySoloists" class="ion-no-padding ion-item-custom">
+              <ion-label class="ion-item-label initcap">{{ soloist.musicianName | lowercase }}</ion-label>
+            </ion-item>
+          </ion-list>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </ion-list>
+
+  <ion-button 
+    type="button" 
+    (click)="cancel()" 
+    color="secondary" 
+    expand="block" 
+    class="button-back"
+  >
+    <ion-icon name="return-up-back-outline" slot="start"></ion-icon>    
+    Volver
+  </ion-button>
+</ion-content>

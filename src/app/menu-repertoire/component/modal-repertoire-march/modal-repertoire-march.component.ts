@@ -17,6 +17,8 @@ import { Video } from 'src/app/models/video/video';
 import { VideoCategory } from 'src/app/models/video-category/video-category';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ModalViewVideoComponent } from 'src/app/menu-multimedia/component/modal-view-video/modal-view-video.component';
+import { ModalEditRepertoireMarchSoloistComponent } from '../modal-edit-repertoire-march-soloist/modal-edit-repertoire-march-soloist.component';
+import { ModalViewRepertoireMarchSoloistComponent } from '../modal-view-repertoire-march-soloist/modal-view-repertoire-march-soloist.component';
 
 @Component({
   selector: 'app-modal-repertoire-march',
@@ -412,6 +414,76 @@ export class ModalRepertoireMarchComponent implements OnDestroy {
     await modal.present();
   }
     
+  /****************************************************************/
+  /******************* REPERTOIRE MARCH SOLOS *********************/
+  /****************************************************************/
+  async updateRepertoireMarchSolos(repertoireMarch:RepertoireMarch, repertoireMarchSliding: IonItemSliding){   
+    // cupdates el sliding 
+    repertoireMarchSliding.close();
+    
+    // mostramos spinner
+    await this.loadingService.presentLoading('Loading...');   
+
+    // abrimos modal    
+    const modal = await this.modalController.create({
+      component: ModalEditRepertoireMarchSoloistComponent,
+      componentProps: {
+        repertoireMarch,
+        updating: true,
+        categoryId: this.categoryId
+      }
+    });
+    modal.present();
+
+    const {data, role} = await modal.onWillDismiss();
+
+    // tratamos el resultado de la modal
+    if(role=='confirm'){      
+      await this.loadingService.presentLoading('Loading...');          
+      this.store.dispatch(new UpdateRepertoireMarch({id: data.id, repertoireMarch:data})).subscribe({
+        next: async ()=> {
+          const success = this.store.selectSnapshot(RepertoireMarchState.success);
+          if(success){
+            this.toast.presentToast("Solistas actualizados correctamente");
+            this.filterRepertoireMarchsGroupByType(false);          
+          }
+          else{
+            const errorStatusCode = this.store.selectSnapshot(RepertoireMarchState.errorStatusCode);
+            const errorMessage = this.store.selectSnapshot(RepertoireMarchState.errorMessage);        
+            // si el token ha caducado (403) lo sacamos de la aplicacion
+            if(errorStatusCode==403){     
+              this.cancel();       
+              this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
+            }
+            else{
+              this.toast.presentToast(errorMessage);
+            }    
+            await this.loadingService.dismissLoading();      
+          }          
+        }
+      })
+    }
+  }
+
+  /****************************************************************/
+  /******************* REPERTOIRE MARCH SOLOS *********************/
+  /****************************************************************/
+  async viewRepertoireMarchSolos(repertoireMarch:RepertoireMarch){   
+    
+    // mostramos spinner
+    await this.loadingService.presentLoading('Loading...');   
+
+    // abrimos modal    
+    const modal = await this.modalController.create({
+      component: ModalViewRepertoireMarchSoloistComponent,
+      componentProps: {
+        repertoireMarch
+      }
+    });
+    modal.present();    
+  }
+
+
   
 }
 

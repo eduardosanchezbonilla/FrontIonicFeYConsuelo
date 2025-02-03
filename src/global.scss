@@ -104,6 +104,17 @@ ion-modal {
     --background: linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.99)), url(/assets/images/fondo.jpeg) no-repeat center center / cover;    
 }
 
+ion-popover {
+    --width: 90%; 
+    --max-width: 90%;
+    --border-radius: 12px;
+}
+
+.initcap {
+    text-transform: capitalize;
+  }
+  
+
 
 /*******************************************************************************/
 /*********************  FUENTES DE LETRAS  *************************************/

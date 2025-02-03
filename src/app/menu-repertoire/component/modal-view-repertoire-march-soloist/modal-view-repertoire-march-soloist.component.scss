@@ -1,0 +1,61 @@
+.custom-h2{
+    margin-top:15px !important;
+    font-size: 1.7rem;
+    //font-weight: bold;
+}
+
+.solo-card {
+    margin: 12px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    background-color: #FFFFFF;
+}
+ 
+.solo-card-header {
+    padding-bottom: 8px;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    margin-top:0px;    
+    margin-bottom:0px;    
+}
+  
+.section-header ion-icon {
+    margin-right: 8px;
+}
+  
+.ion-list-custom{
+    padding-top:0px !important;
+    padding-bottom:0px !important;
+}
+
+.ion-item-custom{
+    padding-left:23px;
+    padding-right:20px;    
+    --min-height: 35px;
+}
+
+.ion-item-label{
+    margin-top:0px;
+    margin-bottom:0px;
+    font-size: 1rem;
+}
+
+ion-card-title {
+    position: relative;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.button-back{
+    margin-left:10px;
+    margin-right:10px;
+}
+
+.custom-title{
+    font-size: 0.9rem;
+}
+  

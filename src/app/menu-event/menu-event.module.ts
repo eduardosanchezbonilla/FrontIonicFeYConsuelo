@@ -24,6 +24,10 @@ import { RepertoireEventState } from '../state/repertoire-event/repertoire-event
 import { RepertoireEventService } from '../services/repertoire-event/repertoire-event.service';
 import { CameraService } from '../services/camera/camera.service';
 import { ModalFormationEventComponent } from './component/modal-formation-event/modal-formation-event.component';
+import { MusicianService } from '../services/musician/musician.service';
+import { MusicianState } from '../state/musician/musician.state';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { MusicianSelectorComponent } from './component/modal-formation-event/musician-selector.component';
 
 @NgModule({
   imports: [
@@ -32,15 +36,17 @@ import { ModalFormationEventComponent } from './component/modal-formation-event/
     IonicModule,
     MenuEventPageRoutingModule,
     CalendarModule,
-    NgxsModule.forFeature([EventState, MusicianEventState, RepertoireMarchState, RepertoireEventState]),
+    DragDropModule,
+    NgxsModule.forFeature([EventState, MusicianEventState, RepertoireMarchState, RepertoireEventState,MusicianState]),
   ],
-  declarations: [MenuEventPage, ModalEditEventComponent, ModalMusicianAssistanceComponent, ModalRepertoireEventComponent, ModalFormationEventComponent],
+  declarations: [MenuEventPage, ModalEditEventComponent, ModalMusicianAssistanceComponent, ModalRepertoireEventComponent, ModalFormationEventComponent, MusicianSelectorComponent],
   providers:[
     EventService,
     MusicianEventService,
     RepertoireMarchService,
     RepertoireEventService,
-    CameraService
+    CameraService,
+    MusicianService
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA] 
 })

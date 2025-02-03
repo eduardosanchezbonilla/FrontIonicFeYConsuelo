@@ -1,4 +1,5 @@
 import { Event } from "src/app/models/event/event";
+import { UpdateEventFormationRequestDto } from "src/app/models/formation-event/update-event-formation-request-dto";
 
 export class CreateEvent {
   static readonly type = '[Event] Create Event';
@@ -58,4 +59,9 @@ export class GetEventReportAssistance{
 export class GetEvent{
   static readonly type = '[Event] GetEvent';
   constructor(public payload: {eventType:string, eventId:number}) { }
+}
+
+export class UpdateEventFormation {
+  static readonly type = '[Event] Update EventFormation';
+  constructor(public payload: {eventType:string, eventId:number, updateEventFormationRequestDto: UpdateEventFormationRequestDto}) { }
 }

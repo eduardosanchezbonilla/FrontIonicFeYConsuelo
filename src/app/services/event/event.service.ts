@@ -8,6 +8,7 @@ import { EventGroupByAnyo } from 'src/app/models/event/event-group-by-anyo';
 import { EventRepertoire } from 'src/app/models/event/event-repertoire';
 import { EventReportAssistance } from 'src/app/models/event/event-report-assistance';
 import { EventListResponse } from 'src/app/models/event/event-list-response';
+import { UpdateEventFormationRequestDto } from 'src/app/models/formation-event/update-event-formation-request-dto';
 
 @Injectable()
 export class EventService {
@@ -400,6 +401,53 @@ export class EventService {
         });                
       }           
     });     
+  }
+
+  async updateEventFormation(
+                              eventType:string, 
+                              eventId:number, 
+                              updateEventFormationRequestDto:UpdateEventFormationRequestDto
+                          ){
+    const token = await this.storage.getItem('token');
+    console.log(updateEventFormationRequestDto);
+    return Http.put(
+      {
+        url:environment.host + '/event/'+ eventType + '/'+ eventId + '/formation',
+        params:{},
+        data:updateEventFormationRequestDto,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        }
+      }
+    ).then(async response => {
+      console.log("OK");
+      const newToken = response.headers['Authorization'] || response.headers['authorization'];
+      if(newToken){                
+        await this.storage.setItem('token', newToken.replace('Bearer ', ''));
+      }
+      if(response.status==200){
+        return true;
+      }
+      else{                
+        return Promise.reject({
+          status: response.status,
+          message: response.data?.message || 'Error al modificar la formacion del evento'
+        });
+      }      
+    })
+    .catch((error) => {    
+      console.log(error);
+      if(error.status){
+        return Promise.reject(error);
+      }
+      else {
+        return Promise.reject({
+          status: 403,
+          message: null
+        });                
+      }           
+    });
   }
 
 

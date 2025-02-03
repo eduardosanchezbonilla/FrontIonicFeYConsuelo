@@ -1,4 +1,5 @@
 import { RepertoireCategory } from "../repertoire-category/repertoire-category";
+import { RepertoireMarchSolo } from "../repertoire-march-solo/repertoire-march-solo";
 import { RepertoireMarchType } from "../repertoire-march-type/repertoire-march-type";
 
 export class RepertoireMarch {
@@ -15,4 +16,5 @@ export class RepertoireMarch {
     checked: boolean;   
     order: number;
     numbers: number;
+    repertoireMarchSolos: RepertoireMarchSolo[];
 }

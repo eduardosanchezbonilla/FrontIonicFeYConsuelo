@@ -135,7 +135,7 @@ ion-item-option.rounded-right {
     height: 22px;   
     margin-top: 13px;  
     margin-bottom: 0px;
-    margin-right: 5px;
+    margin-right: 5px;    
 }
 
 .march-total-header-fab-text {
@@ -182,9 +182,24 @@ ion-item-option.rounded-right {
     height: 25px;   
     margin-top: 0px;  
     margin-bottom: 0px;
-    margin-right: 0px;    
+    margin-right: 0px; 
+    margin-left:10px;   
     border-radius: 50%;
     background-color: var(--ion-color-success);
+    display: flex; 
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center; /* Centra verticalmente */    
+}
+
+.march-header-fab-megaphone {
+    width: 25px;
+    height: 25px;   
+    margin-top: 0px;  
+    margin-bottom: 0px;
+    margin-right: 0px; 
+    margin-left:10px;   
+    border-radius: 50%;
+    background-color: var(--ion-color-success);//#42A5F5;
     display: flex; 
     justify-content: center; /* Centra horizontalmente */
     align-items: center; /* Centra verticalmente */    
@@ -194,4 +209,31 @@ ion-item-option.rounded-right {
     width: 15px;
     height: 15px;     
     color:#FFFFFF;    
+}
+
+::ng-deep ion-item-option.ion-color-soloist-custom {
+    --ion-color-base: #42A5F5; /* Verde azulado */    
+    --ion-color-contrast: #ffffff; /* Blanco para el ícono */
+    --ion-color-shade: #1E88E5; /* Sombra */
+    --ion-color-tint: #64B5F6; /* Tono claro */
+}
+
+.option-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+  
+.option-text {
+    margin-top: 3px; /* Espacio entre el icono y el texto */
+    font-size: 0.6rem; /* Tamaño de fuente ajustable */
+    color: var(--ion-color-light); /* Ajusta el color según tus necesidades */
+    font-weight: bold;
+}
+
+.large-icon {
+    margin-top:2px;
+    font-size: 1.3rem; /* Ajusta este valor para mantener el tamaño deseado */
+    /* Puedes también utilizar otras unidades como 'em' o 'rem' */
 }

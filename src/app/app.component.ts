@@ -12,6 +12,7 @@ import { Store } from '@ngxs/store';
 import { UpdateFirebaseToken } from './state/user/users.actions';
 import { UsersState } from './state/user/users.state';
 import { UserResponse } from './models/user/user-response';
+import { NotificationData } from './models/notification/NotificationData';
 
 @Component({
   selector: 'app-root',
@@ -86,11 +87,31 @@ export class AppComponent {
 
         // anadimos listener para creacion y cambios de token
         this.addTokenRefreshListener();
+
+        // anadimos listener para cuando pulsen en una notificacion en segundo plano
+        this.addPushNotifications();
+
       } 
       else {
         this.toastService.presentToast("Permisos de notificación no concedidos");        
       }
     }
+  }
+  
+  async addPushNotifications() {
+    // Listener para notificaciones clicadas (cuando el usuario pulsa en la notificación)
+    await FirebaseMessaging.addListener('notificationActionPerformed', async event => {
+      const notification = event.notification;
+
+      // Asegúrate de que `data` tiene el tipo correcto
+      const data = notification?.data as NotificationData;
+
+      // Accede al título y cuerpo de la notificación
+      const title = notification?.title || data?.title;
+      const body = notification?.body || data?.body;
+      
+      this.showNotificationAlert(title, body);      
+    });
   }
 
   async addNotificationReceivedListener() {
@@ -129,14 +150,18 @@ export class AppComponent {
       return;
     }
 
+    // Reemplazar \n por <br/> para interpretar saltos de línea
+    const formattedMessage = message.replaceAll('\n', '<br/>');
+
     const alert = await this.alertController.create({
       header: title,       // Título de la notificación
-      message: message,    // Descripción de la notificación
+      message: formattedMessage,    // Descripción de la notificación
       buttons: ['OK']      // Botón de cierre
     });
 
     await alert.present();
   }
 
+  
   
 }

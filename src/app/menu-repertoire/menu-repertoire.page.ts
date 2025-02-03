@@ -16,6 +16,7 @@ import { ModalEditRepertoireMarchComponent } from './component/modal-edit-repert
 import { CreateRepertoireMarch } from '../state/repertoire/repertoire-march.actions';
 import { RepertoireMarchState } from '../state/repertoire/repertoire-march.state';
 import { ModalRepertoireMarchComponent } from './component/modal-repertoire-march/modal-repertoire-march.component';
+import { ModalEditRepertoireMarchSoloistComponent } from './component/modal-edit-repertoire-march-soloist/modal-edit-repertoire-march-soloist.component';
 
 @Component({
   selector: 'app-menu-repertoire',
@@ -346,5 +347,6 @@ export class MenuRepertoirePage implements OnDestroy {
       )      
     }
   }
+
 
 }
