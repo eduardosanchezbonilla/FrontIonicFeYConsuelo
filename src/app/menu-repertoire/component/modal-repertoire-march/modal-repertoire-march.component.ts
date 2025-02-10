@@ -269,12 +269,10 @@ export class ModalRepertoireMarchComponent implements OnDestroy {
       })
   }
 
-  calculateTotalMarchs(){
-    // en el array this.musiciansGroupByVoice te go que filtrar todas las voces que no contengan ANTIGUO, y sumar todos los musicos del array musicians
+  calculateTotalMarchs(){    
     this.totalMarchs = 0;
     if(this.repertoireMarchsGroupByType){
-      this.repertoireMarchsGroupByType.forEach(repertoireMarchGroupByType => {
-        // si la voz no contiene la palabra ANTIGUO        
+      this.repertoireMarchsGroupByType.forEach(repertoireMarchGroupByType => {        
         if(repertoireMarchGroupByType.marchs){
           this.totalMarchs += repertoireMarchGroupByType.marchs.length;
         }        

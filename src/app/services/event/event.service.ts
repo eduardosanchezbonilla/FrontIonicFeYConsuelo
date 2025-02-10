@@ -408,8 +408,7 @@ export class EventService {
                               eventId:number, 
                               updateEventFormationRequestDto:UpdateEventFormationRequestDto
                           ){
-    const token = await this.storage.getItem('token');
-    console.log(updateEventFormationRequestDto);
+    const token = await this.storage.getItem('token');    
     return Http.put(
       {
         url:environment.host + '/event/'+ eventType + '/'+ eventId + '/formation',
@@ -420,8 +419,7 @@ export class EventService {
           'Authorization': 'Bearer ' + token
         }
       }
-    ).then(async response => {
-      console.log("OK");
+    ).then(async response => {      
       const newToken = response.headers['Authorization'] || response.headers['authorization'];
       if(newToken){                
         await this.storage.setItem('token', newToken.replace('Bearer ', ''));
@@ -436,8 +434,7 @@ export class EventService {
         });
       }      
     })
-    .catch((error) => {    
-      console.log(error);
+    .catch((error) => {          
       if(error.status){
         return Promise.reject(error);
       }

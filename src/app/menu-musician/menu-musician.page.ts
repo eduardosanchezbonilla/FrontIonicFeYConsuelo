@@ -50,7 +50,7 @@ export class MenuMusicianPage implements OnDestroy {
   public initScreen = false;
   public initSearchFinish = false;
   public totalMusicians: number = 0;
-
+  public viewUnregistred: boolean = false;
 
   constructor(
     private modalController:ModalController,
@@ -282,6 +282,12 @@ export class MenuMusicianPage implements OnDestroy {
               if(!this.musiciansGroupByVoice){
                 this.musiciansGroupByVoice = [];
               }
+
+              // si estoy viendo musicos antiguos, debo eliminar los grupos que no tienen musicos
+              if(this.viewUnregistred){
+                this.musiciansGroupByVoice = this.musiciansGroupByVoice.filter(musicianGroupByVoice => musicianGroupByVoice.musicians && musicianGroupByVoice.musicians.length>0);
+              }
+
               if(this.expandVoiceList===null){                              
                 this.expandVoiceMap = new Map(); 
                 this.musiciansGroupByVoice.map(musician => musician.voice.id+"").forEach(element => {
@@ -319,16 +325,12 @@ export class MenuMusicianPage implements OnDestroy {
       })
   }
 
-  calculateTotalMusicians(){
-    // en el array this.musiciansGroupByVoice te go que filtrar todas las voces que no contengan ANTIGUO, y sumar todos los musicos del array musicians
+  calculateTotalMusicians(){    
     this.totalMusicians = 0;
     if(this.musiciansGroupByVoice){
-      this.musiciansGroupByVoice.forEach(musicianGroupByVoice => {
-        // si la voz no contiene la palabra ANTIGUO
-        if(musicianGroupByVoice.voice.name.toUpperCase().indexOf("ANTIGUO") == -1){
-          if(musicianGroupByVoice.musicians){
-            this.totalMusicians += musicianGroupByVoice.musicians.length;
-          }
+      this.musiciansGroupByVoice.forEach(musicianGroupByVoice => {        
+        if(musicianGroupByVoice.musicians){
+          this.totalMusicians += musicianGroupByVoice.musicians.length;
         }        
       });
     }    
@@ -346,7 +348,7 @@ export class MenuMusicianPage implements OnDestroy {
     if(showLoading){
       await this.loadingService.presentLoading('Loading...');
     }    
-    this.store.dispatch(new GetMusiciansGroupByVoice({name: this.filter.name}));    
+    this.store.dispatch(new GetMusiciansGroupByVoice({name: this.filter.name,unregistred:this.viewUnregistred}));    
   }
 
   async confirmDeleteMusician(musician:Musician, musicianSliding: IonItemSliding) {
@@ -679,6 +681,10 @@ export class MenuMusicianPage implements OnDestroy {
         }
       )    
     }    
+  }
+
+  onViewUnregistred(event: any){    
+    this.filterMusicians();           
   }
   
 }

@@ -18,8 +18,23 @@
   <ion-refresher slot="fixed" (ionRefresh)="refreshMusicians($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
-
-  <ion-searchbar [(ngModel)]="filter.name" (ionChange)="onSearchTextChanged($event)" placeholder="Buscar"></ion-searchbar>
+  
+  <div class="searchbar-container">
+    <ion-searchbar 
+      [(ngModel)]="filter.name"
+      (ionChange)="onSearchTextChanged($event)"
+      placeholder="Buscar" 
+      class="custom-searchbar"
+    >
+    </ion-searchbar>
+  
+    <ion-item lines="none" class="custom-checkbox-item">     
+      <div class="custom-checkbox-item-div">
+        <ion-checkbox slot="start" [(ngModel)]="viewUnregistred" (ionChange)="onViewUnregistred($event)" class="custom-checkbox"></ion-checkbox>
+        <ion-label>Ver musicos antiguos</ion-label>
+      </div>   
+    </ion-item>
+  </div>
   
   <ion-accordion-group #accordionGroup [multiple]="true" [value]="expandVoiceList" (ionChange)="accordionGroupChange($event)">
 
@@ -73,7 +88,7 @@
                 </ion-label>
                 
                 <!-- botyon ensayo diario -->                
-                <div *ngIf="musician.idLastRehearsal" class="musician-header-div-fab"> 
+                <div *ngIf="!musician.unregistred && musician.idLastRehearsal" class="musician-header-div-fab"> 
                   <div *ngIf="musician.assistLastRehearsal" fill="solid" color="success" class="musician-rehearsal-fab-success" (click)="updateMusicianRehearsal(musician)">
                     <div class="fab-text">
                       <span class="fab-line">ENSAYO</span>

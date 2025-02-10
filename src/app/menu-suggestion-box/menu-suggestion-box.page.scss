@@ -1,0 +1,206 @@
+.custom-content{
+    margin:16px;    
+}
+.custom-modal-title-admin {
+    margin-top:5px;
+    margin-bottom:20px;  
+  }
+  
+  .custom-modal-title {
+    margin-top:5px; 
+    margin-bottom:10px;  
+  }
+  
+  
+  ion-label.ion-color-primary {
+    color: #B22222;
+    font-size: 1rem;
+    font-weight: bold;  
+    text-shadow: 1px 1px 2px #FFFFFF; /* Sombra leve */
+  }
+  
+  ion-item.image-selector {
+    display: flex;
+    align-items: center;
+  }
+  
+  .no-margin-right {
+    margin-right: 0px;
+  }
+  
+  .margin-left {
+    margin-left: 6px;
+  }
+  
+  .custom-item {
+    margin-top: 7px;  
+  }
+  
+  .custom-ion-button-image {
+    margin-bottom: 11px;  
+  }
+  
+  .custom-label-textarea {
+    font-size: 1.5rem !important;
+  }
+  
+  .custom-textarea {
+    margin-top:25px;
+    border: 2px solid #4d4d4d; 
+    border-radius: 10px;        
+    padding: 10px;              
+    background-color: #f9f9f9; 
+    font-size: 16px;            
+    
+    /* Sombra suave en gris oscuro */
+    box-shadow: 0 0 10px rgba(77, 77, 77, 0.2); /* Sombra en gris oscuro, sutil */
+    
+    /* Asegurando visibilidad */
+    display: block;              
+    width: 100%;                
+    min-height: 200px;           
+    visibility: visible;        
+    opacity: 1;                 
+  }
+  
+  .custom-textarea:focus {
+    box-shadow: 0 0 10px rgba(77, 77, 77, 0.4); /* Sombra más pronunciada al hacer foco */
+  }
+  
+  .no-data-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    color: #888;
+  }
+  
+  .no-data-icon {
+    font-size: 48px;
+    color: #ff9800; 
+    margin-top: 10px;
+    margin-bottom: 5px;
+  }
+  
+  .no-data-text {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    color: #333;
+  }
+  
+  /* Borde leve y redondeado para cada elemento de acordeón */
+  ion-accordion {
+    border: 1px solid #dcdcdc; /* Borde gris claro */
+    border-radius: 8px;        /* Bordes redondeados */
+    margin-bottom: 8px;        /* Espaciado entre acordeones */
+    overflow: hidden;          /* Para que el contenido se ajuste al borde redondeado */
+  }
+  
+  ion-accordion ion-item[slot="header"] {
+    --background: #ebebeb; /* Fondo ligeramente más oscuro */
+    color: #333;
+    --border-width: 0px; /* Eliminamos cualquier borde */
+    border-bottom: none; /* Aseguramos que no haya borde inferior */
+    margin-bottom: -1px; /* Ajuste para eliminar cualquier pequeño espacio */
+  }
+  
+  .div-accordion-padding {
+    padding-top: 1px;
+    padding-bottom: 12px;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+  
+  ion-avatar img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .user-item {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    border-radius: 0px;           /* Bordes redondeados */
+    --background: #ffffff;         /* Fondo blanco */  
+  }
+  
+  /* Estilo para el username */
+  .username {
+    display: block;             /* Asegura que esté en su propia línea */
+    font-weight: bold;          /* Resalta el username */
+    font-size: 1em;           /* Tamaño de fuente un poco mayor */
+    color: #333;                /* Color oscuro para destacar */
+  }
+  
+  /* Estilo para el nombre completo */
+  .full-name {
+    display: block;             /* Asegura que esté en su propia línea */
+    font-size: 0.8em;           /* Tamaño de fuente un poco menor */
+    color: #666;                /* Color más claro para el nombre completo */
+  }
+  
+  /* Contenedor expandido para que parezca una continuación del encabezado */
+  .expanded-content {
+    padding: 0px;
+    background-color: #ffffff;    /* Fondo blanco para que se vea continuo */
+    border-radius: 0 0 8px 8px;   /* Redondeo solo en la parte inferior */
+  }
+  
+  /* Estilo específico para los items de cada request */
+  .expanded-content ion-item {
+    --background: #f9f9f9;              /* Fondo suave para cada request */
+    margin: 0;                          /* Sin margen entre items */
+    padding: 0px 0px;                  /* Ajuste de padding interno */    
+    border-bottom: 1px solid #e0e0e0;   /* Línea de separación */
+    --inner-border-width: 0px;          /* Eliminar borde interno */
+  }
+  
+  /* Último item sin línea de separación */
+  .expanded-content ion-item:last-child {
+    border-bottom: none; /* Sin línea de separación en el último item */
+  }
+  
+  /* Estilos para el botón de marcar como leído/no leído */
+  .expanded-content ion-button[slot="start"] {
+    --padding-start: 0;
+    --padding-end: 0;
+    margin-right: 10px; /* Espacio entre el botón y el texto */
+  }
+  /* Ajuste para el botón de marcar como leído/no leído */
+  .expanded-content ion-button[slot="start"] {
+    --padding-start: 0;
+    --padding-end: 0;
+    margin-right: 10px;            /* Espacio entre el botón y el texto */
+  }
+  
+  .expanded-content ion-button[slot="start"] ion-icon {
+    font-size: 18px;
+    color: var(--ion-color-primary); /* Color primario para destacar */
+  }
+  
+  /* Texto de la petición */
+  .request-label {
+    white-space: normal;
+    word-break: break-word;
+    font-size: 0.8em;
+    color: #333;
+    margin-top: 8px;
+    margin-bottom: 8px;
+  }
+  
+  /* Estilos para el contenedor del filtro */
+  .filter-container {
+    padding: 0px 0px;  /* Espaciado alrededor del filtro */
+    background-color: #ebebeb; /* Fondo suave */
+    border-bottom: 1px solid #e0e0e0; /* Línea separadora debajo */
+    margin-bottom: 15px;
+  }
+
+  .custom-button{
+    margin-left:16px;
+    margin-right:16px;
+  }
+  

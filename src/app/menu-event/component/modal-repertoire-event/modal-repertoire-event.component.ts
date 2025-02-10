@@ -73,8 +73,7 @@ export class ModalRepertoireEventComponent implements OnInit {
     return `${day}-${month}-${year}`;
   }
 
-  async ngOnInit() {
-    console.log(this.event);
+  async ngOnInit() {    
     this.isChecked = true;
     this.store.dispatch(new ResetEventRepertoire({})).subscribe({ next: async () => { } })        
     this.eventRepertoire = new EventRepertoire();    
@@ -489,8 +488,7 @@ export class ModalRepertoireEventComponent implements OnInit {
   }
 
   // En tu archivo .ts
-  compareWithFn(o1: any, o2: any): boolean {
-    console.log(o1, o2);
+  compareWithFn(o1: any, o2: any): boolean {    
     return o1 === o2;
   }
 

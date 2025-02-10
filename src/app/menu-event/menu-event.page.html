@@ -53,15 +53,17 @@
     </div>
 
     <!-- PORCENTAJES DE ASISTENCIA PARA MUSICOS -->    
-    <ion-card class="attendance-card background-white" *ngIf="eventListResponse && eventListResponse.events && eventListResponse.events.length>0 && eventListResponse.musicianEventAssistStatistic"> 
+    <!--<ion-card class="attendance-card background-white" *ngIf="eventListResponse && eventListResponse.events && eventListResponse.events.length>0 && eventListResponse.musicianEventAssistStatistic"> -->
+    <ion-card class="attendance-card background-white" *ngIf="eventListResponse && eventListResponse.musicianEventAssistStatistic && showGlobalStatistics"> 
       <ion-card-header>
-        <ion-card-title>Estadísticas de Asistencia</ion-card-title>
+        <ion-card-title>Estadísticas Asistencia (hasta hoy)</ion-card-title>
       </ion-card-header>
       <ion-card-content>
         <ion-grid>
           <ion-row>
             <!-- Asistencia mes actual -->
-            <ion-col size="12" size-md="4" *ngIf="eventListResponse.musicianEventAssistStatistic.musicianCurrentMonthPercentageAssistEvents>=0">
+            <!--<ion-col size="12" size-md="4" *ngIf="eventListResponse.musicianEventAssistStatistic.musicianCurrentMonthPercentageAssistEvents>=0">-->
+            <ion-col size="12" size-md="4" *ngIf="eventListResponse && eventListResponse.musicianEventAssistStatistic && showMonthStatistics">
               <div class="statistic-container">
                 <div class="stat-header">                  
                   <ion-icon name="stats-chart" class="stat-icon success"></ion-icon>
@@ -77,7 +79,8 @@
             </ion-col>
 
             <!-- Asistencia año actual -->
-            <ion-col size="12" size-md="4" *ngIf="eventListResponse.musicianEventAssistStatistic.musicianCurrentYearPercentageAssistEvents>=0">
+            <!--<ion-col size="12" size-md="4" *ngIf="eventListResponse.musicianEventAssistStatistic.musicianCurrentYearPercentageAssistEvents>=0">-->
+            <ion-col size="12" size-md="4" *ngIf="eventListResponse && eventListResponse.musicianEventAssistStatistic && showYearStatistics">
               <div class="statistic-container">
                 <div class="stat-header">                  
                   <ion-icon name="stats-chart" class="stat-icon warning"></ion-icon>
@@ -93,7 +96,8 @@
             </ion-col>
 
             <!-- Asistencia historica -->
-            <ion-col size="12" size-md="4" *ngIf="eventListResponse.musicianEventAssistStatistic.musicianHistoricPercentageAssistEvents>=0">
+            <!--<ion-col size="12" size-md="4" *ngIf="eventListResponse.musicianEventAssistStatistic.musicianHistoricPercentageAssistEvents>=0">-->
+            <ion-col size="12" size-md="4" *ngIf="eventListResponse && eventListResponse.musicianEventAssistStatistic && showHistoricStatistics">
               <div class="statistic-container">
                 <div class="stat-header">                  
                   <ion-icon name="stats-chart" class="stat-icon danger"></ion-icon>
@@ -113,7 +117,7 @@
     </ion-card>
 
     <!-- ESTADÍSTICAS PARA NO MUSICOS -->    
-    <ion-card class="attendance-card background-white" *ngIf="(profile == 'SUPER_ADMIN' || profile == 'ADMIN') && eventListResponse && eventListResponse.events && eventListResponse.events.length>0 && eventListResponse.eventAssistStatistic && eventListResponse.eventAssistStatistic.averageAssitsNumber"> 
+    <ion-card class="attendance-card background-white" *ngIf="(profile == 'SUPER_ADMIN' || profile == 'ADMIN') && eventListResponse && eventListResponse.events && eventListResponse.events.length>0 && eventListResponse.eventAssistStatistic && eventListResponse.eventAssistStatistic.maxDateAssitsNumber"> 
       <ion-card-header>
         <ion-card-title>Estadísticas de Ensayos</ion-card-title>
       </ion-card-header>
@@ -121,34 +125,34 @@
         <ion-grid>
           <ion-row>
             <!-- Media de asistentes al mes -->
-            <ion-col size="12" size-md="4" *ngIf="eventListResponse.eventAssistStatistic.averageAssitsNumber !== null" class="ion-text-left">
+            <ion-col size="12" size-md="4" *ngIf="eventListResponse.eventAssistStatistic.averageAssitsPercentage !== null" class="ion-text-left">
               <div class="statistic-container">
                 <div class="stat-header ion-align-items-start">                  
                   <ion-icon name="people" class="stat-icon success"></ion-icon>
                   <ion-text class="stat-title">Media Asistentes ({{ strSelectedMonth }})</ion-text>
-                  <ion-text class="stat-percentage">{{ eventListResponse.eventAssistStatistic.averageAssitsNumber }}</ion-text>
+                  <ion-text class="stat-percentage">{{ eventListResponse.eventAssistStatistic.averageAssitsPercentage }}%</ion-text>
                 </div>                
               </div>
             </ion-col>
 
             <!-- Día con mayor asistencia -->
-            <ion-col size="12" size-md="4" *ngIf="eventListResponse.eventAssistStatistic.maxDateAssitsNumber">
+            <ion-col size="12" size-md="4" *ngIf="eventListResponse.eventAssistStatistic.maxDateAssitsPercentage">
               <div class="statistic-container">
                 <div class="stat-header">                  
                   <ion-icon name="trending-up" class="stat-icon success"></ion-icon>
-                  <ion-text class="stat-title">Mayor Asistencia ({{ formatDate(eventListResponse.eventAssistStatistic.maxDateAssitsNumber) }})</ion-text>
-                  <ion-text class="stat-percentage">{{ eventListResponse.eventAssistStatistic.maxAssitsNumber }}</ion-text>
+                  <ion-text class="stat-title">Mayor Asistencia ({{ formatDate(eventListResponse.eventAssistStatistic.maxDateAssitsPercentage) }})</ion-text>
+                  <ion-text class="stat-percentage">{{ eventListResponse.eventAssistStatistic.maxAssitsPercentage }}%</ion-text>
                 </div>               
               </div>
             </ion-col>
 
             <!-- Día con menor asistencia -->
-            <ion-col size="12" size-md="4" *ngIf="eventListResponse.eventAssistStatistic.minDateAssitsNumber">
+            <ion-col size="12" size-md="4" *ngIf="eventListResponse.eventAssistStatistic.minDateAssitsPercentage">
               <div class="statistic-container">
                 <div class="stat-header">                  
                   <ion-icon name="trending-down" class="stat-icon danger"></ion-icon>
-                  <ion-text class="stat-title">Menor Asistencia ({{ formatDate(eventListResponse.eventAssistStatistic.minDateAssitsNumber) }})</ion-text>
-                  <ion-text class="stat-percentage">{{ eventListResponse.eventAssistStatistic.minAssitsNumber }}</ion-text>
+                  <ion-text class="stat-title">Menor Asistencia ({{ formatDate(eventListResponse.eventAssistStatistic.minDateAssitsPercentage) }})</ion-text>
+                  <ion-text class="stat-percentage">{{ eventListResponse.eventAssistStatistic.minAssitsPercentage }}%</ion-text>
                 </div>               
               </div>
             </ion-col>

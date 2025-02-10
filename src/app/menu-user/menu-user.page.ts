@@ -529,12 +529,10 @@ export class MenuUserPage implements OnDestroy {
       })
   }
 
-  calculateTotalUsers(){
-    // en el array this.musiciansGroupByVoice te go que filtrar todas las voces que no contengan ANTIGUO, y sumar todos los musicos del array musicians
+  calculateTotalUsers(){    
     this.totalUsers = 0;
     if(this.usersGroupByRole){
-      this.usersGroupByRole.forEach(usersGroupByRole => {
-        // si la voz no contiene la palabra ANTIGUO        
+      this.usersGroupByRole.forEach(usersGroupByRole => {        
         if(usersGroupByRole.users){
           this.totalUsers += usersGroupByRole.users.length;
         }        

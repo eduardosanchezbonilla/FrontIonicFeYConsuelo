@@ -22,6 +22,9 @@ export class Musician {
     phoneNumber: string;
     formationPositionX: number;
     formationPositionY: number;
+    unregistrationDate: string;
+    dateLastNotificationNonAssistsStreakRehearsals: string;
+    unregistred: boolean;
     
     constructor(name?: string) {        
         this.name = name;        

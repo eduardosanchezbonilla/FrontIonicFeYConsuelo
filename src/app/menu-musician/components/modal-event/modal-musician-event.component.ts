@@ -29,7 +29,10 @@ export class ModalMusicianEventComponent implements OnInit {
   
   @Input() musician: Musician;
   public showImage: string;
-
+  public showMonthStatistics = true;
+  public showYearStatistics = true;
+  public showHistoricStatistics = true;
+  public showGlobalStatistics = true;
 
   public initScreen = false;
   public initSearchFinish = false;
@@ -141,13 +144,13 @@ export class ModalMusicianEventComponent implements OnInit {
               if(errorStatusCode==200){                   
                 this.musicianEventListResponse = this.store.selectSnapshot(MusicianEventState.musicianEventListResponse);              
                 if(!this.musicianEventListResponse.events){
-                  this.musicianEventListResponse.events = [];
-                }            
+                  this.musicianEventListResponse.events = [];                  
+                }                                            
                 this.setCalendarDays(this.musicianEventListResponse.events);
                 this.initSearchFinish = true;    
-                this.dismissInitialLoading();   
+                this.dismissInitialLoading();                   
               }
-              else{
+              else{                
                 this.musicianEventListResponse = this.store.selectSnapshot(MusicianEventState.musicianEventListResponse);  
                 this.musicianEventListResponse.events = [];
                 this.setCalendarDays(this.musicianEventListResponse.events);
@@ -162,7 +165,8 @@ export class ModalMusicianEventComponent implements OnInit {
                   this.initSearchFinish = true;    
                   this.dismissInitialLoading();           
                 }   
-              }                                       
+              }       
+              this.calculateShowStatistics();                                
             }          
         }
       }
@@ -513,6 +517,43 @@ export class ModalMusicianEventComponent implements OnInit {
     } else {
       return 'danger';
     }
+  }
+
+  calculateShowStatistics(){
+    let eventDate = new Date(Math.min.apply(null, this.musicianEventListResponse.events.map(e => new Date(e.date))));
+
+    if(this.musicianEventListResponse.musicianEventAssistStatistic &&
+       this.musicianEventListResponse.musicianEventAssistStatistic.musicianCurrentMonthTotalNumberEvents && 
+       this.musicianEventListResponse.musicianEventAssistStatistic.musicianCurrentMonthTotalNumberEvents > 0 &&
+       eventDate<=new Date()
+    ){
+      this.showMonthStatistics=true;
+    }
+    else{
+      this.showMonthStatistics=false;
+    }
+
+    if(this.musicianEventListResponse.musicianEventAssistStatistic &&
+       this.musicianEventListResponse.musicianEventAssistStatistic.musicianCurrentYearTotalNumberEvents && 
+       this.musicianEventListResponse.musicianEventAssistStatistic.musicianCurrentYearTotalNumberEvents > 0 
+    ){
+      this.showYearStatistics=true;
+    }
+    else{
+      this.showYearStatistics=false;
+    }
+
+    if(this.musicianEventListResponse.musicianEventAssistStatistic &&
+      this.musicianEventListResponse.musicianEventAssistStatistic.musicianHistoricTotalNumberEvents && 
+      this.musicianEventListResponse.musicianEventAssistStatistic.musicianHistoricTotalNumberEvents > 0 
+    ){
+      this.showHistoricStatistics=true;
+    }
+    else{
+      this.showHistoricStatistics=false;
+    }
+
+    this.showGlobalStatistics = this.showMonthStatistics || this.showYearStatistics || this.showHistoricStatistics;        
   }
 
 

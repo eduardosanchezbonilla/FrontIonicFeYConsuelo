@@ -261,7 +261,7 @@
 
       <ion-icon name="calendar-outline" slot="end" class="custom-icon"></ion-icon>
 
-      <ion-modal #modalDatetimeBirth [keepContentsMounted]="true">
+      <ion-modal #modalDatetimeRegistration [keepContentsMounted]="true">
         <ng-template>
           <ion-datetime 
               id="datetime-register" 
@@ -287,7 +287,7 @@
         placeHolder="Seleccionar Voz"        
         [compareWith]="compareWith"
         [(ngModel)] = "musician.voice"
-        required
+        required        
         #voiceInput="ngModel"         
       >              
           <ion-select-option *ngFor="let voice of voices" [value]="voice">{{voice.name}}</ion-select-option>
@@ -297,7 +297,7 @@
     <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(voiceInput.invalid && voiceInput.touched)">
       <ion-text color="danger" *ngIf="voiceInput.errors && voiceInput.errors['required']">La voz es obligatoria.</ion-text>      
     </div>
-
+    
     <!-- IMAGEN -->
     <ion-item class="ion-margin-start ion-no-padding background-transparent image-selector custom-item">
       <ion-label color="primary"  class="image-label">
@@ -314,6 +314,38 @@
       </ion-button>      
     </ion-item>
 
+    <!-- UNREGISTRED -->
+    <ion-item *ngIf="updating" class="ion-margin-start ion-margin-end ion-no-padding">
+      <ion-label color="primary">Dado de baja</ion-label>
+      <ion-checkbox slot="end" [(ngModel)]="musician.unregistred" name="unregistred"></ion-checkbox>
+    </ion-item>
+
+    <!-- FECHA DE BAJA -->
+    <ion-item *ngIf="updating && musician.unregistred" class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item" >
+      <ion-label color="primary" class="custom-label">Fecha de baja</ion-label>
+
+      <ion-datetime-button slot="end" datetime="datetime-unregister" color="primary" class="custom-datetime-button"></ion-datetime-button>      
+
+      <ion-icon name="calendar-outline" slot="end" class="custom-icon"></ion-icon>
+
+      <ion-modal #modalDatetimeUnregistration [keepContentsMounted]="true">
+        <ng-template>
+          <ion-datetime 
+              id="datetime-unregister" 
+              presentation="date"
+              [(ngModel)]="musician.unregistrationDate"
+              [ngModelOptions]="{standalone: true}"              
+              [showDefaultButtons]="true"
+              [firstDayOfWeek]="1"
+              required
+          >
+          </ion-datetime>
+        </ng-template>
+      </ion-modal>              
+    </ion-item>
+
+
+
     <div class="spacer"></div>   
     <div class="spacer"></div>  
 
@@ -324,5 +356,6 @@
         {{updating ? 'Actualizar': 'Crear'}} músico
     </ion-button>
 
+    
   </form>
 </ion-content>

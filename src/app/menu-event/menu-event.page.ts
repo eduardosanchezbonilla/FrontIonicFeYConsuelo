@@ -54,6 +54,11 @@ export class MenuEventPage implements OnDestroy {
   public oldPerformancesValue: boolean=false;  
   public firstOldPerformances: boolean;
   public clickOldPerformances: boolean;
+
+  public showMonthStatistics = true;
+  public showYearStatistics = true;
+  public showHistoricStatistics = true;
+  public showGlobalStatistics = true;
   
   public selectedDate: Date;    
   public selectedMonthDate: Date;   
@@ -673,7 +678,8 @@ export class MenuEventPage implements OnDestroy {
                   this.toast.presentToast(errorMessage);
                 }   
 
-              }                        
+              }  
+              this.calculateShowStatistics();   
               this.initSearchFinish = true;    
               this.dismissInitialLoading();                 
             }          
@@ -1314,6 +1320,43 @@ export class MenuEventPage implements OnDestroy {
       }
     });
     modal.present();
+  }
+
+  calculateShowStatistics(){
+    let eventDate = new Date(Math.min.apply(null, this.eventListResponse.events.map(e => new Date(e.date))));
+
+    if(this.eventListResponse.musicianEventAssistStatistic &&
+       this.eventListResponse.musicianEventAssistStatistic.musicianCurrentMonthTotalNumberEvents && 
+       this.eventListResponse.musicianEventAssistStatistic.musicianCurrentMonthTotalNumberEvents > 0   &&
+       eventDate<=new Date()
+    ){
+      this.showMonthStatistics=true;
+    }
+    else{
+      this.showMonthStatistics=false;
+    }
+
+    if(this.eventListResponse.musicianEventAssistStatistic &&
+       this.eventListResponse.musicianEventAssistStatistic.musicianCurrentYearTotalNumberEvents && 
+       this.eventListResponse.musicianEventAssistStatistic.musicianCurrentYearTotalNumberEvents > 0 
+    ){
+      this.showYearStatistics=true;
+    }
+    else{
+      this.showYearStatistics=false;
+    }
+
+    if(this.eventListResponse.musicianEventAssistStatistic &&
+      this.eventListResponse.musicianEventAssistStatistic.musicianHistoricTotalNumberEvents && 
+      this.eventListResponse.musicianEventAssistStatistic.musicianHistoricTotalNumberEvents > 0 
+    ){
+      this.showHistoricStatistics=true;
+    }
+    else{
+      this.showHistoricStatistics=false;
+    }
+
+    this.showGlobalStatistics = this.showMonthStatistics || this.showYearStatistics || this.showHistoricStatistics;        
   }
 
 }

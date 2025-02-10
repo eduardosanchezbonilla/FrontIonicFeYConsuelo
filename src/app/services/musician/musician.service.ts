@@ -52,7 +52,7 @@ export class MusicianService {
     });
   }
 
-  async getMusicians(/*descripcion:string,user:string*/){
+  async getMusicians(){
     const token = await this.storage.getItem('token');
     return Http.get(
       {
@@ -92,12 +92,15 @@ export class MusicianService {
     });
   }
 
-  async getMusiciansGroupByVoice(name:string){    
+  async getMusiciansGroupByVoice(name:string,unregistred:boolean){    
     const token = await this.storage.getItem('token');        
     return Http.get(
       {
         url:environment.host + '/musician/group-by-voice',
-        params:{'name':name},
+        params:{
+          'name':name,
+          'unregistred':unregistred.valueOf().toString()
+        },
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ' + token

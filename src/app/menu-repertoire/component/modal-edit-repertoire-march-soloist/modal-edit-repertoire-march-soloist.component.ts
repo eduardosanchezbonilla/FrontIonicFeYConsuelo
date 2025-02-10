@@ -44,7 +44,7 @@ export class ModalEditRepertoireMarchSoloistComponent implements OnInit {
   ) { }
 
   async ngOnInit() {            
-    this.store.dispatch(new GetMusiciansGroupByVoice({name: ''}));                
+    this.store.dispatch(new GetMusiciansGroupByVoice({name: '',unregistred:false}));                
     this.getMusiciansGroupByVoice();      
 
     if(!this.repertoireMarch.repertoireMarchSolos) {

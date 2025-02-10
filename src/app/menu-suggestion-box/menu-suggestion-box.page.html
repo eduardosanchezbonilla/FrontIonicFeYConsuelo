@@ -1,0 +1,162 @@
+<ion-header [translucent]="true" >
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>   
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()" class="logout-button">
+        <ion-icon name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="false" >
+
+  <div class="custom-content">
+    <form *ngIf="profile=='MUSICO'" (ngSubmit)="createSuggestionBox()" #suggestionBoxForm="ngForm">   
+
+      <!------------------------------------------>
+      <!------ BUZON DE SUGERENCIAS MUSICO ------->
+      <!------------------------------------------>   
+      <h2 class="fancy-title custom-modal-title">
+        Buzón de sugerencias
+      </h2>
+
+      <!-- Titulo -->
+      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+        <ion-label color="primary" position="floating">
+            Nombre (opcional)
+        </ion-label>
+        <ion-icon name="person-outline" slot="end"></ion-icon>      
+        <ion-input                                                        
+              autocomplete="name"       
+              minlength="0"                     
+              maxlength="50"
+              name="name"
+              placeholder="Introduzca el nombre"
+              type="text"            
+              [(ngModel)]="nameSuggestionBox"                                                 
+              #nameInput="ngModel"            
+        >
+        </ion-input>
+      </ion-item>
+      
+      <ion-item lines="none">    
+        <ion-label color="primary" position="stacked" class="custom-label-textarea">
+          Sugerencia
+        </ion-label>
+        <ion-textarea 
+            name="description"
+            placeholder="Escribe la sugerencia ..." 
+            class="custom-textarea focus-style"
+            minlength="1"                     
+            maxlength="1000"
+            required="true"
+            [(ngModel)]="textSuggestionBox"  
+            (ngModelChange)="validTextSuggestionBox()"                                                         
+        >
+        </ion-textarea>
+      </ion-item>
+
+      <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="invalidTextSuggestionBox">
+        <ion-text color="danger" *ngIf="invalidTextSuggestionBox">Debe introducir una descripción de 1 a 1000 caracteres.</ion-text>      
+      </div>
+
+      <div class="spacer"></div>   
+      <div class="spacer"></div>  
+
+      <ion-button 
+            type="submit"           
+            [disabled]="disabledForm"
+            expand="block"
+            class="custom-button"
+      >
+          Enviar mensaje
+      </ion-button>  
+    </form>
+  </div>
+
+  <div *ngIf="profile=='SUPER_ADMIN' || profile=='ADMIN'" class="custom-content">
+  
+    <!------------------------------------------->
+    <!------ GESTION BUZON DE SUGERENCIAS ------->
+    <!------------------------------------------->   
+    <h2 class="fancy-title custom-modal-title-admin">
+      Buzón de Sugerencias
+    </h2>
+
+    <ion-refresher slot="fixed" (ionRefresh)="refreshSuggestionBoxGroupByUser($event)">
+      <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+
+    <!-- Selector de filtro justo debajo del título -->
+    <div class="filter-container">
+      <ion-segment (ionChange)="onReadedChanged($event)" value="unread">
+        <ion-segment-button value="unread">
+          <ion-label>No leídas</ion-label>
+        </ion-segment-button>
+
+        <ion-segment-button value="all">
+          <ion-label>Todas</ion-label>
+        </ion-segment-button>          
+      </ion-segment>
+    </div>
+    
+    <!-- Mensaje vistoso cuando no hay datos -->
+    <div *ngIf="initSearchFinish && !existsRequest" class="no-data-container">
+      <div class="spacer"></div>   
+      <ion-icon name="alert-circle-outline" class="no-data-icon"></ion-icon>
+      <p class="no-data-text">No hay mensajes en el buzón pendientes <br/> de gestionar.</p>     
+      <div class="spacer"></div>   
+      <div class="spacer"></div> 
+    </div>
+
+    <!-- Contenido principal (solo se muestra si hay datos) -->
+    <div *ngIf="initSearchFinish && existsRequest">
+      <div class="spacer-super-small"></div>   
+
+      <ion-accordion-group>
+      
+        <ion-accordion *ngFor="let suggestionBox of suggestionBoxGroupByUser">
+          <ion-item slot="header" class="user-item" >
+            <ion-avatar slot="start">
+              <ion-img 
+                [src]="suggestionBox.user.image ? 'data:image/jpeg;base64,' + suggestionBox.user.image : 'data:image/jpeg;base64,' + defaultMusicianImage">
+              </ion-img>                              
+            </ion-avatar>            
+            <ion-label>
+              
+              <span class="username">{{ suggestionBox.user.username }}</span>
+              <span class="full-name">{{ suggestionBox.user.name }} {{ suggestionBox.user.surname }}</span>
+            </ion-label>
+          </ion-item>
+    
+          
+          <div class="expanded-content" slot="content">
+            <ion-list class="ion-no-padding">
+              <ion-item *ngFor="let suggestion of suggestionBox.suggestions">
+                
+                <ion-button
+                  slot="start"
+                  color="primary"
+                  fill="clear"
+                  (click)="markAsReadUnread(suggestion)"
+                >
+                  <ion-icon [name]="suggestion.readed ? 'checkmark-circle' : 'ellipse-outline'"></ion-icon>
+                </ion-button>
+              
+                <ion-label class="request-label">
+                  {{ suggestion.suggestion }}
+                </ion-label>
+              </ion-item>
+            </ion-list>
+          </div>
+        </ion-accordion>
+      </ion-accordion-group>
+
+      <div class="spacer"></div> 
+    </div> 
+  </div>
+
+</ion-content>

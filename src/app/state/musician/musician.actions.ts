@@ -13,7 +13,7 @@ export class GetMusicians {
 
 export class GetMusiciansGroupByVoice {
   static readonly type = '[Musicians] Get MusiciansGroupByVoice';
-  constructor(public payload: {name: string}) { }
+  constructor(public payload: {name: string, unregistred:boolean}) { }
 }
 
 export class DeleteMusician {

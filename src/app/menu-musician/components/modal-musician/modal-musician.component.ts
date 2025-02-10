@@ -29,7 +29,7 @@ export class ModalMusicianComponent implements OnInit, OnDestroy {
   public showImage: string;
   public selectedImage: string;
   public initScreen = false;
-  public initSearchFinish = false;
+  public initSearchFinish = false;  
   
   constructor(
     private store:Store,
@@ -40,12 +40,14 @@ export class ModalMusicianComponent implements OnInit, OnDestroy {
     private toast:ToastService,    
   ) { }
 
-  async ngOnInit() {
+  async ngOnInit() {    
     if(!this.musician){
       this.musician = new Musician();      
       this.showImage = null;
       this.musician.registrationDate = new Date().toISOString();
-      this.musician.birthDate = new Date().toISOString();
+      this.musician.birthDate = new Date().toISOString();      
+      this.musician.unregistred = false;
+      this.musician.unregistrationDate = null;
     }
     else{
       if(this.musician.image){
@@ -55,7 +57,12 @@ export class ModalMusicianComponent implements OnInit, OnDestroy {
       else{
         this.showImage = `data:image/jpeg;base64,${DEFAULT_MUSICIAN_IMAGE}`;
         this.selectedImage = DEFAULT_MUSICIAN_IMAGE;
-      }            
+      }                  
+      if(this.musician.unregistred){        
+        if(!this.musician.unregistrationDate){          
+          this.musician.unregistrationDate = new Date().toISOString();
+        }
+      }
     }
     this.store.dispatch(new GetVoices({}));
     this.getVoices();        
@@ -122,7 +129,15 @@ export class ModalMusicianComponent implements OnInit, OnDestroy {
 
   confirm(){
     this.musician.image = this.selectedImage;
-    this.modalController.dismiss(this.musician, 'confirm');
+    if(!this.musician.unregistred){
+      this.musician.unregistrationDate = null;
+    }    
+    else{
+      if(!this.musician.unregistrationDate){
+        this.musician.unregistrationDate = new Date().toISOString();
+      }
+    }
+    this.modalController.dismiss(this.musician, 'confirm');    
   }
 
   cancel(){

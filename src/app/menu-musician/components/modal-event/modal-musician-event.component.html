@@ -47,15 +47,17 @@
     </div>
   
     <!-- PORCENTAJES DE ASISTENCIA -->    
-    <ion-card class="attendance-card background-white" *ngIf="musicianEventListResponse && musicianEventListResponse.events && musicianEventListResponse.events.length>0 && musicianEventListResponse.musicianEventAssistStatistic"> 
+    <!--<ion-card class="attendance-card background-white" *ngIf="musicianEventListResponse && musicianEventListResponse.events && musicianEventListResponse.events.length>0 && musicianEventListResponse.musicianEventAssistStatistic"> -->
+    <ion-card class="attendance-card background-white" *ngIf="musicianEventListResponse && musicianEventListResponse.musicianEventAssistStatistic && showGlobalStatistics"> 
       <ion-card-header>
-        <ion-card-title>Estadísticas de Asistencia</ion-card-title>
+        <ion-card-title>Estadísticas Asistencia (hasta hoy)</ion-card-title>
       </ion-card-header>
       <ion-card-content>
         <ion-grid>
           <ion-row>
             <!-- Asistencia mes actual -->
-            <ion-col size="12" size-md="4" *ngIf="musicianEventListResponse.musicianEventAssistStatistic.musicianCurrentMonthPercentageAssistEvents>=0">
+            <!--<ion-col size="12" size-md="4" *ngIf="showMonthStatistics && musicianEventListResponse.musicianEventAssistStatistic.musicianCurrentMonthPercentageAssistEvents>=0">-->
+            <ion-col size="12" size-md="4" *ngIf="musicianEventListResponse && musicianEventListResponse.musicianEventAssistStatistic && showMonthStatistics">
               <div class="statistic-container">
                 <div class="stat-header">                  
                   <ion-icon name="stats-chart" class="stat-icon success"></ion-icon>
@@ -71,7 +73,8 @@
             </ion-col>
 
             <!-- Asistencia año actual -->
-            <ion-col size="12" size-md="4" *ngIf="musicianEventListResponse.musicianEventAssistStatistic.musicianCurrentYearPercentageAssistEvents>=0">
+            <!--<ion-col size="12" size-md="4" *ngIf="musicianEventListResponse.musicianEventAssistStatistic.musicianCurrentYearPercentageAssistEvents>=0">-->
+            <ion-col size="12" size-md="4" *ngIf="musicianEventListResponse && musicianEventListResponse.musicianEventAssistStatistic && showYearStatistics">
               <div class="statistic-container">
                 <div class="stat-header">
                   <ion-icon name="stats-chart" class="stat-icon warning"></ion-icon>
@@ -87,7 +90,8 @@
             </ion-col>
 
             <!-- Asistencia historica -->
-            <ion-col size="12" size-md="4" *ngIf="musicianEventListResponse.musicianEventAssistStatistic.musicianHistoricPercentageAssistEvents>=0">
+            <!--<ion-col size="12" size-md="4" *ngIf="musicianEventListResponse.musicianEventAssistStatistic.musicianHistoricPercentageAssistEvents>=0">-->
+            <ion-col size="12" size-md="4" *ngIf="musicianEventListResponse && musicianEventListResponse.musicianEventAssistStatistic && showHistoricStatistics">
               <div class="statistic-container">
                 <div class="stat-header">
                   <ion-icon name="stats-chart" class="stat-icon danger"></ion-icon>

@@ -180,7 +180,7 @@ export class MusicianState {
       { patchState }: StateContext<MusicianStateModel>,
       { payload }: GetMusiciansGroupByVoice
   ) {
-    return this.musicianService.getMusiciansGroupByVoice(payload.name)
+    return this.musicianService.getMusiciansGroupByVoice(payload.name, payload.unregistred)
       .then(
           (musiciansGroupByVoice:MusicianGroupByVoice[]) => {
             patchState({

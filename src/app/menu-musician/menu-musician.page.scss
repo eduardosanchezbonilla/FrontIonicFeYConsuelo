@@ -214,3 +214,54 @@ ion-accordion ion-item[slot="header"] {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+.searchbar-container {
+    display: flex;
+    align-items: center; /* Centra verticalmente */   
+    padding: 8px; /* Margen interno para darle aire */
+    padding-top:10px;
+    padding-right: 0px;
+    margin-right: 0px;
+}
+  
+.custom-searchbar {
+    margin-top:2px;
+    padding-top:0px;
+    width:50%;
+}
+  
+.custom-checkbox-item {
+    width:50%;
+    margin-top:-3px;
+    padding-top:0px;
+    display: flex;    
+    gap: 5px;    
+    --ion-item-background: transparent; /* Fondo transparente */
+    --ion-item-padding-start: 0; /* Elimina padding innecesario */    
+    --inner-padding-end: 0px;   
+    --padding-end: 0px; /* Asegúrate de que no haya espacio a la derecha */
+    font-size: 0.9em;    
+    color: #333333;   
+    text-shadow: 1px 1px 2px #FFFFFF;        
+}
+
+.custom-checkbox-item::part(native) {    
+    padding-left: unset;    
+  }
+
+.custom-checkbox-item-div {   
+    margin-top:-3px;
+    padding-left: 10px;
+    padding-top: 12px;
+    padding-bottom: 11px;
+    width: 100%; 
+    display: flex;    
+}
+
+.custom-checkbox {
+    padding-left: 0px;
+    margin-left:0px;
+    margin-right:9px;    
+    margin-top: 0px;
+    margin-bottom: 0px;
+}

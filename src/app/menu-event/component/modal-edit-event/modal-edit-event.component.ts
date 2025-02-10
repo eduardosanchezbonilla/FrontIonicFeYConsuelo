@@ -222,14 +222,9 @@ export class ModalEditEventComponent implements OnInit {
             if(!this.updating){
               if(this.type==='REHEARSAL'){       
                 this.event.voiceList = this.voices .filter(
-                  voice => !voice.name.toLowerCase().includes('antiguo') && !voice.name.toLowerCase().includes('banderin') && !voice.name.toLowerCase().includes('escolta')
+                  voice => !voice.name.toLowerCase().includes('banderin') && !voice.name.toLowerCase().includes('escolta')
                 );
-              }
-              else if(this.type==='PERFORMANCE'){       
-                this.event.voiceList = this.voices .filter(
-                  voice => !voice.name.toLowerCase().includes('antiguo')
-                );
-              }
+              }              
               else{
                 this.event.voiceList = this.voices;
               }

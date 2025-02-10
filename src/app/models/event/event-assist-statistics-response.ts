@@ -6,5 +6,11 @@ export class EventAssistStatisticsResponse {
     maxDateAssitsNumber: string;
     minAssitsNumber: number;
     minDateAssitsNumber: string;
+
+    averageAssitsPercentage: number;
+    maxAssitsPercentage: number;
+    maxDateAssitsPercentage: string;
+    minAssitsPercentage: number;
+    minDateAssitsPercentage: string;
        
 }
