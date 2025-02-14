@@ -106,6 +106,9 @@
             </ion-card> 
             
             <ion-item-options>
+              <ion-item-option color="solo-custom" (click)="showMusicianSolo(musician, musicianSliding)" >
+                <ion-icon color="light" slot="icon-only" name="megaphone-outline"></ion-icon>
+              </ion-item-option>   
               <ion-item-option color="calendar-custom" (click)="manageMusicianEvent(musician, musicianSliding)" >
                 <ion-icon color="light" slot="icon-only" name="calendar-outline"></ion-icon>
               </ion-item-option>   

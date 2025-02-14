@@ -60,7 +60,7 @@ ion-avatar img {
     margin: 5px;    
     margin-top: 3px;    
     margin-bottom: 2px;    
-    margin-left: 3px;        
+    margin-left: 3px;       
 }
 
 .musician-ion-item {    
@@ -132,6 +132,13 @@ ion-accordion ion-item[slot="header"] {
     --ion-color-contrast: #ffffff; /* Blanco para el ícono */
     --ion-color-shade: #1E88E5; /* Sombra */
     --ion-color-tint: #64B5F6; /* Tono claro */
+}
+
+::ng-deep ion-item-option.ion-color-solo-custom {
+    --ion-color-base: #9C27B0;   /* Violeta medio */
+    --ion-color-contrast: #ffffff; /* Blanco para el contraste */
+    --ion-color-shade: #7B1FA2;    /* Violeta oscuro para la sombra */
+    --ion-color-tint: #BA68C8;     /* Violeta claro para el tono */
 }
 
 .musician-header-fab-text {

@@ -26,6 +26,7 @@ import { ModalMusicianEventComponent } from './components/modal-event/modal-musi
 import { CreateMusicianEvent, DeleteMusicianEvent } from '../state/musicien-event/musician-event.actions';
 import { MusicianEventState } from '../state/musicien-event/musician-event.state';
 import { MusicianEvent } from '../models/musician-event/musician-event';
+import { ModalMusicianMarchSoloComponent } from './components/modal-musician-march-solo/modal-musician-march-solo.component';
 
 @Component({
   selector: 'app-menu-musician',
@@ -685,6 +686,26 @@ export class MenuMusicianPage implements OnDestroy {
 
   onViewUnregistred(event: any){    
     this.filterMusicians();           
+  }
+
+  /*******************************************************/
+  /*********************** EVENT *************************/
+  /*******************************************************/
+  async showMusicianSolo(musician:Musician, musicianSliding: IonItemSliding){   
+    // cerramos el sliding 
+    musicianSliding.close();
+
+    // mostramos spinner
+    await this.loadingService.presentLoading('Loading...');   
+    
+    // abrimos modal
+    const modal = await this.modalController.create({
+      component: ModalMusicianMarchSoloComponent,
+      componentProps: {
+        musician
+      }
+    });
+    modal.present();
   }
   
 }

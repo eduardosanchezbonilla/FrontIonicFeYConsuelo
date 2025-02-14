@@ -24,6 +24,9 @@ import { CalendarModule } from 'ion2-calendar';
 import { EventState } from '../state/event/event.state';
 import { EventService } from '../services/event/event.service';
 import { CameraService } from '../services/camera/camera.service';
+import { ModalMusicianMarchSoloComponent } from './components/modal-musician-march-solo/modal-musician-march-solo.component';
+import { MusicianMarchSoloState } from '../state/musician-march-solo/musician-march-solo.state';
+import { MusicianMarchSoloService } from '../services/musician-march-solo/musician-march-solo.service';
 
 @NgModule({
   imports: [
@@ -37,6 +40,7 @@ import { CameraService } from '../services/camera/camera.service';
     NgxsModule.forFeature([UserPartitureGroupState]),
     NgxsModule.forFeature([MusicianInventoryState]),
     NgxsModule.forFeature([MusicianEventState]),
+    NgxsModule.forFeature([MusicianMarchSoloState]),
     NgxsModule.forFeature([EventState]),
   ],  
   declarations: [
@@ -45,7 +49,8 @@ import { CameraService } from '../services/camera/camera.service';
     ModalVoiceComponent,
     ModalPartitureComponent,
     ModalMusicianInventoryComponent,
-    ModalMusicianEventComponent
+    ModalMusicianEventComponent,
+    ModalMusicianMarchSoloComponent
   ],
   providers:[
     MusicianService,
@@ -54,7 +59,8 @@ import { CameraService } from '../services/camera/camera.service';
     MusicianInventoryService,
     MusicianEventService,
     EventService,
-    CameraService
+    CameraService,
+    MusicianMarchSoloService
   ]
 })
 export class MenuMusicianPageModule {}

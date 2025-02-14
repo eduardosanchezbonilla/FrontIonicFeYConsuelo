@@ -1,0 +1,79 @@
+<ion-header [translucent]="true" >
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>   
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()" class="logout-button">
+        <ion-icon name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="false">
+
+  <div class="content-container">
+
+    <div *ngIf="isLoading" class="custom-loading-overlay">
+      <div class="custom-loading-content animated">
+        <ion-spinner name="crescent" class="custom-loading-spinner"></ion-spinner>
+        <p>Loading...</p>
+      </div>    
+    </div>
+
+    <h2 class="fancy-title custom-modal-title">
+      Solos Musico
+    </h2>
+
+    <ion-card *ngIf="musician" class="musician-card background-white">
+      <ion-item lines="none">
+        <ion-avatar slot="start" class="musician-avatar">                  
+          <ion-img 
+            [src]="showImage">
+          </ion-img> 
+        </ion-avatar>
+        <ion-label>
+          <h2>{{ musician.name }} {{ musician.surname }}</h2>
+          <p>{{ musician.voice.name }}</p>          
+        </ion-label>
+      </ion-item>
+    </ion-card> 
+
+    <!-- Mensaje vistoso cuando no hay datos -->
+    <div *ngIf="!musicianMarchSolos || musicianMarchSolos.length==0" class="no-data-container">
+      <div class="spacer"></div>   
+      <ion-icon name="alert-circle-outline" class="no-data-icon"></ion-icon>
+      <p class="no-data-text">No existen solos asignados a este músico</p>     
+      <div class="spacer"></div>   
+      <div class="spacer"></div> 
+    </div>
+
+    <!-- Listado de marchas -->
+    <div *ngIf="musicianMarchSolos" class="marches-container">
+      <div *ngFor="let march of musicianMarchSolos">
+        <ion-card class="march-card animated-card">
+          <ion-card-header class="march-card-header">
+            <ion-card-title>{{ march.marchName }}</ion-card-title>
+          </ion-card-header>
+          <ion-card-content class="custon-ion-card-content">
+            <div class="solos-list">
+              <div *ngFor="let solo of march.solos" >
+                <!--<div class="solo-item">-->
+                <div [ngClass]="{'solo-item': true, 'solo-item-suplente': solo.soloName.toLowerCase().includes('suplente') }">
+                  <ion-icon name="musical-notes-outline" class="solo-icon"></ion-icon>
+                  <span                                 
+                    [ngClass]="{'solo-text': true, 'solo-text-suplente': solo.soloName.toLowerCase().includes('suplente') }"
+                  >
+                    {{ solo.soloName | lowercase }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </div>
+  </div>
+
+</ion-content>

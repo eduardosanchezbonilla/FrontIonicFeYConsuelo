@@ -27,6 +27,11 @@
         <ion-icon name="musical-notes-outline"></ion-icon>
         <ion-label>Repertorio</ion-label>
       </ion-tab-button> 
+
+      <ion-tab-button *ngIf="user?.musicianMarchSolos && user?.musicianMarchSolos.length>0" tab="menu-solo" href="/tabs-musician/menu-solo">
+        <ion-icon name="megaphone-outline"></ion-icon>
+        <ion-label>Solos</ion-label>
+      </ion-tab-button> 
       
       <ion-tab-button tab="menu-partiture" href="/tabs-musician/menu-partiture" >
         <ion-icon name="albums-outline"></ion-icon>

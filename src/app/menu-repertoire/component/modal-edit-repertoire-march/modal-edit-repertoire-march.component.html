@@ -68,7 +68,7 @@
     </div>
 
     <!-- CATEGORIA -->
-    <div *ngIf="!categoryId" >
+    <div *ngIf="!categoryId || updating" >
       <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item">
         <ion-label color="primary" class="custom-label-category-type">Categoria</ion-label>
         <ion-select  class="custom-select"              

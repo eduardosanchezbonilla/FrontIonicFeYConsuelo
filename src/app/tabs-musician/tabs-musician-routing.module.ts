@@ -37,6 +37,10 @@ const routes: Routes = [
         loadChildren: () => import('../menu-suggestion-box/menu-suggestion-box.module').then( m => m.MenuSuggestionBoxPageModule)
       },
       {
+        path: 'menu-solo',
+        loadChildren: () => import('../menu-solo/menu-solo.module').then( m => m.MenuSoloPageModule)
+      },
+      {
         path: '',
         redirectTo: '/tabs-musician/menu-partiture',
         pathMatch: 'full'

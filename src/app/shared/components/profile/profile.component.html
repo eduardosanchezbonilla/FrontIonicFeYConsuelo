@@ -288,6 +288,11 @@
         <ion-label>Repertorio</ion-label>
       </ion-item>
 
+      <ion-item *ngIf="user?.musicianMarchSolos && user?.musicianMarchSolos.length>0" button (click)="onTabSelect('menu-solo')" >
+        <ion-icon slot="start" name="megaphone-outline"></ion-icon>
+        <ion-label>Solos</ion-label>
+      </ion-item>
+
       <ion-item button (click)="onTabSelect('menu-partiture')" >
         <ion-icon slot="start" name="albums-outline"></ion-icon>
         <ion-label>Partituras</ion-label>

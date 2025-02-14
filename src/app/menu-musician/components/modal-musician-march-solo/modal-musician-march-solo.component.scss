@@ -1,0 +1,165 @@
+.custom-modal-title {
+    margin-top:5px;
+    margin-bottom:10px;
+    color: #B22222;   
+    text-shadow: 1px 1px 2px #FFFFFF;  
+}
+
+.musician-card {
+    padding-top:3px;     
+    width: calc(100%);
+    max-height: 70px; 
+    margin: 0px;    
+    margin-top:20px;
+    margin-bottom:10px;
+}
+
+.musician-avatar {
+    margin-top:5px;
+    margin-left: -4px;
+}
+  
+/* Ajuste de tipografía para la tarjeta del músico */
+ion-item h2 {
+  font-size: 1rem;
+  margin: 0;
+}
+
+ion-item p {
+  font-size: 0.75rem;
+  color: gray;
+  margin: 0;
+}
+
+/* Contenedor para las marchas */
+.marches-container {
+  margin-top: 12px;
+}
+
+/* Tarjetas de marchas con animación, gradiente rojo-morado y efecto hover */
+.march-card {
+  margin-left:3px;
+  margin-right:4px;
+  margin-bottom: 12px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08);
+  animation: fadeIn 0.5s ease-in-out;
+  transition: transform 0.2s;
+}
+
+/*.march-card:hover {
+  transform: translateY(-3px);
+}*/
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Encabezado de cada marcha con gradiente rojo-morado y tipografía reducida */
+.march-card-header {
+  //background: linear-gradient(90deg, #B22222, #8B008B);
+  background-color: #ebebeb; 
+  background: #ebebeb; 
+  color: #fff;
+  padding: 8px 12px;
+  text-align: center;
+}
+
+.march-card-header ion-card-title {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.custon-ion-card-content {
+    padding-bottom:4px;
+    padding-left:10px;
+    padding-right:10px;
+}
+
+/* Lista de solos con separación y efecto hover */
+.solos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 6px 0;
+}
+
+.solo-item {    
+  display: flex;
+  align-items: center;
+  padding: 6px 8px;
+  border-radius: 6px;
+  //background: rgba(139, 0, 139, 0.1);
+  background: #f9f9f9;  
+  //background: #A5D6A7 ;
+  // border gris un poco mas oscuro
+  border: 1px solid #d9d9d9;
+  transition: background 0.3s ease;
+}
+
+.solo-item-suplente {
+    display: flex;
+    align-items: center;
+    padding: 6px 8px;
+    border-radius: 6px;
+    border: 1px solid #d9d9d9;
+    transition: background 0.3s ease;
+    background: #f9f9f9;
+    //background-color: #FFCDD2; /* Lavanda claro */
+    //color: #6A1B9A; /* Púrpura oscuro */
+  }
+
+/*.solo-item:hover {
+  background: rgba(139, 0, 139, 0.2);
+}*/
+
+.solo-icon {
+  margin-right: 8px;
+  color: #8B008B;
+  font-size: 1rem;
+}
+
+.solo-text {
+  font-size: 0.85rem;
+  //color: #333;
+  color: green;
+  text-transform: capitalize;
+}
+
+.solo-text-suplente {
+    font-size: 0.85rem;
+    color: red;
+    text-transform: capitalize;
+}
+
+/* Botón de volver con espacio superior reducido */
+.button-back {
+  margin-top: 16px;
+}
+
+.no-data-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 150px;
+    text-align: center;
+    color: #888;
+}
+  
+.no-data-icon {
+    font-size: 148px;
+    color: #ff9800; 
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+  
+.no-data-text {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    color: #333;
+}

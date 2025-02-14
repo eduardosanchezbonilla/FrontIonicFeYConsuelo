@@ -161,8 +161,7 @@ export class ModalEditRepertoireMarchComponent implements OnInit {
         const finish = this.store.selectSnapshot(RepertoireMarchTypeState.finish);          
         if(finish){
           const errorStatusCode = this.store.selectSnapshot(RepertoireMarchTypeState.errorStatusCode);          
-          const errorMessage = this.store.selectSnapshot(RepertoireMarchTypeState.errorMessage); 
-          console.log(errorStatusCode);
+          const errorMessage = this.store.selectSnapshot(RepertoireMarchTypeState.errorMessage);           
           if(errorStatusCode==200){
             this.repertoireMarchTypes = this.store.selectSnapshot(RepertoireMarchTypeState.repertoireMarchTypes).map(({ image, ...rest }) => rest);            
             this.initSearchTypesFinish = true;    

@@ -100,7 +100,7 @@ export class ModalEditRepertoireMarchSoloistComponent implements OnInit {
               }    
               // volvamos en el array de musicians los musiccos sin agrupar (tenemos que filtrar grupos sin musicos)              
               this.musicians = this.musiciansGroupByVoice
-                                        .filter(group => group.voice.name.indexOf("1") >-1)
+                                        .filter(group => group.voice.name.indexOf("1") >-1 || group.voice.name.indexOf("BOMBAR") >-1)
                                         .filter(({ musicians }) => musicians && musicians.length > 0)
                                         .map(({ musicians }) => musicians).reduce((acc, val) => acc.concat(val), []);
               this.initSearchMusiciansFinish = true;     
@@ -128,6 +128,22 @@ export class ModalEditRepertoireMarchSoloistComponent implements OnInit {
   confirm(){
     this.repertoireMarch.categoryId = this.repertoireMarch.category.id;
     this.repertoireMarch.typeId = this.repertoireMarch.type.id;
+
+    // recorremos todos los solos y solistas, para ir actualizando el orden, acorde a la posicion en el array
+    this.repertoireMarch.repertoireMarchSolos.forEach((solo, index) => {
+      solo.order = index + 1;
+      if(solo.mainSoloists && solo.mainSoloists.length > 0){
+        solo.mainSoloists.forEach((soloist, idx) => {
+          soloist.order = idx + 1;
+        });
+      }
+      if(solo.secondarySoloists && solo.secondarySoloists.length > 0){
+        solo.secondarySoloists.forEach((soloist, idx) => {
+          soloist.order = idx + 1;
+        });
+      }
+    });
+    
     this.modalController.dismiss(this.repertoireMarch, 'confirm');
   }
 
