@@ -29,3 +29,8 @@ export class GetVideoCategoryImage {
   static readonly type = '[VideoCategory] GetVideoCategoryImage';
   constructor(public payload: {id:number}) { }
 }
+
+export class GetVideoCategoriesGroupByYear {
+  static readonly type = '[VideoCategory] Get VideoCategoriesGroupByYear';
+  constructor(public payload: {onlyPublic: boolean}) { }
+}

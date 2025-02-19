@@ -79,7 +79,9 @@
               <ion-item lines="none" class="musician-ion-item">
                 <ion-avatar slot="start" class="musician-avatar">                  
                   <ion-img 
-                    [src]="musician.image ? 'data:image/jpeg;base64,' + musician.image : 'data:image/jpeg;base64,' + defaultMusicianImage">
+                    [src]="musician.image ? 'data:image/jpeg;base64,' + musician.image : 'data:image/jpeg;base64,' + defaultMusicianImage"
+                    (click)="profile === 'SUPER_ADMIN' || profile === 'ADMIN' ? viewMusicianImage(musician) : null"
+                  >
                   </ion-img>                              
                 </ion-avatar>
                 <ion-label class="musician-card-label">

@@ -23,10 +23,65 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
-  <ion-searchbar [(ngModel)]="filter.name" (ionChange)="onSearchTextChanged($event)" placeholder="Buscar"></ion-searchbar>
-
+  <div *ngIf="profile=='SUPER_ADMIN' || profile=='ADMIN'" class="searchbar-container">
+    <ion-searchbar 
+      [(ngModel)]="filter.name"
+      (ionChange)="onSearchTextChanged($event)"
+      placeholder="Buscar" 
+      class="custom-searchbar"
+    >
+    </ion-searchbar>
   
-  <ion-accordion-group #accordionGroup [multiple]="true" [value]="expandVideoCategoryList" (ionChange)="accordionGroupChange($event)">
+    <ion-item lines="none" class="custom-checkbox-item">     
+      <div class="custom-checkbox-item-div">
+        <ion-checkbox slot="start" [(ngModel)]="editMode" (ionChange)="onEditMode($event)" class="custom-checkbox"></ion-checkbox>
+        <ion-label>Ver modo edición</ion-label>
+      </div>   
+    </ion-item>
+  </div>
+
+  <!-- loop="true" -->
+  <ng-container *ngIf="!editMode && videoCategoriesGroupByYear && videoCategoriesGroupByYear.length > 0">
+
+    <ion-item-group *ngFor="let yearGroup of videoCategoriesGroupByYear; let i = index">
+
+      <ion-item slot="header" >                   
+        <ion-item-divider class="ion-no-padding anyo-header">
+          <ion-avatar slot="start" class="anyo-avatar">
+            <ion-img 
+              [src]="'data:image/jpeg;base64,' + defaultAnyoImage"                  
+            >
+            </ion-img>              
+          </ion-avatar>
+          <ion-label class="anyo-header-label">
+            {{ yearGroup.year }}
+          </ion-label>                
+        </ion-item-divider>
+      </ion-item>
+
+      <swiper-container        
+        autoplay-delay="3000"
+        autoplay-disable-on-interaction="false"
+        slides-per-view="1"
+        [pagination]="{ clickable: true, type: 'progressbar' }"
+        (swiperslidechange)="onSlideChange($event)"
+      >
+        <swiper-slide *ngFor="let videoGroupByCategory of yearGroup.categories" (click)="openVideoCategoryModal(videoGroupByCategory)">
+          <ion-card class="slide-card">
+            <ion-img 
+              [src]="videoGroupByCategory.image ? 'data:image/jpeg;base64,' + videoGroupByCategory.image : 'data:image/jpeg;base64,' + defaultVideoCategoryImage"
+              alt="Gallery Image"
+            ></ion-img>            
+            <ion-card-content class="custom-card-content">
+              {{ videoGroupByCategory.name }}
+            </ion-card-content>
+          </ion-card>
+        </swiper-slide>
+      </swiper-container>
+    </ion-item-group>
+  </ng-container>
+
+  <ion-accordion-group *ngIf="editMode" #accordionGroup [multiple]="true" [value]="expandVideoCategoryList" (ionChange)="accordionGroupChange($event)">
 
     <ion-list *ngFor="let videoGroupByCategory of videosGroupByCategory; trackBy: trackByVideoCategoryFn" class="ion-no-padding background-transparent" >
 
@@ -112,7 +167,7 @@
   <div class="spacer-super-small"></div>  
  
   <!-- botones finales -->    
-  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+  <ion-fab *ngIf="profile=='SUPER_ADMIN' || profile=='ADMIN'" slot="fixed" vertical="bottom" horizontal="end">
     <ion-fab-button>
       <ion-icon name="apps-outline"></ion-icon>
     </ion-fab-button>  

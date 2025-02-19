@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule,CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -17,6 +17,7 @@ import { ModalVideoComponent } from './component/modal-video/modal-video.compone
 import { ModalVideoCategoryComponent } from './component/modal-video-category/modal-video-category.component';
 import { ModalViewCategoryImageComponent } from './component/modal-view-category-image/modal-view-category-image.component';
 import { CameraService } from '../services/camera/camera.service';
+import { ModalViewCategoryVideosComponent } from './component/modal-view-category-videos/modal-view-category-videos.component';
 
 @NgModule({
   imports: [
@@ -32,12 +33,14 @@ import { CameraService } from '../services/camera/camera.service';
     ModalViewVideoComponent,
     ModalVideoComponent,
     ModalVideoCategoryComponent,
-    ModalViewCategoryImageComponent
+    ModalViewCategoryImageComponent,
+    ModalViewCategoryVideosComponent
   ],
   providers:[
     VideoCategoryService,
     VideoService,
     CameraService
-  ]
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class MenuMultimediaPageModule {}

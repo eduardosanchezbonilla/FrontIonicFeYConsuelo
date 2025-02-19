@@ -14,6 +14,10 @@ import { UsersState } from './state/user/users.state';
 import { UserResponse } from './models/user/user-response';
 import { NotificationData } from './models/notification/NotificationData';
 
+// Importa y registra los componentes web de Swiper
+import { register } from 'swiper/element/bundle';
+register();
+
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',

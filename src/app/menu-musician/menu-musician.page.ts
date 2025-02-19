@@ -1,7 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { AlertController, IonItemSliding, ModalController } from '@ionic/angular';
 import { Select, Store } from '@ngxs/store';
-import { CreateMusician,DeleteMusician,GetMusiciansGroupByVoice,ResetMusician,UpdateMusician} from '../state/musician/musician.actions';
+import { CreateMusician,DeleteMusician,GetMusician,GetMusicianFromDni,GetMusiciansGroupByVoice,ResetMusician,UpdateMusician} from '../state/musician/musician.actions';
 import { MusicianState } from '../state/musician/musician.state';
 import { ToastService } from '../services/toast/toast.service';
 import { Musician } from '../models/musician/musician';
@@ -27,6 +27,8 @@ import { CreateMusicianEvent, DeleteMusicianEvent } from '../state/musicien-even
 import { MusicianEventState } from '../state/musicien-event/musician-event.state';
 import { MusicianEvent } from '../models/musician-event/musician-event';
 import { ModalMusicianMarchSoloComponent } from './components/modal-musician-march-solo/modal-musician-march-solo.component';
+import { VideoCategory } from '../models/video-category/video-category';
+import { ModalViewCategoryImageComponent } from '../menu-multimedia/component/modal-view-category-image/modal-view-category-image.component';
 
 @Component({
   selector: 'app-menu-musician',
@@ -686,6 +688,41 @@ export class MenuMusicianPage implements OnDestroy {
 
   onViewUnregistred(event: any){    
     this.filterMusicians();           
+  }
+
+  async viewMusicianImage(musician: Musician){    
+    if(!musician.image){
+      this.toast.presentToast("No existe imagen para previsualizar");
+    }
+    else{
+      await this.loadingService.presentLoading('Loading...');    
+      this.store.dispatch(new GetMusician({id:musician.id}))
+        .subscribe({
+          next: async ()=> {
+            const finish = this.store.selectSnapshot(MusicianState.finish);          
+            const errorStatusCode = this.store.selectSnapshot(MusicianState.errorStatusCode);          
+            
+            if(finish){                        
+              if(errorStatusCode==200){                                        
+                let videoCategory = new VideoCategory();
+                videoCategory.name = 'Foto músico';
+                videoCategory.image = this.store.selectSnapshot(MusicianState.musician).image;
+                
+                const modal = await this.modalController.create({
+                  component: ModalViewCategoryImageComponent,
+                  componentProps: { videoCategory, loadImage: false },
+                });
+
+                await modal.present();       
+              }
+              else{
+                this.dismissInitialLoading();                 
+              }                                                
+            }      
+          }
+        }
+      )
+    }      
   }
 
   /*******************************************************/

@@ -2,9 +2,11 @@ import { Injectable } from '@angular/core';
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { VideoCategory } from 'src/app/models/video-category/video-category';
 import { VideoCategoryService } from 'src/app/services/video-category/video-category.service';
-import { CreateVideoCategory, DeleteVideoCategory, GetVideoCategories, GetVideoCategoryImage, ResetVideoCategory, UpdateVideoCategory } from './video-category.actions';
+import { CreateVideoCategory, DeleteVideoCategory, GetVideoCategories, GetVideoCategoriesGroupByYear, GetVideoCategoryImage, ResetVideoCategory, UpdateVideoCategory } from './video-category.actions';
+import { VideoCategoryGroupByYear } from 'src/app/models/video-category/video-category-group-by-year';
 
 export class VideoCategoryStateModel {
+  public videoCategoriesGroupByYear: VideoCategoryGroupByYear[];
   public videoCategories: VideoCategory[];
   public videoCategory: VideoCategory;
   finish: boolean;
@@ -14,6 +16,7 @@ export class VideoCategoryStateModel {
 }
 
 const defaults = {
+  videoCategoriesGroupByYear: [],
   videoCategories: [],
   videoCategory: null,
   finish: false,
@@ -42,6 +45,12 @@ export class VideoCategoryState {
   static finish(state:VideoCategoryStateModel):boolean {
     return state.finish;
   }
+
+  @Selector()
+  static videoCategoriesGroupByYear(state:VideoCategoryStateModel):VideoCategoryGroupByYear[] {
+    return state.videoCategoriesGroupByYear;
+  }
+
   
   @Selector()
   static videoCategories(state:VideoCategoryStateModel):VideoCategory[] {
@@ -240,6 +249,36 @@ export class VideoCategoryState {
             finish: true,
             success: false,
             videoCategory: new VideoCategory(),
+            errorStatusCode: error.status,
+            errorMessage: error.message
+          })
+        }
+      );
+  }
+
+  @Action(GetVideoCategoriesGroupByYear)
+  getVideoCategoriesGroupByYear(
+      { patchState }: StateContext<VideoCategoryStateModel>,
+      { payload }: GetVideoCategoriesGroupByYear
+  ) {
+    return this.videoCategoryService.getVideoCategoriesGroupByYear(payload.onlyPublic)
+      .then(
+          (videoCategoriesGroupByYear:VideoCategoryGroupByYear[]) => {
+            patchState({
+              finish: true,
+              success: true,
+              videoCategoriesGroupByYear: videoCategoriesGroupByYear,
+              errorStatusCode: 200,
+              errorMessage: null
+            })
+          }
+      )
+      .catch(
+        async (error) => {          
+          patchState({
+            finish: true,
+            success: false,
+            videoCategoriesGroupByYear: [],
             errorStatusCode: error.status,
             errorMessage: error.message
           })

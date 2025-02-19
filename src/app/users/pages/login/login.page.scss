@@ -59,4 +59,43 @@ span[_rrss] {
 	font-size: 0.9rem;
 	color:var(--ion-color-primary);; 
 }
+
+.login-content {
+	position: relative;
+	width: 100%;
+	height: 100%;
   
+	.background-video {
+		position: fixed;  /* Fija el video al viewport */
+		top: 0;
+		left: 0;
+		width: 100vw;  /* 100% del ancho de la ventana */
+		height: 100vh; /* 100% de la altura de la ventana */
+		object-fit: cover;
+		opacity: 0.25;  // Ajusta el valor entre 0 y 1
+		z-index: -1;
+		pointer-events: none; /* Evita interacciones con el video */
+	}
+  
+	.login-form {
+	  position: relative;
+	  z-index: 1;       // Coloca el formulario sobre el video
+	  color: #fff;      // Cambia el color del texto para que sea legible
+	  padding: 20px;
+  
+	  h1 {
+		text-align: center;
+		margin-bottom: 20px;
+	  }
+	}
+}
+
+.background-overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: #f0f0f0;;
+	z-index: -2; 
+}

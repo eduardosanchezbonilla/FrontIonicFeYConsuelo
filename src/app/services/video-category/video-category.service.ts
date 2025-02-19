@@ -3,6 +3,7 @@ import { StorageService } from 'src/app/services/storage/storage.service';
 import { Http } from '@capacitor-community/http';
 import { environment } from 'src/environments/environment';
 import { VideoCategory } from 'src/app/models/video-category/video-category';
+import { VideoCategoryGroupByYear } from 'src/app/models/video-category/video-category-group-by-year';
 
 @Injectable()
 export class VideoCategoryService {
@@ -193,6 +194,51 @@ export class VideoCategoryService {
         return Promise.reject({
           status: response.status,
           message: response.data?.message || 'Error al obtener el la imagen de la categoria'
+        });
+      }    
+    })
+    .catch((error) => {    
+      if(error.status){
+        return Promise.reject(error);
+      }
+      else {
+        return Promise.reject({
+          status: 403,
+          message: null
+        });                
+      }           
+    });
+  }
+
+  async getVideoCategoriesGroupByYear(onlyPublic:boolean){
+    const token = await this.storage.getItem('token');  
+    return Http.get(
+      {
+        url:environment.host + '/video-category/group-by-year',
+        params:{
+          'onlyPublic':onlyPublic.toString()
+        },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        }
+      }
+    ).then(async response => {     
+      const newToken = response.headers['Authorization'] || response.headers['authorization'];      
+      if(newToken){        
+        await this.storage.setItem('token', newToken.replace('Bearer ', ''));
+      }     
+      if(response.status==200 ){
+        const data = await response.data as VideoCategoryGroupByYear[];
+        return data;
+      }
+      else if(response.status==204){
+        return [];
+      }
+      else{                
+        return Promise.reject({
+          status: response.status,
+          message: response.data?.message || 'Error al obtener el listado de categorias de videos'
         });
       }    
     })

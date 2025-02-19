@@ -10,7 +10,7 @@ import { StorageService } from '../services/storage/storage.service';
 import { UserGroupByRole } from '../models/user/user-group-by-role';
 import { FilterUsers } from '../models/user/filter-users';
 import { DEFAULT_ROLE_IMAGE, DEFAULT_USER_IMAGE } from '../constants/constants';
-import { CreateUser, DeleteUser, GetUsersGroupByRole, ResetPasswordUser, ResetUser, UpdateUserDetail, UpdateUserRoles } from '../state/user/users.actions';
+import { CreateUser, DeleteUser, GetUser, GetUsersGroupByRole, ResetPasswordUser, ResetUser, UpdateUserDetail, UpdateUserRoles } from '../state/user/users.actions';
 import { User } from '../models/user/user';
 import { ModalUserComponent } from './components/modal-user/modal-user.component';
 import { UserRequest } from '../models/user/user-request';
@@ -20,6 +20,8 @@ import { ModalResetPasswordComponent } from './components/modal-reset-password/m
 import { GetMusicianFromDni, UpdateMusician } from '../state/musician/musician.actions';
 import { MusicianState } from '../state/musician/musician.state';
 import { Musician } from '../models/musician/musician';
+import { VideoCategory } from '../models/video-category/video-category';
+import { ModalViewCategoryImageComponent } from '../menu-multimedia/component/modal-view-category-image/modal-view-category-image.component';
 
 @Component({
   selector: 'app-menu-user',
@@ -674,6 +676,41 @@ export class MenuUserPage implements OnDestroy {
       return '';
     }    
     return `${lastAccess}`;
+  }
+
+  async viewUserImage(user: User){    
+    if(!user.userDetail.image){
+      this.toast.presentToast("No existe imagen para previsualizar");
+    }
+    else{
+      await this.loadingService.presentLoading('Loading...');    
+      this.store.dispatch(new GetUser({username:user.username}))
+        .subscribe({
+          next: async ()=> {
+            const finish = this.store.selectSnapshot(UsersState.finish);          
+            const errorStatusCode = this.store.selectSnapshot(UsersState.errorStatusCode);          
+            
+            if(finish){                        
+              if(errorStatusCode==200){                                        
+                let videoCategory = new VideoCategory();
+                videoCategory.name = 'Foto usuario';
+                videoCategory.image = this.store.selectSnapshot(UsersState.user).image;
+                
+                const modal = await this.modalController.create({
+                  component: ModalViewCategoryImageComponent,
+                  componentProps: { videoCategory, loadImage: false },
+                });
+
+                await modal.present();       
+              }
+              else{
+                this.dismissInitialLoading();                 
+              }                                                
+            }      
+          }
+        }
+      )
+    }      
   }
 
 }

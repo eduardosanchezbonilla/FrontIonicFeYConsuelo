@@ -1,0 +1,48 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="medium" (click)="cancel()">Cancelar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="spacer-super-small"></div>
+  <div class="spacer-super-small"></div>
+
+  <h2 *ngIf="category" class="fancy-title custom-modal-title">
+    {{ category.name }}
+  </h2>
+
+  <!---------------------------->
+  <!------ Para cada video ----->
+  <!---------------------------->  
+  <ng-container *ngIf="videos && videos.length>0">    
+      <ion-grid class="video-grid">            
+        <ion-row>                           
+          <ion-col size="6" class="column-padding" *ngFor="let video of videos;trackBy: trackByVideoFn">
+            <ion-card class="video-card small-card" (click)="viewVideo(video,video.youtubeId)">     
+              <ion-img [src]="'https://img.youtube.com/vi/' + video.youtubeId + '/mqdefault.jpg'"></ion-img>
+              <ion-card-header>
+                <ion-card-title>{{ video.name }}</ion-card-title>
+              </ion-card-header>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      </ion-grid>    
+  </ng-container>
+
+  <ion-button 
+    type="button" 
+    (click)="cancel()" 
+    color="primary" 
+    expand="block" 
+    class="button-back"
+  >
+    <ion-icon name="return-up-back-outline" slot="start"></ion-icon>    
+    Volver
+  </ion-button>
+
+  <div class="spacer"></div>
+
+</ion-content>

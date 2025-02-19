@@ -60,7 +60,9 @@
                 <div class="avatar-container">
                   <ion-avatar class="user-avatar">                  
                     <ion-img 
-                      [src]="user.userDetail.image ? 'data:image/jpeg;base64,' + user.userDetail.image : 'data:image/jpeg;base64,' + defaultUserImage">
+                      [src]="user.userDetail.image ? 'data:image/jpeg;base64,' + user.userDetail.image : 'data:image/jpeg;base64,' + defaultUserImage"
+                      (click)="profile === 'SUPER_ADMIN' || profile === 'ADMIN' ? viewUserImage(user) : null"
+                    >
                     </ion-img>                              
                   </ion-avatar>
                   <!-- Punto Verde Indicador -->

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { AuthDto } from '../../../models/user/auth-dto';
 import { Store } from '@ngxs/store';
 import { ChangeExpiredPassword, Login, UpdateFirebaseToken, UpdateLassAccessDate, UpdateUserPassword } from '../../../state/user/users.actions';
@@ -21,7 +21,7 @@ import { MusicianState } from 'src/app/state/musician/musician.state';
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
 })
-export class LoginPage {
+export class LoginPage implements OnDestroy{
 
   public auth: AuthDto;
   public showChangeExpiredPassword: boolean;
@@ -51,6 +51,15 @@ export class LoginPage {
   }
 
   async ionViewWillEnter(){
+
+    const videoElement = document.getElementById('loginVideo') as HTMLVideoElement;
+    if (videoElement) {
+      videoElement.muted = true;
+      videoElement.setAttribute('muted', ''); // Asegurar compatibilidad
+      videoElement.removeAttribute('controls'); // Desactivar controles
+      videoElement.play();
+    }
+
     this.showCurrentPassword = false;
     this.showNewPassword = false;
     this.showRepeatNewPassword = false;
@@ -78,6 +87,22 @@ export class LoginPage {
         this.rememberMe = false;
       }
 
+    }
+  }
+
+  ngOnDestroy() {    
+      this.doDestroy();
+  }
+  
+  async ionViewDidLeave(){
+    this.doDestroy();
+  }
+
+  private doDestroy(){
+    console.log("ngOnDestroy login");
+    const videoElement = document.getElementById('loginVideo') as HTMLVideoElement;
+    if (videoElement) {
+      videoElement.pause(); // Pausar el video al salir de la pantalla
     }
   }
 

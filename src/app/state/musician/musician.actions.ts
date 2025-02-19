@@ -40,3 +40,8 @@ export class GetMusicianFromDni {
   static readonly type = '[Musicians] Get GetMusicianFromDni';
   constructor(public payload: {dni:string}) { }
 }
+
+export class GetMusician {
+  static readonly type = '[Musicians] Get GetMusician';
+  constructor(public payload: {id:number}) { }
+}
