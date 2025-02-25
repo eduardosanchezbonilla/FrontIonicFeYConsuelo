@@ -1,0 +1,82 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="medium" (click)="cancel()">Cancelar</ion-button>
+    </ion-buttons>    
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-no-padding">
+
+  <!-- Buscador -->
+  <div class="search-container">
+    <input type="text" id="search-input" placeholder="Buscar ubicación..." />
+    <button (click)="searchLocation()">Buscar</button>
+  </div>
+
+  <!-- Mapa -->
+  <div id="map" style="height: 100%; width: 100%;"></div>
+
+  <!-- Botones -->    
+  <ion-fab #fabRoutes  slot="fixed" vertical="bottom" horizontal="end" *ngIf="profile=='SUPER_ADMIN' || profile=='ADMIN'">
+    <ion-fab-button>
+      <div class="fab-content">
+        <ion-icon name="apps-outline"></ion-icon>    
+      </div>
+    </ion-fab-button>  
+  
+    <ion-fab-list side="start">            
+      <ion-fab-button class="buttons-fab"  color="warning" (click)="saveRoute()">
+        <div class="fab-content">
+          <ion-icon name="save-outline" class="fab-button-icon"></ion-icon>
+          <span>Guardar</span>
+        </div>
+      </ion-fab-button>
+
+      <ion-fab-button class="buttons-fab" color="warning" (click)="cleanRoute()">
+        <div class="fab-content">
+          <ion-icon name="trash-outline" class="fab-button-icon"></ion-icon>
+          <span>Limpiar</span>
+        </div>
+      </ion-fab-button>
+
+      <ion-fab-button class="buttons-fab" color="warning" (click)="sendLocation()">
+        <div class="fab-content">
+          <ion-icon name="navigate-outline" class="fab-button-icon"></ion-icon>
+          <span>Enviar</span>
+        </div>
+      </ion-fab-button>
+
+      <ion-fab-button class="buttons-fab" color="warning" (click)="cleanLocation()">
+        <div class="fab-content">
+          <ion-icon name="navigate-circle-outline" class="fab-button-icon"></ion-icon>
+          <span>Limpiar</span>
+        </div>
+      </ion-fab-button>
+
+      <ion-fab-button *ngIf="!trackingSending" class="buttons-fab" color="danger" (click)="startSendingPosition()">
+        <div class="fab-content">
+          <ion-icon name="locate-outline" class="fab-button-icon"></ion-icon>
+          <span>Start Track</span>
+        </div>
+      </ion-fab-button>
+
+      <ion-fab-button *ngIf="trackingSending" class="buttons-fab" color="success" (click)="stopSendingPosition()">
+        <div class="fab-content">
+          <ion-icon name="locate-outline" class="fab-button-icon"></ion-icon>
+          <span>Stop Track</span>
+        </div>
+      </ion-fab-button>
+
+    </ion-fab-list>
+  </ion-fab>
+
+  <ion-fab slot="fixed" vertical="bottom" horizontal="start" *ngIf="profile=='SUPER_ADMIN' || profile=='ADMIN'">
+    <ion-fab-button fill="solid" class="buttons-fab-1" color="success" (click)="cleanLocation()">
+      <div class="fab-content musician-total-header-fab-text">
+        {{kilometersRoute}} km
+      </div>
+    </ion-fab-button>
+  </ion-fab>
+
+</ion-content>

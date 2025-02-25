@@ -1,3 +1,5 @@
+import { LatLng } from "../route-event/latLng";
+import { RouteEvent } from "../route-event/route-event";
 import { Voice } from "../voice/voice";
 
 export class Event {
@@ -21,6 +23,8 @@ export class Event {
     musicianBus?: boolean;
     musicianAssist?: boolean;
     displacementBus?: boolean;
+    route: RouteEvent;
+    currentPosition: LatLng;
 
     constructor(
         id: number, 

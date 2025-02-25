@@ -163,10 +163,15 @@
 
     <!-- TARJETA PARA LA LISTA DE ASISTENCIA DE MÚSICOS -->
     <ion-card class="attendance-card background-white" *ngIf="(profile === 'SUPER_ADMIN' || profile === 'ADMIN') && eventListResponse?.events?.length > 0 && eventListResponse?.musiciansAssistInformation?.length > 0"> 
-      <ion-card-header>
-        <ion-card-title>Asistencia de Músicos ({{strSelectedMonth}})</ion-card-title>
+
+      <ion-card-header (click)="toggleCard('musicians')" class="custom-ion-card-header">
+        <ion-card-title class="custom-ion-card-title">
+          Asistencia de Músicos ({{strSelectedMonth}})
+          <ion-icon [name]="expandedCard === 'musicians' ? 'chevron-up' : 'chevron-down'" class="custom-ion-icon"></ion-icon>
+        </ion-card-title>
       </ion-card-header>
-      <ion-card-content class="custom-ion-card-content-musician-list">
+
+      <ion-card-content *ngIf="expandedCard === 'musicians'" class="custom-ion-card-content-musician-list">
         <ion-list class="ion-no-padding musician-ion-list">
           <!-- Tarjeta de cada músico -->
           <ion-card *ngFor="let musician of eventListResponse.musiciansAssistInformation" class="musician-card">
@@ -182,6 +187,44 @@
             <ion-progress-bar 
               [value]="musician.musicianPercentageAssistsRehearsal / 100" 
               [color]="getProgressColorMusicianPercentageAssistEvents(musician.musicianPercentageAssistsRehearsal)"
+              class="musician-progress-bar">
+            </ion-progress-bar>
+          </ion-card>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- TARJETA PARA LA LISTA DE MARCHAS ENSAYADAS -->
+    <ion-card class="attendance-card background-white" *ngIf="(profile === 'SUPER_ADMIN' || profile === 'ADMIN') && eventListResponse?.events?.length > 0 && eventListResponse?.repertoireMarchEventStatistic?.length > 0"> 
+
+      <ion-card-header (click)="toggleCard('marches')" class="custom-ion-card-header">
+        <ion-card-title class="custom-ion-card-title">
+          Marchas ensayadas ({{strSelectedMonth}})
+          <ion-icon [name]="expandedCard === 'marches' ? 'chevron-up' : 'chevron-down'" class="custom-ion-icon"></ion-icon>
+        </ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content *ngIf="expandedCard === 'marches'" class="custom-ion-card-content-musician-list">
+        <ion-list class="ion-no-padding musician-ion-list">
+          <!-- Tarjeta de cada músico -->
+          <ion-card *ngFor="let march of eventListResponse.repertoireMarchEventStatistic" class="musician-card">
+            <ion-item lines="none" class="musician-ion-item ion-no-padding">
+              <ion-avatar slot="start" class="type-avatar">
+                <ion-img 
+                  [src]="march.typeImage ? 'data:image/jpeg;base64,' + march.typeImage : 'data:image/jpeg;base64,' + defaultRepertoireMarchTypeImage">
+                </ion-img>              
+              </ion-avatar>   
+              <ion-label class="musician-ion-label">
+                <h2 class="musician-name initcap">{{ march.marchName | lowercase }} </h2>
+              </ion-label>
+              <ion-note class="musician-ion-note" slot="end" [color]="getProgressColorMusicianPercentageAssistEvents(march.percentage)">
+                {{ march.quantity }} {{ march.quantity === 1 ? 'vez' : 'veces' }}
+              </ion-note>
+            </ion-item>
+            <!-- Barra de Progreso -->
+            <ion-progress-bar 
+              [value]="march.percentage / 100" 
+              [color]="getProgressColorMusicianPercentageAssistEvents(march.percentage)"
               class="musician-progress-bar">
             </ion-progress-bar>
           </ion-card>
@@ -295,7 +338,13 @@
                 </ion-item>
               </ion-card> 
               
-              <ion-item-options *ngIf="profile=='SUPER_ADMIN' || profile=='ADMIN'">
+              <ion-item-options *ngIf="(profile=='SUPER_ADMIN' || profile=='ADMIN')">
+                <ion-item-option *ngIf="performance.performanceType!=='CONCIERTO'" color="route-custom" (click)="showEventRoute(performance, performanceSliding)" >
+                  <div class="option-content">
+                    <ion-icon class="large-icon" color="light" slot="icon-only" name="map-outline"></ion-icon>
+                    <span class="option-text">Recorrido</span>
+                  </div>                  
+                </ion-item-option>   
                 <ion-item-option color="formation-custom" (click)="showFormationRepertoire(performance, performanceSliding)" >
                   <div class="option-content">
                     <ion-icon class="large-icon" color="light" slot="icon-only" name="keypad-outline"></ion-icon>
@@ -353,6 +402,14 @@
           <span>Actuación</span>
         </div>
       </ion-fab-button>
+
+      <ion-fab-button class="buttons-fab" *ngIf="viewCalendar && (profile=='SUPER_ADMIN' || profile=='ADMIN')" color="warning" (click)="openModalStats()">
+        <div class="fab-content">
+          <ion-icon name="stats-chart-outline" class="fab-button-icon"></ion-icon>
+          <span>Estadísticas</span>
+        </div>
+      </ion-fab-button>
+
 
       <ion-fab-button class="buttons-fab" *ngIf="viewPerformance && (profile=='SUPER_ADMIN' || profile=='ADMIN')" color="warning" (click)="expandAll()">
         <div class="fab-content">

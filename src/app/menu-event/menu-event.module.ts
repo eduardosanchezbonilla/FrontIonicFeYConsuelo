@@ -28,6 +28,9 @@ import { MusicianService } from '../services/musician/musician.service';
 import { MusicianState } from '../state/musician/musician.state';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MusicianSelectorComponent } from './component/modal-formation-event/musician-selector.component';
+import { ModalStatsComponent } from './component/modal-stats/modal-stats.component';
+import { ModalRouteEventComponent } from './component/modal-route-event/modal-route-event.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   imports: [
@@ -38,8 +41,18 @@ import { MusicianSelectorComponent } from './component/modal-formation-event/mus
     CalendarModule,
     DragDropModule,
     NgxsModule.forFeature([EventState, MusicianEventState, RepertoireMarchState, RepertoireEventState,MusicianState]),
+    HttpClientModule
   ],
-  declarations: [MenuEventPage, ModalEditEventComponent, ModalMusicianAssistanceComponent, ModalRepertoireEventComponent, ModalFormationEventComponent, MusicianSelectorComponent],
+  declarations: [
+    MenuEventPage, 
+    ModalEditEventComponent,
+    ModalMusicianAssistanceComponent,
+    ModalRepertoireEventComponent,
+    ModalFormationEventComponent,
+    MusicianSelectorComponent,
+    ModalStatsComponent,
+    ModalRouteEventComponent
+  ],
   providers:[
     EventService,
     MusicianEventService,

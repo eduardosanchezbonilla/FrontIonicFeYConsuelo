@@ -1,0 +1,189 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="medium" (click)="cancel()">Cancelar</ion-button>
+    </ion-buttons>    
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <h2 class="fancy-title custom-modal-title">
+    Estadísticas 
+  </h2>
+
+  <!-- FECHA INICIO -->
+  <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item" >
+    <ion-label color="primary" class="custom-label">Fecha inicial</ion-label>
+
+    <ion-datetime-button slot="end" datetime="datetime-start" color="primary" class="custom-datetime-button"></ion-datetime-button>      
+
+    <ion-icon name="calendar-outline" slot="end" class="custom-icon"></ion-icon>
+
+    <ion-modal #modalDatetimeStart [keepContentsMounted]="true">
+      <ng-template>
+        <ion-datetime 
+            id="datetime-start" 
+            presentation="date"
+            [(ngModel)]="startDate"
+            [ngModelOptions]="{standalone: true}"              
+            [showDefaultButtons]="true"
+            [firstDayOfWeek]="1"
+            required
+        >
+        </ion-datetime>
+      </ng-template>
+    </ion-modal>              
+  </ion-item>
+
+  <!-- FECHA FIN -->
+  <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item" >
+    <ion-label color="primary" class="custom-label">Fecha final</ion-label>
+
+    <ion-datetime-button slot="end" datetime="datetime-end" color="primary" class="custom-datetime-button"></ion-datetime-button>      
+
+    <ion-icon name="calendar-outline" slot="end" class="custom-icon"></ion-icon>
+
+    <ion-modal #modalDatetimeEnd [keepContentsMounted]="true">
+      <ng-template>
+        <ion-datetime 
+            id="datetime-end" 
+            presentation="date"
+            [(ngModel)]="endDate"
+            [ngModelOptions]="{standalone: true}"              
+            [showDefaultButtons]="true"
+            [firstDayOfWeek]="1"
+            required
+        >
+        </ion-datetime>
+      </ng-template>
+    </ion-modal>              
+  </ion-item>
+
+  <ion-button 
+    type="button" 
+    (click)="filterStatistics()" 
+    color="primary" 
+    expand="block" 
+    class="button-back"
+  >
+    <ion-icon name="stats-chart-outline" slot="start"></ion-icon>    
+    Obtener estadísticas
+  </ion-button>
+
+  <!-- ESTADÍSTICAS PARA NO MUSICOS -->    
+  <ion-card class="attendance-card background-white" *ngIf="eventListResponse && eventListResponse.events && eventListResponse.events.length>0 && eventListResponse.eventAssistStatistic && eventListResponse.eventAssistStatistic.maxDateAssitsNumber"> 
+    <ion-card-header>
+      <ion-card-title>Estadísticas de Ensayos</ion-card-title>
+    </ion-card-header>
+    <ion-card-content class="custom-ion-card-content">
+      <ion-grid>
+        <ion-row>
+          <!-- Media de asistentes al mes -->
+          <ion-col size="12" size-md="4" *ngIf="eventListResponse.eventAssistStatistic.averageAssitsPercentage !== null" class="ion-text-left">
+            <div class="statistic-container">
+              <div class="stat-header ion-align-items-start">                  
+                <ion-icon name="people" class="stat-icon success"></ion-icon>
+                <ion-text class="stat-title">Media Asistentes</ion-text>
+                <ion-text class="stat-percentage">{{ eventListResponse.eventAssistStatistic.averageAssitsPercentage }}%</ion-text>
+              </div>                
+            </div>
+          </ion-col>
+
+          <!-- Día con mayor asistencia -->
+          <ion-col size="12" size-md="4" *ngIf="eventListResponse.eventAssistStatistic.maxDateAssitsPercentage">
+            <div class="statistic-container">
+              <div class="stat-header">                  
+                <ion-icon name="trending-up" class="stat-icon success"></ion-icon>
+                <ion-text class="stat-title">Mayor Asistencia ({{ formatDate(eventListResponse.eventAssistStatistic.maxDateAssitsPercentage) }})</ion-text>
+                <ion-text class="stat-percentage">{{ eventListResponse.eventAssistStatistic.maxAssitsPercentage }}%</ion-text>
+              </div>               
+            </div>
+          </ion-col>
+
+          <!-- Día con menor asistencia -->
+          <ion-col size="12" size-md="4" *ngIf="eventListResponse.eventAssistStatistic.minDateAssitsPercentage">
+            <div class="statistic-container">
+              <div class="stat-header">                  
+                <ion-icon name="trending-down" class="stat-icon danger"></ion-icon>
+                <ion-text class="stat-title">Menor Asistencia ({{ formatDate(eventListResponse.eventAssistStatistic.minDateAssitsPercentage) }})</ion-text>
+                <ion-text class="stat-percentage">{{ eventListResponse.eventAssistStatistic.minAssitsPercentage }}%</ion-text>
+              </div>               
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- TARJETA PARA LA LISTA DE ASISTENCIA DE MÚSICOS -->
+  <ion-card class="attendance-card background-white" *ngIf="eventListResponse?.events?.length > 0 && eventListResponse?.musiciansAssistInformation?.length > 0"> 
+
+    <ion-card-header (click)="toggleCard('musicians')" class="custom-ion-card-header">
+      <ion-card-title class="custom-ion-card-title">
+        Asistencia de Músicos
+        <ion-icon [name]="expandedCard === 'musicians' ? 'chevron-up' : 'chevron-down'" class="custom-ion-icon"></ion-icon>
+      </ion-card-title>
+    </ion-card-header>
+    
+    <ion-card-content *ngIf="expandedCard === 'musicians'" class="custom-ion-card-content-musician-list">    
+      <ion-list class="ion-no-padding musician-ion-list">
+        <!-- Tarjeta de cada músico -->
+        <ion-card *ngFor="let musician of eventListResponse.musiciansAssistInformation" class="musician-card">
+          <ion-item lines="none" class="musician-ion-item ion-no-padding">
+            <ion-label class="musician-ion-label">
+              <h2 class="musician-name initcap">{{ musician.name | lowercase }} {{ musician.surname | lowercase }}</h2>
+            </ion-label>
+            <ion-note class="musician-ion-note" slot="end" [color]="getProgressColorMusicianPercentageAssistEvents(musician.musicianPercentageAssistsRehearsal)">
+              {{ musician.musicianPercentageAssistsRehearsal }}%
+            </ion-note>
+          </ion-item>
+          <!-- Barra de Progreso -->
+          <ion-progress-bar 
+            [value]="musician.musicianPercentageAssistsRehearsal / 100" 
+            [color]="getProgressColorMusicianPercentageAssistEvents(musician.musicianPercentageAssistsRehearsal)"
+            class="musician-progress-bar">
+          </ion-progress-bar>
+        </ion-card>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- TARJETA PARA LA LISTA DE MARCHAS ENSAYADAS -->
+  <ion-card class="attendance-card background-white" *ngIf="eventListResponse?.events?.length > 0 && eventListResponse?.repertoireMarchEventStatistic?.length > 0"> 
+
+    <ion-card-header (click)="toggleCard('marches')" class="custom-ion-card-header">
+      <ion-card-title class="custom-ion-card-title">
+        Marchas ensayadas
+        <ion-icon [name]="expandedCard === 'marches' ? 'chevron-up' : 'chevron-down'" class="custom-ion-icon"></ion-icon>
+      </ion-card-title>
+    </ion-card-header>
+    
+    <ion-card-content *ngIf="expandedCard === 'marches'" class="custom-ion-card-content-musician-list">
+      <ion-list class="ion-no-padding musician-ion-list">
+        <!-- Tarjeta de cada músico -->
+        <ion-card *ngFor="let march of eventListResponse.repertoireMarchEventStatistic" class="musician-card">
+          <ion-item lines="none" class="musician-ion-item ion-no-padding">
+            <ion-avatar slot="start" class="type-avatar">
+              <ion-img 
+                [src]="march.typeImage ? 'data:image/jpeg;base64,' + march.typeImage : 'data:image/jpeg;base64,' + defaultRepertoireMarchTypeImage">
+              </ion-img>              
+            </ion-avatar>   
+            <ion-label class="musician-ion-label">
+              <h2 class="musician-name initcap">{{ march.marchName | lowercase }} </h2>
+            </ion-label>
+            <ion-note class="musician-ion-note" slot="end" [color]="getProgressColorMusicianPercentageAssistEvents(march.percentage)">
+              {{ march.quantity }} {{ march.quantity === 1 ? 'vez' : 'veces' }}
+            </ion-note>
+          </ion-item>
+          <!-- Barra de Progreso -->
+          <ion-progress-bar 
+            [value]="march.percentage / 100" 
+            [color]="getProgressColorMusicianPercentageAssistEvents(march.percentage)"
+            class="musician-progress-bar">
+          </ion-progress-bar>
+        </ion-card>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>

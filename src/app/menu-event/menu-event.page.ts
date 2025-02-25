@@ -17,13 +17,15 @@ import { MusicianEventState } from '../state/musicien-event/musician-event.state
 import { ModalMusicianAssistanceComponent } from './component/modal-musician-assistance/modal-musician-assistance.component';
 import { EventGroupByAnyo } from '../models/event/event-group-by-anyo';
 import { FilterEvents } from '../models/event/filter-events';
-import { DEFAULT_ANYO_IMAGE, DEFAULT_EVENT_IMAGE } from '../constants/constants';
+import { DEFAULT_ANYO_IMAGE, DEFAULT_EVENT_IMAGE, DEFAULT_REPERTOIRE_MARCH_TYPE_IMAGE } from '../constants/constants';
 import { IonFab } from '@ionic/angular';
 import { ModalRepertoireEventComponent } from './component/modal-repertoire-event/modal-repertoire-event.component';
 import { VideoCategory } from '../models/video-category/video-category';
 import { ModalViewCategoryImageComponent } from '../menu-multimedia/component/modal-view-category-image/modal-view-category-image.component';
 import { EventListResponse } from '../models/event/event-list-response';
 import { ModalFormationEventComponent } from './component/modal-formation-event/modal-formation-event.component';
+import { ModalStatsComponent } from './component/modal-stats/modal-stats.component';
+import { ModalRouteEventComponent } from './component/modal-route-event/modal-route-event.component';
 
 @Component({
   selector: 'app-menu-event',
@@ -32,7 +34,10 @@ import { ModalFormationEventComponent } from './component/modal-formation-event/
 })
 export class MenuEventPage implements OnDestroy {
 
+  expandedCard: string | null = null;
+
   @ViewChild('fabEvents', { static: false }) fabEvents!: IonFab;
+  public defaultRepertoireMarchTypeImage: string = DEFAULT_REPERTOIRE_MARCH_TYPE_IMAGE;    
 
   public eventListResponseSubscription: Subscription;
   @Select(EventState.eventListResponse)
@@ -232,7 +237,16 @@ export class MenuEventPage implements OnDestroy {
           value: 'formation',
         }
       );
-
+    }
+    if(!this.isRehearsalDay([selectedEvent]) && selectedEvent.performanceType!=='CONCIERTO'){
+      inputs.push(
+        {
+          name: 'route',
+          type: 'radio',
+          label: 'Recorrido',
+          value: 'route',
+        }
+      );
     }
 
     const alert = await this.alertController.create({
@@ -269,6 +283,10 @@ export class MenuEventPage implements OnDestroy {
             if('formation'===selectedType){ 
               this.selectedDate = null; 
               this.formationRepertoire( selectedEvent.type,  selectedEvent, selectedDateString);              
+            }
+            if('route'===selectedType){ 
+              this.selectedDate = null; 
+              this.eventRoute( selectedEvent.type,  selectedEvent, selectedDateString);              
             }
             if('viewPerformanceImage'===selectedType){ 
               this.selectedDate = null; 
@@ -693,7 +711,7 @@ export class MenuEventPage implements OnDestroy {
     if(showLoading){
       await this.loadingService.presentLoading('Loading...');
     }       
-    this.store.dispatch(new GetEvents({startDate:startDate, endDate:endDate})).subscribe({ next: async () => { } });    
+    this.store.dispatch(new GetEvents({startDate:startDate, endDate:endDate, allEvents:true})).subscribe({ next: async () => { } });    
   }
 
   refreshEvents($event){       
@@ -1322,6 +1340,33 @@ export class MenuEventPage implements OnDestroy {
     modal.present();
   }
 
+  async showEventRoute(event: Event, userSliding: IonItemSliding){
+    // cerramos el sliding 
+    if(userSliding){
+      userSliding.close();
+    }
+
+    // abrimos la modal
+    this.eventRoute( event.type,  event, event.date);                  
+  }
+
+  async eventRoute(type:string, event: Event, date: string){
+
+    // mostramos spinner
+    await this.loadingService.presentLoading('Loading...');   
+
+    // mostramos la modal
+    const modal = await this.modalController.create({
+      component: ModalRouteEventComponent,
+      componentProps: {
+        date: date,
+        type: this.translateEventType(type),
+        event: event
+      }
+    });
+    modal.present();
+  }
+
   calculateShowStatistics(){
     let eventDate = new Date(Math.min.apply(null, this.eventListResponse.events.map(e => new Date(e.date))));
 
@@ -1358,5 +1403,33 @@ export class MenuEventPage implements OnDestroy {
 
     this.showGlobalStatistics = this.showMonthStatistics || this.showYearStatistics || this.showHistoricStatistics;        
   }
+
+  async openModalStats(){
+
+    // mostramos spinner
+    await this.loadingService.presentLoading('Loading...');   
+
+    // mostramos la modal
+    const modal = await this.modalController.create({
+      component: ModalStatsComponent,
+      componentProps: {}
+    });
+    modal.present();
+
+    const {data, role} = await modal.onWillDismiss();
+
+    if(role=='cancel'){    
+      this.filterEvents(
+        this.getFirstDayOfMonth(this.selectedMonthDate),
+        this.getLastDayOfMonth(this.selectedMonthDate)
+      );   
+    }  
+
+  }
+
+  toggleCard(card: string) {
+    this.expandedCard = this.expandedCard === card ? null : card;
+  }
+
 
 }

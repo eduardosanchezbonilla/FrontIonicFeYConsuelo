@@ -1,5 +1,7 @@
 import { Event } from "src/app/models/event/event";
 import { UpdateEventFormationRequestDto } from "src/app/models/formation-event/update-event-formation-request-dto";
+import { LatLng } from "src/app/models/route-event/latLng";
+import { RouteEvent } from "src/app/models/route-event/route-event";
 
 export class CreateEvent {
   static readonly type = '[Event] Create Event';
@@ -8,7 +10,7 @@ export class CreateEvent {
 
 export class GetEvents{
   static readonly type = '[Event] Get Event';
-  constructor(public payload: {startDate:string, endDate:string}) { }
+  constructor(public payload: {startDate:string, endDate:string,allEvents:boolean}) { }
 }
 
 export class DeleteEvent {
@@ -64,4 +66,14 @@ export class GetEvent{
 export class UpdateEventFormation {
   static readonly type = '[Event] Update EventFormation';
   constructor(public payload: {eventType:string, eventId:number, updateEventFormationRequestDto: UpdateEventFormationRequestDto}) { }
+}
+
+export class UpdateEventRoute {
+  static readonly type = '[Event] Update EventRoute';
+  constructor(public payload: {eventType:string, eventId:number, routeEvent: RouteEvent}) { }
+}
+
+export class UpdateEventCurrentPosition {
+  static readonly type = '[Event] Update EventCurrentPosition';
+  constructor(public payload: {eventType:string, eventId:number, latLng: LatLng}) { }
 }

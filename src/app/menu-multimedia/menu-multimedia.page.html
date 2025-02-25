@@ -45,7 +45,7 @@
 
     <ion-item-group *ngFor="let yearGroup of videoCategoriesGroupByYear; let i = index">
 
-      <ion-item slot="header" >                   
+      <ion-item slot="header" class="ion-no-padding">                   
         <ion-item-divider class="ion-no-padding anyo-header">
           <ion-avatar slot="start" class="anyo-avatar">
             <ion-img 
@@ -58,12 +58,14 @@
           </ion-label>                
         </ion-item-divider>
       </ion-item>
-
+      
+      <div style="width:100%; height:4px;" class="div-pagination" *ngIf="yearGroup.categories && yearGroup.categories.length==1"></div>
+      
       <swiper-container        
         autoplay-delay="3000"
         autoplay-disable-on-interaction="false"
         slides-per-view="1"
-        [pagination]="{ clickable: true, type: 'progressbar' }"
+        [pagination]="{ clickable: true, type: 'progressbar' }"                
         (swiperslidechange)="onSlideChange($event)"
       >
         <swiper-slide *ngFor="let videoGroupByCategory of yearGroup.categories" (click)="openVideoCategoryModal(videoGroupByCategory)">
@@ -77,6 +79,7 @@
             </ion-card-content>
           </ion-card>
         </swiper-slide>
+       
       </swiper-container>
     </ion-item-group>
   </ng-container>

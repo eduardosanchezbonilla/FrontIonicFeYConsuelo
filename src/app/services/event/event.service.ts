@@ -9,6 +9,8 @@ import { EventRepertoire } from 'src/app/models/event/event-repertoire';
 import { EventReportAssistance } from 'src/app/models/event/event-report-assistance';
 import { EventListResponse } from 'src/app/models/event/event-list-response';
 import { UpdateEventFormationRequestDto } from 'src/app/models/formation-event/update-event-formation-request-dto';
+import { RouteEvent } from 'src/app/models/route-event/route-event';
+import { LatLng } from 'src/app/models/route-event/latLng';
 
 @Injectable()
 export class EventService {
@@ -55,7 +57,7 @@ export class EventService {
     });
   }
 
-  async getEvents(startDate:string, endDate:string){
+  async getEvents(startDate:string, endDate:string, allEvents:boolean){
     
     const token = await this.storage.getItem('token');
     return Http.get(
@@ -63,7 +65,8 @@ export class EventService {
         url:environment.host + '/event',
         params:{
           'startDate':startDate,
-          'endDate':endDate
+          'endDate':endDate,
+          'allEvents':allEvents.toString()
         },
         headers: {
           'Content-Type': 'application/json',
@@ -431,6 +434,95 @@ export class EventService {
         return Promise.reject({
           status: response.status,
           message: response.data?.message || 'Error al modificar la formacion del evento'
+        });
+      }      
+    })
+    .catch((error) => {          
+      if(error.status){
+        return Promise.reject(error);
+      }
+      else {
+        return Promise.reject({
+          status: 403,
+          message: null
+        });                
+      }           
+    });
+  }
+
+  async updateEventRoute(
+                              eventType:string, 
+                              eventId:number, 
+                              routeEvent:RouteEvent
+                          ){
+    const token = await this.storage.getItem('token');    
+    return Http.put(
+      {
+        url:environment.host + '/event/'+ eventType + '/'+ eventId + '/route',
+        params:{},
+        data:routeEvent,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        }
+      }
+    ).then(async response => {      
+      const newToken = response.headers['Authorization'] || response.headers['authorization'];
+      if(newToken){                
+        await this.storage.setItem('token', newToken.replace('Bearer ', ''));
+      }
+      if(response.status==200){
+        return true;
+      }
+      else{                
+        return Promise.reject({
+          status: response.status,
+          message: response.data?.message || 'Error al modificar la ruta del evento'
+        });
+      }      
+    })
+    .catch((error) => {          
+      if(error.status){
+        return Promise.reject(error);
+      }
+      else {
+        return Promise.reject({
+          status: 403,
+          message: null
+        });                
+      }           
+    });
+  }
+
+
+  async updateEventCurrentPosition(
+                              eventType:string, 
+                              eventId:number, 
+                              latLng:LatLng
+                          ){
+    const token = await this.storage.getItem('token');    
+    return Http.put(
+      {
+        url:environment.host + '/event/'+ eventType + '/'+ eventId + '/current-position',
+        params:{},
+        data:latLng,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        }
+      }
+    ).then(async response => {      
+      const newToken = response.headers['Authorization'] || response.headers['authorization'];
+      if(newToken){                
+        await this.storage.setItem('token', newToken.replace('Bearer ', ''));
+      }
+      if(response.status==200){
+        return true;
+      }
+      else{                
+        return Promise.reject({
+          status: response.status,
+          message: response.data?.message || 'Error al modificar la posicion actual del evento'
         });
       }      
     })

@@ -29,5 +29,9 @@
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
     "strictTemplates": true
-  }
+  },
+  "include": [
+    "src/**/*",
+    "leaflet-draw.d.ts" // Asegúrate de que TypeScript incluya este archivo
+  ]
 }

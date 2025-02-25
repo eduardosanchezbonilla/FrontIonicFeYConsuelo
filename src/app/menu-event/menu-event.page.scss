@@ -469,7 +469,7 @@ ion-card-header {
 
 .custom-ion-card-content-musician-list {    
     padding-top: 5px !important;
-    padding-bottom: 0px !important;
+    padding-bottom: 10px !important;
 }
   
 .statistic-container {    
@@ -671,6 +671,13 @@ ion-progress-bar.color-danger {
     --ion-color-tint: #64B5F6; /* Tono claro */
 }
 
+::ng-deep ion-item-option.ion-color-route-custom {
+    --ion-color-base: #9C27B0;   /* Violeta medio */
+    --ion-color-contrast: #ffffff; /* Blanco para el contraste */
+    --ion-color-shade: #7B1FA2;    /* Violeta oscuro para la sombra */
+    --ion-color-tint: #BA68C8;     /* Violeta claro para el tono */
+}
+
 .option-content {
     display: flex;
     flex-direction: column;
@@ -694,4 +701,40 @@ ion-card-title {
     font-size: 1.1rem;
     margin-bottom: 0px;
     color:#000000;
+}
+
+.type-avatar {
+    margin-right: 0px;
+    margin-top:0px;
+    margin-bottom:0px;
+    width: 23px;
+    height: 23px;
+    border: 1px solid #000000; 
+    border-radius: 0 !important;
+    background-color: #f7f7f7; 
+}
+  
+.type-avatar ion-img {
+    border: 10px;
+    width: 100%;
+    height: 100%;
+}
+
+.custom-ion-card-header {
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom:15px;    
+  }
+
+.custom-ion-icon {
+    font-size: 20px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.custom-ion-card-title {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
 }

@@ -1,0 +1,330 @@
+.custom-modal-title {
+    margin-top:5px;
+    margin-bottom:10px;
+    color: #B22222;   
+    text-shadow: 1px 1px 2px #FFFFFF;  
+}
+
+.custom-item {
+    margin-top: 7px;  
+}
+
+.custom-label {
+    padding-bottom: 3px;  
+}
+
+ion-label.ion-color-primary {
+    color: #B22222;
+    font-size: 1rem;
+    font-weight: bold;  
+    text-shadow: 1px 1px 2px #FFFFFF; /* Sombra leve */
+}
+
+.custom-datetime-button {
+    border: 1px solid var(--ion-color-primary); 
+    border-bottom: 3px solid var(--ion-color-primary); 
+    border-radius: 8px;
+    padding: 0px 0px;  
+    margin-bottom: 5px;  
+}
+
+.custom-icon {
+    padding-bottom: 5px;  
+}
+
+// fondo del ion-datetime
+ion-datetime-button::part(native) {
+    background-color: transparent;   
+}
+
+.button-back {
+    margin-top:15px;
+    margin-bottom:15px;
+}
+
+.attendance-card {
+    margin-top: 0px;
+    margin-left: 3px;
+    margin-right: 3px;
+    --padding-start: 0px !important; 
+    --padding-end: 0px; 
+}
+
+ion-card-header {
+    //--padding-bottom: 50px !important;
+    padding-bottom: 0px !important;
+}
+
+.custom-ion-card-content {
+    padding-top: 5px !important;
+    padding-bottom: 0px !important;
+}
+
+.custom-ion-card-content-musician-list {    
+    padding-top: 5px !important;
+    padding-bottom: 10px !important;
+}
+  
+.statistic-container {    
+    width: 100%;
+    padding: 0px;
+    text-align: center; /* Centra el contenido dentro del contenedor */
+}
+  
+.stat-header {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Centra horizontalmente los elementos dentro de la cabecera */
+    margin-bottom: 5px;
+}
+  
+.stat-icon {
+    font-size: 24px;
+    margin-right: 10px;
+}
+  
+.stat-icon.success {
+    color: var(--ion-color-success);
+}
+  
+.stat-icon.warning {
+    color: var(--ion-color-warning);
+}
+  
+.stat-icon.danger {
+    color: var(--ion-color-danger);
+}
+  
+.stat-title {
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.stat-percentage {
+    font-weight: bold;
+    font-size: 1rem;
+    margin-left: 10px;
+    color: #000;
+}
+  
+.attendance-progress {
+    height: 15px;
+    border-radius: 10px;
+    transition: width 1s ease-in-out;
+}
+  
+.percentage-text {
+    margin-top: 5px;
+    font-weight: bold;
+    color: #000;
+}
+  
+/* Estilos Responsivos */
+@media (min-width: 768px) {
+    .statistic-container {
+      padding: 15px;
+    }
+  
+    .stat-icon {
+      font-size: 28px;
+    }
+  
+    .stat-title {
+      font-size: 18px;
+    }
+  
+    .percentage-text {
+      font-size: 16px;
+    }
+}
+
+.musician-card {
+  margin: 8px 0;
+  padding: 10px;
+  padding-top:0px;
+  padding-bottom:5px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
+}
+
+.musician-card:hover {
+  transform: translateY(-2px); /* Efecto de elevación al pasar el cursor */
+}
+
+/* Estilos del Item */
+.musician-ion-item {
+    --min-height: 25px !important;     
+    display: flex;
+    align-items: center;
+    --padding-end: 0px;
+    --inner-padding-end: 8px;
+}
+
+/* Etiquetas del Músico */
+.musician-ion-label {
+  margin-left: 8px;
+  margin-top:4px;
+  margin-bottom:4px;
+}
+
+.musician-name {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #333333;
+}
+
+.musician-email {
+  font-size: 0.85rem;
+  color: gray;
+  margin: 0;
+}
+
+/* Barra de Progreso */
+.musician-progress-bar {
+  margin-top: 0px;
+  height: 8px;
+  border-radius: 4px;
+}
+
+/* Texto del Porcentaje */
+.musician-ion-note {
+    font-size: 0.9rem;
+    font-weight: bold;
+    //color: #333333;
+    padding-top:6px;
+    padding-bottom:2px;
+    margin-left:0px;
+}
+
+/* Responsividad */
+@media (max-width: 767px) { /* Pantallas pequeñas */
+  .musician-name {
+    font-size: 0.9rem;
+  }
+
+  .musician-email {
+    font-size: 0.75rem;
+  }
+
+  .musician-progress-bar {
+    height: 6px;
+  }
+
+  .musician-ion-note {
+    font-size: 0.8rem;
+  }
+}
+
+@media (min-width: 768px) { /* Pantallas medianas y grandes */
+  .musician-name {
+    font-size: 1rem;
+  }
+
+  .musician-email {
+    font-size: 0.85rem;
+  }
+
+  .musician-progress-bar {
+    height: 8px;
+  }
+
+  .musician-ion-note {
+    font-size: 0.9rem;
+  }
+}
+
+/* Colores para la Barra de Progreso */
+ion-progress-bar.color-success {
+  --ion-color: var(--ion-color-success);
+}
+
+ion-progress-bar.color-warning {
+  --ion-color: var(--ion-color-warning);
+}
+
+ion-progress-bar.color-danger {
+  --ion-color: var(--ion-color-danger);
+}
+
+/* Ajustes para el ion-note */
+.musician-ion-note {
+  display: flex;
+  align-items: center;
+}
+
+.initcap {
+    text-transform: capitalize;
+}
+
+::ng-deep ion-item-option.ion-color-formation-custom {
+    --ion-color-base: #42A5F5; /* Verde azulado */    
+    --ion-color-contrast: #ffffff; /* Blanco para el ícono */
+    --ion-color-shade: #1E88E5; /* Sombra */
+    --ion-color-tint: #64B5F6; /* Tono claro */
+}
+
+.option-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+  
+.option-text {
+    margin-top: 6px; /* Espacio entre el icono y el texto */
+    font-size: 0.6rem; /* Tamaño de fuente ajustable */
+    color: var(--ion-color-light); /* Ajusta el color según tus necesidades */
+    font-weight: bold;
+}
+
+.large-icon {
+    font-size: 1.7rem; /* Ajusta este valor para mantener el tamaño deseado */
+    /* Puedes también utilizar otras unidades como 'em' o 'rem' */
+}
+
+ion-card-title {
+    font-size: 1.1rem;
+    margin-bottom: 0px;
+    color:#000000;
+}
+
+.type-avatar {
+    margin-right: 0px;
+    margin-top:0px;
+    margin-bottom:0px;
+    width: 23px;
+    height: 23px;
+    border: 1px solid #000000; 
+    border-radius: 0 !important;
+    background-color: #f7f7f7; 
+}
+
+ion-img {
+    border-radius: 0 !important;
+}
+  
+.type-avatar ion-img {
+    border: 10px;
+    width: 100%;
+    height: 100%;
+}
+
+.custom-ion-card-header {
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom:15px;    
+  }
+
+.custom-ion-icon {
+    font-size: 20px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.custom-ion-card-title {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}

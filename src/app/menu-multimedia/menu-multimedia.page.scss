@@ -285,6 +285,7 @@ ion-card-header {
 
 .anyo-header-label {
     margin-top:10px;
+    margin-left:12px;
 }
 
 .anyo-header ion-label {
@@ -322,6 +323,7 @@ ion-card-header {
     border: 10px;
     width: 100%;
     height: 100%;
+    margin-left:16px;
 }
 
 ion-avatar img {
@@ -392,3 +394,11 @@ ion-card-header, ion-card-content {
     font-weight: bold;
     color:#000000;
 }
+
+.div-pagination {
+    opacity: 1 !important;
+    visibility: visible !important;
+    height: 4px; /* Ajusta el grosor si es necesario */   
+    background-color:var(--ion-color-primary, #0054e9);;
+}
+  
