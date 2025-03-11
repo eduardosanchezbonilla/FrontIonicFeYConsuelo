@@ -1,0 +1,189 @@
+.custom-modal-title {
+    margin-top:5px;
+    margin-bottom:10px;
+    color: #B22222;   
+    text-shadow: 1px 1px 2px #FFFFFF;  
+}
+
+.attendance-card {
+    margin-top: 0px;
+    margin-left: 3px;
+    margin-right: 3px;
+    --padding-start: 0px !important; 
+    --padding-end: 0px; 
+}
+
+ion-card-header {
+    //--padding-bottom: 50px !important;
+    padding-bottom: 0px !important;
+}
+
+.custom-ion-card-content-musician-list {    
+    padding-top: 5px !important;
+    padding-bottom: 10px !important;
+}
+
+.musician-card {
+    margin: 8px 0;
+    padding: 10px;
+    padding-top:0px;
+    padding-bottom:5px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+  
+.musician-card:hover {
+    transform: translateY(-2px); /* Efecto de elevación al pasar el cursor */
+}
+
+/* Estilos del Item */
+.musician-ion-item {
+    --min-height: 25px !important;     
+    display: flex;
+    align-items: center;
+    --padding-end: 0px;
+    --inner-padding-end: 8px;
+}
+
+/* Etiquetas del Músico */
+.musician-ion-label {
+  margin-left: 8px;
+  margin-top:4px;
+  margin-bottom:4px;
+}
+
+.musician-name {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #333333;
+}
+
+.musician-email {
+  font-size: 0.85rem;
+  color: gray;
+  margin: 0;
+}
+
+/* Barra de Progreso */
+.musician-progress-bar {
+  margin-top: 0px;
+  height: 6px;
+  border-radius: 4px;
+}
+
+/* Barra de Progreso */
+.musician-progress-bar-margin-top {
+    margin-top: 6px;
+    height: 6px;
+    border-radius: 4px;
+  }
+
+/* Texto del Porcentaje */
+.musician-ion-note {
+    font-size: 0.9rem;
+    font-weight: bold;
+    //color: #333333;
+    padding-top:6px;
+    padding-bottom:2px;
+    margin-left:0px;
+}
+
+/* Responsividad */
+@media (max-width: 767px) { /* Pantallas pequeñas */
+  .musician-name {
+    font-size: 0.9rem;
+  }
+
+  .musician-email {
+    font-size: 0.75rem;
+  }
+
+  .musician-progress-bar {
+    height: 6px;
+  }
+
+  .musician-ion-note {
+    font-size: 0.8rem;
+  }
+}
+
+@media (min-width: 768px) { /* Pantallas medianas y grandes */
+  .musician-name {
+    font-size: 1rem;
+  }
+
+  .musician-email {
+    font-size: 0.85rem;
+  }
+
+  .musician-progress-bar {
+    height: 8px;
+  }
+
+  .musician-ion-note {
+    font-size: 0.9rem;
+  }
+}
+
+/* Colores para la Barra de Progreso */
+ion-progress-bar.color-success {
+  --ion-color: var(--ion-color-success);
+}
+
+ion-progress-bar.color-warning {
+  --ion-color: var(--ion-color-warning);
+}
+
+ion-progress-bar.color-danger {
+  --ion-color: var(--ion-color-danger);
+}
+
+/* Ajustes para el ion-note */
+.musician-ion-note {
+  display: flex;
+  align-items: center;
+}
+
+.initcap {
+    text-transform: capitalize;
+}
+
+.stacked-progress {
+    display: flex;
+    height: 8px;
+    margin-top: 8px;
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  
+  .progress-segment {
+    height: 100%;
+  }
+  
+  .progress-segment.main {
+    background-color: #3880ff;
+  }
+  
+  .progress-segment.supl {
+    background-color: #0cd1e8;
+  }
+
+
+  .chart-container {
+    width: 100%;
+    height: 400px; /* o el valor que necesites */
+    background-color: white;
+    border-radius: 10px;
+    padding-top:10px;
+    padding-bottom:10px;
+    padding-left:5px;
+    padding-right:5px;
+    margin-top: 20px;
+  }
+
+  .chart-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+  }

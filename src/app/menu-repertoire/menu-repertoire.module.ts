@@ -26,6 +26,7 @@ import { MusicianService } from '../services/musician/musician.service';
 import { VoiceState } from '../state/voice/voice.state';
 import { MusicianState } from '../state/musician/musician.state';
 import { ModalViewRepertoireMarchSoloistComponent } from './component/modal-view-repertoire-march-soloist/modal-view-repertoire-march-soloist.component';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 @NgModule({
   imports: [
@@ -37,7 +38,8 @@ import { ModalViewRepertoireMarchSoloistComponent } from './component/modal-view
     NgxsModule.forFeature([RepertoireMarchTypeState]),    
     NgxsModule.forFeature([RepertoireMarchState]),    
     NgxsModule.forFeature([VoiceState]),    
-    NgxsModule.forFeature([MusicianState]),    
+    NgxsModule.forFeature([MusicianState]),  
+    DragDropModule,  
   ],
   declarations: [
     MenuRepertoirePage,

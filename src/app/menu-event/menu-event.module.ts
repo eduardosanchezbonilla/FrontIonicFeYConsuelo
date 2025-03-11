@@ -31,6 +31,8 @@ import { MusicianSelectorComponent } from './component/modal-formation-event/mus
 import { ModalStatsComponent } from './component/modal-stats/modal-stats.component';
 import { ModalRouteEventComponent } from './component/modal-route-event/modal-route-event.component';
 import { HttpClientModule } from '@angular/common/http';
+import { ModalCrossheadEventComponent } from './component/modal-crosshead-event/modal-crosshead-event.component';
+import { MarchSelectorComponent } from './component/modal-crosshead-event/march-selector.component';
 
 @NgModule({
   imports: [
@@ -50,8 +52,10 @@ import { HttpClientModule } from '@angular/common/http';
     ModalRepertoireEventComponent,
     ModalFormationEventComponent,
     MusicianSelectorComponent,
+    MarchSelectorComponent,
     ModalStatsComponent,
-    ModalRouteEventComponent
+    ModalRouteEventComponent,
+    ModalCrossheadEventComponent
   ],
   providers:[
     EventService,

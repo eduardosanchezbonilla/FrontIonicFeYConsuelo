@@ -1,0 +1,212 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="medium" (click)="cancel()">Cancelar</ion-button>
+    </ion-buttons>    
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <!-------------------------------->
+  <!--------- DATOS CRUCETA -------->
+  <!-------------------------------->
+  <form (ngSubmit)="confirm()" #crossheadEventForm="ngForm">    
+    <h2 class="fancy-title custom-modal-title">
+      Cruceta
+    </h2>
+
+    <!-- CABECERA -->    
+    <ion-card class="event-card background-white">
+      <ion-item lines="none">
+        <ion-avatar slot="start" class="event-avatar">                  
+          <ion-img 
+            [src]="showImage">
+          </ion-img> 
+        </ion-avatar>
+        <ion-label>
+          <h2>{{ showTextEvent }} </h2>
+          <p>{{ showDateTextEvent }}</p>          
+        </ion-label>
+      </ion-item>
+    </ion-card> 
+
+    <div *ngIf="(profile=='SUPER_ADMIN' || profile=='ADMIN')" class="spacer-small"></div>  
+
+    <div *ngIf="(profile=='SUPER_ADMIN' || profile=='ADMIN')" class="searchbar-container">      
+      <ion-item lines="none" class="custom-checkbox-item">     
+        <div class="custom-checkbox-item-div">
+          <ion-checkbox slot="start" [(ngModel)]="editMode" [ngModelOptions]="{standalone: true}"   (ionChange)="onEditMode($event)" class="custom-checkbox"></ion-checkbox>
+          <ion-label>Ver modo edición</ion-label>
+        </div>   
+      </ion-item>
+    </div>
+
+    <div class="spacer-small"></div>  
+
+    <!-------------------------------->
+    <!--------- VISTA EDICION -------->
+    <!-------------------------------->
+    <div *ngIf="editMode && crossheadEvent && crossheadEvent.streets" cdkDropList (cdkDropListDropped)="drop($event)" class="block-container ion-no-padding">
+      <div *ngFor="let street of crossheadEvent.streets ; let i = index; trackBy: trackByStreet" cdkDrag class="custom-block" >
+        <!-- CONTENIDO DEL BLOQUE -->
+        <ion-card class="street-card">     
+
+          <!-- Encabezado con icono de mover y botón de eliminar -->
+          <div class="card-header">
+            <div class="drag-handle" cdkDragHandle>
+              <ion-icon class="custom-reorder-three" name="reorder-three"></ion-icon>
+            </div>
+            <ion-button fill="clear" color="danger" size="small" (click)="removeStreet(i)">
+              <ion-icon name="trash-outline"></ion-icon>
+            </ion-button>
+          </div>
+
+          <!-- Contenido -->
+          <ion-card-content class="ion-no-padding custom-ion-card-street">
+            
+            <!-- Nombre de la calle -->
+            <ion-item class="ion-no-padding custom-item-street">
+              <ion-label color="primary" position="floating" class="custom-label">
+                Lugar
+              </ion-label>
+              <ion-input
+                type="text"
+                name="streetName{{i}}"
+                placeholder="Nombre del lugar"
+                required
+                [(ngModel)]="street.street"
+                #streetNameInput="ngModel"
+              ></ion-input>
+            </ion-item>
+            <div class="ion-no-padding custom-item-street" *ngIf="streetNameInput.invalid && streetNameInput.touched">
+              <ion-text color="danger" *ngIf="streetNameInput.errors['required']">El nombre de la calle es obligatorio.</ion-text>
+            </div>
+
+            <!-- Anotaciones para las marchas de esta calle -->            
+            <ion-item lines="none" class="ion-no-padding custom-item-street-annotations label-checkbox-container-annotations">  
+              <ion-label color="primary" class="custom-label-textarea">
+                Anotaciones                
+                <ion-checkbox [(ngModel)]="street.isAnnotations" [ngModelOptions]="{standalone: true}" 
+                  (ionChange)="onAnnotationsClick($event)" class="custom-checkbox-annotations">
+                </ion-checkbox>
+              </ion-label>  
+            </ion-item>
+
+
+            <!-- Textarea dentro del mismo ion-item, pero visible solo si el checkbox está activado -->
+            <ion-item *ngIf="street.isAnnotations" lines="none" class="ion-no-padding custom-item-street">
+              <ion-textarea 
+                name="annotations{{i}}"                  
+                class="custom-textarea focus-style"
+                minlength="0"                     
+                maxlength="1000"
+                required="false"
+                [(ngModel)]="street.annotations">
+              </ion-textarea>
+            </ion-item>
+
+
+            <!----------------->
+            <!---- MARCHAS ---->
+            <!----------------->
+            <ion-item lines="none" class="ion-no-padding custom-item-street-marchs">
+              <ion-label class="custom-label-marchs">Marchas</ion-label>
+              <ion-button color="warning" size="small" slot="end" (click)="openSelectMarchsModal(i)">
+                <ion-icon name="add-circle-outline"></ion-icon>
+              </ion-button>
+            </ion-item>
+
+            <!-- Lista reordenable de marchas -->
+            <ion-reorder-group disabled="false" (ionItemReorder)="reorderMarchs($event, i)">
+              <ion-item *ngFor="let march of street.marchs; let j = index" class="ion-no-padding custom-item-list-street">
+                <ion-button fill="clear" color="danger" size="small" (click)="removeMarch(i, j)">
+                  <ion-icon name="trash-outline"></ion-icon>
+                </ion-button>
+                <ion-label class="initcap custom-ion-label-march">{{ march.marchName | lowercase }}</ion-label>
+                <ion-reorder slot="end"></ion-reorder>
+              </ion-item>
+            </ion-reorder-group>
+
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </div>
+
+    <!-------------------------------->
+    <!--------- VISTA VISUALIZACION -->
+    <!-------------------------------->
+    <!-- Mensaje vistoso cuando no hay datos -->
+    <div *ngIf="loadFinish && !editMode && !existstCrosshead" class="no-data-container">
+      <div class="spacer"></div>   
+      <ion-icon name="alert-circle-outline" class="no-data-icon"></ion-icon>
+      <p class="no-data-text">Aún no existe cruceta disponible<br/> para este evento.</p>     
+      <div class="spacer"></div>   
+      <div class="spacer"></div> 
+    </div>
+
+    <ion-list class="ion-list-view ion-no-padding" *ngIf="existstCrosshead && !editMode && crossheadEvent && crossheadEvent.streets">
+      <div *ngFor="let street of crossheadEvent.streets">
+        <ion-card class="street-card-view">
+          <ion-card-header class="street-card-header-view">
+            <ion-card-title class="custom-ion-card-title">
+              {{ street.street }}
+            </ion-card-title>
+          </ion-card-header>
+          
+          <ion-card-content>
+            <!-- Sección para Marchas -->
+            <div *ngIf="street.isAnnotations">
+              <div class="section-header-view">
+                <ion-icon name="create-outline" color="primary"></ion-icon>
+                <span class="custom-title-view">Anotaciones</span>
+              </div>              
+              <p class="custom-annotations-p" [innerHTML]="street.annotationsView"></p>
+            </div>
+         
+            <!-- Sección para Marchas -->
+            <div *ngIf="street.marchs && street.marchs.length>0" class="section-header-view">
+              <ion-icon name="star-outline" color="primary"></ion-icon>
+              <span class="custom-title-view">Marchas</span>
+            </div>
+            <ion-list class="ion-list-custom">
+              <ion-item *ngFor="let march of street.marchs" class="ion-no-padding ion-item-custom">
+                <ion-label class="ion-item-label initcap">{{ march.marchName | lowercase }}</ion-label>
+              </ion-item>
+            </ion-list>              
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </ion-list>
+    
+    <div *ngIf="editMode" class="spacer"></div>  
+    <div *ngIf="!editMode" class="spacer-small"></div>  
+
+    <ion-button 
+          *ngIf="editMode"
+          type="submit"           
+          [disabled]="crossheadEventForm.invalid"
+          expand="block">
+          Actualizar
+    </ion-button>    
+
+    <ion-button 
+      *ngIf="!editMode"
+      type="button"     
+      (click)="cancel()"   
+      color="secondary" 
+      expand="block" 
+      class="button-back"
+    >
+      <ion-icon name="return-up-back-outline" slot="start"></ion-icon>    
+      Volver
+    </ion-button>
+  </form>
+
+  <ion-fab *ngIf="editMode" vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button color="primary" (click)="addStreet()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+</ion-content>

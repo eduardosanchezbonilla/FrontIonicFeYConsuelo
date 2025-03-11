@@ -171,14 +171,14 @@
             <ion-label class="musician-ion-label">
               <h2 class="musician-name initcap">{{ march.marchName | lowercase }} </h2>
             </ion-label>
-            <ion-note class="musician-ion-note" slot="end" [color]="getProgressColorMusicianPercentageAssistEvents(march.percentage)">
+            <ion-note class="musician-ion-note" slot="end" [color]="getProgressColorMarchStats(march.percentage)">
               {{ march.quantity }} {{ march.quantity === 1 ? 'vez' : 'veces' }}
             </ion-note>
           </ion-item>
           <!-- Barra de Progreso -->
           <ion-progress-bar 
             [value]="march.percentage / 100" 
-            [color]="getProgressColorMusicianPercentageAssistEvents(march.percentage)"
+            [color]="getProgressColorMarchStats(march.percentage)"
             class="musician-progress-bar">
           </ion-progress-bar>
         </ion-card>

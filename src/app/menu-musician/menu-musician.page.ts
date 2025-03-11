@@ -29,6 +29,7 @@ import { MusicianEvent } from '../models/musician-event/musician-event';
 import { ModalMusicianMarchSoloComponent } from './components/modal-musician-march-solo/modal-musician-march-solo.component';
 import { VideoCategory } from '../models/video-category/video-category';
 import { ModalViewCategoryImageComponent } from '../menu-multimedia/component/modal-view-category-image/modal-view-category-image.component';
+import { ModalMusicianSolosStatsComponent } from './components/modal-musician-solos-stats/modal-musician-solos-stats.component';
 
 @Component({
   selector: 'app-menu-musician',
@@ -744,5 +745,21 @@ export class MenuMusicianPage implements OnDestroy {
     });
     modal.present();
   }
+  
+  /*******************************************************/
+  /********** MUSICIAN STATS SOLOS ***********************/
+  /*******************************************************/
+  async openModalMusicianStatsSolo(){
+  
+      // mostramos spinner
+      await this.loadingService.presentLoading('Loading...');   
+  
+      // mostramos la modal
+      const modal = await this.modalController.create({
+        component: ModalMusicianSolosStatsComponent,
+        componentProps: {}
+      });
+      modal.present();  
+    }
   
 }

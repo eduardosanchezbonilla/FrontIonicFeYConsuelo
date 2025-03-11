@@ -67,6 +67,7 @@ export class LoginPage implements OnDestroy{
 
     const user = JSON.parse(await this.storage.getItem('user'));
     if(user){
+      this.updateLassAccessDate();
       setTimeout(() => {      
         this.redirectAfterLogin();      
       }, 200); // 2000 milise   

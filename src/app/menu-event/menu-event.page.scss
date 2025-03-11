@@ -678,6 +678,13 @@ ion-progress-bar.color-danger {
     --ion-color-tint: #BA68C8;     /* Violeta claro para el tono */
 }
 
+::ng-deep ion-item-option.ion-color-crosshead-custom {
+    --ion-color-base: #A1887F;   /* Marrón clarito (Brown 300) */
+    --ion-color-contrast: #ffffff; /* Blanco para el contraste */
+    --ion-color-shade: #5D4037;    /* Marrón oscuro (Brown 700) para la sombra */
+    --ion-color-tint: #D7CCC8; 
+}
+
 .option-content {
     display: flex;
     flex-direction: column;
@@ -737,4 +744,8 @@ ion-card-title {
     display: flex;
     justify-content: space-between;
     width: 100%;
+}
+
+.custom-item-option{
+    width: 50px;
 }

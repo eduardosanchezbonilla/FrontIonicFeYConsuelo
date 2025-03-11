@@ -27,6 +27,10 @@ import { CameraService } from '../services/camera/camera.service';
 import { ModalMusicianMarchSoloComponent } from './components/modal-musician-march-solo/modal-musician-march-solo.component';
 import { MusicianMarchSoloState } from '../state/musician-march-solo/musician-march-solo.state';
 import { MusicianMarchSoloService } from '../services/musician-march-solo/musician-march-solo.service';
+import { ModalMusicianSolosStatsComponent } from './components/modal-musician-solos-stats/modal-musician-solos-stats.component';
+import { MusicianSolosStatsState } from '../state/musician-solos-stats/musician-solos-stats.state';
+import { MusicianSolosStatsService } from '../services/musician-solos-stats/musician-solos-stats.service';
+import { NgChartsModule } from 'ng2-charts';
 
 @NgModule({
   imports: [
@@ -41,7 +45,9 @@ import { MusicianMarchSoloService } from '../services/musician-march-solo/musici
     NgxsModule.forFeature([MusicianInventoryState]),
     NgxsModule.forFeature([MusicianEventState]),
     NgxsModule.forFeature([MusicianMarchSoloState]),
+    NgxsModule.forFeature([MusicianSolosStatsState]),
     NgxsModule.forFeature([EventState]),
+    NgChartsModule
   ],  
   declarations: [
     MenuMusicianPage,
@@ -50,7 +56,8 @@ import { MusicianMarchSoloService } from '../services/musician-march-solo/musici
     ModalPartitureComponent,
     ModalMusicianInventoryComponent,
     ModalMusicianEventComponent,
-    ModalMusicianMarchSoloComponent
+    ModalMusicianMarchSoloComponent,
+    ModalMusicianSolosStatsComponent
   ],
   providers:[
     MusicianService,
@@ -60,7 +67,8 @@ import { MusicianMarchSoloService } from '../services/musician-march-solo/musici
     MusicianEventService,
     EventService,
     CameraService,
-    MusicianMarchSoloService
+    MusicianMarchSoloService,
+    MusicianSolosStatsService
   ]
 })
 export class MenuMusicianPageModule {}

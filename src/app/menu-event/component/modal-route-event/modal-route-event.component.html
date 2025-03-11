@@ -8,14 +8,58 @@
 
 <ion-content class="ion-no-padding">
 
+  <div class="div-container-no-content" *ngIf="profile!=='SUPER_ADMIN' && profile!=='ADMIN' && showMessageNoRoute && !existsRoute">
+    <h2 class="fancy-title custom-modal-title">
+      Itinerario 
+    </h2>
+
+    <!-- CABECERA -->    
+    <ion-card class="event-card background-white">
+      <ion-item lines="none">
+        <ion-avatar slot="start" class="event-avatar">                  
+          <ion-img 
+            [src]="showImage">
+          </ion-img> 
+        </ion-avatar>
+        <ion-label>
+          <h2>{{ showTextEvent }} </h2>
+          <p>{{ showDateTextEvent }}</p>          
+        </ion-label>
+      </ion-item>
+    </ion-card> 
+
+    <div class="spacer"></div>  
+
+    <!-- Mensaje vistoso cuando no hay datos -->
+    <div class="no-data-container">
+      <div class="spacer"></div>   
+      <ion-icon name="alert-circle-outline" class="no-data-icon"></ion-icon>
+      <p class="no-data-text">Aún no existe itinerario disponible<br/> para este evento.</p>     
+      <div class="spacer"></div>   
+      <div class="spacer"></div> 
+    </div>
+
+    <ion-button 
+      type="button" 
+      (click)="cancel()" 
+      color="secondary" 
+      expand="block" 
+    >
+      <ion-icon name="return-up-back-outline" slot="start"></ion-icon>    
+      Volver
+    </ion-button>
+  </div>
+
   <!-- Buscador -->
-  <div class="search-container">
+  <div class="search-container" *ngIf="profile=='SUPER_ADMIN' || profile=='ADMIN'">
     <input type="text" id="search-input" placeholder="Buscar ubicación..." />
-    <button (click)="searchLocation()">Buscar</button>
+    <button (click)="searchLocation()"><ion-icon name="search-outline" class="custon-ion-icon"></ion-icon>  </button>
+    
+    <!--<button (click)="searchLocation()">Buscar</button>-->
   </div>
 
   <!-- Mapa -->
-  <div id="map" style="height: 100%; width: 100%;"></div>
+  <div id="map" style="height: 100%; width: 100%;" ></div>
 
   <!-- Botones -->    
   <ion-fab #fabRoutes  slot="fixed" vertical="bottom" horizontal="end" *ngIf="profile=='SUPER_ADMIN' || profile=='ADMIN'">
@@ -25,7 +69,7 @@
       </div>
     </ion-fab-button>  
   
-    <ion-fab-list side="start">            
+    <ion-fab-list side="top">            
       <ion-fab-button class="buttons-fab"  color="warning" (click)="saveRoute()">
         <div class="fab-content">
           <ion-icon name="save-outline" class="fab-button-icon"></ion-icon>
@@ -33,35 +77,56 @@
         </div>
       </ion-fab-button>
 
-      <ion-fab-button class="buttons-fab" color="warning" (click)="cleanRoute()">
-        <div class="fab-content">
-          <ion-icon name="trash-outline" class="fab-button-icon"></ion-icon>
-          <span>Limpiar</span>
+      <ion-fab-button class="buttons-fab-1" color="warning" (click)="cleanRoute()">
+        <div class="fab-content-1">
+          <ion-icon name="trash-outline" class="fab-button-icon-1"></ion-icon>
+          <span>Limpiar<br/>Ruta</span>
         </div>
       </ion-fab-button>
 
-      <ion-fab-button class="buttons-fab" color="warning" (click)="sendLocation()">
-        <div class="fab-content">
-          <ion-icon name="navigate-outline" class="fab-button-icon"></ion-icon>
-          <span>Enviar</span>
+      <ion-fab-button class="buttons-fab-1" color="warning" (click)="sendLocation()">
+        <div class="fab-content-1">
+          <ion-icon name="navigate-outline" class="fab-button-icon-1"></ion-icon>
+          <span>Enviar<br/>Ubicación</span>
         </div>
       </ion-fab-button>
 
-      <ion-fab-button class="buttons-fab" color="warning" (click)="cleanLocation()">
-        <div class="fab-content">
-          <ion-icon name="navigate-circle-outline" class="fab-button-icon"></ion-icon>
-          <span>Limpiar</span>
+      <ion-fab-button class="buttons-fab-1" color="warning" (click)="cleanLocation()">
+        <div class="fab-content-1">
+          <ion-icon name="navigate-circle-outline" class="fab-button-icon-1"></ion-icon>
+          <span>Limpiar<br/>Ubicación</span>
         </div>
       </ion-fab-button>
 
-      <ion-fab-button *ngIf="!trackingSending" class="buttons-fab" color="danger" (click)="startSendingPosition()">
+      <ion-fab-button class="buttons-fab-1" color="warning" (click)="updateCurrentMarch()">
+        <div class="fab-content-1">
+          <ion-icon name="musical-notes-outline" class="fab-button-icon-1"></ion-icon>
+          <span>Enviar<br/>marcha</span>
+        </div>
+      </ion-fab-button>
+
+      <ion-fab-button class="buttons-fab-1" color="warning" (click)="cleanCurrentMarch()">
+        <div class="fab-content-1">
+          <ion-icon name="musical-notes-outline" class="fab-button-icon-1"></ion-icon>
+          <span>Limpiar<br/>marcha</span>
+        </div>
+      </ion-fab-button>
+
+      <ion-fab-button class="buttons-fab-1" color="warning" (click)="centerLocation()">
+        <div class="fab-content-1">
+          <ion-icon name="flag-outline" class="fab-button-icon-1"></ion-icon>
+          <span>Centrar en<br/>Ubicación</span>
+        </div>
+      </ion-fab-button>
+
+      <ion-fab-button *ngIf="!trackingSending" class="buttons-fab" color="danger" (click)="startTrackingPositionAdmin()">
         <div class="fab-content">
           <ion-icon name="locate-outline" class="fab-button-icon"></ion-icon>
           <span>Start Track</span>
         </div>
       </ion-fab-button>
 
-      <ion-fab-button *ngIf="trackingSending" class="buttons-fab" color="success" (click)="stopSendingPosition()">
+      <ion-fab-button *ngIf="trackingSending" class="buttons-fab" color="success" (click)="stopTrackingPositionAdmin()">
         <div class="fab-content">
           <ion-icon name="locate-outline" class="fab-button-icon"></ion-icon>
           <span>Stop Track</span>
@@ -71,9 +136,18 @@
     </ion-fab-list>
   </ion-fab>
 
-  <ion-fab slot="fixed" vertical="bottom" horizontal="start" *ngIf="profile=='SUPER_ADMIN' || profile=='ADMIN'">
-    <ion-fab-button fill="solid" class="buttons-fab-1" color="success" (click)="cleanLocation()">
-      <div class="fab-content musician-total-header-fab-text">
+  <!-- Botones -->    
+  <ion-fab  slot="fixed" vertical="bottom" horizontal="end" *ngIf="profile!='SUPER_ADMIN' && profile!='ADMIN' && existsRoute">
+    <ion-fab-button (click)="getEventCurrentData()">
+      <div class="fab-content">
+        <ion-icon name="reload-outline"></ion-icon>    
+      </div>
+    </ion-fab-button>        
+  </ion-fab>
+
+  <ion-fab slot="fixed" vertical="bottom" horizontal="start" *ngIf="existsRoute || profile=='SUPER_ADMIN' || profile=='ADMIN'">
+    <ion-fab-button fill="solid" class="buttons-fab-km" color="success">
+      <div class="fab-content km-header-fab-text">
         {{kilometersRoute}} km
       </div>
     </ion-fab-button>

@@ -217,14 +217,14 @@
               <ion-label class="musician-ion-label">
                 <h2 class="musician-name initcap">{{ march.marchName | lowercase }} </h2>
               </ion-label>
-              <ion-note class="musician-ion-note" slot="end" [color]="getProgressColorMusicianPercentageAssistEvents(march.percentage)">
+              <ion-note class="musician-ion-note" slot="end" [color]="getProgressColorMarchStats(march.percentage)">
                 {{ march.quantity }} {{ march.quantity === 1 ? 'vez' : 'veces' }}
               </ion-note>
             </ion-item>
             <!-- Barra de Progreso -->
             <ion-progress-bar 
               [value]="march.percentage / 100" 
-              [color]="getProgressColorMusicianPercentageAssistEvents(march.percentage)"
+              [color]="getProgressColorMarchStats(march.percentage)"
               class="musician-progress-bar">
             </ion-progress-bar>
           </ion-card>
@@ -342,7 +342,7 @@
                 <ion-item-option *ngIf="performance.performanceType!=='CONCIERTO'" color="route-custom" (click)="showEventRoute(performance, performanceSliding)" >
                   <div class="option-content">
                     <ion-icon class="large-icon" color="light" slot="icon-only" name="map-outline"></ion-icon>
-                    <span class="option-text">Recorrido</span>
+                    <span class="option-text">Itinerario</span>
                   </div>                  
                 </ion-item-option>   
                 <ion-item-option color="formation-custom" (click)="showFormationRepertoire(performance, performanceSliding)" >
@@ -351,16 +351,22 @@
                     <span class="option-text">Formación</span>
                   </div>                  
                 </ion-item-option>   
-                <ion-item-option color="tertiary" (click)="showEventRepertoire(performance, performanceSliding)" >
+                <ion-item-option *ngIf="performance.performanceType!=='CONCIERTO'" color="crosshead-custom" (click)="showCrossheadEvent(performance, performanceSliding)">
+                  <div class="option-content">
+                    <ion-icon class="large-icon" color="light" slot="icon-only" name="receipt-outline"></ion-icon>
+                    <span class="option-text">Cruceta</span>
+                  </div>                  
+                </ion-item-option>   
+                <ion-item-option class="custom-item-option" color="tertiary" (click)="showEventRepertoire(performance, performanceSliding)" >
                   <ion-icon color="light" slot="icon-only" name="musical-notes-outline"></ion-icon>
                 </ion-item-option>   
-                <ion-item-option color="success" (click)="updateMusicianAssistance(performance, performanceSliding)" >
+                <ion-item-option class="custom-item-option" color="success" (click)="updateMusicianAssistance(performance, performanceSliding)" >
                   <ion-icon color="light" slot="icon-only" name="checkbox-outline"></ion-icon>
                 </ion-item-option>        
-                <ion-item-option color="warning" (click)="updatePerformance(performance, performanceSliding)" >
+                <ion-item-option class="custom-item-option" color="warning" (click)="updatePerformance(performance, performanceSliding)" >
                   <ion-icon color="light" slot="icon-only" name="pencil-outline"></ion-icon>
                 </ion-item-option>        
-                <ion-item-option color="danger"  class="rounded-right" (click)="confirmDeletePerformance(performance, performanceSliding)">
+                <ion-item-option color="danger"  class="rounded-right custom-item-option" (click)="confirmDeletePerformance(performance, performanceSliding)">
                   <ion-icon color="light" slot="icon-only" name="trash-outline"></ion-icon>
                 </ion-item-option>                
               </ion-item-options>

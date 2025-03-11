@@ -16,15 +16,22 @@
       Solos
     </h2>
 
-    <ion-list>
-      <div *ngFor="let solo of repertoireMarch.repertoireMarchSolos; let i = index" class="ion-margin-bottom">
+    <div *ngIf="repertoireMarch && repertoireMarch.repertoireMarchSolos" cdkDropList (cdkDropListDropped)="drop($event)" class="block-container ion-no-padding">
+      <div *ngFor="let solo of repertoireMarch.repertoireMarchSolos; let i = index; trackBy: trackBySolo" cdkDrag class="custom-block" >
+   
         <ion-card class="solo-card">     
-          <!-- Botón para eliminar posicionado en la esquina superior derecha -->
-          <div class="remove-button">
-            <ion-button color="danger" size="small" (click)="removeSolo(i)">
+
+          <!-- Encabezado con icono de mover y botón de eliminar -->
+          <div class="card-header">
+            <div class="drag-handle" cdkDragHandle>
+              <ion-icon class="custom-reorder-three" name="reorder-three"></ion-icon>
+            </div>
+            <ion-button fill="clear" color="danger" size="small" (click)="removeSolo(i)">
               <ion-icon name="trash-outline"></ion-icon>
             </ion-button>
-          </div>     
+          </div>
+
+
           <ion-card-content class="ion-no-padding custom-ion-card-solo">
             <!-- Nombre del Solo -->
             <ion-item class="ion-no-padding custom-item-solo">
@@ -44,26 +51,7 @@
               <ion-text color="danger" *ngIf="soloNameInput.errors['required']">El nombre del solo es obligatorio.</ion-text>
             </div>
 
-            <!-- Orden del Solo -->
-            <ion-item class="ion-no-padding custom-item-solo">
-              <ion-label color="primary" position="floating" class="custom-label">
-                Orden
-              </ion-label>
-              <ion-input
-                type="number"
-                name="soloOrder{{i}}"
-                placeholder="Orden del solo"
-                required
-                [(ngModel)]="solo.order"
-                #soloOrderInput="ngModel"
-              ></ion-input>
-            </ion-item>
-            <div class="ion-no-padding custom-item-solo" *ngIf="soloOrderInput.invalid && soloOrderInput.touched">
-              <ion-text color="danger" *ngIf="soloOrderInput.errors['required']">El orden es obligatorio.</ion-text>              
-            </div>
-
             <div class="spacer-small"></div>
-
 
             <!------------------------------>
             <!---- SOLISTAS PRINCIPALES ---->
@@ -110,8 +98,8 @@
             
           </ion-card-content>
         </ion-card>
-      </div>
-    </ion-list>
+      </div>    
+    </div>
 
     <!--<div class="spacer"></div>   -->
     <div class="spacer"></div>  

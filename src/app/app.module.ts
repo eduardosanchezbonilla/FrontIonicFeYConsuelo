@@ -12,6 +12,7 @@ import { Profile } from './shared/components/profile/profile.component';
 import { CalendarModule } from 'ion2-calendar';
 
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgChartsModule } from 'ng2-charts';
 
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -23,7 +24,8 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
     NgxsModule.forRoot(),
     AppRoutingModule,
     Profile,
-    CalendarModule
+    CalendarModule,
+    NgChartsModule
   ],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent],

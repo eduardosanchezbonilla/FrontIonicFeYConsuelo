@@ -105,8 +105,7 @@ export class ModalStatsComponent implements OnInit {
             const errorMessage = this.store.selectSnapshot(EventState.errorMessage);               
             if(finish){                                     
               if(errorStatusCode==200){                   
-                this.eventListResponse = this.store.selectSnapshot(EventState.eventListResponse);                              
-                console.log(errorStatusCode);    
+                this.eventListResponse = this.store.selectSnapshot(EventState.eventListResponse);                                              
                 if(!this.eventListResponse.events){
                   this.eventListResponse.events = [];
                 }                            
@@ -185,6 +184,16 @@ export class ModalStatsComponent implements OnInit {
     if (percentage >= 80) {
       return 'success';
     } else if (percentage >= 50) {
+      return 'warning';
+    } else {
+      return 'danger';
+    }
+  }
+
+  getProgressColorMarchStats(percentage: number): string {
+    if (percentage >= 60) {
+      return 'success';
+    } else if (percentage >= 30) {
       return 'warning';
     } else {
       return 'danger';

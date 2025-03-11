@@ -9,12 +9,14 @@ import { ToastService } from 'src/app/services/toast/toast.service';
 import { StorageService } from 'src/app/services/storage/storage.service';
 import { RouteEvent } from 'src/app/models/route-event/route-event';
 import { LatLng } from 'src/app/models/route-event/latLng';
-import { GetEvent, ResetEvent, UpdateEventCurrentPosition, UpdateEventRoute } from 'src/app/state/event/event.actions';
+import { GetEvent, GetEventCurrentData, GetEventCurrentPosition, ResetEvent, UpdateEventCurrentMarch, UpdateEventCurrentPosition, UpdateEventRoute } from 'src/app/state/event/event.actions';
 import { Event } from 'src/app/models/event/event';
 import { Store } from '@ngxs/store';
 import { EventState } from 'src/app/state/event/event.state';
 import { UsersService } from 'src/app/services/user/users.service';
-
+import { App } from '@capacitor/app';
+import 'leaflet-rotate';
+import { DEFAULT_EVENT_IMAGE } from 'src/app/constants/constants';
 
 @Component({
   selector: 'app-modal-route-event',
@@ -31,6 +33,7 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
   map: L.Map;
   userMarker: L.Marker;
   zoomLevel = 17;
+  rotation = 0;
   mapCenterLat : number = 37.7191055;
   mapCenterLng : number = -3.9737003;
   kilometersRoute = 0;
@@ -43,6 +46,22 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
   trackingInterval: any;
   timeInterval:number = 5000;
   trackingSending = false;  
+
+  trackingIntervalCurrentPositionMusicAndGuest: any;
+  timeIntervalCurrentPositionMusicAndGuest:number = 60000;
+  trackingSendingCurrentPositionMusicAndGuest = false;  
+
+  watchId: string | null = null;
+  lastLocation: { lat: number; lng: number } | null = null;
+  lastCurrentMarch: string = null;
+
+  existsRoute = false;
+  showMessageNoRoute = false;
+
+  public showImage: string;  
+  public showTextEvent: string;
+  public showDateTextEvent: string;
+
 
   cicleMarkerStyle = { // Configuración para los CircleMarker
     color: '#0000FF', // Color del círculo (rojo)
@@ -79,6 +98,9 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
 
   public initScreen = false;
   public initSearchFinish = false;
+  public initSearchCurrentPositionFinish = false;
+
+  private isModalRouteOpen = true;
 
   detailEvent: Event;
 
@@ -107,8 +129,55 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
     L.Marker.prototype.options.icon = DefaultIcon;
   }
 
-  async ngOnInit() {       
-    this.profile = await this.storage.getItem('profile');            
+  convertDateFormat(dateString: string): string {
+    // Divide la cadena en sus partes (año, mes, día)
+    const [year, month, day] = dateString.split('-');
+    
+    // Retorna la fecha en el nuevo formato
+    return `${day}-${month}-${year}`;
+  }
+
+  async ngOnInit() { 
+    if(this.event.image){
+      this.showImage = `data:image/jpeg;base64,${this.event.image}`;      
+    }
+    else{
+      this.showImage = `data:image/jpeg;base64,${DEFAULT_EVENT_IMAGE}`;      
+    }   
+  
+    if(this.type === 'REHEARSAL'){
+      this.showTextEvent = this.event.title?this.event.title:"Ensayo General";
+      if(this.event.location){
+        this.showTextEvent = this.showTextEvent + " (" + this.event.location + ")";
+      }
+      this.showDateTextEvent = this.convertDateFormat(this.event.date) + " (" + this.event.startTime + " - " + this.event.endTime + ")";
+    }
+    else {
+      this.showTextEvent = this.event.title;
+      if(this.event.municipality){
+        this.showTextEvent = this.showTextEvent + " (" + this.event.municipality + ")";
+      }
+      this.showDateTextEvent = this.convertDateFormat(this.event.date) + " (" + this.event.startTime + " - " + this.event.endTime + ")";
+    }   
+
+    this.profile = await this.storage.getItem('profile');    
+    
+    // ojo que esto afecta a todas las pantallas
+    App.addListener('appStateChange', (state) => {
+      // si la app no esta activa, debemos cerrar el proceso de tracking
+      // llamamos al destroy, puesto que no hay cancelaciones de subscriptions
+      if(this.isModalRouteOpen){
+        if (!state.isActive) {         
+            this.doDestroy();        
+        }
+        else{
+          // si estamos activando la app y la modal esta abierta        
+          if(this.profile!=='SUPER_ADMIN' && this.profile!=='ADMIN' && this.existsRoute){
+            this.startTrackingCurrentPositionMusicAndGuest();
+          }            
+        }
+      }
+    });
   }
 
   ngAfterViewInit() {    
@@ -116,12 +185,13 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
   }
   
   async dismissInitialLoading(){
-    if(this.initScreen && this.initSearchFinish ){
+    if(this.initScreen && this.initSearchFinish && this.initSearchCurrentPositionFinish ){
       await this.loadingService.dismissLoading();         
     }
   }
 
   async ionViewDidEnter(){
+    this.isModalRouteOpen = true;
     this.initScreen = true;    
     this.dismissInitialLoading();    
   }
@@ -130,12 +200,16 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
     this.doDestroy();
   }
   
-  async ionViewDidLeave(){    
+  async ionViewDidLeave(){   
+    this.isModalRouteOpen = false; 
     this.doDestroy();
   }
 
-  private doDestroy(){
-    this.stopSendingPosition();
+  private async doDestroy(){
+    this.stopTrackingPositionAdmin();
+    this.stopWatchingLocation();
+    this.stopTrackingCurrentPositionMusicAndGuest();
+    await this.loadingService.dismissLoading();     
     this.store.dispatch(new ResetEvent({})).subscribe({ next: async () => { } })                     
   }  
 
@@ -151,27 +225,105 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
           const errorStatusCode = this.store.selectSnapshot(EventState.errorStatusCode);          
           
           if(finish){                        
-            if(errorStatusCode==200){                                        
-              this.detailEvent = this.store.selectSnapshot(EventState.event);              
-              if(this.detailEvent.route){                
+            if(errorStatusCode==200){                                                   
+              this.detailEvent = this.store.selectSnapshot(EventState.event);      
+              this.lastCurrentMarch = this.detailEvent.currentMarch;
+              if(this.detailEvent.route){                      
+                // puede ser que entre aqui y no haya ruta, pq no vengan route
+                if(!this.detailEvent.route.route || this.detailEvent.route.route.length==0){
+                  this.existsRoute = false;
+                  this.showMessageNoRoute = true;
+                }
+                else{
+                  this.existsRoute = true;
+                  this.showMessageNoRoute = false;
+                }                
+
                 this.zoomLevel = this.detailEvent.route.zoomLevel;
+                this.rotation = this.detailEvent.route.rotation;
                 this.mapCenterLat  = this.detailEvent.route.center.lat;
-                this.mapCenterLng  = this.detailEvent.route.center.lng;                
+                this.mapCenterLng  = this.detailEvent.route.center.lng;  
+                if(this.detailEvent.currentPosition){
+                  this.lastLocation = {
+                    lat: this.detailEvent.currentPosition.lat,
+                    lng: this.detailEvent.currentPosition.lng,
+                  };
+                }
+                else{
+                  this.lastLocation = {
+                    lat: null,
+                    lng: null,
+                  };
+                }                
+                this.lastCurrentMarch = this.detailEvent.currentMarch;
+                
+                //  si hay ruta definida, para los musicos inicamos la obtencion de posicion actual para ir actualizando el mapa
+                if(this.profile!=='SUPER_ADMIN' && this.profile!=='ADMIN' && this.existsRoute){
+                  this.startTrackingCurrentPositionMusicAndGuest();
+                }
+                else{
+                  this.initSearchCurrentPositionFinish = true;
+                }
               }
               else{
                 this.zoomLevel = 17;
+                this.rotation = 0;
                 this.mapCenterLat  = 37.7191055;
-                this.mapCenterLng  = -3.9737003;              
+                this.mapCenterLng  = -3.9737003;     
+                if(this.detailEvent.currentPosition){
+                  this.lastLocation = {
+                    lat: this.detailEvent.currentPosition.lat,
+                    lng: this.detailEvent.currentPosition.lng,
+                  };
+                }
+                else{
+                  this.lastLocation = {
+                    lat: null,
+                    lng: null,
+                  };
+                }                
+                this.lastCurrentMarch = this.detailEvent.currentMarch;   
+                
+                this.existsRoute = false;
+                this.showMessageNoRoute = true;
+
+                this.initSearchCurrentPositionFinish = true;
               }              
+            }
+            else if(errorStatusCode==403){   // si el token ha caducado (403) lo sacamos de la aplicacion                                             
+              await this.loadingService.dismissLoading();      
+              this.cancel();         
+              this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
             }
             else{
               this.detailEvent=null;
+              this.lastCurrentMarch = null;
               // sino encontramos ruta, cogemos valores por defecto
               this.zoomLevel = 17;
+              this.rotation = 0;
               this.mapCenterLat  = 37.7191055;
-              this.mapCenterLng  = -3.9737003;              
-            }     
-            this.loadMap();         
+              this.mapCenterLng  = -3.9737003;   
+              if(this.detailEvent.currentPosition){
+                this.lastLocation = {
+                  lat: this.detailEvent.currentPosition.lat,
+                  lng: this.detailEvent.currentPosition.lng,
+                };
+              }
+              else{
+                this.lastLocation = {
+                  lat: null,
+                  lng: null,
+                };
+              }                
+              this.lastCurrentMarch = null;
+              
+              this.existsRoute = false;
+              this.showMessageNoRoute = true;
+              this.initSearchCurrentPositionFinish = true;
+            }    
+            if(this.existsRoute || this.profile=='SUPER_ADMIN' || this.profile=='ADMIN'){
+              this.loadMap();         
+            }
             this.initSearchFinish = true;                                              
             this.dismissInitialLoading();                 
           }      
@@ -205,27 +357,48 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
       // Inicializar el mapa centrado en Jaén
       this.map = L.map(
           'map', 
-          {
-            zoomControl: zoomControl
-          }
+          {         
+            zoomControl: zoomControl,
+            rotate: true, // Habilita la rotación
+            rotation: this.rotation,  // Ángulo inicial de rotación           
+            touchRotate: true, // Habilita la rotación con gestos táctiles
+            //transform3DLimit: 180, // Límite de rotación en grados
+          } 
         )
         .setView(coords, this.zoomLevel);
 
+      // CAPAS
+      // Capa estándar de OpenStreetMap
+      const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {});
+
+      // Capa Satélite de ESRI
+      const esriSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {});
+
+      // Capa Topográfica de ESRI (opcional)
+      const esriTopo = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {});
+
+      // Control de capas para alternar entre mapas
+      L.control.layers({
+          'Estándar': osmLayer,
+          'Satélite': esriSat,
+          'Topográfico': esriTopo
+      }).addTo(this.map);
+
+      // Agregar la capa base por defecto
+      osmLayer.addTo(this.map);
+
+
       // Añadir capa de mapa (OpenStreetMap)
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      /*L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         //attribution: '© OpenStreetMap contributors',
       }).addTo(this.map);
+      */
+
 
       // Añadir marcador en Jaén (opcional)
       //L.marker(coords).addTo(this.map).openPopup();
-
-      // Forzar la actualización del mapa después de un pequeño retraso
-      setTimeout(() => {
-        this.map.invalidateSize(); // Esto asegura que el mapa se renderice correctamente
-      }, 200);
-
+      
       // Si el usuario es super administrador, habilitar el dibujo de rutas
-      //if (this.isAdmin) {
       const drawControl = new (L as any).Control.Draw({
         draw: {
           polygon: false,                  
@@ -240,10 +413,20 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
       this.map.addControl(drawControl);
       this.map.addLayer(this.drawnItems); // Añadir el FeatureGroup al mapa
       this.markerGroup = L.layerGroup().addTo(this.map);
-
+      
+      // asignamos propiedades
+      this.map.setBearing(this.rotation);
+      this.map.setView([this.mapCenterLat, this.mapCenterLng], this.zoomLevel);
       this.loadRoute();
-
-      this.loadCurrentPosition();
+      this.loadCurrentPosition();   
+      
+      //this.map.setView([this.mapCenterLat, this.mapCenterLng], this.zoomLevel);
+      
+      // Forzar la actualización del mapa después de un pequeño retraso (esto para que no se quede cortado)
+      setTimeout(() => {
+        this.map.invalidateSize(); // Esto asegura que el mapa se renderice correctamente
+        this.loadCurrentPosition();   
+      }, 200);
 
       // Detectar cambios en el zoom
       this.map.on('zoomend', () => {
@@ -262,7 +445,12 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
         const layer = event.layer;
         this.drawnItems.addLayer(layer); // Añadir la ruta al FeatureGroup
         this.calculateDistanceRoute();
-      });      
+      });  
+
+      // Escuchar cambios en la rotación
+      this.map.on('rotate', () => {
+        this.rotation = this.map.getBearing(); // Obtener el ángulo actual                
+      });    
     } catch (error) {
       console.error('Error inicializando el mapa:', error);
     }
@@ -270,12 +458,11 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
 
   loadCurrentPosition() {    
     if (this.detailEvent && this.detailEvent.currentPosition && this.detailEvent.currentPosition.lat && this.detailEvent.currentPosition.lng) {    
-      this.drawCurrentPosition(this.detailEvent.currentPosition.lat, this.detailEvent.currentPosition.lng,this.redIcon);      
+      this.drawPosition(this.detailEvent.currentPosition.lat, this.detailEvent.currentPosition.lng,this.redIcon,this.detailEvent.currentMarch);      
     }
-    
   }
 
-  drawCurrentPosition(lat:number, lng:number, icon: L.Icon, clean:boolean = true) {       
+  drawPosition(lat:number, lng:number, icon: L.Icon, march:string,  clean:boolean = true) {       
       // limpiamos todos los que haya 
       if(clean){
         this.markerGroup.clearLayers();
@@ -283,9 +470,18 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
 
       if(lat && lng){
         const coords = L.latLng(lat, lng);
-        L.marker(coords, { icon: icon })
+
+        if(march && march.length>0){
+          L.marker(coords, { icon: icon })
+          .bindPopup(march.replaceAll("\n","<br/>"), { className: 'custom-marker' , autoPan: false})
           .addTo(this.markerGroup)
           .openPopup();
+        }
+        else{
+          L.marker(coords, { icon: icon })                  
+          .addTo(this.markerGroup)
+          .openPopup();
+        }           
       }      
   }
 
@@ -341,9 +537,10 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
       new LatLng(this.mapCenterLat, this.mapCenterLng),
       this.zoomLevel,
       route,
-      circles
+      circles,
+      this.rotation
     );
-
+    
     await this.loadingService.presentLoading('Loading...');   
     
     this.store.dispatch(new UpdateEventRoute({eventType: this.type, eventId: this.event.id, routeEvent: routeEvent}))        
@@ -371,15 +568,8 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
         }
       }
     )   
-  }
 
-  async sendLocation() {
-    const position = await Geolocation.getCurrentPosition();
-    const { latitude, longitude } = position.coords;
-
-    let latLng = new LatLng(latitude, longitude);
-
-    this.updateCurrentPosition(latLng);   
+    this.calculateDistanceRoute();
   }
 
   async cleanLocation() {
@@ -399,6 +589,10 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
             role: 'confirm',
             handler: () => {
               let latLng = new LatLng();
+              this.lastLocation = {
+                lat: null,
+                lng: null,
+              };
               this.updateCurrentPosition(latLng);
             }
           }
@@ -407,17 +601,111 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
     alert.present();    
   }
 
-  async updateCurrentPosition(latLng: LatLng) {
-    
-    await this.loadingService.presentLoading('Loading...');   
+  async updateCurrentPosition(latLng: LatLng,showLoading:boolean = true) {
+    if(showLoading){
+      await this.loadingService.presentLoading('Loading...');   
+    }
     
     this.store.dispatch(new UpdateEventCurrentPosition({eventType: this.type, eventId: this.event.id, latLng: latLng}))        
       .subscribe({
         next: async ()=> {
           const success = this.store.selectSnapshot(EventState.success);
-          if(success){
-            this.toast.presentToast("Posicion actualizada correctamente");   
-            this.drawCurrentPosition(latLng.lat, latLng.lng, this.redIcon);                
+          if(success){            
+            this.lastLocation = {
+              lat: latLng.lat,
+              lng: latLng.lng,
+            };
+            this.drawPosition(latLng.lat, latLng.lng, this.redIcon, this.lastCurrentMarch);                
+            await this.loadingService.dismissLoading();      
+          }
+          else{
+            const errorStatusCode = this.store.selectSnapshot(EventState.errorStatusCode);
+            const errorMessage = this.store.selectSnapshot(EventState.errorMessage);        
+            // si el token ha caducado (403) lo sacamos de la aplicacion
+            if(errorStatusCode==403){   
+              await this.loadingService.dismissLoading();      
+              this.cancel();         
+              this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
+            }
+            else{
+              await this.loadingService.dismissLoading();      
+              this.toast.presentToast(errorMessage);
+            }                
+          }          
+        }
+      }
+    )   
+  }
+
+  async cleanCurrentMarch() {
+    const alert = await this.alertController.create({
+        header: 'Confirmacion',
+        message: '¿Estas seguro de eliminar la marcha actual?',
+        buttons: [
+          {
+            text: 'No',
+            role: 'cancel',
+            handler: () => {
+              ;
+            }
+          },
+          {
+            text: 'Si',
+            role: 'confirm',
+            handler: () => {     
+              this.lastCurrentMarch = null;         
+              this.doUpdateCurrentMarch(null);
+            }
+          }
+        ]
+    });
+    alert.present();    
+  }
+
+  async updateCurrentMarch() {
+    const alert = await this.alertController.create({
+      header: 'Nombre de la marcha',
+      cssClass: 'notifications-alert-width',
+      inputs: [
+        {
+          name: 'marchName',
+          type: 'textarea',
+          //placeholder: 'Escribe un mensaje (opcional)'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          handler: () => {
+            ;
+          }
+        },
+        {
+          text: 'Aceptar',
+          handler: (data) => {
+            const marchName = data.marchName || ''; 
+            this.doUpdateCurrentMarch(marchName);
+          }
+        }
+      ]
+    });  
+    await alert.present();
+
+  }
+  
+  async doUpdateCurrentMarch(march: string,showLoading:boolean = true) {
+    if(showLoading){
+      await this.loadingService.presentLoading('Loading...');   
+    }
+    
+    this.store.dispatch(new UpdateEventCurrentMarch({eventType: this.type, eventId: this.event.id, march: march}))        
+      .subscribe({
+        next: async ()=> {
+          const success = this.store.selectSnapshot(EventState.success);
+          if(success){     
+            this.lastCurrentMarch = march;       
+            this.drawPosition(this.lastLocation.lat, this.lastLocation.lng, this.redIcon, this.lastCurrentMarch);                
             await this.loadingService.dismissLoading();      
           }
           else{
@@ -457,6 +745,7 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
             role: 'confirm',
             handler: () => {
               this.drawnItems.clearLayers();
+              this.calculateDistanceRoute();
             }
           }
         ]
@@ -482,7 +771,7 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
             this.map.setView([lat, lng], this.zoomLevel);
 
             // Añadir un marcador en la ubicación encontrada
-            this.drawCurrentPosition(lat, lng, this.blueIcon, false);            
+            this.drawPosition(lat, lng, this.blueIcon, null, false);            
           } else {
             alert('Ubicación no encontrada');
           }
@@ -507,21 +796,132 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
     this.kilometersRoute = parseFloat((distance / 1000).toFixed(2));    
   }
 
-  startSendingPosition() {
+  startTrackingPositionAdmin() {
     // Inicia un intervalo para enviar la posición cada 5 segundos
     this.trackingSending = true;
     this.trackingInterval = setInterval(() => {
       // Lógica para enviar la posición, por ejemplo:
-      console.log("enviamos posicion");
       this.sendLocation();
     }, this.timeInterval);
   }
   
-  stopSendingPosition() {
+  stopTrackingPositionAdmin() {
     this.trackingSending = false;
     if (this.trackingInterval) {
       clearInterval(this.trackingInterval);
       this.trackingInterval = null;
     }
   }
+
+  async sendLocation() {
+    await this.loadingService.presentLoading('Loading...');   
+    try{
+      this.watchId = await Geolocation.watchPosition(
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 },
+        async (position, err) => {
+          if (err) {
+            this.toast.presentToast('Error obteniendo ubicación:', err);   
+            await this.loadingService.dismissLoading();                  
+            this.stopWatchingLocation();
+            return;
+          }
+    
+          if (position) {
+            this.lastLocation = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            };            
+            let latLng = new LatLng(this.lastLocation.lat, this.lastLocation.lng);
+            this.updateCurrentPosition(latLng,false);             
+            this.stopWatchingLocation();            
+          }          
+        }
+      );
+    }
+    catch(err){
+      console.error(err);
+      await this.loadingService.dismissLoading();      
+    }    
+  }
+
+  stopWatchingLocation() {
+    if (this.watchId) {
+      Geolocation.clearWatch({ id: this.watchId });
+      this.watchId = null;
+    }    
+  }
+
+  async getEventCurrentData(showLoading:boolean = true) {
+    if(showLoading){    
+      await this.loadingService.presentLoading('Loading...');   
+    }
+
+    this.store.dispatch(new GetEventCurrentData({eventType:this.event.type,eventId: this.event.id}))
+      .subscribe({
+        next: async ()=> {
+          const finish = this.store.selectSnapshot(EventState.finish);          
+          const errorStatusCode = this.store.selectSnapshot(EventState.errorStatusCode);          
+          
+          if(finish){                        
+            if(errorStatusCode==200){                                        
+              let currentDataEvent = this.store.selectSnapshot(EventState.currentDataEvent);              
+              if(currentDataEvent && currentDataEvent.lat && currentDataEvent.lng){  
+                this.drawPosition(currentDataEvent.lat, currentDataEvent.lng, this.redIcon, currentDataEvent.march);                                                
+              } 
+              else {
+                // sino hemos encontrado posicion es porque el admin la ha borrado
+                this.drawPosition(null, null, this.redIcon, null);                                                
+              }                       
+            }  
+            else if(errorStatusCode==403){   // si el token ha caducado (403) lo sacamos de la aplicacion                                             
+              await this.loadingService.dismissLoading();      
+              this.cancel();         
+              this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
+            }
+            else{              
+              const errorMessage = this.store.selectSnapshot(EventState.errorMessage);        
+              this.toast.presentToast(errorMessage);
+            }     
+            this.initSearchCurrentPositionFinish = true;
+            this.dismissInitialLoading();          
+          }      
+        }
+      }
+    )
+  }
+
+  startTrackingCurrentPositionMusicAndGuest() {
+    this.getEventCurrentData(false);
+    // Inicia un intervalo para enviar la posición cada 5 segundos
+    this.trackingSendingCurrentPositionMusicAndGuest = true;
+    this.trackingIntervalCurrentPositionMusicAndGuest = setInterval(() => {      
+      this.getEventCurrentData();
+    }, this.timeIntervalCurrentPositionMusicAndGuest);
+  }
+  
+  stopTrackingCurrentPositionMusicAndGuest() {
+    this.trackingSendingCurrentPositionMusicAndGuest = false;
+    if (this.trackingIntervalCurrentPositionMusicAndGuest) {
+      clearInterval(this.trackingIntervalCurrentPositionMusicAndGuest);
+      this.trackingIntervalCurrentPositionMusicAndGuest = null;
+    }
+  }
+
+  async centerLocation() {    
+    if(this.lastLocation){
+      this.drawPosition(this.lastLocation.lat, this.lastLocation.lng, this.redIcon, this.lastCurrentMarch);                
+      this.map.setView([this.lastLocation.lat, this.lastLocation.lng], this.zoomLevel);
+    }
+    else if (this.detailEvent && this.detailEvent.currentPosition && this.detailEvent.currentPosition.lat && this.detailEvent.currentPosition.lng) {    
+      this.drawPosition(this.detailEvent.currentPosition.lat, this.detailEvent.currentPosition.lng,this.redIcon,this.detailEvent.currentMarch);
+      this.map.setView([this.detailEvent.currentPosition.lat, this.detailEvent.currentPosition.lng], this.zoomLevel);
+    }
+    else{
+      this.drawPosition(this.mapCenterLat, this.mapCenterLng,this.redIcon, this.lastCurrentMarch);
+      this.map.setView([this.mapCenterLat, this.mapCenterLng], this.zoomLevel);
+    }
+  }
+
+
+
 }

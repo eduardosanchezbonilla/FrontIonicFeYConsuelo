@@ -26,6 +26,7 @@ import { EventListResponse } from '../models/event/event-list-response';
 import { ModalFormationEventComponent } from './component/modal-formation-event/modal-formation-event.component';
 import { ModalStatsComponent } from './component/modal-stats/modal-stats.component';
 import { ModalRouteEventComponent } from './component/modal-route-event/modal-route-event.component';
+import { ModalCrossheadEventComponent } from './component/modal-crosshead-event/modal-crosshead-event.component';
 
 @Component({
   selector: 'app-menu-event',
@@ -218,6 +219,16 @@ export class MenuEventPage implements OnDestroy {
         value: 'repertoire',
       }
     );
+    if(!this.isRehearsalDay([selectedEvent]) && selectedEvent.performanceType!=='CONCIERTO'){
+      inputs.push(
+        {
+          name: 'crosshead',
+          type: 'radio',
+          label: 'Cruceta',
+          value: 'crosshead',
+        }
+      );
+    }
     if(!this.isRehearsalDay([selectedEvent]) && selectedEvent.image){
       inputs.push(
         {
@@ -243,7 +254,7 @@ export class MenuEventPage implements OnDestroy {
         {
           name: 'route',
           type: 'radio',
-          label: 'Recorrido',
+          label: 'Itinerario',
           value: 'route',
         }
       );
@@ -291,6 +302,10 @@ export class MenuEventPage implements OnDestroy {
             if('viewPerformanceImage'===selectedType){ 
               this.selectedDate = null; 
               this.viewPerformanceImage( selectedEvent);              
+            }
+            if('crosshead'===selectedType){ 
+              this.selectedDate = null; 
+              this.crossheadEvent( selectedEvent.type,  selectedEvent, selectedDateString);              
             }
           },
         },
@@ -402,6 +417,16 @@ export class MenuEventPage implements OnDestroy {
         value: 'REPERTOIRE',            
       }
     );
+    if(!this.isRehearsalDay([event]) && event.performanceType!=='CONCIERTO'){
+      inputs.push(
+        {
+          name: 'crosshead',
+          type: 'radio',
+          label: 'Cruceta',
+          value: 'CROSSHEAD',
+        }
+      );
+    }
     inputs.push(
       {
         name: 'information',
@@ -417,6 +442,16 @@ export class MenuEventPage implements OnDestroy {
           type: 'radio',
           label: 'Formación',
           value: 'FORMATION'            
+        }
+      );
+    }    
+    if(!this.isRehearsalDay([event]) && event.performanceType!=='CONCIERTO'){
+      inputs.push(
+        {
+          name: 'route',
+          type: 'radio',
+          label: 'Itinerario',
+          value: 'ROUTE',
         }
       );
     }
@@ -448,7 +483,15 @@ export class MenuEventPage implements OnDestroy {
             if('FORMATION'===selectedType){ 
               this.selectedDate = null; 
               this.formationRepertoire( event.type,  event, selectedDateString);              
-            }       
+            }   
+            if('ROUTE'===selectedType){ 
+              this.selectedDate = null; 
+              this.eventRoute( event.type,  event, selectedDateString);              
+            }    
+            if('CROSSHEAD'===selectedType){ 
+              this.selectedDate = null; 
+              this.crossheadEvent( event.type,  event, selectedDateString);              
+            }   
           },
         },
       ],
@@ -1306,6 +1349,16 @@ export class MenuEventPage implements OnDestroy {
     }
   }
 
+  getProgressColorMarchStats(percentage: number): string {
+    if (percentage >= 60) {
+      return 'success';
+    } else if (percentage >= 30) {
+      return 'warning';
+    } else {
+      return 'danger';
+    }
+  }
+
   formatDate(dateString: string): string {
     const date = new Date(dateString);
     const opciones: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long' };
@@ -1358,6 +1411,33 @@ export class MenuEventPage implements OnDestroy {
     // mostramos la modal
     const modal = await this.modalController.create({
       component: ModalRouteEventComponent,
+      componentProps: {
+        date: date,
+        type: this.translateEventType(type),
+        event: event
+      }
+    });
+    modal.present();
+  }
+
+  async showCrossheadEvent(event: Event, userSliding: IonItemSliding){
+    // cerramos el sliding 
+    if(userSliding){
+      userSliding.close();
+    }
+
+    // abrimos la modal
+    this.crossheadEvent( event.type,  event, event.date);                  
+  }
+
+  async crossheadEvent(type:string, event: Event, date: string){
+
+    // mostramos spinner
+    await this.loadingService.presentLoading('Loading...');   
+
+    // mostramos la modal
+    const modal = await this.modalController.create({
+      component: ModalCrossheadEventComponent,
       componentProps: {
         date: date,
         type: this.translateEventType(type),

@@ -11,6 +11,8 @@ import { EventListResponse } from 'src/app/models/event/event-list-response';
 import { UpdateEventFormationRequestDto } from 'src/app/models/formation-event/update-event-formation-request-dto';
 import { RouteEvent } from 'src/app/models/route-event/route-event';
 import { LatLng } from 'src/app/models/route-event/latLng';
+import { EventCurrentData } from 'src/app/models/event/event-current-data';
+import { CrossheadEvent } from 'src/app/models/crosshead-event/crosshead-event';
 
 @Injectable()
 export class EventService {
@@ -539,6 +541,269 @@ export class EventService {
     });
   }
 
+  async updateEventCurrentMarch(
+                              eventType:string, 
+                              eventId:number, 
+                              march:string
+                          ){
+    const token = await this.storage.getItem('token');    
+    return Http.put(
+      {
+        url:environment.host + '/event/'+ eventType + '/'+ eventId + '/current-march',
+        params:{},
+        data:{march:march},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        }
+      }
+    ).then(async response => {      
+      const newToken = response.headers['Authorization'] || response.headers['authorization'];
+      if(newToken){                
+        await this.storage.setItem('token', newToken.replace('Bearer ', ''));
+      }
+      if(response.status==200){
+        return true;
+      }
+      else{                
+        return Promise.reject({
+          status: response.status,
+          message: response.data?.message || 'Error al modificar la marcha actual del evento'
+        });
+      }      
+    })
+    .catch((error) => {          
+      if(error.status){
+        return Promise.reject(error);
+      }
+      else {
+        return Promise.reject({
+          status: 403,
+          message: null
+        });                
+      }           
+    });
+  }
+
+  async getEventCurrentPosition(eventType:string,eventId:number){
+    
+    const token = await this.storage.getItem('token');
+    return Http.get(
+      {
+        url:environment.host + '/event/'+ eventType + '/'+ eventId + '/current-position',
+        params:{},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        }
+      }
+    ).then(async response => {
+      const newToken = response.headers['Authorization'] || response.headers['authorization'];
+      if(newToken){          
+        await this.storage.setItem('token', newToken.replace('Bearer ', ''));
+      }
+      if(response.status==200){
+        const data = await response.data as LatLng;
+        return data;
+      }
+      else if(response.status==204){
+        return null;
+      }
+      else{                
+        return Promise.reject({
+          status: response.status,
+          message: response.data?.message || 'Error al obtener la posicion actual del evento'
+        });
+      }    
+    })
+    .catch((error) => {    
+      if(error.status){
+        return Promise.reject(error);
+      }
+      else {
+        return Promise.reject({
+          status: 403,
+          message: null
+        });                
+      }           
+    });     
+  }
+
+  async getEventRoute(eventType:string,eventId:number){
+    
+    const token = await this.storage.getItem('token');
+    return Http.get(
+      {
+        url:environment.host + '/event/'+ eventType + '/'+ eventId + '/route',
+        params:{},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        }
+      }
+    ).then(async response => {
+      const newToken = response.headers['Authorization'] || response.headers['authorization'];
+      if(newToken){          
+        await this.storage.setItem('token', newToken.replace('Bearer ', ''));
+      }
+      if(response.status==200){
+        const data = await response.data as RouteEvent;
+        return data;
+      }
+      else if(response.status==204){
+        return null;
+      }
+      else{                
+        return Promise.reject({
+          status: response.status,
+          message: response.data?.message || 'Error al obtener la ruta del evento'
+        });
+      }    
+    })
+    .catch((error) => {    
+      if(error.status){
+        return Promise.reject(error);
+      }
+      else {
+        return Promise.reject({
+          status: 403,
+          message: null
+        });                
+      }           
+    });     
+  }
+
+  async getEventCurrentData(eventType:string,eventId:number){
+    
+    const token = await this.storage.getItem('token');
+    return Http.get(
+      {
+        url:environment.host + '/event/'+ eventType + '/'+ eventId + '/current-data',
+        params:{},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        }
+      }
+    ).then(async response => {
+      const newToken = response.headers['Authorization'] || response.headers['authorization'];
+      if(newToken){          
+        await this.storage.setItem('token', newToken.replace('Bearer ', ''));
+      }
+      if(response.status==200){
+        const data = await response.data as EventCurrentData;
+        return data;
+      }
+      else if(response.status==204){
+        return null;
+      }
+      else{                
+        return Promise.reject({
+          status: response.status,
+          message: response.data?.message || 'Error al obtener la informacion actual del evento'
+        });
+      }    
+    })
+    .catch((error) => {    
+      if(error.status){
+        return Promise.reject(error);
+      }
+      else {
+        return Promise.reject({
+          status: 403,
+          message: null
+        });                
+      }           
+    });     
+  }
+
+  async getEventCrosshead(eventType:string,eventId:number){
+    
+    const token = await this.storage.getItem('token');
+    return Http.get(
+      {
+        url:environment.host + '/event/'+ eventType + '/'+ eventId + '/crosshead',
+        params:{},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        }
+      }
+    ).then(async response => {
+      const newToken = response.headers['Authorization'] || response.headers['authorization'];
+      if(newToken){          
+        await this.storage.setItem('token', newToken.replace('Bearer ', ''));
+      }
+      if(response.status==200){
+        const data = await response.data as CrossheadEvent;
+        return data;
+      }
+      else if(response.status==204){
+        return new CrossheadEvent(null);
+      }
+      else{                
+        return Promise.reject({
+          status: response.status,
+          message: response.data?.message || 'Error al obtener la cruceta del evento'
+        });
+      }    
+    })
+    .catch((error) => {    
+      if(error.status){
+        return Promise.reject(error);
+      }
+      else {
+        return Promise.reject({
+          status: 403,
+          message: null
+        });                
+      }           
+    });     
+  }
+
+  async updateEventCrosshead(
+                              eventType:string, 
+                              eventId:number, 
+                              crossheadEvent:CrossheadEvent
+                          ){
+    const token = await this.storage.getItem('token');    
+    return Http.put(
+      {
+        url:environment.host + '/event/'+ eventType + '/'+ eventId + '/crosshead',
+        params:{},
+        data:crossheadEvent,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        }
+      }
+    ).then(async response => {      
+      const newToken = response.headers['Authorization'] || response.headers['authorization'];
+      if(newToken){                
+        await this.storage.setItem('token', newToken.replace('Bearer ', ''));
+      }
+      if(response.status==200){
+        return true;
+      }
+      else{                
+        return Promise.reject({
+          status: response.status,
+          message: response.data?.message || 'Error al actualizar la cruceta del evento'
+        });
+      }      
+    })
+    .catch((error) => {          
+      if(error.status){
+        return Promise.reject(error);
+      }
+      else {
+        return Promise.reject({
+          status: 403,
+          message: null
+        });                
+      }           
+    });
+  }
 
 }
 

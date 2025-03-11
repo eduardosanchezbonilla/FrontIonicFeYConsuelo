@@ -25,6 +25,7 @@ export class Event {
     displacementBus?: boolean;
     route: RouteEvent;
     currentPosition: LatLng;
+    currentMarch: string;
 
     constructor(
         id: number, 

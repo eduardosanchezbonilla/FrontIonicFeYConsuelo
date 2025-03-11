@@ -1,3 +1,4 @@
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, Input, OnInit } from '@angular/core';
 import { AlertController, ModalController, PopoverController } from '@ionic/angular';
 import { Select, Store } from '@ngxs/store';
@@ -39,8 +40,8 @@ export class ModalEditRepertoireMarchSoloistComponent implements OnInit {
     private loadingService: LoadingService,    
     private userService: UsersService,
     private toast:ToastService,   
-    private popoverController: PopoverController,
-    private alertController: AlertController,
+    private popoverController: PopoverController,    
+    private alertController: AlertController,      
   ) { }
 
   async ngOnInit() {            
@@ -309,6 +310,9 @@ export class ModalEditRepertoireMarchSoloistComponent implements OnInit {
 
   addSelectedMainSoloist(soloIndex: number, musician: any) {
     const solo = this.repertoireMarch.repertoireMarchSolos[soloIndex];
+    if(!solo.mainSoloists){
+      solo.mainSoloists = [];
+    }
     solo.mainSoloists.push({
       musicianId: musician.musicianId,
       musicianName: musician.musicianName,
@@ -318,6 +322,9 @@ export class ModalEditRepertoireMarchSoloistComponent implements OnInit {
 
   addSelectedSecondarySoloist(soloIndex: number, musician: any) {
     const solo = this.repertoireMarch.repertoireMarchSolos[soloIndex];
+    if(!solo.secondarySoloists){
+      solo.secondarySoloists = [];
+    }
     solo.secondarySoloists.push({
       musicianId: musician.musicianId,
       musicianName: musician.musicianName,
@@ -346,5 +353,20 @@ export class ModalEditRepertoireMarchSoloistComponent implements OnInit {
     });
     event.detail.complete();
   }
+
+  trackBySolo(index: number, item: any): number {
+    return item.order;
+  }
+
+  drop(event: CdkDragDrop<any[]>) {    
+    const newOrder = [...this.repertoireMarch.repertoireMarchSolos]; // Clonar el array
+    moveItemInArray(newOrder, event.previousIndex, event.currentIndex);
+    // Actualizar manualmente los valores de `order`
+    newOrder.forEach((solo, index) => {
+        solo.order = index + 1;
+    });
+    this.repertoireMarch.repertoireMarchSolos = newOrder; // Asignar el nuevo array
+  }
+
 
 }

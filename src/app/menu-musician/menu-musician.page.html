@@ -143,12 +143,12 @@
   <div class="spacer-super-small"></div>  
 
   <!-- botones finales -->    
-  <ion-fab slot="fixed" vertical="bottom" horizontal="end" style="margin-right: 70px;">
+  <ion-fab slot="fixed" vertical="bottom" horizontal="start" style="margin-right: 0px;">
     <ion-fab-button>
       <ion-icon name="apps-outline"></ion-icon>
     </ion-fab-button>  
   
-    <ion-fab-list side="start">
+    <ion-fab-list side="end">
       <ion-fab-button color="warning" (click)="createMusician()">
         <ion-icon name="person-add-outline"></ion-icon>        
       </ion-fab-button>
@@ -162,7 +162,17 @@
         <ion-icon name="chevron-collapse-outline"></ion-icon>
       </ion-fab-button>
     </ion-fab-list>
+
+    <ion-fab-list side="top">
+      <ion-fab-button class="buttons-fab" *ngIf="(profile=='SUPER_ADMIN' || profile=='ADMIN')" color="warning" (click)="openModalMusicianStatsSolo()">
+        <div class="fab-content">
+          <ion-icon name="stats-chart-outline" class="fab-button-icon"></ion-icon>
+          <span>Estadísticas</span>
+        </div>
+      </ion-fab-button>      
+    </ion-fab-list>
   </ion-fab>
+  
 
   <ion-fab slot="fixed" vertical="bottom" horizontal="end">
     <ion-fab-button fill="solid" color="success"  class="musician-total-header-fab-text">

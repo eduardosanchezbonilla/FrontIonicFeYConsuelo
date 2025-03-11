@@ -1,0 +1,360 @@
+.custom-modal-title {
+    margin-top:5px;
+    margin-bottom:10px;
+    color: #B22222;   
+    text-shadow: 1px 1px 2px #FFFFFF;  
+}
+
+.custom-modal-subtitle {
+    margin-top:-10px !important;
+    margin-bottom:10px !important;
+    margin-left:5px !important;    
+    font-size: 1.4rem; 
+    text-align: left; 
+    text-shadow: 1px 1px 2px #FFFFFF;  
+}
+
+.custom-label {
+    color: #B22222;
+    font-size: 1rem;
+    font-weight: bold;  
+    text-shadow: 1px 1px 2px #FFFFFF; /* Sombra leve */
+}
+
+.custom-label-textarea {
+    /*flex: 1;
+    font-size: 1rem;
+    font-weight: bold;    */
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Espacio mínimo entre el texto y el checkbox */
+    font-size: 1rem;
+    font-weight: bold;
+    white-space: nowrap; 
+    padding-bottom:0px !important;
+    margin-bottom: 0px !important;
+    margin-top: 0px !important;
+}
+
+ion-label.ion-color-primary {
+    color: #B22222;
+    font-size: 1rem;
+    font-weight: bold;  
+    text-shadow: 1px 1px 2px #FFFFFF; /* Sombra leve */
+}
+  
+.custom-textarea {
+    margin-top:5px;
+    margin-bottom:5px;
+    border: 2px solid #4d4d4d; 
+    border-radius: 10px;        
+    padding: 10px;              
+    background-color: #f9f9f9; 
+    font-size: 16px;     
+    padding-top:0px;       
+    padding-bottom:0px;             
+    box-shadow: 0 0 10px rgba(77, 77, 77, 0.2); 
+    display: block;              
+    width: 100%;                
+    min-height: 50px;           
+    visibility: visible;        
+    opacity: 1;                     
+}
+
+.event-card {
+    width: calc(100%);
+    max-height: 70px; 
+    margin: 0px;    
+    margin-top:20px;
+    margin-bottom:10px;
+}
+
+.event-avatar {
+    margin-top:5px;
+    margin-left: 0px;
+    margin-right: 15px;
+    border-radius: 0 !important;
+}
+
+ion-img {
+    border-radius: 0 !important;
+}
+
+.street-card {    
+    background-color: #FFFFFF;
+    width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin:0px;
+}
+
+.custom-ion-card-street{
+    padding-left:12px !important;
+    padding-right:12px !important;
+    padding-bottom:10px !important;
+}
+
+.custom-item-street-annotations{
+    padding-left:5px !important;
+    padding-right:5px !important;
+    padding-bottom:0x !important;
+}
+
+.custom-item-street{
+    padding-left:5px !important;
+    padding-right:5px !important;
+}
+  
+.custom-item-list-street{
+    padding-left:0px !important;
+    padding-right:20px !important;
+    min-height: 20px;
+    --min-height: 20px;
+}
+
+.remove-button {
+    position: absolute;
+    top: 8px;
+    right: 26px;
+    z-index: 10;
+}
+  
+/* Opcional: ajustar el tamaño del botón si fuera necesario */
+ion-button[size="small"] {
+    padding: 0;
+    min-width: 0;
+}
+  
+.initcap {
+    text-transform: capitalize;
+}
+
+
+.custom-ion-label-march{
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+  
+.ion-reorder .ion-icon {
+    height: 20px !important;
+}
+  
+.reorder-icon {
+    height: 20px !important;
+}
+ 
+.block-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 0px;    
+}
+  
+.custom-block {
+    width: 100%;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    padding-bottom:0px;
+    padding-top:0px;
+    background: #f8f9fa;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+  
+.drag-handle {    
+    cursor: grab;
+    font-size: 20px;
+    color: #666;
+}
+
+.drag-handle:active {
+    cursor: grabbing;
+}
+  
+.drag-handle ion-icon {
+    font-size: 24px;
+}
+  
+.custom-reorder-three{
+    margin-top:5px;
+}
+
+.button-back{
+    margin-left:0px;
+    margin-right:0px;
+}
+
+.no-data-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    color: #888;
+}
+  
+.no-data-icon {
+    font-size: 48px;
+    color: #ff9800; 
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+  
+.no-data-text {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    color: #333;
+}
+  
+.street-card-view {
+    margin: 12px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    background-color: #FFFFFF;
+    margin-left:0px;
+    margin-top:0px;
+    margin-right: 0px;;
+}
+ 
+.street-card-header-view {
+    padding-bottom: 8px;
+}
+
+.section-header-view {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    margin-top:0px;    
+    margin-bottom:0px;    
+}
+  
+.section-header-view ion-icon {
+    margin-right: 8px;
+}
+
+.ion-list-custom{
+    padding-top:0px !important;
+    padding-bottom:0px !important;
+}
+
+.ion-item-custom{
+    padding-left:23px;
+    padding-right:20px;    
+    --min-height: 35px;
+}
+
+.ion-item-label{
+    margin-top:0px;
+    margin-bottom:0px;
+    font-size: 1rem;
+}
+
+.custom-ion-card-title{
+    position: relative;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.custom-title-view{
+    font-size: 0.9rem;
+}
+
+.ion-list-view{
+    padding:0px !important;
+}
+
+.searchbar-container {
+    display: flex;
+    align-items: center; /* Centra verticalmente */   
+    padding: 0px; /* Margen interno para darle aire */
+    padding-top:0px;
+    padding-right: 0px;
+    margin-right: 0px;
+}
+
+.custom-checkbox-item {
+    width:50%;
+    margin-top:-3px;
+    padding-top:0px;
+    display: flex;    
+    gap: 5px;    
+    --ion-item-background: transparent; /* Fondo transparente */
+    --ion-item-padding-start: 0; /* Elimina padding innecesario */    
+    --inner-padding-end: 0px;   
+    --padding-end: 0px; /* Asegúrate de que no haya espacio a la derecha */
+    font-size: 0.9em;    
+    color: #333333;   
+    text-shadow: 1px 1px 2px #FFFFFF;        
+}
+
+.custom-checkbox-item::part(native) {    
+    padding-left: unset;    
+}
+
+.custom-checkbox-item-div {   
+    margin-top:-3px;
+    padding-left: 10px;
+    padding-top: 12px;
+    padding-bottom: 11px;
+    width: 100%; 
+    display: flex;    
+}
+
+.custom-checkbox {
+    padding-left: 0px;
+    margin-left:0px;
+    margin-right:9px;    
+    margin-top: 0px;
+    margin-bottom: 0px;   
+}
+
+.custom-checkbox-annotations {
+    padding-left: 0px;
+    margin-top: 0px;
+    margin-bottom: 0px;   
+    margin-left: 6px !important;
+    margin-right: 0px !important;    
+  }
+  
+.label-checkbox-container-annotations {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 5px 10px;
+    padding-top:0px;
+    padding-bottom:0px !important;
+    min-height: 30px;
+    --min-height: 30px;  
+    margin-top:5px;    
+}
+
+.custom-label-marchs{
+    color: #B22222;
+    font-size: 1rem;
+    font-weight: bold;  
+    text-shadow: 1px 1px 2px #FFFFFF; /* Sombra leve */
+    margin-top:0px;
+    margin-bottom:0px;      
+}
+  
+.custom-item-street-marchs{
+    padding-left:5px !important;
+    padding-right:5px !important;
+    padding-bottom:0x !important;
+    min-height: 30px;
+    --min-height: 30px;    
+}
+
+.custom-annotations-p{
+    margin-left:22px;
+    color:black;
+    margin-top:3px;
+    margin-bottom:5px;
+}

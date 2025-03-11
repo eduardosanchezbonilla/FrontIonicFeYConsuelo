@@ -2,13 +2,16 @@ import { Injectable } from '@angular/core';
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { EventService } from 'src/app/services/event/event.service';
 import { Event } from 'src/app/models/event/event';
-import { CreateEvent, DeleteEvent, GetEvent, GetEventMusicianAssistance, GetEventRepertoire, GetEventReportAssistance, GetEvents, GetEventsGroupByAnyo, ResetEvent, ResetEventMusicianAssistance, ResetEventRepertoire, UpdateEvent, UpdateEventCurrentPosition, UpdateEventFormation, UpdateEventRoute } from './event.actions';
+import { CreateEvent, DeleteEvent, GetEvent, GetEventCrosshead, GetEventCurrentData, GetEventCurrentPosition, GetEventMusicianAssistance, GetEventRepertoire, GetEventReportAssistance, GetEventRoute, GetEvents, GetEventsGroupByAnyo, ResetEvent, ResetEventMusicianAssistance, ResetEventRepertoire, UpdateEvent, UpdateEventCrosshead, UpdateEventCurrentMarch, UpdateEventCurrentPosition, UpdateEventFormation, UpdateEventRoute } from './event.actions';
 import { EventMusicianAssistance } from 'src/app/models/event/event-musician-assistance';
 import { EventGroupByAnyo } from 'src/app/models/event/event-group-by-anyo';
 import { EventRepertoire } from 'src/app/models/event/event-repertoire';
 import { EventReportAssistance } from 'src/app/models/event/event-report-assistance';
-import { MusicianEventListResponse } from 'src/app/models/musician-event/musician-event-list-response';
 import { EventListResponse } from 'src/app/models/event/event-list-response';
+import { RouteEvent } from 'src/app/models/route-event/route-event';
+import { LatLng } from 'src/app/models/route-event/latLng';
+import { EventCurrentData } from 'src/app/models/event/event-current-data';
+import { CrossheadEvent } from 'src/app/models/crosshead-event/crosshead-event';
 
 export class EventStateModel {
   //public events: Event[];
@@ -18,6 +21,10 @@ export class EventStateModel {
   public eventRepertoire: EventRepertoire;
   public eventListResponse: EventListResponse;
   public event: Event;
+  public routeEvent: RouteEvent;
+  public crossheadEvent: CrossheadEvent;
+  public currentPositionEvent: LatLng;
+  public currentDataEvent: EventCurrentData;
   finish: boolean;
   success: boolean;
   errorStatusCode: number;
@@ -32,6 +39,10 @@ const defaults = {
   eventRepertoire: null,
   eventListResponse:null,
   event: null,
+  routeEvent: null,
+  crossheadEvent: null,
+  currentPositionEvent: null,
+  currentDataEvent: null,
   finish: false,
   success: false,
   errorStatusCode: null,
@@ -59,11 +70,6 @@ export class EventState {
     return state.finish;
   }
   
-  /*@Selector()
-  static events(state:EventStateModel):Event[] {
-    return state.events;
-  }*/
-
   @Selector()
   static eventListResponse(state:EventStateModel):EventListResponse {
     return state.eventListResponse;
@@ -92,6 +98,26 @@ export class EventState {
   @Selector()
   static event(state:EventStateModel):Event {
     return state.event;
+  }
+
+  @Selector()
+  static routeEvent(state:EventStateModel):RouteEvent {
+    return state.routeEvent;
+  }
+
+  @Selector()
+  static crossheadEvent(state:EventStateModel):CrossheadEvent {
+    return state.crossheadEvent;
+  }
+
+  @Selector()
+  static currentPositionEvent(state:EventStateModel):LatLng {
+    return state.currentPositionEvent;
+  }
+
+  @Selector()
+  static currentDataEvent(state:EventStateModel):EventCurrentData {
+    return state.currentDataEvent;
   }
 
   @Selector()
@@ -546,6 +572,201 @@ export class EventState {
             errorMessage: error.message
           })
       });     
+  }
+
+  @Action(UpdateEventCurrentMarch)
+  updateEventCurrentMarch(
+      { patchState }: StateContext<EventStateModel>,
+      { payload }: UpdateEventCurrentMarch
+  ) {
+    return this.eventService.updateEventCurrentMarch(payload.eventType, payload.eventId, payload.march)
+      .then( 
+        async (success:boolean) => {
+          if(success){
+            patchState({
+              finish: true,
+              success: true,
+              errorStatusCode: 200,
+              errorMessage: null
+            })
+          }
+          else{
+            patchState({
+              finish: true,
+              success: false,
+              errorStatusCode: 500,
+              errorMessage: 'Error al modificar el evento'
+            })
+          }
+        }
+      )
+      .catch(
+        async (error) => {          
+          patchState({
+            finish: true,
+            success: false,
+            errorStatusCode: error.status,
+            errorMessage: error.message
+          })
+      });     
+  }
+
+
+  @Action(GetEventRoute)
+  getEventRoute(
+      { patchState }: StateContext<EventStateModel>,
+      { payload }: GetEventRoute
+  ) {
+    return this.eventService.getEventRoute(payload.eventType, payload.eventId)
+      .then(
+        (route:RouteEvent) => {
+          patchState({
+            finish: true,
+            success: true,            
+            routeEvent: route,
+            errorStatusCode: 200,
+            errorMessage: null
+          })
+        }
+      )
+      .catch(
+        async (error) => {          
+          patchState({
+            finish: true,
+            success: false,            
+            routeEvent: new RouteEvent(null,null,null,null,null),
+            errorStatusCode: error.status,
+            errorMessage: error.message
+          })
+        }
+      );
+  }
+
+  @Action(GetEventCurrentPosition)
+  getEventCurrentPosition(
+      { patchState }: StateContext<EventStateModel>,
+      { payload }: GetEventCurrentPosition
+  ) {
+    return this.eventService.getEventCurrentPosition(payload.eventType, payload.eventId)
+      .then(
+        (currentPosition:LatLng) => {
+          patchState({
+            finish: true,
+            success: true,            
+            currentPositionEvent: currentPosition,
+            errorStatusCode: 200,
+            errorMessage: null
+          })
+        }
+      )
+      .catch(
+        async (error) => {          
+          patchState({
+            finish: true,
+            success: false,            
+            currentPositionEvent: new LatLng(null,null),
+            errorStatusCode: error.status,
+            errorMessage: error.message
+          })
+        }
+      );
+  }
+
+  @Action(GetEventCurrentData)
+  getEventCurrentData(
+      { patchState }: StateContext<EventStateModel>,
+      { payload }: GetEventCurrentData
+  ) {
+    return this.eventService.getEventCurrentData(payload.eventType, payload.eventId)
+      .then(
+        (currentData:EventCurrentData) => {
+          patchState({
+            finish: true,
+            success: true,            
+            currentDataEvent: currentData,
+            errorStatusCode: 200,
+            errorMessage: null
+          })
+        }
+      )
+      .catch(
+        async (error) => {          
+          patchState({
+            finish: true,
+            success: false,            
+            currentDataEvent: new EventCurrentData(null,null,null),
+            errorStatusCode: error.status,
+            errorMessage: error.message
+          })
+        }
+      );
+  }
+
+  @Action(UpdateEventCrosshead)
+  updateEventCrosshead(
+      { patchState }: StateContext<EventStateModel>,
+      { payload }: UpdateEventCrosshead
+  ) {
+    return this.eventService.updateEventCrosshead(payload.eventType, payload.eventId, payload.crossheadEvent)
+      .then( 
+        async (success:boolean) => {
+          if(success){
+            patchState({
+              finish: true,
+              success: true,
+              errorStatusCode: 200,
+              errorMessage: null
+            })
+          }
+          else{
+            patchState({
+              finish: true,
+              success: false,
+              errorStatusCode: 500,
+              errorMessage: 'Error al actualizar el evento'
+            })
+          }
+        }
+      )
+      .catch(
+        async (error) => {          
+          patchState({
+            finish: true,
+            success: false,
+            errorStatusCode: error.status,
+            errorMessage: error.message
+          })
+      });     
+  }
+
+  @Action(GetEventCrosshead)
+  getEventCrosshead(
+      { patchState }: StateContext<EventStateModel>,
+      { payload }: GetEventCrosshead
+  ) {
+    return this.eventService.getEventCrosshead(payload.eventType, payload.eventId)
+      .then(
+        (crosshead:CrossheadEvent) => {
+          patchState({
+            finish: true,
+            success: true,            
+            crossheadEvent: crosshead,
+            errorStatusCode: 200,
+            errorMessage: null
+          })
+        }
+      )
+      .catch(
+        async (error) => {          
+          patchState({
+            finish: true,
+            success: false,            
+            crossheadEvent: new CrossheadEvent(null),
+            errorStatusCode: error.status,
+            errorMessage: error.message
+          })
+        }
+      );
   }
 
 }

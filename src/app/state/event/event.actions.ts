@@ -1,3 +1,4 @@
+import { CrossheadEvent } from "src/app/models/crosshead-event/crosshead-event";
 import { Event } from "src/app/models/event/event";
 import { UpdateEventFormationRequestDto } from "src/app/models/formation-event/update-event-formation-request-dto";
 import { LatLng } from "src/app/models/route-event/latLng";
@@ -76,4 +77,34 @@ export class UpdateEventRoute {
 export class UpdateEventCurrentPosition {
   static readonly type = '[Event] Update EventCurrentPosition';
   constructor(public payload: {eventType:string, eventId:number, latLng: LatLng}) { }
+}
+
+export class UpdateEventCurrentMarch {
+  static readonly type = '[Event] Update EventCurrentMarch';
+  constructor(public payload: {eventType:string, eventId:number, march: string}) { }
+}
+
+export class GetEventRoute{
+  static readonly type = '[Event] GetEventRoute';
+  constructor(public payload: {eventType:string, eventId:number}) { }
+}
+
+export class GetEventCurrentPosition{
+  static readonly type = '[Event] GetEventCurrentPosition';
+  constructor(public payload: {eventType:string, eventId:number}) { }
+}
+
+export class GetEventCurrentData{
+  static readonly type = '[Event] GetEventCurrentData';
+  constructor(public payload: {eventType:string, eventId:number}) { }
+}
+
+export class UpdateEventCrosshead {
+  static readonly type = '[Event] Update EventCrosshead';
+  constructor(public payload: {eventType:string, eventId:number, crossheadEvent: CrossheadEvent}) { }
+}
+
+export class GetEventCrosshead{
+  static readonly type = '[Event] GetEventCrosshead';
+  constructor(public payload: {eventType:string, eventId:number}) { }
 }
