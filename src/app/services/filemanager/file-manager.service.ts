@@ -14,7 +14,7 @@ export class FileManagerService {
         private toastService: ToastService
     ) { }
 
-    private showFileNavigatorWeb(base64String: string) {
+    private showFileNavigatorWeb(base64String: string, format: String) {
         // Convierte la cadena base64 a un Blob
         const byteCharacters = atob(base64String);
         const byteNumbers = new Array(byteCharacters.length);
@@ -22,14 +22,14 @@ export class FileManagerService {
             byteNumbers[i] = byteCharacters.charCodeAt(i);
         }
         const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: 'application/pdf' });
+        const blob = new Blob([byteArray], { type: ''+format });
     
         // Crear una URL a partir del Blob y abrirla en una nueva pestaña
         const pdfUrl = URL.createObjectURL(blob);
         window.open(pdfUrl);
     }
 
-    private downloadFileNavigatorWeb(base64String: string) {   
+    /*private downloadFileNavigatorWeb(base64String: string, format: String) {   
         // Convierte la cadena base64 a un Blob
         const byteCharacters = atob(base64String);
         const byteNumbers = new Array(byteCharacters.length);
@@ -37,7 +37,7 @@ export class FileManagerService {
             byteNumbers[i] = byteCharacters.charCodeAt(i);
         }
         const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: 'application/pdf' });
+        const blob = new Blob([byteArray], { type: 'application/'+format });
 
         // Crear una URL a partir del Blob
         const pdfUrl = URL.createObjectURL(blob);
@@ -45,13 +45,13 @@ export class FileManagerService {
         // Crear un enlace invisible para forzar la descarga
         const link = document.createElement('a');
         link.href = pdfUrl;
-        link.download = 'document.pdf'; // Nombre del archivo
+        link.download = 'document.'+format; // Nombre del archivo
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);    
-    }
+    }*/
 
-    private async showFileAndroid(name:string, base64String: string): Promise<void> {    
+    private async showFileAndroid(name:string, base64String: string, format:string): Promise<void> {    
         // guardamos el fichero       
         /*const fileName = 'tmp/'+name;
         const contentBase64= base64String;
@@ -92,7 +92,7 @@ export class FileManagerService {
             // ahora lo abrimos  
         await FileOpener.open({
             filePath: result.uri,
-            contentType: 'application/pdf',
+            contentType: format,
             openWithDefault: true
           });
         } catch (error) {
@@ -100,15 +100,15 @@ export class FileManagerService {
         }
     }
 
-    public async showFile(name:string, contentBase64: string): Promise<void> {        
+    public async showFile(name:string, contentBase64: string, format: string = 'application/pdf'): Promise<void> {        
         if (this.platform.is('hybrid') && this.platform.is('android')) {        
-            this.showFileAndroid(name,contentBase64);            
+            this.showFileAndroid(name,contentBase64,format);            
         } else if (this.platform.is('hybrid') && this.platform.is('ios')) {
             console.log('La app se está ejecutando en iOS nativo');            
         } else {
             // Lógica específica para navegador web (incluye móviles y PC)
-            this.showFileNavigatorWeb(contentBase64);      
+            this.showFileNavigatorWeb(contentBase64,format);      
         }
     }
-
+    
 }

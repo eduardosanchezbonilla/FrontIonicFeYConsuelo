@@ -1,5 +1,7 @@
 
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { User } from '../models/user/user';
+import { StorageService } from '../services/storage/storage.service';
 
 @Component({
   selector: 'app-tabs-guest',
@@ -12,12 +14,46 @@ export class TabsGuestPage  implements OnInit {
   showLeftArrow: boolean = false;
   showRightArrow: boolean = false;
 
-  ngOnInit() {
+  public user: User;
+
+  constructor(
+      private storage: StorageService
+    ) {}
+
+  async ngOnInit() {
+    this.doEnter();
+  }
+
+  async ionViewWillEnter() {
+    this.doEnter();
+  }
+
+  async doEnter(){
+    this.user = JSON.parse(await this.storage.getItem('user'));   
+    
     setTimeout(() => {
       this.checkOverflow();
     }, 100); // Esperamos a que el DOM esté completamente cargado
 
     window.addEventListener('resize', () => this.checkOverflow());
+  }
+
+  ionViewDidEnter() {    
+  }
+
+  ionViewWillLeave() {    
+  }
+
+  ionViewDidLeave() {
+    this.doDestroy();
+  }
+
+  ngOnDestroy() {
+    this.doDestroy();
+  }
+
+  doDestroy(){
+    console.log("ondestoy tabs super admin");    
   }
 
   checkOverflow() {

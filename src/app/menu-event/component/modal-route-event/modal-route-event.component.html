@@ -3,10 +3,15 @@
     <ion-buttons slot="start">
       <ion-button color="medium" (click)="cancel()">Cancelar</ion-button>
     </ion-buttons>    
+    <ion-buttons *ngIf="(profile==='SUPER_ADMIN' || profile==='ADMIN')" slot="end">
+      <ion-button (click)="downloadRoute()" class="download-button">
+        <ion-icon name="download-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>   
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-no-padding">
+<ion-content id="capture" class="ion-no-padding">
 
   <div class="div-container-no-content" *ngIf="profile!=='SUPER_ADMIN' && profile!=='ADMIN' && showMessageNoRoute && !existsRoute">
     <h2 class="fancy-title custom-modal-title">
@@ -42,7 +47,7 @@
     <ion-button 
       type="button" 
       (click)="cancel()" 
-      color="secondary" 
+      color="primary" 
       expand="block" 
     >
       <ion-icon name="return-up-back-outline" slot="start"></ion-icon>    
@@ -137,7 +142,13 @@
   </ion-fab>
 
   <!-- Botones -->    
-  <ion-fab  slot="fixed" vertical="bottom" horizontal="end" *ngIf="profile!='SUPER_ADMIN' && profile!='ADMIN' && existsRoute">
+  <ion-fab  
+      slot="fixed" 
+      vertical="bottom" 
+      horizontal="end" 
+      *ngIf="existsRoute"
+      [ngStyle]="{'margin-right': (profile=='SUPER_ADMIN' || profile=='ADMIN') ? '65px' : '0'}"
+  >
     <ion-fab-button (click)="getEventCurrentData()">
       <div class="fab-content">
         <ion-icon name="reload-outline"></ion-icon>    
@@ -145,7 +156,12 @@
     </ion-fab-button>        
   </ion-fab>
 
-  <ion-fab slot="fixed" vertical="bottom" horizontal="start" *ngIf="existsRoute || profile=='SUPER_ADMIN' || profile=='ADMIN'">
+  <ion-fab 
+      slot="fixed" 
+      vertical="bottom" 
+      horizontal="start" 
+      *ngIf="existsRoute || profile=='SUPER_ADMIN' || profile=='ADMIN'"
+  >
     <ion-fab-button fill="solid" class="buttons-fab-km" color="success">
       <div class="fab-content km-header-fab-text">
         {{kilometersRoute}} km

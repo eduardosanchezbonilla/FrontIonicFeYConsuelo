@@ -13,17 +13,25 @@
 
 <ion-content [fullscreen]="false">
 
-  <ion-refresher slot="fixed" (ionRefresh)="refreshEvents($event)">
+  <ion-refresher *ngIf="viewCalendar && profile!=='INVITADO'" slot="fixed" (ionRefresh)="refreshEvents($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
   <!-- Título con estilo personalizado -->
-  <h2 class="fancy-title custom-modal-title">
+  <h2 *ngIf="profile!=='INVITADO' && !isTodayPerformance" class="fancy-title custom-modal-title">
     Calendario de eventos
   </h2>
 
+  <h2 *ngIf="profile==='INVITADO' && !isTodayPerformance" class="fancy-title custom-modal-title">
+    Actuaciones
+  </h2>
+
+  <h2 *ngIf="isTodayPerformance" class="fancy-title custom-modal-title">
+    Hoy Tocamos
+  </h2>
+
   <!-- Selector de filtro justo debajo del título -->
-  <div class="filter-container">
+  <div *ngIf="profile!=='INVITADO' && !isTodayPerformance" class="filter-container">
     <ion-segment [(ngModel)]="selectedSegment" (ionChange)="onSegmentChanged($event)" value="calendar">
       <ion-segment-button value="calendar">
         <ion-label>Calendario</ion-label>
@@ -38,7 +46,7 @@
   <!-------------------------->
   <!---- Vista calendario ---->   
   <!--------------------------> 
-  <div *ngIf="viewCalendar">
+  <div *ngIf="viewCalendar && profile!=='INVITADO'">
     <!-- Contenedor de calendario con estilo de tarjeta -->
     <div class="calendar-container">
       <ion-calendar
@@ -243,9 +251,9 @@
   </div>
 
   <!-------------------------->
-  <!--- Vista actuaciones ---->   
-  <!--------------------------> 
-  <div *ngIf="viewPerformance">
+  <!--- Vista actuaciones ---->
+  <!-------------------------->
+  <div *ngIf="(viewPerformance || profile==='INVITADO') && (!isTodayPerformance || (isTodayPerformance && todayPerformance.length>1))">
     
     <!--<div class="spacer-super-small"></div>  -->
 
@@ -255,7 +263,7 @@
     
     <!--<ion-searchbar [(ngModel)]="filter.filter" (ionChange)="onSearchTextChanged($event)" placeholder="Buscar" class="custom-searchbar"></ion-searchbar>-->
 
-    <div class="searchbar-container">
+    <div *ngIf="!isTodayPerformance" class="searchbar-container">
       <ion-searchbar 
         [(ngModel)]="filter.filter" 
         (ionChange)="onSearchTextChanged($event)" 
@@ -339,19 +347,25 @@
               </ion-card> 
               
               <ion-item-options *ngIf="(profile=='SUPER_ADMIN' || profile=='ADMIN')">
-                <ion-item-option *ngIf="performance.performanceType!=='CONCIERTO'" color="route-custom" (click)="showEventRoute(performance, performanceSliding)" >
+                <ion-item-option class="custom-item-option" *ngIf="profile=='SUPER_ADMIN' && performance.googleId && performance.googleId!==''"  color="attach-custom" (click)="showEventAttach(performance, performanceSliding)" >
+                  <div class="option-content">
+                    <ion-icon class="large-icon" color="light" slot="icon-only" name="attach-outline"></ion-icon>
+                    <span class="option-text">Attach</span>
+                  </div>                  
+                </ion-item-option>   
+                <ion-item-option class="custom-item-option" *ngIf="performance.performanceType!=='CONCIERTO'" color="route-custom" (click)="showEventRoute(performance, performanceSliding)" >
                   <div class="option-content">
                     <ion-icon class="large-icon" color="light" slot="icon-only" name="map-outline"></ion-icon>
-                    <span class="option-text">Itinerario</span>
+                    <span class="option-text">Itine.</span>
                   </div>                  
                 </ion-item-option>   
-                <ion-item-option color="formation-custom" (click)="showFormationRepertoire(performance, performanceSliding)" >
+                <ion-item-option class="custom-item-option" color="formation-custom" (click)="showFormationRepertoire(performance, performanceSliding)" >
                   <div class="option-content">
                     <ion-icon class="large-icon" color="light" slot="icon-only" name="keypad-outline"></ion-icon>
-                    <span class="option-text">Formación</span>
+                    <span class="option-text">Forma.</span>
                   </div>                  
                 </ion-item-option>   
-                <ion-item-option *ngIf="performance.performanceType!=='CONCIERTO'" color="crosshead-custom" (click)="showCrossheadEvent(performance, performanceSliding)">
+                <ion-item-option class="custom-item-option" *ngIf="performance.performanceType!=='CONCIERTO'" color="crosshead-custom" (click)="showCrossheadEvent(performance, performanceSliding)">
                   <div class="option-content">
                     <ion-icon class="large-icon" color="light" slot="icon-only" name="receipt-outline"></ion-icon>
                     <span class="option-text">Cruceta</span>
@@ -387,7 +401,7 @@
   </div>
 
   <!-- Botones finales -->    
-  <ion-fab #fabEvents  slot="fixed" vertical="bottom" horizontal="end" *ngIf="profile=='SUPER_ADMIN' || profile=='ADMIN'">
+  <ion-fab #fabEvents  slot="fixed" vertical="bottom" horizontal="end" *ngIf="(profile=='SUPER_ADMIN' || profile=='ADMIN') && !isTodayPerformance">
     <ion-fab-button>
       <div class="fab-content">
         <ion-icon name="apps-outline"></ion-icon>    
@@ -409,13 +423,19 @@
         </div>
       </ion-fab-button>
 
-      <ion-fab-button class="buttons-fab" *ngIf="viewCalendar && (profile=='SUPER_ADMIN' || profile=='ADMIN')" color="warning" (click)="openModalStats()">
-        <div class="fab-content">
-          <ion-icon name="stats-chart-outline" class="fab-button-icon"></ion-icon>
-          <span>Estadísticas</span>
+      <ion-fab-button class="buttons-fab" *ngIf="viewCalendar && (profile=='SUPER_ADMIN' || profile=='ADMIN')" color="warning" (click)="openModalStatsAssintance()">
+        <div class="fab-content-1">
+          <ion-icon name="stats-chart-outline" class="fab-button-icon-1"></ion-icon>
+          <span>Estadísticas<br/>Asistencia</span>
         </div>
       </ion-fab-button>
 
+      <ion-fab-button class="buttons-fab" *ngIf="viewCalendar && (profile=='SUPER_ADMIN' || profile=='ADMIN')" color="warning" (click)="openModalStatsMarchs()">
+        <div class="fab-content-1">
+          <ion-icon name="stats-chart-outline" class="fab-button-icon-1"></ion-icon>
+          <span>Estadísticas<br/>Marchas</span>
+        </div>
+      </ion-fab-button>
 
       <ion-fab-button class="buttons-fab" *ngIf="viewPerformance && (profile=='SUPER_ADMIN' || profile=='ADMIN')" color="warning" (click)="expandAll()">
         <div class="fab-content">
@@ -433,5 +453,272 @@
 
     </ion-fab-list>
   </ion-fab>
+
+  <!------------------------------------------------->
+  <!--- Vista TodayPerformande 1 unica actuacion ---->
+  <!------------------------------------------------->
+  <div *ngIf="isTodayPerformance && todayPerformance.length==1 && eventToday">
+    <!-- IMAGEN PARA LA VISTA MUSICO -->
+    <div 
+      *ngIf="eventToday.image"
+      class="guest-event-image-container"      
+    >
+      <img        
+        [src]="'data:image/jpeg;base64,' + eventToday.image"
+        class="guest-event-image"
+        (load)="onImageLoad()"
+        [hidden]="loading"
+        (click)="openEventImage($event,eventToday)"
+      />
+    </div>
+
+    <div class="fab-container">
+
+      <ion-fab-button *ngIf="profile!=='INVITADO' && profile!=='MUSICO'"  class="buttons-fab"  (click)="updateMusicianAssistance(eventToday, null)">
+        <div class="fab-content">
+          <ion-icon name="checkbox-outline" class="fab-button-icon"></ion-icon>
+          <span>Asistencia</span>
+        </div>
+      </ion-fab-button>  
+
+      <ion-fab-button *ngIf="profile!=='INVITADO' && profile==='MUSICO'"  class="buttons-fab"  (click)="showModalMusicianAssistanceEvent(eventToday)">
+        <div class="fab-content">
+          <ion-icon name="checkbox-outline" class="fab-button-icon"></ion-icon>
+          <span>Asistencia</span>
+        </div>
+      </ion-fab-button>  
+
+      <ion-fab-button class="buttons-fab"  (click)="showEventRepertoire(eventToday, null)">
+        <div class="fab-content">
+          <ion-icon name="musical-notes-outline" class="fab-button-icon"></ion-icon>
+          <span>Repertorio</span>
+        </div>
+      </ion-fab-button>      
+
+      <ion-fab-button *ngIf="profile!=='INVITADO'" class="buttons-fab" (click)="showCrossheadEvent(eventToday, null)">
+        <div class="fab-content">
+          <ion-icon name="receipt-outline" class="fab-button-icon"></ion-icon>
+          <span>Cruceta</span>
+        </div>
+      </ion-fab-button>     
+
+      <ion-fab-button *ngIf="profile!=='INVITADO'" class="buttons-fab" (click)="showFormationRepertoire(eventToday, null)">
+        <div class="fab-content">
+          <ion-icon name="keypad-outline" class="fab-button-icon"></ion-icon>
+          <span>Formatión</span>
+        </div>
+      </ion-fab-button>     
+
+      <ion-fab-button class="buttons-fab" (click)="showEventRoute(eventToday, null)">
+        <div class="fab-content">
+          <ion-icon name="map-outline" class="fab-button-icon"></ion-icon>
+          <span>Itinerario</span>
+        </div>
+      </ion-fab-button>     
+    </div>
+
+    <div class="guest-event-details-container" 
+         *ngIf="!eventToday.image || imageLoaded"        
+    >
+      <!-- TITLE -->
+      <div>
+        <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent height-item" class="no-pointer">
+          <ion-label color="primary" position="floating">
+              Título
+          </ion-label>
+          <ion-icon name="document-text-outline" slot="end" class="custom-icon-2"></ion-icon>      
+          <ion-input                                                        
+                autocomplete="title"       
+                name="title"
+                type="text"
+                [(ngModel)]="eventToday.title"                                                               
+          >
+          </ion-input>
+        </ion-item>
+      </div>
   
+      <!-- FECHA -->
+      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item no-pointer">
+        <ion-label color="primary" class="custom-label">Fecha</ion-label>
+  
+        <ion-datetime-button slot="end" datetime="datetime-event-today" color="primary" class="custom-datetime-button"></ion-datetime-button>      
+  
+        <ion-icon name="calendar-outline" slot="end" class="custom-icon"></ion-icon>
+  
+        <ion-modal #modalDate [keepContentsMounted]="true"> 
+          <ng-template>
+            <ion-datetime 
+                id="datetime-event-today" 
+                name="datetime-event-today" 
+                presentation="date"
+                [(ngModel)]="eventToday.date"
+                [ngModelOptions]="{standalone: true}"              
+                [showDefaultButtons]="true"
+                readonly
+                [firstDayOfWeek]="1"
+                required
+            >
+            </ion-datetime>
+          </ng-template>
+        </ion-modal>              
+      </ion-item>
+  
+      <!-- HORA DE INICIO -->
+      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item no-pointer">
+        <ion-label color="primary" class="custom-label">Hora inicio</ion-label>
+  
+        <ion-datetime-button slot="end" datetime="time-start-event-today" color="primary" class="custom-datetime-button"></ion-datetime-button>      
+  
+        <ion-icon name="time-outline" slot="end" class="custom-icon"></ion-icon>
+  
+        <ion-modal #modalTimeStart [keepContentsMounted]="true">
+          <ng-template>
+            <ion-datetime 
+              id="time-start-event-today" 
+              name="time-start-event-today" 
+              presentation="time"
+              [(ngModel)]="eventToday.startTime"
+              [ngModelOptions]="{standalone: true}"              
+              [showDefaultButtons]="true"
+              minuteValues="0,15,30,45"
+              doneText="Aceptar"
+              cancelText="Cancelar"
+            >
+            </ion-datetime>
+          </ng-template>
+        </ion-modal>              
+      </ion-item>
+  
+      <!-- HORA DE FIN -->
+      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item no-pointer">
+        <ion-label color="primary" class="custom-label">Hora fin</ion-label>
+  
+        <ion-datetime-button slot="end" datetime="time-end-event-today" color="primary" class="custom-datetime-button"></ion-datetime-button>      
+  
+        <ion-icon name="time-outline" slot="end" class="custom-icon"></ion-icon>
+  
+        <ion-modal #modalTimeEnd [keepContentsMounted]="true">
+          <ng-template>
+            <ion-datetime 
+              id="time-end-event-today" 
+              name="time-end-event-today" 
+              presentation="time"
+              [(ngModel)]="eventToday.endTime"
+              [ngModelOptions]="{standalone: true}"              
+              [showDefaultButtons]="true"
+              minuteValues="0,15,30,45"
+              doneText="Aceptar"
+              cancelText="Cancelar"
+            >
+            </ion-datetime>
+          </ng-template>
+        </ion-modal>              
+      </ion-item>  
+  
+      <!-- DESCRIPCION -->    
+      <ion-item lines="none" class="no-pointer">  
+        <ion-label color="primary" position="stacked" class="custom-label-textarea">
+          Descripción
+        </ion-label>
+        <ion-textarea 
+            name="description"
+            placeholder="Escriba aquí la descripción ..."           
+            class="custom-textarea focus-style"
+            minlength="1"                     
+            maxlength="1000"
+            required="true"
+            [(ngModel)]="eventToday.description"            
+        >
+        </ion-textarea>
+      </ion-item>
+  
+      <!-- UBICACION -->
+      <div>
+        <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent" class="no-pointer">
+          <ion-label color="primary" position="floating">
+              Ubicación
+          </ion-label>
+          <ion-icon name="earth-outline" slot="end" class="custom-icon-2"></ion-icon>      
+          <ion-input                                                        
+                autocomplete="title"       
+                name="title"
+                type="text"
+                [value]="getUbication(eventToday)" 
+          >
+          </ion-input>
+        </ion-item>
+      </div>
+
+      <!-- HORA DE AUTOBUS -->
+      <ion-item 
+          *ngIf="eventToday && 
+                 eventToday.displacementBus && 
+                 eventToday.busData && 
+                 (
+                   profile=== 'SUPER_ADMIN' || 
+                   profile=== 'ADMIN' || 
+                   profile=== 'MUSICO'
+                 )
+                " 
+          class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item no-pointer"           
+      >
+        <ion-label color="primary" class="custom-label">Hora salida autobús</ion-label>
+
+        <ion-datetime-button slot="end" datetime="time-bus-today" color="primary" class="custom-datetime-button"></ion-datetime-button>      
+
+        <ion-icon name="time-outline" slot="end" class="custom-icon"></ion-icon>
+
+        <ion-modal #modalTimebus [keepContentsMounted]="true">
+          <ng-template>
+            <ion-datetime 
+              id="time-bus-today" 
+              name="time-bus-today" 
+              presentation="time"
+              [(ngModel)]="eventToday.busTime"
+              [ngModelOptions]="{standalone: true}"              
+              [showDefaultButtons]="true"
+              minuteValues="0,15,30,45"
+              doneText="Aceptar"
+              cancelText="Cancelar"
+            >
+            </ion-datetime>
+          </ng-template>
+        </ion-modal>              
+      </ion-item>
+
+      <!-- LOCATION BUS-->
+      <ion-item 
+          *ngIf="eventToday && 
+                 eventToday.displacementBus && 
+                 eventToday.busData && 
+                 (
+                   profile=== 'SUPER_ADMIN' || 
+                   profile=== 'ADMIN' || 
+                   profile=== 'MUSICO'
+                 )
+                " 
+          class="ion-margin-start ion-margin-end ion-no-padding background-transparent no-pointer"           
+      >
+        <ion-label color="primary" position="floating">
+            Lugar salida autobús
+        </ion-label>
+        <ion-icon name="location-outline" slot="end" class="custom-icon"></ion-icon>      
+        <ion-input                                                        
+              autocomplete="locationBus"                             
+              maxlength="200"
+              name="locationBus"
+              placeholder="Introduzca el lugar de salida del autobús"
+              type="text"            
+              [(ngModel)]="eventToday.busLocation"                                                 
+              #busLocationInput="ngModel"            
+        >
+        </ion-input>
+      </ion-item>
+
+    </div>
+
+    <div class="spacer" ></div>  
+    
+  </div>
+
 </ion-content>

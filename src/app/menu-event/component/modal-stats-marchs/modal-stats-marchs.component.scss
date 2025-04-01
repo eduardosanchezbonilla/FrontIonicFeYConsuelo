@@ -1,0 +1,520 @@
+.custom-modal-title {
+    margin-top:5px;
+    margin-bottom:20px;
+    color: #B22222;   
+    text-shadow: 1px 1px 2px #FFFFFF;  
+}
+
+.custom-item {
+    margin-top: 7px;  
+}
+
+.custom-label {
+    padding-bottom: 3px;  
+}
+
+.custom-label-check {
+  padding-bottom: 0px;  
+}
+
+.custom-check {
+  margin-top:0px;
+  margin-bottom:0px;
+  margin-right:2px;
+}
+
+ion-label.ion-color-primary {
+    color: #B22222;
+    font-size: 1rem;
+    font-weight: bold;  
+    text-shadow: 1px 1px 2px #FFFFFF; /* Sombra leve */
+}
+
+.custom-datetime-button {
+    border: 1px solid var(--ion-color-primary); 
+    border-bottom: 3px solid var(--ion-color-primary); 
+    border-radius: 8px;
+    padding: 0px 0px;  
+    margin-bottom: 5px;  
+}
+
+.custom-icon {
+    padding-bottom: 5px;  
+}
+
+// fondo del ion-datetime
+ion-datetime-button::part(native) {
+    background-color: transparent;   
+}
+
+.button-back {
+    margin-top:15px;
+    margin-bottom:15px;
+}
+
+.attendance-card {
+    margin-top: 0px;
+    margin-left: 3px;
+    margin-right: 3px;
+    --padding-start: 0px !important; 
+    --padding-end: 0px; 
+}
+
+ion-card-header {
+    //--padding-bottom: 50px !important;
+    padding-bottom: 0px !important;
+}
+
+.custom-ion-card-content {
+    padding-top: 5px !important;
+    padding-bottom: 0px !important;
+}
+
+.custom-ion-card-content-musician-list {    
+    padding-top: 5px !important;
+    padding-bottom: 10px !important;
+}
+  
+.statistic-container {    
+    width: 100%;
+    padding: 0px;
+    text-align: center; /* Centra el contenido dentro del contenedor */
+}
+  
+.stat-header {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Centra horizontalmente los elementos dentro de la cabecera */
+    margin-bottom: 0px;
+}
+    
+.stat-icon.success {
+    color: var(--ion-color-success);
+}
+  
+.stat-icon.warning {
+    color: var(--ion-color-warning);
+}
+  
+.stat-icon.danger {
+    color: var(--ion-color-danger);
+}
+
+.stat-icon {
+  height: 24px;
+  font-size: 24px;
+  margin-right: 10px;
+  border:0px solid;
+}
+  
+.stat-title {
+    height: 24px;
+    line-height: 24px;   
+    //display: flex;
+    display: inline-flex;
+    align-items: center;
+    box-sizing: border-box;
+    font-weight: bold;
+    font-size: 1.05rem;
+    border: 0px solid;  
+}
+
+.stat-percentage {
+    height: 24px;
+    line-height: 24px;      /* Esto alinea verticalmente el texto en bloques sin padding ni border extra */
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    font-weight: bold;
+    font-size: 1.05rem;
+    color: #000;    
+    margin-left:10px;
+    border: 0px solid;
+}
+
+.stat-detail {
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.stat-detail-empty {
+  text-align: center;
+  margin-bottom: 0px;
+}
+  
+.stat-detail-text {
+    color: #000;
+    display: block;
+    font-size: 1rem;
+    font-weight: bold;
+}
+  
+  
+.attendance-progress {
+    height: 15px;
+    border-radius: 10px;
+    transition: width 1s ease-in-out;
+}
+  
+.percentage-text {
+    margin-top: 5px;
+    font-weight: bold;
+    color: #000;
+}
+  
+/* Estilos Responsivos */
+@media (min-width: 768px) {
+    .statistic-container {
+      padding: 15px;
+    }
+  
+    .stat-icon {
+      font-size: 28px;
+    }
+  
+    .stat-title {
+      font-size: 18px;
+    }
+  
+    .percentage-text {
+      font-size: 16px;
+    }
+}
+
+.musician-card {
+  margin: 8px 0;
+  padding: 10px;
+  padding-top:0px;
+  padding-bottom:5px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
+}
+
+.musician-card:hover {
+  transform: translateY(-2px); /* Efecto de elevación al pasar el cursor */
+}
+
+/* Estilos del Item */
+.musician-ion-item {
+    --min-height: 25px !important;     
+    display: flex;
+    align-items: center;
+    --padding-end: 0px;
+    --inner-padding-end: 8px;
+}
+
+/* Etiquetas del Músico */
+.musician-ion-label {
+  margin-left: 8px;
+  margin-top:4px;
+  margin-bottom:4px;
+}
+
+.musician-name {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #333333;
+}
+
+.musician-email {
+  font-size: 0.85rem;
+  color: gray;
+  margin: 0;
+}
+
+/* Barra de Progreso */
+.musician-progress-bar {
+  margin-top: 0px;
+  height: 8px;
+  border-radius: 4px;
+}
+
+/* Texto del Porcentaje */
+.musician-ion-note {
+    font-size: 0.9rem;
+    font-weight: bold;
+    //color: #333333;
+    padding-top:6px;
+    padding-bottom:2px;
+    margin-left:0px;
+}
+
+/* Responsividad */
+@media (max-width: 767px) { /* Pantallas pequeñas */
+  .musician-name {
+    font-size: 0.9rem;
+  }
+
+  .musician-email {
+    font-size: 0.75rem;
+  }
+
+  .musician-progress-bar {
+    height: 6px;
+  }
+
+  .musician-ion-note {
+    font-size: 0.8rem;
+  }
+}
+
+@media (min-width: 768px) { /* Pantallas medianas y grandes */
+  .musician-name {
+    font-size: 1rem;
+  }
+
+  .musician-email {
+    font-size: 0.85rem;
+  }
+
+  .musician-progress-bar {
+    height: 8px;
+  }
+
+  .musician-ion-note {
+    font-size: 0.9rem;
+  }
+}
+
+/* Colores para la Barra de Progreso */
+ion-progress-bar.color-success {
+  --ion-color: var(--ion-color-success);
+}
+
+ion-progress-bar.color-warning {
+  --ion-color: var(--ion-color-warning);
+}
+
+ion-progress-bar.color-danger {
+  --ion-color: var(--ion-color-danger);
+}
+
+/* Ajustes para el ion-note */
+.musician-ion-note {
+  display: flex;
+  align-items: center;
+}
+
+.initcap {
+    text-transform: capitalize;
+}
+
+::ng-deep ion-item-option.ion-color-formation-custom {
+    --ion-color-base: #42A5F5; /* Verde azulado */    
+    --ion-color-contrast: #ffffff; /* Blanco para el ícono */
+    --ion-color-shade: #1E88E5; /* Sombra */
+    --ion-color-tint: #64B5F6; /* Tono claro */
+}
+
+.option-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+  
+.option-text {
+    margin-top: 6px; /* Espacio entre el icono y el texto */
+    font-size: 0.6rem; /* Tamaño de fuente ajustable */
+    color: var(--ion-color-light); /* Ajusta el color según tus necesidades */
+    font-weight: bold;
+}
+
+.large-icon {
+    font-size: 1.7rem; /* Ajusta este valor para mantener el tamaño deseado */
+    /* Puedes también utilizar otras unidades como 'em' o 'rem' */
+}
+
+ion-card-title {
+    font-size: 1.1rem;
+    margin-bottom: 0px;
+    color:#000000;
+}
+
+.type-avatar {
+    margin-right: 0px;
+    margin-top:0px;
+    margin-bottom:0px;
+    width: 23px;
+    height: 23px;
+    border: 1px solid #000000; 
+    border-radius: 0 !important;
+    background-color: #f7f7f7; 
+}
+
+ion-img {
+    border-radius: 0 !important;
+}
+  
+.type-avatar ion-img {
+    border: 10px;
+    width: 100%;
+    height: 100%;
+}
+
+.custom-ion-card-header {
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom:15px;    
+  }
+
+.custom-ion-icon {
+    font-size: 20px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.custom-ion-card-title {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.custom-select {
+    padding-bottom: 17px;    
+    min-width: 60%;  
+    text-align: right;
+}
+
+.custom-label-voice {
+    padding-bottom: 5px;  
+}
+
+.chart-container {
+  width: 100%;
+  height: 400px; /* o el valor que necesites */
+  background-color: white;
+  border-radius: 10px;
+  padding-top:10px;
+  padding-bottom:10px;
+  padding-left:5px;
+  padding-right:5px;
+  margin-top: 5px;
+}
+
+.chart-container canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.chart-container-pie {
+  display: block; 
+  width: 100%; 
+  height: 550px;
+  //width: 100%;
+  //height: 1000px;
+  background-color: white;
+  border-radius: 10px;
+  padding-top:10px;
+  padding-bottom:10px;
+  padding-left:5px;
+  padding-right:5px;
+  margin-top: 5px;
+}
+
+.march-title{
+  margin-top:0px !important;
+  font-size: 1.5rem !important;
+  text-align: left;
+  margin-left:10px;
+  margin-bottom: 0px;
+  color: var(--ion-color-primary)
+}
+
+.type-title {
+  font-style: italic;
+  font-size: 14px; /* Ajusta el tamaño según lo necesites */
+  margin-top: 5px; /* Espacio inferior para separar del contenido siguiente */
+  margin-bottom:0px !important;
+  color: #333; /* Color, puedes modificarlo según tu diseño */
+}
+
+
+.event-header {        
+  font-size: 0.92rem; 
+  font-weight: bold; 
+  display: flex;
+  align-items: center;   
+  color: #B22222;   
+  text-shadow: 1px 1px 2px #FFFFFF;  
+}
+
+.event-header-label {
+  margin-top:10px;
+}
+
+.event-header ion-label {
+  padding-right: 5px; 
+}
+
+.event-header-div-fab {
+  position: absolute;
+  right: 50px;
+  display: flex; 
+}
+
+.event-header-fab {
+  //border:1px solid #000000;
+  //border-radius: 50%;
+  width: 30px;
+  height: 30px;     
+}
+
+.event-header-fab-icon {
+  width: 15px;
+  height: 15px;     
+}
+
+.event-avatar {
+  margin-right: 15px;
+  width: 30px;
+  height: 30px;
+  border: 1px solid #000000; 
+  border-radius: 0 !important;
+  background-color: #f7f7f7; 
+}
+
+.event-avatar ion-img {
+  border: 10px;
+  width: 100%;
+  height: 100%;
+}
+
+ion-avatar img {
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+}
+
+ion-accordion-group ion-item-divider {
+  border: 0px solid;
+  border-image-width: 0px;
+}
+
+ion-accordion ion-item[slot="header"] {
+  //border-bottom: 1px solid blue; 
+  --border-width: 0 0 1px 0;
+  // --border-width: 1px solid blue; 
+}
+
+.div-accordion-padding {
+  padding-top: 15px;
+  padding-bottom: 0px;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.ion-grid-custon-event{
+  margin:0px;
+  padding:0px;
+}
+
+ion-col{
+  padding:0px;
+  margin-bottom:5px;
+  border: 0px solid;
+}
+
+

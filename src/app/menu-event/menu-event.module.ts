@@ -33,6 +33,11 @@ import { ModalRouteEventComponent } from './component/modal-route-event/modal-ro
 import { HttpClientModule } from '@angular/common/http';
 import { ModalCrossheadEventComponent } from './component/modal-crosshead-event/modal-crosshead-event.component';
 import { MarchSelectorComponent } from './component/modal-crosshead-event/march-selector.component';
+import { ModalStatsMarchsComponent } from './component/modal-stats-marchs/modal-stats-marchs.component';
+import { NgChartsModule } from 'ng2-charts';
+import { ModalAttachEventComponent } from './component/modal-attach-event/modal-attach-event.component';
+import { CloudDocumentState } from '../state/cloud-document/cloud-document.state';
+import { CloudDocumentService } from '../services/clouddocument/cloud-document.service';
 
 @NgModule({
   imports: [
@@ -42,8 +47,9 @@ import { MarchSelectorComponent } from './component/modal-crosshead-event/march-
     MenuEventPageRoutingModule,
     CalendarModule,
     DragDropModule,
-    NgxsModule.forFeature([EventState, MusicianEventState, RepertoireMarchState, RepertoireEventState,MusicianState]),
-    HttpClientModule
+    NgxsModule.forFeature([EventState, MusicianEventState, RepertoireMarchState, RepertoireEventState,MusicianState,CloudDocumentState]),
+    HttpClientModule,
+    NgChartsModule
   ],
   declarations: [
     MenuEventPage, 
@@ -54,8 +60,10 @@ import { MarchSelectorComponent } from './component/modal-crosshead-event/march-
     MusicianSelectorComponent,
     MarchSelectorComponent,
     ModalStatsComponent,
+    ModalStatsMarchsComponent,
     ModalRouteEventComponent,
-    ModalCrossheadEventComponent
+    ModalCrossheadEventComponent,
+    ModalAttachEventComponent
   ],
   providers:[
     EventService,
@@ -63,7 +71,8 @@ import { MarchSelectorComponent } from './component/modal-crosshead-event/march-
     RepertoireMarchService,
     RepertoireEventService,
     CameraService,
-    MusicianService
+    MusicianService,
+    CloudDocumentService
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA] 
 })

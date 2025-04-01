@@ -33,6 +33,10 @@ const routes: Routes = [
         loadChildren: () => import('../menu-multimedia/menu-multimedia.module').then(m => m.MenuMultimediaPageModule)
       },
       {
+        path: 'menu-today-performance',
+        loadChildren: () => import('../menu-event/menu-event.module').then( m => m.MenuEventPageModule)
+      },
+      {
         path: 'menu-event',
         loadChildren: () => import('../menu-event/menu-event.module').then( m => m.MenuEventPageModule)
       },

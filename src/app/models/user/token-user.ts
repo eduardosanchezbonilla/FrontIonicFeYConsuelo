@@ -9,4 +9,5 @@ export class TokenUser {
     musician: Musician;
     musicianMarchSolos: MusicianMarchSoloResponse[];
     userDetail: UserDetail;
+    todayPerformance: number[];
 }

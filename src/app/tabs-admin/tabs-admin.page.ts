@@ -2,6 +2,8 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/co
 import { IonTabs } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { TabNavigationService } from '../services/tab-navigation/tab-navigation.service';
+import { User } from '../models/user/user';
+import { StorageService } from '../services/storage/storage.service';
 
 @Component({
   selector: 'app-tabs-admin',
@@ -15,12 +17,27 @@ export class TabsAdminPage implements OnInit, OnDestroy {
   showLeftArrow: boolean = false;
   showRightArrow: boolean = false;
 
+  public user: User;
+
   @ViewChild('tabs', { static: true }) tabs: IonTabs;
   private tabChangeSubscription: Subscription;
 
-  constructor(private tabNavigationService: TabNavigationService) {}
+  constructor(
+    private tabNavigationService: TabNavigationService,
+    private storage: StorageService
+  ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
+    this.doEnter();
+  }
+
+  async ionViewWillEnter() {
+    this.doEnter();
+  }
+
+  async doEnter(){
+    this.user = JSON.parse(await this.storage.getItem('user'));  
+
     this.tabChangeSubscription = this.tabNavigationService.tabChange$.subscribe(tab => {
       this.tabs.select(tab);
     });
@@ -32,7 +49,22 @@ export class TabsAdminPage implements OnInit, OnDestroy {
     window.addEventListener('resize', () => this.checkOverflow());
   }
 
+  ionViewDidEnter() {    
+  }
+
+  ionViewWillLeave() {    
+  }
+
+  ionViewDidLeave() {
+    this.doDestroy();
+  }
+
   ngOnDestroy() {
+    this.doDestroy();
+  }
+
+  doDestroy(){
+    console.log("ondestoy tabs super admin");
     if (this.tabChangeSubscription) {
       this.tabChangeSubscription.unsubscribe();
     }

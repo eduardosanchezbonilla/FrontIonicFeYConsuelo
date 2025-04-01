@@ -157,7 +157,8 @@ ion-item p {
   
 .no-data-icon {
     font-size: 148px;
-    color: #ff9800; 
+    //color: #ff9800; 
+    color: var(--ion-color-primary);
     margin-top: 10px;
     margin-bottom: 5px;
 }

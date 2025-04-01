@@ -6,17 +6,20 @@ export class RouteEvent {
     rotation: number;
     route: LatLng[];
     circles: LatLng[];
+    kilometers: number;
     
     constructor(center: LatLng,
                 zoomLevel: number,
                 route: LatLng[], 
                 circles: LatLng[],
-                rotation: number 
+                rotation: number,
+                kilometers: number
     ) {
         this.center = center;
         this.zoomLevel = zoomLevel;
         this.route = route;
         this.circles = circles;
         this.rotation = rotation;
+        this.kilometers = kilometers
     }
 }

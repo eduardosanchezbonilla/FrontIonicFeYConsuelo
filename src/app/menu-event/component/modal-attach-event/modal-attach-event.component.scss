@@ -1,0 +1,92 @@
+.custom-modal-title {
+    margin-top:5px;
+    margin-bottom:10px;
+    color: #B22222;   
+    text-shadow: 1px 1px 2px #FFFFFF;  
+}
+
+.event-card {
+    width: calc(100%);
+    max-height: 70px; 
+    margin: 0px;    
+    margin-top:20px;
+    margin-bottom:10px;
+}
+
+.event-avatar {
+    margin-top:5px;
+    margin-left: 0px;
+    margin-right: 15px;
+    border-radius: 0 !important;
+}
+
+ion-img {
+    border-radius: 0 !important;
+}
+
+.document-card {
+    width: calc(100% - 10px);
+    margin: 5px;       
+    margin-bottom: 10px;
+}
+
+.document-card ion-card-content {
+    padding: 5px; 
+    padding-left: 15px;
+    color: #000;
+}
+
+.document-card ion-card-content div {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;   
+}
+
+.document-header {
+    display: flex;
+    align-items: center;         /* Alinea verticalmente el h5 y los botones */
+    justify-content: space-between; /* Separa el h5 a la izquierda y los botones a la derecha */
+ }
+  
+.document-header-buttons {
+    display: flex; /* Para poner varios botones en línea */
+    margin-right: 0px;
+}
+  
+.document-header-fab {
+    width: 25px;
+    height: 25px;
+    margin: 0 0px;
+    margin-right:5px;
+    /* Quita margin-right si quieres, ajusta a tu gusto */
+}
+  
+.document-header-fab-icon {
+    width: 15px;
+    height: 15px;
+}
+  
+.no-data-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    color: #888;
+}
+  
+.no-data-icon {
+    font-size: 48px;
+    //color: #ff9800; 
+    color: var(--ion-color-primary);
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+  
+.no-data-text {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    color: #333;
+}

@@ -35,7 +35,7 @@ export class UsersService {
     }
     this.store.dispatch(new Logout());
     this.menuController.close("content");
-    this.navController.navigateForward('login');    
+    this.navController.navigateRoot('login');    
   }
 
   login(auth:AuthDto){

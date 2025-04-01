@@ -35,6 +35,7 @@ export class MenuSoloPage implements OnDestroy {
   ) { }
 
   logout(){
+    this.doDestroy();
     this.userService.logout();
   }
 

@@ -33,6 +33,11 @@
         <ion-label>Repertorio</ion-label>
       </ion-tab-button>
 
+      <ion-tab-button *ngIf="user?.todayPerformance && user?.todayPerformance.length>0" tab="menu-today-performance" href="/tabs-admin/menu-event" >       
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        <ion-label>Hoy Tocamos</ion-label>
+      </ion-tab-button> 
+
       <ion-tab-button tab="menu-partiture" href="/tabs-admin/menu-partiture" class="hide-tab">
         <ion-icon name="albums-outline"></ion-icon>
         <ion-label>Partituras</ion-label>

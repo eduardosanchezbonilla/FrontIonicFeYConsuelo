@@ -201,7 +201,8 @@ ion-accordion ion-item[slot="header"] {
 
 .no-data-icon {
     font-size: 48px;
-    color: #ff9800; 
+    //color: #ff9800; 
+    color: var(--ion-color-primary);
     margin-top: 10px;
     margin-bottom: 5px;
 }
@@ -227,4 +228,8 @@ ion-accordion ion-item[slot="header"] {
 .custom-ion-segment-button{
     min-height:30px;
     height:30px;
+}
+
+ion-item {
+    --inner-border-width: 0;
 }

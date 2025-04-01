@@ -22,10 +22,20 @@
         <ion-label>Repertorio</ion-label>
       </ion-tab-button> 
 
+      <ion-tab-button *ngIf="user?.todayPerformance && user?.todayPerformance.length>0" tab="menu-today-performance" href="/tabs-guest/menu-event" >       
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        <ion-label>Hoy Tocamos</ion-label>
+      </ion-tab-button> 
+
       <ion-tab-button tab="menu-multimedia" href="/tabs-guest/menu-multimedia" >      
         <ion-icon name="images-outline"></ion-icon>      
         <ion-label>Multimedia</ion-label>
       </ion-tab-button> 
+
+      <ion-tab-button tab="menu-event" href="/tabs-guest/menu-event" >                 
+        <ion-icon name="calendar-outline"></ion-icon>
+        <ion-label>Actuaciones</ion-label>
+      </ion-tab-button>
 
     </div>
 

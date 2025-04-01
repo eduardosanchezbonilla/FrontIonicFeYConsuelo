@@ -11,84 +11,6 @@
     Solistas 
   </h2>
 
-  <!-- TARJETA PARA LA LISTA DE ASISTENCIA DE MÚSICOS -->
-  <!--<ion-card class="attendance-card background-white" *ngIf="musicianSolosStats && musicianSolosStats.length > 0"> 
-
-    <ion-card-content class="custom-ion-card-content-musician-list">    
-      <ion-list class="ion-no-padding musician-ion-list">
-        
-        <ion-card *ngFor="let musician of musicianSolosStats" class="musician-card">
-          <ion-item lines="none" class="musician-ion-item ion-no-padding">
-            <ion-label class="musician-ion-label">
-              <h2 class="musician-name initcap">{{ musician.name | lowercase }} {{ musician.surname | lowercase }}</h2>
-            </ion-label>
-            <ion-note class="musician-ion-note" slot="end" [color]="getProgressColorMusicianPercentageAssistEvents(musician.percentageSolos)">
-              {{ musician.totalSolos }}%
-            </ion-note>
-          </ion-item>
-          
-          <ion-progress-bar 
-            [value]="musician.percentageSolos / 100" 
-            [color]="getProgressColorMusicianPercentageAssistEvents(musician.percentageSolos)"
-            class="musician-progress-bar">
-          </ion-progress-bar>
-
-          
-          <div class="stacked-progress">
-            <div class="progress-segment main" [style.width.%]="musician.percentageMainSolos"></div>
-            <div class="progress-segment supl" [style.width.%]="musician.percentageSecondarySolos"></div>
-          </div>
-          
-          <ion-progress-bar 
-            [value]="musician.percentageMainSolos / 100" 
-            [color]="getProgressColorMusicianPercentageAssistEvents(musician.percentageMainSolos)"
-            class="musician-progress-bar-margin-top">
-          </ion-progress-bar>
-
-          <ion-progress-bar 
-            [value]="musician.percentageSecondarySolos / 100" 
-            [color]="getProgressColorMusicianPercentageAssistEvents(musician.percentageSecondarySolos)"
-            class="musician-progress-bar-margin-top">
-          </ion-progress-bar>
-        </ion-card>
-      </ion-list>
-    </ion-card-content>
-  </ion-card>-->
-
-  <!--<ion-card *ngFor="let musician of musicianSolosStats" class="musician-card">
-    <ion-card-header>
-      <ion-card-title>{{ musician.name | lowercase }} {{ musician.surname | lowercase }}</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <div class="charts-container">
-        
-        <div class="chart-item">
-          <canvas baseChart 
-            [data]="[musician.totalSolos]" 
-            [labels]="['Total de Solos']"
-            [chartType]="'doughnut'">
-          </canvas>
-        </div>
-        
-        <div class="chart-item">
-          <canvas baseChart 
-            [data]="[musician.mainSolos]" 
-            [labels]="['Solos Principales']"
-            [chartType]="'doughnut'">
-          </canvas>
-        </div>
-        
-        <div class="chart-item">
-          <canvas baseChart 
-            [data]="[musician.suplSolos]" 
-            [labels]="['Solos Suplentes']"
-            [chartType]="'doughnut'">
-          </canvas>
-        </div>
-      </div>
-    </ion-card-content>
-  </ion-card>-->
-
   <div class="chart-container" [style.height.px]="dynamicHeight">
     <canvas baseChart
             [data]="chartData"
@@ -98,21 +20,5 @@
       >
     </canvas>
   </div>
-
-  <!--<ion-card *ngFor="let musician of musicianSolosStats" class="musician-card">
-    <ion-item>
-      <ion-label>
-        <h2>{{ musician.name | lowercase }} {{ musician.surname | lowercase }}</h2>
-      </ion-label>
-      <ion-note slot="end">{{ musician.percentageSolos }}%</ion-note>
-    </ion-item>
-    
-    <ion-progress-bar [value]="musician.percentageSolos / 100"></ion-progress-bar>
-    
-    <div class="stacked-progress">
-      <div class="progress-segment main" [style.width.%]="musician.percentageMainSolos"></div>
-      <div class="progress-segment supl" [style.width.%]="musician.percentageSecondarySolos"></div>
-    </div>
-  </ion-card>-->
 
 </ion-content>

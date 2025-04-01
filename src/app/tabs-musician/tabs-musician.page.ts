@@ -28,6 +28,14 @@ export class TabsMusicianPage  implements  OnInit, OnDestroy {
   ) {}
 
   async ngOnInit() {
+    this.doEnter();
+  }
+
+  async ionViewWillEnter() {
+    this.doEnter();
+  }
+
+  async doEnter(){
     this.user = JSON.parse(await this.storage.getItem('user'));     
     
     this.tabChangeSubscription = this.tabNavigationService.tabChange$.subscribe(tab => {
@@ -41,7 +49,22 @@ export class TabsMusicianPage  implements  OnInit, OnDestroy {
     window.addEventListener('resize', () => this.checkOverflow());
   }
 
+  ionViewDidEnter() {    
+  }
+
+  ionViewWillLeave() {    
+  }
+
+  ionViewDidLeave() {
+    this.doDestroy();
+  }
+
   ngOnDestroy() {
+    this.doDestroy();
+  }
+
+  doDestroy(){
+    console.log("ondestoy tabs super admin");
     if (this.tabChangeSubscription) {
       this.tabChangeSubscription.unsubscribe();
     }

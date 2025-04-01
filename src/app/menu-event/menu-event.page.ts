@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { CalendarComponentOptions } from 'ion2-calendar';
 import { StorageService } from '../services/storage/storage.service';
 import { LoadingService } from '../services/loading/loading.service';
@@ -27,6 +27,9 @@ import { ModalFormationEventComponent } from './component/modal-formation-event/
 import { ModalStatsComponent } from './component/modal-stats/modal-stats.component';
 import { ModalRouteEventComponent } from './component/modal-route-event/modal-route-event.component';
 import { ModalCrossheadEventComponent } from './component/modal-crosshead-event/modal-crosshead-event.component';
+import { Router } from '@angular/router';
+import { ModalStatsMarchsComponent } from './component/modal-stats-marchs/modal-stats-marchs.component';
+import { ModalAttachEventComponent } from './component/modal-attach-event/modal-attach-event.component';
 
 @Component({
   selector: 'app-menu-event',
@@ -90,6 +93,13 @@ export class MenuEventPage implements OnDestroy {
   public viewCalendar: boolean = true;
   public viewPerformance: boolean = false;
 
+  public todayPerformance: number[];
+  public isTodayPerformance: boolean = false;
+  public eventToday: Event;
+
+  public imageLoaded = false;
+  public loading: boolean = true; // Estado de carga de la imagen
+
   constructor(
     private loadingService: LoadingService,
     private storage: StorageService,
@@ -97,8 +107,9 @@ export class MenuEventPage implements OnDestroy {
     private store:Store,
     private userService: UsersService,
     private toast:ToastService,
-    private alertController: AlertController
-  ) {    
+    private alertController: AlertController,
+    private router: Router
+  ) {        
     this.expandAnyoList = null;
     this.expandAnyoMap = null;
     this.filter = new FilterEvents();
@@ -128,24 +139,42 @@ export class MenuEventPage implements OnDestroy {
     return `${year}-${month}-${day}`;    
   }
 
-  async ionViewWillEnter(){    
+  async ionViewWillEnter(){          
+    if(this.router.url.indexOf('menu-today-performance')>=0){
+      let user = JSON.parse(await this.storage.getItem('user'));     
+      if(user?.todayPerformance?.length>0){
+        this.todayPerformance = user.todayPerformance;
+        this.isTodayPerformance = true;              
+      }
+    }
+    
+    this.profile = await this.storage.getItem('profile');     
     this.finishSearchEvents = false;
     this.firstOldPerformances = true;
     this.clickOldPerformances = false;
-    this.viewCalendar = true;
-    this.viewPerformance = false;
-    this.selectedSegment = 'calendar';
-    this.selectedDate = new Date();          
-    this.selectedMonthDate = new Date();          
-    this.profile = await this.storage.getItem('profile');     
-    this.selectedMonthDate  = new Date();
-    this.updateSelectedStrMonthAndYear();    
-    this.getEvents();      
-    this.filterEvents(
-      this.getFirstDayOfMonth(new Date()),
-      this.getLastDayOfMonth(new Date())
-    );   
-    this.getEventsGroupByAnyo();
+    if(this.profile!=='INVITADO' && !this.isTodayPerformance){ // si es dia de actuacion no mostramos tampoco calendario, en esa pantalla siempre lista de actuaciones
+      this.viewCalendar = true;
+      this.viewPerformance = false;
+      this.selectedSegment = 'calendar';
+      this.selectedDate = new Date();          
+      this.selectedMonthDate = new Date();                
+      this.selectedMonthDate  = new Date();
+      this.updateSelectedStrMonthAndYear();    
+      this.getEvents();      
+      this.filterEvents(
+        this.getFirstDayOfMonth(new Date()),
+        this.getLastDayOfMonth(new Date())
+      );   
+      this.getEventsGroupByAnyo();
+    }
+    else{    
+      this.viewCalendar = false;
+      this.viewPerformance = true;      
+      this.selectedSegment = 'performance';
+      this.getEventsGroupByAnyo();
+      this.filterEventsGroupByAnyo();
+    }        
+    
   }
 
   async dismissInitialLoading(){
@@ -155,6 +184,13 @@ export class MenuEventPage implements OnDestroy {
   }
 
   async ionViewDidEnter(){    
+    if(this.router.url.indexOf('menu-today-performance')>=0){
+      let user = JSON.parse(await this.storage.getItem('user'));     
+      if(user?.todayPerformance?.length>0){
+        this.todayPerformance = user.todayPerformance;
+        this.isTodayPerformance = true;        
+      }
+    }
     this.initScreen = true;    
     this.dismissInitialLoading();
   }
@@ -163,19 +199,27 @@ export class MenuEventPage implements OnDestroy {
     this.doDestroy();
   }
   
-  async ionViewDidLeave(){
+  async ionViewDidLeave(){    
     this.doDestroy();
   }
 
-  private doDestroy(){
-    this.eventsGroupByAnyo = [];
-    this.viewCalendar = true;    
-    if (this.eventListResponseSubscription) {      
+  private doDestroy(){    
+    this.finishSearchEvents = false;
+    if(!this.isTodayPerformance){
+      this.eventsGroupByAnyo = [];
+    }    
+    if(this.profile!=='INVITADO' && !this.isTodayPerformance){
+      this.viewCalendar = true;          
+    }
+    else{
+      this.viewCalendar = false; 
+    }
+    if (this.eventListResponseSubscription) {                  
       this.eventListResponseSubscription.unsubscribe();  // Cancelar la suscripción al destruir el componente
     }
-    if (this.eventGroupByAnyoSubscription) {      
+    if (this.eventGroupByAnyoSubscription) {             
       this.eventGroupByAnyoSubscription.unsubscribe();  // Cancelar la suscripción al destruir el componente
-    }
+    }    
     this.store.dispatch(new ResetEvent({})).subscribe({ next: async () => { } })  
     this.store.dispatch(new ResetMusicianEvent({})).subscribe({ next: async () => { } })  
   }
@@ -259,6 +303,16 @@ export class MenuEventPage implements OnDestroy {
         }
       );
     }
+    if(!this.isRehearsalDay([selectedEvent]) && this.profile==='SUPER_ADMIN' && selectedEvent.googleId && selectedEvent.googleId!==''){
+      inputs.push(
+        {
+          name: 'attach',
+          type: 'radio',
+          label: 'Adjuntos',
+          value: 'attach',
+        }
+      );
+    }
 
     const alert = await this.alertController.create({
       //header: 'Evento',
@@ -306,6 +360,10 @@ export class MenuEventPage implements OnDestroy {
             if('crosshead'===selectedType){ 
               this.selectedDate = null; 
               this.crossheadEvent( selectedEvent.type,  selectedEvent, selectedDateString);              
+            }
+            if('attach'===selectedType){ 
+              this.selectedDate = null; 
+              this.eventAttach( selectedEvent.type,  selectedEvent, selectedDateString);              
             }
           },
         },
@@ -398,53 +456,60 @@ export class MenuEventPage implements OnDestroy {
     currentDate.setHours(0,0,0,0);
 
     let inputs = [];
-    inputs.push(
-      {
-        name: 'assist',
-        type: 'radio',
-        label: 'Asistencia',
-        value: 'ASSIST',
-        checked: !(new Date(selectedDateString)<currentDate),
-        disabled: (new Date(selectedDateString)<currentDate), 
-      }
-    );     
+    if(this.profile!=='INVITADO'){
+      inputs.push(
+        {
+          name: 'assist',
+          type: 'radio',
+          label: 'Asistencia',
+          value: 'ASSIST',
+          checked: !(new Date(selectedDateString)<currentDate),
+          disabled: (new Date(selectedDateString)<currentDate), 
+        }
+      );     
+    }
     inputs.push(
       {
         name: 'repertoire',
         type: 'radio',
         label: 'Repertorio',
-        checked: (new Date(selectedDateString)<currentDate),
+        checked: (new Date(selectedDateString)<currentDate) && this.profile!=='INVITADO',
         value: 'REPERTOIRE',            
       }
     );
-    if(!this.isRehearsalDay([event]) && event.performanceType!=='CONCIERTO'){
-      inputs.push(
-        {
-          name: 'crosshead',
-          type: 'radio',
-          label: 'Cruceta',
-          value: 'CROSSHEAD',
-        }
-      );
-    }
+    if(this.profile!=='INVITADO'){
+      if(!this.isRehearsalDay([event]) && event.performanceType!=='CONCIERTO'){
+        inputs.push(
+          {
+            name: 'crosshead',
+            type: 'radio',
+            label: 'Cruceta',
+            value: 'CROSSHEAD',
+          }
+        );
+      }
+    }    
     inputs.push(
       {
         name: 'information',
         type: 'radio',
         label: 'Informacion detallada',
+        checked: this.profile==='INVITADO',
         value: 'INFORMATION'            
       }
-    );        
-    if(!this.isRehearsalDay([event]) ){
-      inputs.push(
-        {
-          name: 'formation',
-          type: 'radio',
-          label: 'Formación',
-          value: 'FORMATION'            
-        }
-      );
-    }    
+    );    
+    if(this.profile!=='INVITADO'){        
+      if(!this.isRehearsalDay([event]) ){
+        inputs.push(
+          {
+            name: 'formation',
+            type: 'radio',
+            label: 'Formación',
+            value: 'FORMATION'            
+          }
+        );
+      }    
+    }
     if(!this.isRehearsalDay([event]) && event.performanceType!=='CONCIERTO'){
       inputs.push(
         {
@@ -455,7 +520,7 @@ export class MenuEventPage implements OnDestroy {
         }
       );
     }
-
+    
     const alert = await this.alertController.create({
       header: event.title?event.title:(event.description?event.description:'Evento'),
       inputs: inputs,
@@ -715,7 +780,7 @@ export class MenuEventPage implements OnDestroy {
             if(finish){             
               this.selectedDate = null; 
               if(errorStatusCode==200){                   
-                this.eventListResponse = this.store.selectSnapshot(EventState.eventListResponse);                              
+                this.eventListResponse = this.store.selectSnapshot(EventState.eventListResponse);                   
                 if(!this.eventListResponse.events){
                   this.eventListResponse.events = [];
                 }            
@@ -757,7 +822,7 @@ export class MenuEventPage implements OnDestroy {
     this.store.dispatch(new GetEvents({startDate:startDate, endDate:endDate, allEvents:true})).subscribe({ next: async () => { } });    
   }
 
-  refreshEvents($event){       
+  refreshEvents($event){           
     this.filterEvents(
       this.getFirstDayOfMonth(this.selectedMonthDate),
       this.getLastDayOfMonth(this.selectedMonthDate)
@@ -880,7 +945,9 @@ export class MenuEventPage implements OnDestroy {
 
   async updateMusicianAssistance(event: Event, userSliding: IonItemSliding){
     // cerramos el sliding 
-    userSliding.close();
+    if(userSliding){
+      userSliding.close();
+    }
 
     // abrimos la modal
     this.eventMusicianAssistance( "PERFORMANCE",  event, event.date);                  
@@ -1168,11 +1235,11 @@ export class MenuEventPage implements OnDestroy {
     this.eventGroupByAnyoSubscription = this.eventsGroupByAnyo$     
       .subscribe(
         {
-          next: async ()=> {      
+          next: async ()=> {                  
             const finish = this.store.selectSnapshot(EventState.finish);          
             const errorStatusCode = this.store.selectSnapshot(EventState.errorStatusCode);          
-            const errorMessage = this.store.selectSnapshot(EventState.errorMessage);                
-            if(finish){                          
+            const errorMessage = this.store.selectSnapshot(EventState.errorMessage);               
+            if(finish){                     
               if(errorStatusCode==200){                   
                 this.eventsGroupByAnyo = this.store.selectSnapshot(EventState.eventsGroupByAnyo);              
                 if(!this.eventsGroupByAnyo){
@@ -1190,6 +1257,10 @@ export class MenuEventPage implements OnDestroy {
                 }        
                 if(this.clickOldPerformances && this.firstOldPerformances){                 
                   this.firstOldPerformances = false;
+                }
+
+                if(this.isTodayPerformance && this.eventsGroupByAnyo.length>0){
+                  this.eventToday = this.eventsGroupByAnyo[0].events[0];
                 }
               }
               else{                
@@ -1209,11 +1280,11 @@ export class MenuEventPage implements OnDestroy {
                   this.toast.presentToast(errorMessage);
                 }   
 
-              }  
-              this.finishSearchEvents = true;
+              }                
               this.isSearching = false;                       
               this.initSearchFinish = true;    
               await this.loadingService.dismissLoading();                 
+              this.finishSearchEvents = true;
             }          
         }
       }
@@ -1221,12 +1292,21 @@ export class MenuEventPage implements OnDestroy {
   }
 
   async filterEventsGroupByAnyo( showLoading:boolean=true){    
+    if (this.isTodayPerformance && (!this.eventGroupByAnyoSubscription || (this.eventGroupByAnyoSubscription && this.eventGroupByAnyoSubscription.closed))) {
+      this.getEventsGroupByAnyo();    
+    }
+
     this.finishSearchEvents = false;
     if(showLoading){
       await this.loadingService.presentLoading('Loading...');
     }       
     let startDate = this.oldPerformances ? '' : new Date().toISOString().split('T')[0];    
-    this.store.dispatch(new GetEventsGroupByAnyo({eventType: 'PERFORMANCE', startDate:startDate, endDate:'', name: this.filter.filter})).subscribe({ next: async () => { } });    
+    if(this.isTodayPerformance){
+      this.store.dispatch(new GetEventsGroupByAnyo({eventType: 'PERFORMANCE', startDate:startDate, endDate:startDate, name: this.filter.filter})).subscribe({ next: async () => { } });    
+    }
+    else{
+      this.store.dispatch(new GetEventsGroupByAnyo({eventType: 'PERFORMANCE', startDate:startDate, endDate:'', name: this.filter.filter})).subscribe({ next: async () => { } });    
+    }    
   }
 
   refreshEventsGroupByAnyo($event){       
@@ -1301,6 +1381,8 @@ export class MenuEventPage implements OnDestroy {
   }
 
   logout(){
+    
+    this.doDestroy();
     this.userService.logout();
   }
 
@@ -1447,6 +1529,34 @@ export class MenuEventPage implements OnDestroy {
     modal.present();
   }
 
+  async showEventAttach(event: Event, userSliding: IonItemSliding){
+    // cerramos el sliding 
+    if(userSliding){
+      userSliding.close();
+    }
+
+    // abrimos la modal
+    this.eventAttach( event.type,  event, event.date);                  
+  }
+
+  async eventAttach(type:string, event: Event, date: string){
+
+    // mostramos spinner
+    await this.loadingService.presentLoading('Loading...');   
+
+    // mostramos la modal
+    const modal = await this.modalController.create({
+      component: ModalAttachEventComponent,
+      componentProps: {
+        date: date,
+        type: this.translateEventType(type),
+        event: event
+      }
+    });
+    modal.present();
+  }
+
+
   calculateShowStatistics(){
     let eventDate = new Date(Math.min.apply(null, this.eventListResponse.events.map(e => new Date(e.date))));
 
@@ -1484,7 +1594,7 @@ export class MenuEventPage implements OnDestroy {
     this.showGlobalStatistics = this.showMonthStatistics || this.showYearStatistics || this.showHistoricStatistics;        
   }
 
-  async openModalStats(){
+  async openModalStatsAssintance(){
 
     // mostramos spinner
     await this.loadingService.presentLoading('Loading...');   
@@ -1492,6 +1602,28 @@ export class MenuEventPage implements OnDestroy {
     // mostramos la modal
     const modal = await this.modalController.create({
       component: ModalStatsComponent,
+      componentProps: {}
+    });
+    modal.present();
+
+    const {data, role} = await modal.onWillDismiss();
+
+    if(role=='cancel'){    
+      this.filterEvents(
+        this.getFirstDayOfMonth(this.selectedMonthDate),
+        this.getLastDayOfMonth(this.selectedMonthDate)
+      );   
+    }  
+  }
+
+  async openModalStatsMarchs(){
+
+    // mostramos spinner
+    await this.loadingService.presentLoading('Loading...');   
+
+    // mostramos la modal
+    const modal = await this.modalController.create({
+      component: ModalStatsMarchsComponent,
       componentProps: {}
     });
     modal.present();
@@ -1512,4 +1644,39 @@ export class MenuEventPage implements OnDestroy {
   }
 
 
+  onImageLoad() {    
+    this.imageLoaded = true; // Oculta el loader cuando la imagen termina de cargarse
+    this.loading = false;
+    this.dismissInitialLoading();    
+  }
+
+  async openEventImage(event: any, objectEvent: Event){
+    event.stopPropagation(); 
+
+    if(!objectEvent.image){
+      this.toast.presentToast("No existe imagen para previsualizar");
+    }
+    else{      
+      let videoCategory = new VideoCategory();
+      videoCategory.name = 'Cartel Actuación';
+      videoCategory.image = objectEvent.image;
+
+      await this.loadingService.presentLoading('Loading...');    
+      const modal = await this.modalController.create({
+        component: ModalViewCategoryImageComponent,
+        componentProps: { videoCategory, loadImage: false },
+      });
+
+      await modal.present();
+    }          
+  }
+
+  getUbication(event:Event){
+    if(event && event.municipality && event.province){
+      return event.municipality.trim() + ' (' + event.province.trim() + ')';      
+    }
+    else{
+      return '';
+    }
+  }
 }

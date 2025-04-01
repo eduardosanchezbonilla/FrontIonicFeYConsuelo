@@ -14,17 +14,20 @@ const routes: Routes = [
   {
     path: 'tabs-admin',
     loadChildren: () => import('./tabs-admin/tabs-admin.module').then( m => m.TabsAdminPageModule),
-    canActivate: [AuthGuard] 
+    canActivate: [AuthGuard],
+    runGuardsAndResolvers: 'always', // Esto evita el caché
   },
   {
     path: 'tabs-musician',
     loadChildren: () => import('./tabs-musician/tabs-musician.module').then( m => m.TabsMusicianPageModule),
-    canActivate: [AuthGuard] 
+    canActivate: [AuthGuard],
+    runGuardsAndResolvers: 'always', // Esto evita el caché
   },
   {
     path: 'tabs-guest',
     loadChildren: () => import('./tabs-guest/tabs-guest.module').then( m => m.TabsGuestPageModule),
-    canActivate: [AuthGuard] 
+    canActivate: [AuthGuard],
+    runGuardsAndResolvers: 'always', // Esto evita el caché
   },
   {
     path: '',

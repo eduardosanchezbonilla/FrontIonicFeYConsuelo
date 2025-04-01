@@ -53,6 +53,7 @@ export class MenuProfilePage implements OnDestroy {
   }
 
   logout(){
+    this.doDestroy();
     this.userService.logout();
   }
 

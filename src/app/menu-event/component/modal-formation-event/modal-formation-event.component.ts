@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { AlertController, ModalController, PopoverController } from '@ionic/angular';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { AlertController, IonContent, ModalController, PopoverController } from '@ionic/angular';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subscription } from 'rxjs';
 import { Formation, MusicianSlot, Row } from 'src/app/models/formation-event/formation-event-dto';
@@ -7,15 +7,16 @@ import { Musician } from 'src/app/models/musician/musician';
 import { LoadingService } from 'src/app/services/loading/loading.service';
 import { ToastService } from 'src/app/services/toast/toast.service';
 import { UsersService } from 'src/app/services/user/users.service';
-import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { CdkDragDrop } from '@angular/cdk/drag-drop';
 import { EventState } from 'src/app/state/event/event.state';
 import { EventMusicianAssistance } from 'src/app/models/event/event-musician-assistance';
-import { GetEventMusicianAssistance, ResetEventMusicianAssistance, UpdateEventFormation } from 'src/app/state/event/event.actions';
+import { GetEventMusicianFormation, ResetEventMusicianAssistance, UpdateEventFormation } from 'src/app/state/event/event.actions';
 import { Event } from 'src/app/models/event/event';
 import { MusicianSelectorComponent } from './musician-selector.component';
-import { DEFAULT_EVENT_IMAGE, DEFAULT_MUSICIAN_IMAGE } from 'src/app/constants/constants';
+import { DEFAULT_EVENT_IMAGE, DEFAULT_FAKE_MUSICIAN_IMAGE, DEFAULT_MUSICIAN_IMAGE } from 'src/app/constants/constants';
 import { UpdateEventFormationRequestDto } from 'src/app/models/formation-event/update-event-formation-request-dto';
 import { StorageService } from 'src/app/services/storage/storage.service';
+import { CaptureService } from 'src/app/services/capture/capture.service';
 
 @Component({
   selector: 'app-modal-formation-event',
@@ -51,6 +52,10 @@ export class ModalFormationEventComponent implements OnInit {
 
   public defaultMusicianImage: string = DEFAULT_MUSICIAN_IMAGE;
 
+  private fakeMusicianCounter = -1;
+
+  public isCapturing = false;
+
   constructor(
       private store:Store,
       private modalController: ModalController,
@@ -59,7 +64,8 @@ export class ModalFormationEventComponent implements OnInit {
       private userService: UsersService,
       private popoverController: PopoverController,
       private storage: StorageService,
-      private alertController: AlertController
+      private alertController: AlertController,      
+      private captureService: CaptureService
     ) { }
 
     convertDateFormat(dateString: string): string {
@@ -104,7 +110,7 @@ export class ModalFormationEventComponent implements OnInit {
       this.showDateTextEvent = this.convertDateFormat(this.event.date) + " (" + this.event.startTime + " - " + this.event.endTime + ")";
     }   
 
-    this.store.dispatch(new GetEventMusicianAssistance({eventType: this.type, eventId: this.event.id}));
+    this.store.dispatch(new GetEventMusicianFormation({eventType: this.type, eventId: this.event.id}));
     this.getEventMusicianAssistance();       
   }
 
@@ -155,7 +161,7 @@ export class ModalFormationEventComponent implements OnInit {
                                         .filter(musician => musician.assistLastRehearsal);
               this.availableMusicians = this.eventMusicianAssistance.musiciansGroupByVoice
                                         .flatMap(musicianGroupByVoice => musicianGroupByVoice.musicians)
-                                        .filter(musician => musician.assistLastRehearsal);                                            
+                                        .filter(musician => musician.assistLastRehearsal);                                                                         
             }            
             this.dismissInitialLoading();    
           }
@@ -172,9 +178,64 @@ export class ModalFormationEventComponent implements OnInit {
             }
           } 
           this.loadFormation();         
+          // ahora meto en los array un musico ficticio
+          this.insertFakeMusicianInArray();
+
         }
       }
     })
+  }
+
+  insertFakeMusicianInArray(){    
+    
+      // miramos cuantos musicos ficticios hay, para asi inicializar la variable fakeMusicianCounter = -1
+      // mas bien, no cuantos hay, sino el menor id negativo que hay
+      let minAll=null;
+      let fakeMusicianIds = this.allMusicians.filter(musician => musician.id<0).map(musician => musician.id);
+      if(fakeMusicianIds.length>0){
+        this.fakeMusicianCounter = Math.min(...fakeMusicianIds);
+        minAll=Math.min(...fakeMusicianIds);        
+      }
+      let minAvailable=null;
+      let fakeAvailableMusician = this.availableMusicians.filter(musician => musician.id<0).map(musician => musician.id);
+      if(fakeAvailableMusician.length>0){
+        minAvailable=Math.min(...fakeAvailableMusician);
+      }
+      let addFake=false;
+      if(minAll===null && minAvailable===null){
+        this.fakeMusicianCounter = -1;
+        addFake=true;
+      }
+      if(minAll===null && minAvailable!==null){        
+        addFake=false;
+      }
+      if(minAll!==null && minAvailable===null){        
+        this.fakeMusicianCounter = minAll -1;
+        addFake=true;
+      }
+      if(minAll!==null && minAvailable!==null){        
+        addFake=false;
+      }
+      
+      if(addFake){        
+         // ahora meto en los array un musico ficticio
+         let fakeMusician = new Musician();
+         fakeMusician.id = this.fakeMusicianCounter;
+         fakeMusician.name = "Hueco";
+         fakeMusician.surname = "";
+         fakeMusician.image = DEFAULT_FAKE_MUSICIAN_IMAGE;
+         // lo insertamos al principio de los arrays
+         this.allMusicians.unshift(fakeMusician);
+         this.availableMusicians.unshift(fakeMusician);
+      }     
+
+      // si hay varios en availableMusicians con id negativo, me tengo que quedar solo con uno, con el de mayor id negativo
+      let fakeAvailableMusicianIds = this.availableMusicians.filter(musician => musician.id<0).map(musician => musician.id);
+      if(fakeAvailableMusicianIds.length>1){
+        let maxFakeAvailableMusicianId = Math.max(...fakeAvailableMusicianIds);
+        this.availableMusicians = this.availableMusicians.filter(musician => musician.id>=0 || musician.id===maxFakeAvailableMusicianId);
+      }
+      
   }
 
   loadFormation() {
@@ -220,7 +281,7 @@ export class ModalFormationEventComponent implements OnInit {
       musiciansCurrentFormation.forEach(musician => {
         this.formation.rows[musician.formationPositionY].musicians[musician.formationPositionX].musician = musician;
       });
-    }
+    }    
     this.updateAvailableMusicians();
   }
 
@@ -377,6 +438,8 @@ export class ModalFormationEventComponent implements OnInit {
       .filter(slot => slot.musician)
       .map(slot => slot.musician!.id);
     this.availableMusicians = this.allMusicians.filter(musician => !assignedMusicianIds.includes(musician.id));
+
+    this.insertFakeMusicianInArray();
   }
 
   trackByRowId(index: number, row: Row): number {
@@ -450,6 +513,21 @@ export class ModalFormationEventComponent implements OnInit {
     const temp = this.formation.rows[previousRow].musicians[previousColumn];
     this.formation.rows[previousRow].musicians[previousColumn] = this.formation.rows[currentRow].musicians[currentColumn];
     this.formation.rows[currentRow].musicians[currentColumn] = temp;
+  }
+  
+  @ViewChild(IonContent, { static: false }) content: IonContent;
+
+  async downloadFormation() {
+    try {
+      await this.loadingService.presentLoading('Loading...');       
+      this.isCapturing = true;
+      await this.captureService.capture(this.content, 'capture', 'capturaFormation.png');      
+    } catch (error) {     
+      this.toast.presentToast('Error al capturar y compartir la imagen: ' + error);       
+    } finally {
+      this.isCapturing = false;
+      await this.loadingService.dismissLoading();   
+    }    
   }
 
 }

@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, Renderer2 } from '@angular/core';
 import { AuthDto } from '../../../models/user/auth-dto';
 import { Store } from '@ngxs/store';
 import { ChangeExpiredPassword, Login, UpdateFirebaseToken, UpdateLassAccessDate, UpdateUserPassword } from '../../../state/user/users.actions';
@@ -41,7 +41,8 @@ export class LoginPage implements OnDestroy{
       private toastService: ToastService,
       private navController: NavController,
       private storage: StorageService,          
-      private loadingService: LoadingService      
+      private loadingService: LoadingService,
+      private renderer: Renderer2
   ) {
     this.auth = new AuthDto(); 
     this.changePassword = new ChangePasswordDto();   
@@ -119,22 +120,66 @@ export class LoginPage implements OnDestroy{
     if(user.roles.includes('SUPER_ADMIN')){           
       this.subscribeToRoleTopics('SUPER_ADMIN');
       this.storage.setItem('profile', 'SUPER_ADMIN');
-      this.navController.navigateForward('tabs-super-admin/menu-musician');   
+      if(user?.todayPerformance?.length>0){                
+        this.navController.navigateRoot('tabs-super-admin/menu-today-performance'); // navigateForward
+        setTimeout(() => {
+          const tabButton = document.querySelector('ion-tab-button[tab="menu-today-performance"]');
+          if (tabButton) {     
+            this.renderer.addClass(tabButton, 'tab-selected');
+          }
+        }, 400);
+      }
+      else{
+        this.navController.navigateRoot('tabs-super-admin/menu-musician');         
+      }           
     }        
     else if(user.roles.includes('ADMIN')){
       this.subscribeToRoleTopics('ADMIN');
       this.storage.setItem('profile', 'ADMIN');
-      this.navController.navigateForward('tabs-admin/menu-musician');   
+      if(user?.todayPerformance?.length>0){
+        this.navController.navigateRoot('tabs-admin/menu-today-performance');         
+        setTimeout(() => {
+          const tabButton = document.querySelector('ion-tab-button[tab="menu-today-performance"]');
+          if (tabButton) {            
+            this.renderer.addClass(tabButton, 'tab-selected');
+          }
+        }, 400);
+      }
+      else{
+        this.navController.navigateRoot('tabs-admin/menu-musician');   
+      }           
     }
     else if(user.roles.includes('MUSICO')){
       this.subscribeToRoleTopics('MUSICO');
       this.storage.setItem('profile', 'MUSICO');
-      this.navController.navigateForward('tabs-musician/menu-partiture');   
+      if(user?.todayPerformance?.length>0){
+        this.navController.navigateRoot('tabs-musician/menu-today-performance');         
+        setTimeout(() => {
+          const tabButton = document.querySelector('ion-tab-button[tab="menu-today-performance"]');
+          if (tabButton) {            
+            this.renderer.addClass(tabButton, 'tab-selected');
+          }
+        }, 400);
+      }
+      else{
+        this.navController.navigateRoot('tabs-musician/menu-partiture');   
+      }      
     }
     else{
       this.subscribeToRoleTopics('INVITADO');
-      this.storage.setItem('profile', 'INVITADO');
-      this.navController.navigateForward('tabs-guest/menu-history');   
+      this.storage.setItem('profile', 'INVITADO');      
+      if(user?.todayPerformance?.length>0){        
+        this.navController.navigateRoot('tabs-guest/menu-today-performance');           
+        setTimeout(() => {
+          const tabButton = document.querySelector('ion-tab-button[tab="menu-today-performance"]');
+          if (tabButton) {            
+            this.renderer.addClass(tabButton, 'tab-selected');
+          }
+        }, 400);
+      }
+      else{        
+        this.navController.navigateRoot('tabs-guest/menu-history');   
+      }            
     }
   }
 
@@ -225,9 +270,12 @@ export class LoginPage implements OnDestroy{
           this.updateRemerberData();
           this.updateFirebaseToken();  
           this.updateLassAccessDate();
-          this.auth.username=null;
-          this.auth.password=null;
-          this.redirectAfterLogin();          
+          setTimeout(() => {      
+            this.auth.username=null;
+            this.auth.password=null;
+          }, 500);
+          await this.loadingService.dismissLoading();           
+          this.redirectAfterLogin();                    
         }
         else{
           // aqui dependiendo del tipo de error tendremos que hacer una cosa u otra, 
@@ -243,8 +291,8 @@ export class LoginPage implements OnDestroy{
           else{
             this.toastService.presentToast(errorMessage);
           }                    
-        }
-        await this.loadingService.dismissLoading();
+          await this.loadingService.dismissLoading();
+        }           
       } 
     })
   }

@@ -236,3 +236,7 @@ ion-segment-button {
 .fab-button-icon {
     margin-top: 1px;
 }
+
+ion-item {
+    --inner-border-width: 0;
+}

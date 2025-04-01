@@ -1,0 +1,121 @@
+<ion-header [translucent]="true" >
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>   
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()" class="logout-button">
+        <ion-icon name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="false">
+  
+  <div *ngIf="isLoading" class="custom-loading-overlay">
+    <div class="custom-loading-content animated">
+      <ion-spinner name="crescent" class="custom-loading-spinner"></ion-spinner>
+      <p>Loading...</p>
+    </div>    
+  </div>
+
+  <div class="spacer-super-small"></div>  
+
+  <h2 *ngIf="profile=='SUPER_ADMIN'" class="fancy-title custom-modal-title">
+    Contratos
+  </h2>
+  
+  <ion-refresher slot="fixed" (ionRefresh)="refreshContractGroups($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+
+  <ion-accordion-group #accordionGroup [multiple]="true" [value]="accordionValue" (ionChange)="accordionGroupChange($event)">
+
+    <ion-list *ngFor="let contractGroup of contractGroups; trackBy: trackByContractGroupFn" class="ion-no-padding background-transparent" >
+
+      <ion-accordion value="{{ contractGroup.id }}" >
+
+        <!------------------------------------------>
+        <!-- Repite para cada grupo de contratos -->
+        <!------------------------------------------>
+        <ion-item slot="header" >                   
+          <ion-item-divider class="ion-no-padding contract-group-header">
+            <ion-avatar slot="start" class="contract-group-avatar">
+              <ion-img 
+                [src]="'data:image/jpeg;base64,' + defaultContractGroupImage">
+              </ion-img>              
+            </ion-avatar>
+            <ion-label class="contract-group-header-label">
+              {{ contractGroup.name }}
+            </ion-label>    
+            <div *ngIf="profile=='SUPER_ADMIN'" class="contract-group-header-buttons" class="contract-group-header-div-fab" > 
+              <ion-fab-button fill="clear" color="warning" size="small" (click)="updateContractGroup($event,contractGroup)" class="contract-group-header-fab">
+                <ion-icon name="pencil-outline" class="contract-group-header-fab-icon"></ion-icon>        
+              </ion-fab-button>   
+              <ion-fab-button fill="clear" color="warning" size="small" (click)="confirmDeleteContractGroup($event,contractGroup)" class="contract-group-header-fab">
+                <ion-icon name="trash-outline" class="contract-group-header-fab-icon"></ion-icon>        
+              </ion-fab-button>                             
+            </div>
+          </ion-item-divider>
+        </ion-item>
+
+
+        <!---------------------------->
+        <!---- Para cada contrato --->
+        <!---------------------------->
+        <div class="div-accordion-padding" slot="content">
+          <ion-item-sliding *ngFor="let contract of contractGroup.contracts; trackBy: trackByContractFn" #contractSliding>
+            <ion-card class="contract-card background-white">
+              <ion-card-content>                
+                <div>
+                  <h5>{{ contract.name }}</h5>
+                  <div class="contract-header-buttons">
+                    <ion-fab-button *ngIf="contract.googleId" fill="clear" color="success" size="small" (click)="downloadContract(contract)" class="contract-header-fab">
+                      <ion-icon name="eye-outline" class="contract-header-fab-icon"></ion-icon>        
+                    </ion-fab-button>                     
+
+                    <ion-fab-button *ngIf="contract.googleId" fill="clear" color="danger" size="small" (click)="confirmDeleteContract($event,contract)" class="contract-header-fab">
+                      <ion-icon name="trash-outline" class="contract-header-fab-icon"></ion-icon>        
+                    </ion-fab-button>    
+                  </div>   
+                </div>
+              </ion-card-content>              
+            </ion-card>             
+          </ion-item-sliding>
+        </div> 
+      </ion-accordion>
+    </ion-list>
+  </ion-accordion-group>
+
+  <!-- separador -->
+  <div class="spacer"></div>  
+  <div class="spacer-small"></div>  
+  <div class="spacer-small"></div>  
+  <div class="spacer-small"></div>     
+  <div class="spacer-super-small"></div>  
+  <div class="spacer-super-small"></div>  
+  <div class="spacer-super-small"></div>  
+
+  <!-- botones finales -->    
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button>
+      <ion-icon name="apps-outline"></ion-icon>
+    </ion-fab-button>  
+  
+    <ion-fab-list side="start">
+      <!-- este solo sera para cualqueira que no sea administrador-->   
+      <ion-fab-button *ngIf="profile=='SUPER_ADMIN'" color="warning" (click)="createContract()">            
+        <ion-icon name="cloud-upload-outline"></ion-icon>
+      </ion-fab-button> 
+      <ion-fab-button *ngIf="profile=='SUPER_ADMIN'" color="warning" (click)="createContractGroup()">            
+        <ion-icon name="add-outline"></ion-icon>
+      </ion-fab-button> 
+      <ion-fab-button color="warning" (click)="collapseAll()">
+        <ion-icon name="chevron-collapse-outline"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
+
+</ion-content>

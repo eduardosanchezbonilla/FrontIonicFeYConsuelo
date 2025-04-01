@@ -1,0 +1,53 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="medium" (click)="cancel()">Cancelar</ion-button>
+    </ion-buttons>    
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form (ngSubmit)="selectAndUpload()" #contractForm="ngForm">    
+    <!------------------------->
+    <!------ DATOS MUSICO ----->
+    <!------------------------->
+    <h2 class="fancy-title custom-h2">
+      Contrato
+    </h2>
+
+    <div class="spacer"></div>  
+      
+    <!-- GRUPO DE CONTRATOS -->
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item">
+      <ion-label color="primary" class="custom-label-group">Grupo</ion-label>
+      <ion-select  class="custom-select"      
+        okText="Aceptar"
+        cancelText="Cancelar"
+        name="contractGroup"
+        placeHolder="Seleccionar Grupo"        
+        [compareWith]="compareWith"
+        [(ngModel)] = "contractGroup"
+        required
+        #contractGroupInput="ngModel"         
+      >              
+          <ion-select-option *ngFor="let contractGroup of contractGroups" [value]="contractGroup">{{contractGroup.name}}</ion-select-option>
+      </ion-select>      
+    </ion-item>
+
+    <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(contractGroupInput.invalid && contractGroupInput.touched)">
+      <ion-text color="danger" *ngIf="contractGroupInput.errors && contractGroupInput.errors['required']">El grupo de contratos es obligatoria.</ion-text>      
+    </div>
+    
+   
+    <div class="spacer"></div>   
+    <div class="spacer"></div>  
+
+    <ion-button 
+          type="submit"           
+          [disabled]="contractForm.invalid"
+          expand="block">
+        Seleccionar y subir contrato
+    </ion-button>
+
+  </form>
+</ion-content>

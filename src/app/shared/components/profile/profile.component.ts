@@ -30,7 +30,7 @@ export class Profile  {
     this.menuController.close();
   }
 
-  logout() {
+  logout() {    
     this.userService.logout();
     this.user = null;  
   }

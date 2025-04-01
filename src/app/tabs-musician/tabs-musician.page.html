@@ -23,9 +23,14 @@
         <ion-label>¿Quienes somos?</ion-label>
       </ion-tab-button> 
 
-      <ion-tab-button tab="menu-repertoire" href="/tabs-guest/menu-repertoire">
+      <ion-tab-button tab="menu-repertoire" href="/tabs-musician/menu-repertoire">
         <ion-icon name="musical-notes-outline"></ion-icon>
         <ion-label>Repertorio</ion-label>
+      </ion-tab-button> 
+
+      <ion-tab-button *ngIf="user?.todayPerformance && user?.todayPerformance.length>0" tab="menu-today-performance" href="/tabs-musician/menu-event" > 
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        <ion-label>Hoy Tocamos</ion-label>
       </ion-tab-button> 
 
       <ion-tab-button *ngIf="user?.musicianMarchSolos && user?.musicianMarchSolos.length>0" tab="menu-solo" href="/tabs-musician/menu-solo">

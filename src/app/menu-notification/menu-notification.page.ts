@@ -44,6 +44,7 @@ export class MenuNotificationPage implements OnInit {
   ) { }
 
   logout(){
+    this.doDestroy();
     this.userService.logout();
   }
   

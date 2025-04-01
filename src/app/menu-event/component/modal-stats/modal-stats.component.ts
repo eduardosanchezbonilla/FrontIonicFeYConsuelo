@@ -119,7 +119,9 @@ export class ModalStatsComponent implements OnInit {
                   this.eventListResponse.events = [];                  
                 }
                 // si el token ha caducado (403) lo sacamos de la aplicacion
-                if(errorStatusCode==403){            
+                if(errorStatusCode==403){    
+                  await this.loadingService.dismissLoading();           
+                  this.cancel();       
                   this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
                 }
                 else{

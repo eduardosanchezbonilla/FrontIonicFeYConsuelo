@@ -78,6 +78,7 @@ export class MenuMusicianPage implements OnDestroy {
   }
 
   logout(){
+    this.doDestroy();
     this.userService.logout();
   }
 
@@ -91,8 +92,8 @@ export class MenuMusicianPage implements OnDestroy {
     return `${year}-${month}-${day}`;
   }
 
-  async ionViewWillEnter(){      
-    this.profile = await this.storage.getItem('profile');             
+  async ionViewWillEnter(){        
+    this.profile = await this.storage.getItem('profile'); 
     this.getMusiciansGroupByVoice();      
     this.filterMusicians();    
   }

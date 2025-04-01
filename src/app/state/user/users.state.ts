@@ -109,7 +109,8 @@ export class UsersState {
               this.getProfile(token.roles),
               token.musician,
               token.musicianMarchSolos,
-              token.userDetail
+              token.userDetail,
+              token.todayPerformance
             );    
             await this.storage.setItem('user',JSON.stringify(userToken));  
             patchState({

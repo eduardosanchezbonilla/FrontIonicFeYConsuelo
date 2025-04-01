@@ -12,6 +12,7 @@ export class User {
     musician: Musician;
     musicianMarchSolos: MusicianMarchSoloResponse[];
     userDetail: UserDetail;
+    todayPerformance: number[];
 
     constructor(username: string, 
                 roles:string[],
@@ -19,6 +20,7 @@ export class User {
                 musician: Musician,
                 musicianMarchSolos: MusicianMarchSoloResponse[],
                 uerDetail: UserDetail,
+                todayPerformance: number[],
                 _id?: string
     ) {
         this.username = username;
@@ -27,6 +29,7 @@ export class User {
         this.musician = musician;
         this.musicianMarchSolos = musicianMarchSolos;
         this.userDetail = uerDetail;
+        this.todayPerformance = todayPerformance;
         this._id = _id;
     }
 }

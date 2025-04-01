@@ -1,0 +1,90 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="medium" (click)="cancel()">Cancelar</ion-button>
+    </ion-buttons>        
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-no-padding">
+
+  <div class="ion-padding" id="capture" #capture>
+    <!-------------------------------->
+    <!--------- DATOS CRUCETA -------->
+    <!-------------------------------->
+    <form #attachEventForm="ngForm">    
+      <h2 class="fancy-title custom-modal-title">
+        Documentos adjuntos
+      </h2>
+
+      <!-- CABECERA -->    
+      <ion-card class="event-card background-white">
+        <ion-item lines="none">
+          <ion-avatar slot="start" class="event-avatar">                  
+            <ion-img 
+              [src]="showImage">
+            </ion-img> 
+          </ion-avatar>
+          <ion-label>
+            <h2>{{ showTextEvent }} </h2>
+            <p>{{ showDateTextEvent }}</p>          
+          </ion-label>
+        </ion-item>
+      </ion-card> 
+
+      
+      <div class="spacer-small"></div>  
+
+
+      <!-- DOCUMENTOS -->      
+      <div *ngIf="loadFinish && (!cloudDocuments || cloudDocuments.length===0)" class="no-data-container">
+        <div class="spacer"></div>   
+        <ion-icon name="alert-circle-outline" class="no-data-icon"></ion-icon>
+        <p class="no-data-text">No existen documentos adjuntos<br/> para este evento.</p>     
+        <div class="spacer"></div>   
+        <div class="spacer"></div> 
+      </div>
+
+      <div *ngIf="loadFinish && cloudDocuments && cloudDocuments.length>0">
+        <ion-list class="ion-no-padding background-transparent" >
+          <ion-card *ngFor="let document of cloudDocuments; trackBy: trackByDocument"  class="document-card background-white">
+            <ion-card-content>                
+              <div>
+                <h5>{{ document.name }}</h5>
+                <div class="document-header-buttons">
+                  <ion-fab-button *ngIf="document.googleId" fill="clear" color="success" size="small" (click)="downloadDocument(document)" class="document-header-fab">
+                    <ion-icon name="eye-outline" class="document-header-fab-icon"></ion-icon>        
+                  </ion-fab-button>                     
+
+                  <ion-fab-button *ngIf="document.googleId" fill="clear" color="danger" size="small" (click)="confirmDeleteDocument($event,document)" class="document-header-fab">
+                    <ion-icon name="trash-outline" class="document-header-fab-icon"></ion-icon>        
+                  </ion-fab-button>    
+                </div>   
+              </div>
+            </ion-card-content>              
+          </ion-card>    
+        </ion-list>
+
+        <div class="spacer-small"></div>  
+      </div>
+
+      <ion-button 
+        type="button"     
+        (click)="cancel()"   
+        color="primary" 
+        expand="block" 
+        class="button-back"
+      >
+        <ion-icon name="return-up-back-outline" slot="start"></ion-icon>    
+        Volver
+      </ion-button>
+    </form>
+  </div>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button color="primary" (click)="selectAndUpload()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+</ion-content>

@@ -1,5 +1,5 @@
-import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
-import { AlertController, ModalController } from '@ionic/angular';
+import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { AlertController, IonContent, ModalController } from '@ionic/angular';
 import { LoadingService } from 'src/app/services/loading/loading.service';
 import { Geolocation } from '@capacitor/geolocation';
 import * as L from 'leaflet';
@@ -17,6 +17,7 @@ import { UsersService } from 'src/app/services/user/users.service';
 import { App } from '@capacitor/app';
 import 'leaflet-rotate';
 import { DEFAULT_EVENT_IMAGE } from 'src/app/constants/constants';
+import { CaptureService } from 'src/app/services/capture/capture.service';
 
 @Component({
   selector: 'app-modal-route-event',
@@ -112,7 +113,8 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
     private storage: StorageService,
     private store:Store,
     private userService: UsersService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private captureService: CaptureService,
   ) { 
     this.drawnItems = new L.FeatureGroup(); // Inicializa el FeatureGroup
 
@@ -443,9 +445,14 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
       // Escuchar eventos de dibujo
       this.map.on(L.Draw.Event.CREATED, (event: any) => {
         const layer = event.layer;
-        this.drawnItems.addLayer(layer); // Añadir la ruta al FeatureGroup
+        this.drawnItems.addLayer(layer); // Añadir la ruta al FeatureGroup        
         this.calculateDistanceRoute();
       });  
+
+      // Cuando se ha terminado de editar alguna capa
+      this.map.on(L.Draw.Event.EDITED, (e: any) => {
+        this.calculateDistanceRoute(); 
+      });
 
       // Escuchar cambios en la rotación
       this.map.on('rotate', () => {
@@ -533,12 +540,15 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
       }
     });
 
+    this.calculateDistanceRoute();
+
     let routeEvent = new RouteEvent(
       new LatLng(this.mapCenterLat, this.mapCenterLng),
       this.zoomLevel,
       route,
       circles,
-      this.rotation
+      this.rotation,
+      this.kilometersRoute
     );
     
     await this.loadingService.presentLoading('Loading...');   
@@ -922,6 +932,21 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
     }
   }
 
+  @ViewChild(IonContent, { static: false }) content: IonContent;
+  public isCapturing = false;
+  
+  async downloadRoute() {
+    try {      
+      this.isCapturing = true;   
+      await this.loadingService.presentLoading('Loading...');                
+      await this.captureService.capture(this.content, 'capture', 'capturaRepertoire.png',100,50);      
+    } catch (error) {     
+      this.toast.presentToast('Error al capturar y compartir la imagen: ' + error);       
+    } finally {
+      this.isCapturing = false;
+      await this.loadingService.dismissLoading();   
+    }    
+  }
 
 
 }

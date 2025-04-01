@@ -85,6 +85,7 @@ export class MenuMultimediaPage  implements OnDestroy {
   }
   
   logout(){
+    this.doDestroy();
     this.userService.logout();
   }
 

@@ -13,6 +13,7 @@ import { RouteEvent } from 'src/app/models/route-event/route-event';
 import { LatLng } from 'src/app/models/route-event/latLng';
 import { EventCurrentData } from 'src/app/models/event/event-current-data';
 import { CrossheadEvent } from 'src/app/models/crosshead-event/crosshead-event';
+import { GlobalEventStatsResponse } from 'src/app/models/event/global-event-stats-response';
 
 @Injectable()
 export class EventService {
@@ -189,6 +190,50 @@ export class EventService {
     return Http.get(
       {
         url:environment.host + '/event/'+ eventType + '/'+ eventId+ '/musicianAssistance',
+        params:{},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        }
+      }
+    ).then(async response => {
+      const newToken = response.headers['Authorization'] || response.headers['authorization'];
+      if(newToken){          
+        await this.storage.setItem('token', newToken.replace('Bearer ', ''));
+      }
+      if(response.status==200){
+        const data = await response.data as EventMusicianAssistance;
+        return data;
+      }
+      else if(response.status==204){
+        return null;
+      }
+      else{                
+        return Promise.reject({
+          status: response.status,
+          message: response.data?.message || 'Error al obtener el listado de musicos asociados al evento'
+        });
+      }    
+    })
+    .catch((error) => {    
+      if(error.status){
+        return Promise.reject(error);
+      }
+      else {
+        return Promise.reject({
+          status: 403,
+          message: null
+        });                
+      }           
+    });     
+  }
+
+  async getEventMusicianFormation(eventType:string,eventId:number){
+    
+    const token = await this.storage.getItem('token');
+    return Http.get(
+      {
+        url:environment.host + '/event/'+ eventType + '/'+ eventId+ '/musicianFormation',
         params:{},
         headers: {
           'Content-Type': 'application/json',
@@ -803,6 +848,55 @@ export class EventService {
         });                
       }           
     });
+  }
+
+  async getEventStats(eventType:string,startDate:string, endDate:string, excludeSpecialTypes: boolean){
+    
+    const token = await this.storage.getItem('token');
+    return Http.get(
+      {
+        url:environment.host + '/event/stats',
+        params:{
+          'eventType':eventType,
+          'startDate':startDate,
+          'endDate':endDate,
+          'excludeSpecialTypes': excludeSpecialTypes.toString()
+        },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        }
+      }
+    ).then(async response => {
+      const newToken = response.headers['Authorization'] || response.headers['authorization'];
+      if(newToken){          
+        await this.storage.setItem('token', newToken.replace('Bearer ', ''));
+      }
+      if(response.status==200){
+        const data = await response.data as GlobalEventStatsResponse;
+        return data;
+      }
+      else if(response.status==204){
+        return new GlobalEventStatsResponse();
+      }
+      else{                
+        return Promise.reject({
+          status: response.status,
+          message: response.data?.message || 'Error al obtener las estadisticas de los eventos'
+        });
+      }    
+    })
+    .catch((error) => {    
+      if(error.status){
+        return Promise.reject(error);
+      }
+      else {
+        return Promise.reject({
+          status: 403,
+          message: null
+        });                
+      }           
+    });     
   }
 
 }

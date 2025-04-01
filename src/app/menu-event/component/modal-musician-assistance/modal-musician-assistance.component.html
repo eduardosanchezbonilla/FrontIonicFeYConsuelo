@@ -2,112 +2,121 @@
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-button color="medium" (click)="cancel()">Cancelar</ion-button>
-    </ion-buttons>    
+    </ion-buttons>   
+    <ion-buttons *ngIf="(profile==='SUPER_ADMIN' || profile==='ADMIN')" slot="end">
+      <ion-button (click)="downloadAssistance()" class="download-button">
+        <ion-icon name="download-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>     
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
+<ion-content class="ion-no-padding">
 
-  <form (ngSubmit)="confirm()" #eventMusicianAssistanceForm="ngForm">    
+  <div class="ion-padding" id="capture" #capture>
 
-    <!-------------------------------->
-    <!------ DATOS INVENTARIO -------->
-    <!-------------------------------->
-    <h2 class="fancy-title custom-modal-title">
-      Asistencia 
-    </h2>
+    <form (ngSubmit)="confirm()" #eventMusicianAssistanceForm="ngForm">    
 
-    <!-- CABECERA -->    
-    <ion-card class="event-card background-white">
-      <ion-item lines="none">
-        <ion-avatar slot="start" class="event-avatar">                  
-          <ion-img 
-            [src]="showImage">
-          </ion-img> 
-        </ion-avatar>
-        <ion-label>
-          <h2>{{ showTextEvent }} </h2>
-          <p>{{ showDateTextEvent }}</p>          
-        </ion-label>
-      </ion-item>
-    </ion-card> 
-  
-    <!-- DATOS -->    
-    <div *ngIf="eventMusicianAssistance.musiciansGroupByVoice">            
-      <ion-accordion-group #accordionGroup [multiple]="true" [value]="expandedAccordionValues" >
-        <ion-list *ngFor="let musicianGroupByVoice of eventMusicianAssistance.musiciansGroupByVoice; trackBy: trackByVoiceFn" class="ion-no-padding background-transparent" >
-                  
-          <ion-accordion value="{{musicianGroupByVoice.voice.id}}" >
+      <!-------------------------------->
+      <!------ DATOS INVENTARIO -------->
+      <!-------------------------------->
+      <h2 class="fancy-title custom-modal-title">
+        Asistencia 
+      </h2>
 
-            <!---------------------------->
-            <!-- Repite para cada voice -->
-            <!---------------------------->
-            <ion-item slot="header" >                   
-              <ion-item-divider class="ion-no-padding voice-header">              
-                <ion-label class="voice-header-label">
-                  {{ musicianGroupByVoice.voice.name }}
-                </ion-label>                  
-              </ion-item-divider>
-            </ion-item>
+      <!-- CABECERA -->    
+      <ion-card class="event-card background-white">
+        <ion-item lines="none">
+          <ion-avatar slot="start" class="event-avatar">                  
+            <ion-img 
+              [src]="showImage">
+            </ion-img> 
+          </ion-avatar>
+          <ion-label>
+            <h2>{{ showTextEvent }} </h2>
+            <p>{{ showDateTextEvent }}</p>          
+          </ion-label>
+        </ion-item>
+      </ion-card> 
+    
+      <!-- DATOS -->    
+      <div *ngIf="eventMusicianAssistance && eventMusicianAssistance.musiciansGroupByVoice">            
+        <ion-accordion-group #accordionGroup [multiple]="true" [value]="expandedAccordionValues" >
+          <ion-list *ngFor="let musicianGroupByVoice of eventMusicianAssistance.musiciansGroupByVoice; trackBy: trackByVoiceFn" class="ion-no-padding background-transparent" >
+                    
+            <ion-accordion value="{{musicianGroupByVoice.voice.id}}" >
 
-            <!---------------------------->
-            <!---- Para cada musician ---->
-            <!---------------------------->
-            <div class="div-accordion-padding" slot="content">   
-              <ion-item-sliding *ngFor="let musician of musicianGroupByVoice.musicians; trackBy: trackByMusicianFn" #musicianSliding>
-                <ion-card class="musician-card background-white">
-                  <ion-item  class="musician-ion-item">                
-                    <ion-label class="musician-card-label">
-                      <p class="musician-name">{{ musician.name }} {{ musician.surname }} </p>                                      
-                    </ion-label>
+              <!---------------------------->
+              <!-- Repite para cada voice -->
+              <!---------------------------->
+              <ion-item slot="header" >                   
+                <ion-item-divider class="ion-no-padding voice-header">              
+                  <ion-label class="voice-header-label">
+                    {{ musicianGroupByVoice.voice.name }}
+                  </ion-label>                  
+                </ion-item-divider>
+              </ion-item>
 
-                    <!-- Segment alineado a la derecha -->
-                    <div class="segment-container">
-                      <ion-segment 
-                            *ngIf="type=='PERFORMANCE' && event.displacementBus"  
-                            [value]="getSegmentValue(musician)"
-                            (ionChange)="onSegmentAssistChanged(musician,$event)"
+              <!---------------------------->
+              <!---- Para cada musician ---->
+              <!---------------------------->
+              <div class="div-accordion-padding" slot="content">   
+                <ion-item-sliding *ngFor="let musician of musicianGroupByVoice.musicians; trackBy: trackByMusicianFn" #musicianSliding>
+                  <ion-card class="musician-card background-white">
+                    <ion-item  class="musician-ion-item">                
+                      <ion-label class="musician-card-label">
+                        <p class="musician-name">{{ musician.name }} {{ musician.surname }} </p>                                      
+                      </ion-label>
+
+                      <!-- Segment alineado a la derecha -->
+                      <div class="segment-container">
+                        <ion-segment 
+                              *ngIf="type=='PERFORMANCE' && event.displacementBus"  
+                              [value]="getSegmentValue(musician)"
+                              (ionChange)="onSegmentAssistChanged(musician,$event)"
+                        >
+                          <ion-segment-button value="assistBus"  class="custom-segment-button">
+                            <ion-icon name="bus" class="custom-icon-segment"></ion-icon>
+                          </ion-segment-button>
+                          <ion-segment-button value="assistNotBus" class="custom-segment-button">
+                            <ion-icon name="car" class="custom-icon-segment"></ion-icon>
+                          </ion-segment-button>
+                          <ion-segment-button value="notAssist"  class="custom-segment-button">
+                            <ion-icon name="close" class="custom-icon-segment"></ion-icon>
+                          </ion-segment-button>                        
+                        </ion-segment>
+                      </div>
+
+                      <ion-checkbox 
+                        *ngIf="type!=='PERFORMANCE' || !event.displacementBus"
+                        name="musicianAssistLastRehearsal"
+                        (ionChange)="updateEventMusicianAssistance(musician)"                                           
+                        [checked]="musician.assistLastRehearsal"
+                        class="custom-check"
                       >
-                        <ion-segment-button value="assistBus"  class="custom-segment-button">
-                          <ion-icon name="bus" class="custom-icon-segment"></ion-icon>
-                        </ion-segment-button>
-                        <ion-segment-button value="assistNotBus" class="custom-segment-button">
-                          <ion-icon name="car" class="custom-icon-segment"></ion-icon>
-                        </ion-segment-button>
-                        <ion-segment-button value="notAssist"  class="custom-segment-button">
-                          <ion-icon name="close" class="custom-icon-segment"></ion-icon>
-                        </ion-segment-button>                        
-                      </ion-segment>
-                    </div>
+                      </ion-checkbox>   
 
-                    <ion-checkbox 
-                      *ngIf="type!=='PERFORMANCE' || !event.displacementBus"
-                      name="musicianAssistLastRehearsal"
-                      (ionChange)="updateEventMusicianAssistance(musician)"                                           
-                      [checked]="musician.assistLastRehearsal"
-                      class="custom-check"
-                    >
-                    </ion-checkbox>   
+                    </ion-item>
+                  </ion-card>                          
+                </ion-item-sliding>        
+              </div>                   
+            </ion-accordion>
+          </ion-list>
+        </ion-accordion-group>
+      </div>
 
-                  </ion-item>
-                </ion-card>                          
-              </ion-item-sliding>        
-            </div>                   
-          </ion-accordion>
-        </ion-list>
-      </ion-accordion-group>
-    </div>
+      <div class="spacer"></div>  
 
-    <div class="spacer"></div>  
-
-    <ion-button 
-          type="submit"           
-          [disabled]="eventMusicianAssistanceForm.invalid"
-          expand="block"         
-    >
-          Volver
-    </ion-button>
-  </form>
+      <ion-button 
+            *ngIf="!isCapturing"
+            type="submit"           
+            [disabled]="eventMusicianAssistanceForm.invalid"
+            expand="block"         
+      >
+            Volver
+      </ion-button>
+    </form>
+  </div>
 
   <div class="spacer"></div>  
   <div class="spacer"></div>    

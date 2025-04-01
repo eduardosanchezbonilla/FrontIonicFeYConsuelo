@@ -344,6 +344,23 @@
       </ion-modal>              
     </ion-item>
 
+    <!-- DESCRIPCION -->
+    <ion-item lines="none">      
+      <ion-label color="primary" position="stacked" class="custom-label-textarea">
+        Observaciones
+      </ion-label>
+      <ion-textarea 
+          name="observations"
+          placeholder="Escribe las observaciones asociadas al músico..." 
+          class="custom-textarea focus-style"
+          minlength="1"                     
+          maxlength="10000"
+          required="false"
+          [(ngModel)]="musician.observations"              
+      >
+      </ion-textarea>
+   </ion-item>
+
 
 
     <div class="spacer"></div>   

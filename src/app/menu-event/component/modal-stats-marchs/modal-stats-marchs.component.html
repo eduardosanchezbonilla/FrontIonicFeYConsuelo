@@ -1,0 +1,574 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="medium" (click)="cancel()">Cancelar</ion-button>
+    </ion-buttons>  
+    <ion-buttons *ngIf="(profile==='SUPER_ADMIN' || profile==='ADMIN')" slot="end">
+      <ion-button (click)="downloadStats()" class="download-button">
+        <ion-icon name="download-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>  
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-no-padding">
+  <div class="ion-padding" id="capture" #capture>
+    <h2 class="fancy-title custom-modal-title">
+      Estadísticas 
+    </h2>
+
+    <!-- FECHA INICIO -->
+    <div id="filters" *ngIf="!isCapturing" >
+      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item" >
+        <ion-label color="primary" class="custom-label">Fecha inicial</ion-label>
+
+        <ion-datetime-button slot="end" datetime="datetime-start" color="primary" class="custom-datetime-button"></ion-datetime-button>      
+
+        <ion-icon name="calendar-outline" slot="end" class="custom-icon"></ion-icon>
+
+        <ion-modal #modalDatetimeStart [keepContentsMounted]="true">
+          <ng-template>
+            <ion-datetime 
+                id="datetime-start" 
+                presentation="date"
+                [(ngModel)]="startDate"
+                [ngModelOptions]="{standalone: true}"              
+                [showDefaultButtons]="true"
+                [firstDayOfWeek]="1"
+                required
+            >
+            </ion-datetime>
+          </ng-template>
+        </ion-modal>              
+      </ion-item>
+
+      <!-- FECHA FIN -->
+      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item" >
+        <ion-label color="primary" class="custom-label">Fecha final</ion-label>
+
+        <ion-datetime-button slot="end" datetime="datetime-end" color="primary" class="custom-datetime-button"></ion-datetime-button>      
+
+        <ion-icon name="calendar-outline" slot="end" class="custom-icon"></ion-icon>
+
+        <ion-modal #modalDatetimeEnd [keepContentsMounted]="true">
+          <ng-template>
+            <ion-datetime 
+                id="datetime-end" 
+                presentation="date"
+                [(ngModel)]="endDate"
+                [ngModelOptions]="{standalone: true}"              
+                [showDefaultButtons]="true"
+                [firstDayOfWeek]="1"
+                required
+            >
+            </ion-datetime>
+          </ng-template>
+        </ion-modal>              
+      </ion-item>
+
+      <!-- TIPO EVENTO -->
+      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item">
+        <ion-label color="primary" class="custom-label">Tipo de evento</ion-label>
+        <ion-select 
+          class="custom-select"     
+          okText="Aceptar"
+          cancelText="Cancelar" 
+          name="selectedEventType"
+          placeHolder="Seleccionar Tipo de"        
+          [(ngModel)]="selectedEventType"       
+        >
+          <ion-select-option value="REHEARSAL">ENSAYO</ion-select-option>
+          <ion-select-option value="PERFORMANCE">ACTUACIÓN</ion-select-option>
+          <ion-select-option value="">TODOS</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <!-- DESPLAZAMIENTO EN BUS -->      
+      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+        <ion-label color="primary" class="custom-label-check">Excluir tipos (Himno, Ordinario, Navidad)</ion-label>            
+        <ion-checkbox 
+          name="excludeSpecialTypes"     
+          [(ngModel)]="excludeSpecialTypes"                                                               
+          class="custom-check"
+        >
+        </ion-checkbox>          
+      </ion-item>      
+
+      <!-- BOTON -->
+      <ion-button 
+        type="button" 
+        (click)="filterStatistics()" 
+        color="primary" 
+        expand="block" 
+        class="button-back"
+      >
+        <ion-icon name="stats-chart-outline" slot="start"></ion-icon>    
+        Obtener estadísticas
+      </ion-button>
+    </div>
+
+    <!-- TARJETA PARA LAS ESTADISTICAS GLOBALES -->
+    <ion-card class="attendance-card background-white" *ngIf="eventStatsResponse?.eventStats?.length > 0"> 
+
+      <ion-card-header (click)="toggleCard('totalStats')" class="custom-ion-card-header">
+        <ion-card-title class="custom-ion-card-title">
+          Estadísticas Globales
+          <ion-icon [name]="expandedCards.includes('totalStats') ? 'chevron-up' : 'chevron-down'" class="custom-ion-icon"></ion-icon>
+        </ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content *ngIf="expandedCards.includes('totalStats')" class="custom-ion-card-content-musician-list">    
+
+        <!-- ESTADISTICAS -->
+        <ion-grid>
+          <ion-row>                        
+            <ion-col size="12" size-md="4" *ngIf="eventStatsResponse?.totalStats?.mostPlayerMarchOwnSlow?.length>0">
+              <div class="statistic-container">
+                <div class="stat-header">
+                  <ion-icon name="trophy-outline" class="stat-icon success"></ion-icon>
+                  <div class="stat-title">Marcha propia más interpretada</div>
+                </div>
+                <div class="stat-detail">
+                  <div class="stat-detail-text">
+                    <div *ngFor="let marcha of eventStatsResponse.totalStats.mostPlayerMarchOwnSlow">
+                      {{ marcha.name }} ({{ marcha.count }} veces)<br>
+                    </div>
+                  </div>                
+                </div>
+              </div>
+            </ion-col>
+
+            <ion-col size="12" size-md="4" *ngIf="eventStatsResponse?.totalStats?.mostPlayerMarchOtherSlow?.length>0">
+              <div class="statistic-container">
+                <div class="stat-header">
+                  <ion-icon name="trophy-outline" class="stat-icon success"></ion-icon>
+                  <div class="stat-title">Marcha no propia más interpretada</div>
+                </div>
+                <div class="stat-detail">
+                  <div class="stat-detail-text">
+                    <div *ngFor="let marcha of eventStatsResponse.totalStats.mostPlayerMarchOtherSlow">
+                      {{ marcha.name }} ({{ marcha.count }} veces)<br>
+                    </div>
+                  </div>                
+                </div>
+              </div>
+            </ion-col>
+
+            <ion-col size="12" size-md="4" *ngIf="eventStatsResponse?.totalStats?.marchsTypeStats?.length>0">
+              <div class="statistic-container">
+                <div class="stat-header">
+                  <ion-icon name="trophy-outline" class="stat-icon success"></ion-icon>
+                  <div class="stat-title">Marcha más interpretada por categoria</div>
+                </div>
+                <div class="stat-detail">
+                  <div class="stat-detail-text">
+                    <div *ngFor="let type of eventStatsResponse.totalStats.marchsTypeStats">
+                      <!-- Título para el type -->
+                      <h3 class="type-title">{{ type.name }}</h3>
+                      <div *ngFor="let march of type.mostPlayerMarch">
+                        {{ march.name }} ({{ march.count }} veces)<br>
+                      </div>
+                    </div>
+                  </div>                
+                </div>
+              </div>
+            </ion-col>
+
+            <ion-col size="12" size-md="4" *ngIf="eventStatsResponse?.totalStats?.totalNumberMarchs >= 0" class="ion-text-left">
+              <div class="statistic-container">
+                <div class="stat-header ion-align-items-start">                  
+                  <ion-icon name="musical-notes" class="stat-icon success"></ion-icon>
+                  <div class="stat-title">Número total de marchas:<span class="stat-percentage">{{ eventStatsResponse.totalStats.totalNumberMarchs }}</span></div>                  
+                </div>  
+                <!--<div class="stat-detail-empty"></div>-->
+              </div>
+            </ion-col>
+
+            <ion-col size="12" size-md="4" *ngIf="eventStatsResponse?.totalStats?.totalNumberMarchsOwnSlow >= 0">
+              <div class="statistic-container">
+                <div class="stat-header">                  
+                  <!--<ion-icon name="trending-up" class="stat-icon success"></ion-icon>-->
+                  <ion-icon name="musical-notes" class="stat-icon success"></ion-icon>
+                  <div class="stat-title">Número total de marchas propias:<span class="stat-percentage">{{ eventStatsResponse.totalStats.totalNumberMarchsOwnSlow }}</span></div>                  
+                </div> 
+                <!--<div class="stat-detail-empty"></div>-->                      
+              </div>
+            </ion-col>
+
+            <ion-col size="12" size-md="4" *ngIf="eventStatsResponse?.totalStats?.totalNumberMarchsOtherSlow >= 0">
+              <div class="statistic-container">
+                <div class="stat-header">                  
+                  <ion-icon name="musical-notes" class="stat-icon success"></ion-icon>
+                  <div class="stat-title">Número total de marchas no propias:<span class="stat-percentage">{{ eventStatsResponse.totalStats.totalNumberMarchsOtherSlow }}</span></div>                  
+                </div>    
+                <!--<div class="stat-detail-empty"></div>-->                   
+              </div>
+            </ion-col>
+
+            <ion-col size="12" size-md="4" *ngIf="eventStatsResponse?.totalStats?.totalNumberMarchsOrdinary >= 0">
+              <div class="statistic-container">
+                <div class="stat-header">                                  
+                  <ion-icon name="musical-notes" class="stat-icon success"></ion-icon>
+                  <div class="stat-title">Número total de marchas de ordinario:<span class="stat-percentage">{{ eventStatsResponse.totalStats.totalNumberMarchsOrdinary }}</span></div>                  
+                </div>    
+                <!--<div class="stat-detail-empty"></div>-->                   
+              </div>
+            </ion-col>
+
+            <ion-col size="12" size-md="4" *ngIf="eventStatsResponse?.totalStats?.totalNumberHours >= 0">
+              <div class="statistic-container">
+                <div class="stat-header">                  
+                  <ion-icon name="time" class="stat-icon success"></ion-icon>
+                  <div class="stat-title">Número total de horas:<span class="stat-percentage">{{ eventStatsResponse.totalStats.totalNumberHours }}</span></div>                  
+                </div>    
+                <!--<div class="stat-detail-empty"></div>-->                   
+              </div>
+            </ion-col>
+
+            <ion-col size="12" size-md="4" *ngIf="eventStatsResponse?.totalStats?.totalNumberKilometers >= 0">
+              <div class="statistic-container">
+                <div class="stat-header">                  
+                  <ion-icon name="walk" class="stat-icon success"></ion-icon>
+                  <div class="stat-title">Número total de kilometros:<span class="stat-percentage">{{ eventStatsResponse.totalStats.totalNumberKilometers }}</span></div>                  
+                </div>   
+                <!--<div class="stat-detail-empty"></div>-->                    
+              </div>
+            </ion-col>
+
+            <ion-col size="12" size-md="4" *ngIf="eventStatsResponse?.totalStats?.averageNumberMarchsByHour >= 0">
+              <div class="statistic-container">
+                <div class="stat-header">                  
+                  <ion-icon name="pulse" class="stat-icon success"></ion-icon>
+                  <div class="stat-title">Marchas interpretadas por hora:<span class="stat-percentage">{{ eventStatsResponse.totalStats.averageNumberMarchsByHour }}</span></div>                  
+                </div>    
+                <!--<div class="stat-detail-empty"></div>-->                   
+              </div>
+            </ion-col>
+
+            <ion-col size="12" size-md="4" *ngIf="eventStatsResponse?.totalStats?.percentageNumberMarchsOwn >= 0">
+              <div class="statistic-container">
+                <div class="stat-header">                  
+                  <ion-icon name="pulse" class="stat-icon success"></ion-icon>
+                  <div class="stat-title">Porcentaje de marchas propias:<span class="stat-percentage">{{ eventStatsResponse.totalStats.percentageNumberMarchsOwn }}</span></div>                  
+                </div>  
+                <!--<div class="stat-detail-empty"></div>-->                     
+              </div>
+            </ion-col>
+
+            <ion-col size="12" size-md="4" *ngIf="eventStatsResponse?.totalStats?.percentageNumberMarchsOther >= 0">
+              <div class="statistic-container">
+                <div class="stat-header">                  
+                  <ion-icon name="pulse" class="stat-icon success"></ion-icon>
+                  <div class="stat-title">Porcentaje de marchas no propias:<span class="stat-percentage">{{ eventStatsResponse.totalStats.percentageNumberMarchsOther }}</span></div>                  
+                </div>  
+                <!--<div class="stat-detail-empty"></div>-->                     
+              </div>
+            </ion-col>
+
+            <ion-col size="12" size-md="4" *ngIf="eventStatsResponse?.totalStats?.mostPlayerMarchOwnSlow?.length>0">
+              <div class="statistic-container">
+                <div class="stat-header">
+                  <ion-icon name="trending-down-outline" class="stat-icon danger"></ion-icon>
+                  <div class="stat-title">Marcha propia menos interpretada</div>
+                </div>
+                <div class="stat-detail">
+                  <div class="stat-detail-text">
+                    <div *ngFor="let marcha of eventStatsResponse.totalStats.leastPlayerMarchOwnSlow">
+                      {{ marcha.name }} ({{ marcha.count }} veces)<br>
+                    </div>
+                  </div>                
+                </div>
+              </div>
+            </ion-col>
+
+            <ion-col size="12" size-md="4" *ngIf="eventStatsResponse?.totalStats?.mostPlayerMarchOtherSlow?.length>0">
+              <div class="statistic-container">
+                <div class="stat-header">
+                  <ion-icon name="trending-down-outline" class="stat-icon danger"></ion-icon>
+                  <div class="stat-title">Marcha no propia menos interpretada</div>
+                </div>
+                <div class="stat-detail">
+                  <div class="stat-detail-text">
+                    <div *ngFor="let marcha of eventStatsResponse.totalStats.leastPlayerMarchOtherSlow">
+                      {{ marcha.name }} ({{ marcha.count }} veces)<br>
+                    </div>
+                  </div>                
+                </div>
+              </div>
+            </ion-col>
+
+            <ion-col size="12" size-md="4" *ngIf="eventStatsResponse?.totalStats?.marchsTypeStats?.length>0">
+              <div class="statistic-container">
+                <div class="stat-header">
+                  <ion-icon name="trending-down-outline" class="stat-icon danger"></ion-icon>
+                  <div class="stat-title">Marcha menos interpretada por categoria</div>
+                </div>
+                <div class="stat-detail">
+                  <div class="stat-detail-text">
+                    <div *ngFor="let type of eventStatsResponse.totalStats.marchsTypeStats">
+                      <!-- Título para el type -->
+                      <h3 class="type-title">{{ type.name }}</h3>
+                      <div *ngFor="let march of type.leastPlayerMarch">
+                        {{ march.name }} ({{ march.count }} veces)<br>
+                      </div>
+                    </div>
+                  </div>                
+                </div>
+              </div>
+            </ion-col>
+
+          </ion-row>
+        </ion-grid>
+
+        <!-- GRAFICOS -->
+        <div>
+          <!-- Grafico total marchas por evento -->
+          <div *ngIf="eventStatsResponse?.eventStats?.length > 0" class="chart-container" [style.height.px]="dynamicHeight">
+            <canvas baseChart
+                    [data]="chartDataTotalMarchByEvent"
+                    [type]="chartTypeTotalMarchByEvent"
+                    [options]="chartOptionsTotalMarchByEvent"
+                    [plugins]="chartPlugins"
+              >
+            </canvas>
+          </div>
+
+          <!-- Grafico marchas por hora en cada evento -->
+          <div *ngIf="eventStatsResponse?.eventStats?.length > 0" class="chart-container" [style.height.px]="dynamicHeight">
+            <canvas baseChart
+                    [data]="chartDataAverageMarchByHourByEvent"
+                    [type]="chartTypeAverageMarchByHourByEvent"
+                    [options]="chartOptionsAverageMarchByHourByEvent"
+                    [plugins]="chartPlugins"
+              >
+            </canvas>
+          </div>
+
+          <!-- Grafico de sectores con marchas en cada dia -->
+          <div *ngIf="eventStatsResponse?.eventStats?.length > 1" class="chart-container-pie">
+            <canvas baseChart
+                    [data]="chartDataPieMarchByEvent"
+                    [type]="chartTypePieMarchByEvent"
+                    [options]="chartOptionsPieMarchByEvent"                
+              >
+            </canvas>
+          </div>
+
+          <!-- Grafico marchas por tipo -->
+          <div *ngIf="eventStatsResponse?.totalStats?.marchsTypeStats?.length > 1" class="chart-container" >
+            <canvas baseChart
+                  [data]="chartDataTotalMarchByType"
+                  [type]="chartTypeTotalMarchByType"
+                  [options]="chartOptionsTotalMarchByType"
+                  [plugins]="chartPlugins"
+              >
+            </canvas>
+          </div>
+        </div>
+
+        <!-- Desglose de marchas -->      
+        <h2 class=" fancy-title march-title">Marchas interpretadas</h2>
+        
+        <ion-list class="ion-no-padding musician-ion-list">
+          
+          <ion-card *ngFor="let march of eventStatsResponse?.totalStats?.marchsStats" class="musician-card">
+            <ion-item lines="none" class="musician-ion-item ion-no-padding">
+              <ion-avatar slot="start" class="type-avatar">
+                <ion-img 
+                  [src]="march.image ? 'data:image/jpeg;base64,' + march.image : 'data:image/jpeg;base64,' + defaultRepertoireMarchTypeImage">
+                </ion-img>              
+              </ion-avatar>   
+              <ion-label class="musician-ion-label">
+                <h2 class="musician-name initcap">{{ march.name | lowercase }} </h2>
+              </ion-label>
+              <ion-note class="musician-ion-note" slot="end" [color]="getProgressColorMarchStats( (march.count/ eventStatsResponse?.totalStats?.countMostPlayerMarch)*100)">
+                {{ march.count }} {{ march.count === 1 ? 'vez' : 'veces' }}
+              </ion-note>
+            </ion-item>
+            
+            <ion-progress-bar 
+              [value]="(march.count/ eventStatsResponse?.totalStats?.countMostPlayerMarch)" 
+              [color]="getProgressColorMarchStats((march.count/ eventStatsResponse?.totalStats?.countMostPlayerMarch)*100)"
+              class="musician-progress-bar">
+            </ion-progress-bar>
+          </ion-card>
+        </ion-list>
+
+      </ion-card-content>      
+    </ion-card>
+    
+
+    <!-- TARJETA PARA LAS ESTADISTICAS POR EVENTO -->
+    <ion-card class="attendance-card background-white" *ngIf="eventStatsResponse?.eventStats?.length > 0"> 
+
+      <ion-card-header (click)="toggleCard('eventStats')" class="custom-ion-card-header">
+        <ion-card-title class="custom-ion-card-title">
+          Estadísticas por Evento
+          <ion-icon [name]="expandedCards.includes('eventStats') ? 'chevron-up' : 'chevron-down'" class="custom-ion-icon"></ion-icon>
+        </ion-card-title>
+      </ion-card-header>
+      
+      <ion-card-content *ngIf="expandedCards.includes('eventStats')" class="custom-ion-card-content-musician-list">
+                
+        <ion-accordion-group #accordionGroup [multiple]="true" [value]="expandedAccordions">
+          <ion-list *ngFor="let eventStat of eventStatsResponse.eventStats; trackBy: trackByEventStatFn" class="ion-no-padding background-transparent" >      
+            <ion-accordion value="{{ eventStat.event.id }}" >
+      
+              <!----------------------------->
+              <!-- Repite para cada evento -->
+              <!----------------------------->
+              <ion-item slot="header" >                   
+                <ion-item-divider class="ion-no-padding event-header">
+                  <ion-avatar slot="start" class="event-avatar">
+                    <ion-img 
+                      [src]="eventStat.event.image ? 'data:image/jpeg;base64,' + eventStat.event.image : 'data:image/jpeg;base64,' + defaultEventImage">
+                    </ion-img>              
+                  </ion-avatar>
+                  <ion-label class="event-header-label">
+                    {{ getEventName(eventStat) }}
+                  </ion-label>                      
+                </ion-item-divider>
+              </ion-item>
+      
+      
+              <!---------------------------->
+              <!---- Para cada evento   ---->
+              <!---------------------------->
+              <div class="div-accordion-padding" slot="content">
+                <ion-grid class="ion-grid-custon-event">
+                  <ion-row>                                            
+                    <ion-col size="12" size-md="4" *ngIf="hasValidMarchOwnSlow(eventStat)">
+                      <div class="statistic-container">
+                        <div class="stat-header">
+                          <ion-icon name="trophy-outline" class="stat-icon success"></ion-icon>
+                          <div class="stat-title">Marcha propia más interpretada</div>
+                        </div>
+                        <div class="stat-detail">
+                          <div class="stat-detail-text">
+                            <div *ngFor="let march of eventStat.stats.mostPlayerMarchOwnSlow">
+                              {{ march.name }} ({{ march.count }} veces)<br>
+                            </div>
+                          </div>                
+                        </div>
+                      </div>
+                    </ion-col>
+        
+                    <ion-col size="12" size-md="4" *ngIf="hasValidMarchOtherSlow(eventStat)">                    
+                      <div class="statistic-container">
+                        <div class="stat-header">
+                          <ion-icon name="trophy-outline" class="stat-icon success"></ion-icon>
+                          <div class="stat-title">Marcha no propia más interpretada</div>
+                        </div>
+                        <div class="stat-detail">
+                          <div class="stat-detail-text">
+                            <div *ngFor="let march of eventStat.stats.mostPlayerMarchOtherSlow">
+                              {{ march.name }} ({{ march.count }} veces)<br>
+                            </div>
+                          </div>                
+                        </div>
+                      </div>
+                    </ion-col>
+        
+                    <ion-col size="12" size-md="4" *ngIf="eventStat.stats.totalNumberMarchs>=0" class="ion-text-left">
+                      <div class="statistic-container">
+                        <div class="stat-header ion-align-items-start">                  
+                          <ion-icon name="musical-notes" class="stat-icon success"></ion-icon>
+                          <div class="stat-title">Número total de marchas:<span class="stat-percentage">{{ eventStat.stats.totalNumberMarchs }}</span></div>                          
+                        </div> 
+                        <!--<div class="stat-detail-empty"></div>-->                       
+                      </div>
+                    </ion-col>
+        
+                    <ion-col size="12" size-md="4" *ngIf="eventStat.stats.totalNumberMarchsOwnSlow>=0">
+                      <div class="statistic-container">
+                        <div class="stat-header">                  
+                          <ion-icon name="musical-notes" class="stat-icon success"></ion-icon>
+                          <div class="stat-title">Número total de marchas propias:<span class="stat-percentage">{{ eventStat.stats.totalNumberMarchsOwnSlow }}</span></div>                          
+                        </div> 
+                        <!--<div class="stat-detail-empty"></div>-->                      
+                      </div>
+                    </ion-col>
+        
+                    <ion-col size="12" size-md="4" *ngIf="eventStat.stats.totalNumberMarchsOtherSlow >=0">
+                      <div class="statistic-container">
+                        <div class="stat-header">                  
+                          <ion-icon name="musical-notes" class="stat-icon success"></ion-icon>
+                          <div class="stat-title">Número total de marchas no propias:<span class="stat-percentage">{{ eventStat.stats.totalNumberMarchsOtherSlow }}</span></div>                          
+                        </div>   
+                        <!--<div class="stat-detail-empty"></div>-->                    
+                      </div>
+                    </ion-col>
+        
+                    <ion-col size="12" size-md="4" *ngIf="eventStat.stats.totalNumberMarchsOrdinary >=0">
+                      <div class="statistic-container">
+                        <div class="stat-header">                                  
+                          <ion-icon name="musical-notes" class="stat-icon success"></ion-icon>
+                          <div class="stat-title">Número total de marchas de ordinario:<span class="stat-percentage">{{ eventStat.stats.totalNumberMarchsOrdinary }}</span></div>                          
+                        </div>   
+                        <!--<div class="stat-detail-empty"></div>-->                    
+                      </div>
+                    </ion-col>
+        
+                    <ion-col size="12" size-md="4" *ngIf="eventStat.stats.totalNumberHours >=0">
+                      <div class="statistic-container">
+                        <div class="stat-header">                  
+                          <ion-icon name="time" class="stat-icon success"></ion-icon>
+                          <div class="stat-title">Número total de horas:<span class="stat-percentage">{{ eventStat.stats.totalNumberHours }}</span></div>                          
+                        </div>    
+                        <!--<div class="stat-detail-empty"></div>-->                   
+                      </div>
+                    </ion-col>
+        
+                    <ion-col size="12" size-md="4" *ngIf="eventStat.stats.totalNumberKilometers >=0">
+                      <div class="statistic-container">
+                        <div class="stat-header">                  
+                          <ion-icon name="walk" class="stat-icon success"></ion-icon>
+                          <div class="stat-title">Número total de kilometros:<span class="stat-percentage">{{ eventStat.stats.totalNumberKilometers }}</span></div>                          
+                        </div>   
+                        <!--<div class="stat-detail-empty"></div>-->                    
+                      </div>
+                    </ion-col>
+        
+                    <ion-col size="12" size-md="4" *ngIf="eventStat.stats.averageNumberMarchsByHour>=0">
+                      <div class="statistic-container">
+                        <div class="stat-header">                  
+                          <ion-icon name="pulse" class="stat-icon success"></ion-icon>
+                          <div class="stat-title">Marchas interpretadas por hora:<span class="stat-percentage">{{ eventStat.stats.averageNumberMarchsByHour }}</span></div>                          
+                        </div>   
+                        <!--<div class="stat-detail-empty"></div>-->                    
+                      </div>
+                    </ion-col>
+        
+                    <ion-col size="12" size-md="4" *ngIf="eventStat.stats.percentageNumberMarchsOwn>=0">
+                      <div class="statistic-container">
+                        <div class="stat-header">                  
+                          <ion-icon name="pulse" class="stat-icon success"></ion-icon>
+                          <div class="stat-title">Porcentaje de marchas propias:<span class="stat-percentage">{{ eventStat.stats.percentageNumberMarchsOwn }}</span></div>                          
+                        </div>  
+                        <!--<div class="stat-detail-empty"></div>-->                     
+                      </div>
+                    </ion-col>
+        
+                    <ion-col size="12" size-md="4" *ngIf="eventStat.stats.percentageNumberMarchsOther>=0">
+                      <div class="statistic-container">
+                        <div class="stat-header">                  
+                          <ion-icon name="pulse" class="stat-icon success"></ion-icon>
+                          <div class="stat-title">Porcentaje de marchas no propias:<span class="stat-percentage">{{ eventStat.stats.percentageNumberMarchsOther }}</span></div>                          
+                        </div>    
+                        <!--<div class="stat-detail-empty"></div>-->                   
+                      </div>
+                    </ion-col>
+        
+                  </ion-row>
+                </ion-grid>
+
+              </div>
+            </ion-accordion>
+          </ion-list>   
+        </ion-accordion-group>    
+
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+</ion-content>

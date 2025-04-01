@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { IonContent, ModalController } from '@ionic/angular';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subscription } from 'rxjs';
 import { DEFAULT_EVENT_IMAGE, DEFAULT_REPERTOIRE_MARCH_TYPE_IMAGE } from 'src/app/constants/constants';
@@ -7,6 +7,7 @@ import { Event } from 'src/app/models/event/event';
 import { EventRepertoire } from 'src/app/models/event/event-repertoire';
 import { RepertoireEvent } from 'src/app/models/repertoire-event/repertoire-event';
 import { RepertoireMarch } from 'src/app/models/repertoire/repertoire-march';
+import { CaptureService } from 'src/app/services/capture/capture.service';
 import { LoadingService } from 'src/app/services/loading/loading.service';
 import { StorageService } from 'src/app/services/storage/storage.service';
 import { ToastService } from 'src/app/services/toast/toast.service';
@@ -62,7 +63,8 @@ export class ModalRepertoireEventComponent implements OnInit {
     private toast:ToastService,
     private userService: UsersService,
     private loadingService: LoadingService,    
-    private storage: StorageService
+    private storage: StorageService,
+    private captureService: CaptureService,
   ) { }
 
   convertDateFormat(dateString: string): string {
@@ -568,6 +570,22 @@ export class ModalRepertoireEventComponent implements OnInit {
         }
       )    
     } 
+  }
+
+  @ViewChild(IonContent, { static: false }) content: IonContent;
+  public isCapturing = false;
+  
+  async downloadRepertoire() {
+    try {      
+      this.isCapturing = true;   
+      await this.loadingService.presentLoading('Loading...');                
+      await this.captureService.capture(this.content, 'capture', 'capturaRepertoire.png',100,50);      
+    } catch (error) {     
+      this.toast.presentToast('Error al capturar y compartir la imagen: ' + error);       
+    } finally {
+      this.isCapturing = false;
+      await this.loadingService.dismissLoading();   
+    }    
   }
 
 }

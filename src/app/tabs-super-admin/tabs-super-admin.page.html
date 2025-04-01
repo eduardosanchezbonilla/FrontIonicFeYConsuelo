@@ -33,21 +33,21 @@
         <ion-label>Musicos</ion-label>
       </ion-tab-button>
 
-      <ion-tab-button tab="menu-repertoire" href="/tabs-super-admin/menu-repertoire" class="hide-tab">
-        <ion-icon name="musical-notes-outline"></ion-icon>
-        <ion-label>Repertorio</ion-label>
-      </ion-tab-button> 
-
-      <ion-tab-button tab="menu-partiture" href="/tabs-super-admin/menu-partiture" >
-        <ion-icon name="albums-outline"></ion-icon>
-        <ion-label>Partituras</ion-label>
-      </ion-tab-button> 
-
       <ion-tab-button tab="menu-inventory" href="/tabs-super-admin/menu-inventory" class="hide-tab">
         <ion-icon name="shirt-outline"></ion-icon>
         <ion-label>Inventario</ion-label>
       </ion-tab-button> 
 
+      <ion-tab-button *ngIf="user?.todayPerformance && user?.todayPerformance.length>0" tab="menu-today-performance" href="/tabs-super-admin/menu-event" >       
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        <ion-label>Hoy Tocamos</ion-label>
+      </ion-tab-button> 
+
+      <ion-tab-button tab="menu-repertoire" href="/tabs-super-admin/menu-repertoire" class="hide-tab">
+        <ion-icon name="musical-notes-outline"></ion-icon>
+        <ion-label>Repertorio</ion-label>
+      </ion-tab-button> 
+      
       <ion-tab-button tab="menu-notification" href="/tabs-super-admin/menu-notification" class="hide-tab">      
         <ion-icon name="notifications-outline"></ion-icon>
         <ion-label>Notificaciones</ion-label>
@@ -61,6 +61,16 @@
       <ion-tab-button tab="menu-event" href="/tabs-super-admin/menu-event" >                 
         <ion-icon name="calendar-outline"></ion-icon>
         <ion-label>Eventos</ion-label>
+      </ion-tab-button> 
+
+      <ion-tab-button tab="menu-partiture" href="/tabs-super-admin/menu-partiture" >
+        <ion-icon name="albums-outline"></ion-icon>
+        <ion-label>Partituras</ion-label>
+      </ion-tab-button>            
+
+      <ion-tab-button tab="menu-contract" href="/tabs-super-admin/menu-contract" >
+        <ion-icon name="document-attach-outline"></ion-icon>
+        <ion-label>Contratos</ion-label>
       </ion-tab-button> 
 
       <ion-tab-button tab="menu-suggestion-box" href="/tabs-super-admin/menu-suggestion-box" >                 

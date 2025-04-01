@@ -112,7 +112,7 @@ export class MenuHistoryPage implements OnInit {
   ngOnInit() {
   }
 
-  logout(){
+  logout(){    
     this.userService.logout();
   }
 

@@ -72,6 +72,7 @@ export class MenuUserPage implements OnDestroy {
   }
 
   logout(){
+    this.doDestroy();
     this.userService.logout();
   }
 

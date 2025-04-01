@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { IonSegment, ModalController } from '@ionic/angular';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subscription } from 'rxjs';
@@ -59,6 +59,7 @@ export class ModalEditEventComponent implements OnInit {
     private toast:ToastService,   
     private cameraService: CameraService,
     private userService: UsersService,
+    private cdRef: ChangeDetectorRef
   ) { }
 
   getTime(time: string){
@@ -88,6 +89,9 @@ export class ModalEditEventComponent implements OnInit {
       this.event.date = this.date ? this.date:new Date().toISOString();       
       this.event.endDate = this.date ? this.date:new Date().toISOString();       
       this.event.displacementBus = false;
+      this.event.busData = false;
+      this.event.busTime = '18:00';
+      this.event.busLocation = '';
 
       if(this.type==='REHEARSAL'){       
         this.event.startTime = '21:00';     
@@ -114,7 +118,16 @@ export class ModalEditEventComponent implements OnInit {
         else{
           this.showImage = `data:image/jpeg;base64,${DEFAULT_EVENT_IMAGE}`;
           this.selectedImage = DEFAULT_EVENT_IMAGE;
-        }      
+        }  
+        if(this.event.busData){        
+          if(!this.event.busTime){          
+            this.event.busTime = '18:00';
+          }          
+        }
+        else{
+          this.event.busTime = '18:00';
+          this.event.busLocation = '';
+        }    
       }      
     }
     
@@ -153,7 +166,8 @@ export class ModalEditEventComponent implements OnInit {
 
   async ionViewDidEnter(){
     this.initScreen = true;    
-    this.dismissInitialLoading();    
+    this.dismissInitialLoading();   
+    this.cdRef.detectChanges(); 
   }
 
   ngOnDestroy() {      
@@ -282,6 +296,31 @@ export class ModalEditEventComponent implements OnInit {
       this.event.image = this.selectedImage;    
       this.event.date = this.formatDate(this.event.date);
       this.event.endDate = this.event.endDate ? this.formatDate(this.event.endDate):null; 
+      if(!this.event.eventPublic){
+        this.event.eventPublic = false;        
+      }
+      if(!this.event.repertoirePublic){
+        this.event.repertoirePublic = false;        
+      }
+      if(!this.event.crossheadPublic){
+        this.event.crossheadPublic = false;
+      }
+      if(!this.event.displacementBus){
+        this.event.busData = false;
+        this.event.busTime = null;
+        this.event.busLocation = null;
+      }
+      if(!this.event.busData){
+        this.event.busData = false;
+        this.event.busTime = null;
+        this.event.busLocation = null;
+      }      
+      if(this.event.busData){        
+        if(!this.event.busTime && (this.event.busTime==='' || this.event.busTime===null)){          
+          this.event.busTime = '18:00';
+        }        
+      }
+
       this.modalController.dismiss(this.event, 'confirm');
     }
     else{
@@ -316,6 +355,22 @@ export class ModalEditEventComponent implements OnInit {
 
         await modal.present();
       }    
+    }
+  }
+
+  formatDateGuestView(dateStr: string): string {
+    if (!dateStr) return '';
+    const parts = dateStr.split('-'); // [yyyy, mm, dd]
+    if (parts.length !== 3) return dateStr; // Si no tiene el formato esperado, devuelve el valor original
+    return `${parts[2]}-${parts[1]}-${parts[0]}`;
+  }
+
+  getUbication(event:Event){
+    if(event && event.municipality && event.province){
+      return event.municipality.trim() + ' (' + event.province.trim() + ')';      
+    }
+    else{
+      return '';
     }
   }
 

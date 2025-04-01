@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import {  ModalController } from '@ionic/angular';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import {  IonContent, ModalController } from '@ionic/angular';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subscription } from 'rxjs';
 import { DEFAULT_EVENT_IMAGE, DEFAULT_VOICE_IMAGE } from 'src/app/constants/constants';
@@ -15,6 +15,8 @@ import { EventState } from 'src/app/state/event/event.state';
 import { CreateMusicianEvent, DeleteMusicianEvent } from 'src/app/state/musicien-event/musician-event.actions';
 import { MusicianEventState } from 'src/app/state/musicien-event/musician-event.state';
 import { FileManagerService } from 'src/app/services/filemanager/file-manager.service';
+import { CaptureService } from 'src/app/services/capture/capture.service';
+import { StorageService } from 'src/app/services/storage/storage.service';
 
 @Component({
   selector: 'app-modal-musician-assistance',
@@ -38,6 +40,7 @@ export class ModalMusicianAssistanceComponent implements OnInit {
   public showImage: string;  
   public showTextEvent: string;
   public showDateTextEvent: string;
+  public profile: string;  
 
   public totalBusAssist: number = 0;
   public totalNotBusAssist: number = 0;
@@ -52,7 +55,9 @@ export class ModalMusicianAssistanceComponent implements OnInit {
     private toast:ToastService,
     private userService: UsersService,
     private loadingService: LoadingService,    
-    private fileManagerService: FileManagerService
+    private fileManagerService: FileManagerService,
+    private captureService: CaptureService,
+    private storage: StorageService,
   ) { }
 
   convertDateFormat(dateString: string): string {
@@ -63,7 +68,8 @@ export class ModalMusicianAssistanceComponent implements OnInit {
     return `${day}-${month}-${year}`;
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+    this.profile = await this.storage.getItem('profile');        
     this.isChecked = true;
     this.store.dispatch(new ResetEventMusicianAssistance({})).subscribe({ next: async () => { } })        
     this.eventMusicianAssistance = new EventMusicianAssistance();    
@@ -431,5 +437,21 @@ export class ModalMusicianAssistanceComponent implements OnInit {
           }
         }
       )
+  }
+
+  @ViewChild(IonContent, { static: false }) content: IonContent;
+  public isCapturing = false;
+  
+  async downloadAssistance() {
+    try {      
+      this.isCapturing = true;   
+      await this.loadingService.presentLoading('Loading...');                
+      await this.captureService.capture(this.content, 'capture', 'capturaAssistance.png',100,50);      
+    } catch (error) {     
+      this.toast.presentToast('Error al capturar y compartir la imagen: ' + error);       
+    } finally {
+      this.isCapturing = false;
+      await this.loadingService.dismissLoading();   
+    }    
   }
 }

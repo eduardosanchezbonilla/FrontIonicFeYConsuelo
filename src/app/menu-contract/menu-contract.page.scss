@@ -1,0 +1,212 @@
+.custom-modal-title {
+    margin-top:10px !important;
+    //margin-top:0.625rem !important;
+    margin-bottom:15px !important;        
+    //margin-bottom:0.9375rem !important;        
+}
+
+.contract-group-header {    
+    font-size: 0.92rem; 
+    font-weight: bold; 
+    display: flex;
+    align-items: center;   
+    color: #B22222;   
+    text-shadow: 1px 1px 2px #FFFFFF;  
+}
+
+.contract-group-header-label {
+    margin-top:10px;
+    //margin-top:0.625rem;
+}
+
+.contract-group-header ion-label {
+    padding-right: 5px; 
+    //padding-right: 0.3125rem; 
+}
+
+.contract-group-header-div-fab {
+    position: absolute;
+    right: 47px;
+    display: flex; 
+    margin-bottom:3px;
+}
+
+.contract-group-header-fab {
+    width: 30px;
+    height: 30px; 
+    margin-right: 3px;    
+}
+
+.contract-group-header-fab-icon {
+    width: 15px;
+    height: 15px;     
+}
+
+.contract-group-avatar {
+    margin-right: 15px;
+    width: 35px;
+    height:35px;
+    border: 1px solid #000000; 
+    border-radius: 0 !important;
+    background-color: #f7f7f7; 
+    padding:2px;
+}
+
+ion-avatar img {
+   // border-radius: 50%;
+    width: 35px;
+    height: 35px;
+}
+
+.contract-group ion-img {
+    border: 10px;
+    width: 95%;
+    height: 95%;
+}
+
+ion-img {
+    border-radius: 0 !important;
+}
+
+ion-item h2 {
+    //font-size: 16px;
+    font-size: 1rem;
+    margin: 0;
+}
+  
+ion-item p {
+    //font-size: 12px;
+    font-size: 0.75rem;
+    color: gray;
+    margin: 0;
+}
+
+ion-accordion-group ion-item-divider {
+    border: 0px solid;
+    border-image-width: 0px;
+}
+
+ion-accordion ion-item[slot="header"] {
+    --border-width: 0 0 1px 0;    
+}
+
+.div-accordion-padding {
+    padding-top: 1px;
+    padding-bottom: 12px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.contract-card {
+    width: calc(100% - 10px);
+    margin: 5px;  
+    margin-bottom: 0px;   
+}
+
+.contract-card ion-card-content {
+    padding: 5px; 
+    padding-left: 15px;
+    color: #000;
+}
+
+.contract-card ion-card-content div {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;   
+}
+
+.contract-header {
+    display: flex;
+    align-items: center;         /* Alinea verticalmente el h5 y los botones */
+    justify-content: space-between; /* Separa el h5 a la izquierda y los botones a la derecha */
+  }
+  
+  .contract-header-buttons {
+    display: flex; /* Para poner varios botones en línea */
+    margin-right: 0px;
+  }
+  
+  .contract-header-fab {
+    width: 25px;
+    height: 25px;
+    margin: 0 0px;
+    margin-right:5px;
+    /* Quita margin-right si quieres, ajusta a tu gusto */
+  }
+  
+  .contract-header-fab-icon {
+    width: 15px;
+    height: 15px;
+  }
+  
+/*******************************************************************************/
+/*********************  LOADING (ALTERNATIVA AL LoadingService)  ***************/
+/*******************************************************************************/
+
+.custom-loading-overlay {
+    position: fixed;
+    top: 57;
+    left: 0;
+    width: 100vw;  // Ancho completo de la ventana
+    height: 100vh;  // Alto completo de la ventana
+    display: flex;
+    justify-content: center;  // Centrado horizontalmente
+    align-items: center;      // Centrado verticalmente
+    background-color: rgba(0, 0, 0, 0.2);  // Fondo negro semi-transparente
+    z-index: 9999;  // Asegura que esté por encima de todo el contenido
+    pointer-events: none;  // Evita que interfiera con las interacciones del contenido debajo
+}
+
+.custom-loading-spinner {
+    margin-right: 20px !important;
+}
+  
+.custom-loading-content {
+    margin-top:-100px;
+    display: flex;
+    align-items: center;  // Alinear el spinner y el texto
+    background: white;  // Fondo blanco para el contenido del loading
+    padding-top: 15px;
+    padding-bottom: 15px;
+    padding-left: 17px;
+    padding-right: 17px;
+    border-radius: 2px;  // Bordes redondeados
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);  // Sombra para mayor visibilidad
+    opacity: 0;  // Iniciar oculto
+    animation: slideIn 0.4s ease-out forwards;  // Animación de entrada
+}
+  
+.custom-loading-content ion-spinner {
+    margin-right: 10px;  // Espacio entre el spinner y el texto
+    --spinner-width: 30px;
+    --spinner-height: 30px;
+    color: var(--ion-color-primary); 
+}
+  
+.custom-loading-content p {
+    font-size: 0.9rem;
+    color: rgb(38, 38, 38);  // Texto negro
+}
+  
+@keyframes slideIn {
+    from {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+}
+  
+@keyframes slideOut {
+    from {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+}
+  

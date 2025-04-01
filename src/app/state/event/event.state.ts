@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { EventService } from 'src/app/services/event/event.service';
 import { Event } from 'src/app/models/event/event';
-import { CreateEvent, DeleteEvent, GetEvent, GetEventCrosshead, GetEventCurrentData, GetEventCurrentPosition, GetEventMusicianAssistance, GetEventRepertoire, GetEventReportAssistance, GetEventRoute, GetEvents, GetEventsGroupByAnyo, ResetEvent, ResetEventMusicianAssistance, ResetEventRepertoire, UpdateEvent, UpdateEventCrosshead, UpdateEventCurrentMarch, UpdateEventCurrentPosition, UpdateEventFormation, UpdateEventRoute } from './event.actions';
+import { CreateEvent, DeleteEvent, GetEvent, GetEventCrosshead, GetEventCurrentData, GetEventCurrentPosition, GetEventMusicianAssistance, GetEventMusicianFormation, GetEventRepertoire, GetEventReportAssistance, GetEventRoute, GetEvents, GetEventsGroupByAnyo, GetEventStats, ResetEvent, ResetEventMusicianAssistance, ResetEventRepertoire, UpdateEvent, UpdateEventCrosshead, UpdateEventCurrentMarch, UpdateEventCurrentPosition, UpdateEventFormation, UpdateEventRoute } from './event.actions';
 import { EventMusicianAssistance } from 'src/app/models/event/event-musician-assistance';
 import { EventGroupByAnyo } from 'src/app/models/event/event-group-by-anyo';
 import { EventRepertoire } from 'src/app/models/event/event-repertoire';
@@ -12,9 +12,11 @@ import { RouteEvent } from 'src/app/models/route-event/route-event';
 import { LatLng } from 'src/app/models/route-event/latLng';
 import { EventCurrentData } from 'src/app/models/event/event-current-data';
 import { CrossheadEvent } from 'src/app/models/crosshead-event/crosshead-event';
+import { GlobalEventStatsResponse } from 'src/app/models/event/global-event-stats-response';
 
 export class EventStateModel {
   //public events: Event[];
+  public eventStats: GlobalEventStatsResponse;
   public eventsGroupByAnyo: EventGroupByAnyo[];
   public eventMusicianAssistance: EventMusicianAssistance;
   public eventReportAssistance: EventReportAssistance;
@@ -33,6 +35,7 @@ export class EventStateModel {
 
 const defaults = {
   //events: [],  
+  eventStats: null,
   eventsGroupByAnyo: [],  
   eventMusicianAssistance: null,
   eventReportAssistance: null,
@@ -78,6 +81,11 @@ export class EventState {
   @Selector()
   static eventsGroupByAnyo(state:EventStateModel):EventGroupByAnyo[] {
     return state.eventsGroupByAnyo;
+  }
+
+  @Selector()
+  static eventStats(state:EventStateModel):GlobalEventStatsResponse {
+    return state.eventStats;
   }
 
   @Selector()
@@ -302,6 +310,36 @@ export class EventState {
       );
   }
 
+  @Action(GetEventMusicianFormation)
+  getEventMusicianFormation(
+      { patchState }: StateContext<EventStateModel>,
+      { payload }: GetEventMusicianFormation
+  ) {
+    return this.eventService.getEventMusicianFormation(payload.eventType, payload.eventId)
+      .then(
+        (eventMusicianAssistance:EventMusicianAssistance) => {
+          patchState({
+            finish: true,
+            success: true,            
+            eventMusicianAssistance: eventMusicianAssistance,
+            errorStatusCode: 200,
+            errorMessage: null
+          })
+        }
+      )
+      .catch(
+        async (error) => {          
+          patchState({
+            finish: true,
+            success: false,            
+            eventMusicianAssistance: new EventMusicianAssistance(),
+            errorStatusCode: error.status,
+            errorMessage: error.message
+          })
+        }
+      );
+  }
+
   @Action(GetEventsGroupByAnyo)
   getEventsGroupByAnyo(
       { patchState }: StateContext<EventStateModel>,
@@ -333,7 +371,7 @@ export class EventState {
   }
 
   @Action(ResetEvent)
-  resetMusician(
+  resetEvent(
       { patchState }: StateContext<EventStateModel>,
       { payload }: ResetEvent
   ) {
@@ -634,7 +672,7 @@ export class EventState {
           patchState({
             finish: true,
             success: false,            
-            routeEvent: new RouteEvent(null,null,null,null,null),
+            routeEvent: new RouteEvent(null,null,null,null,null,null),
             errorStatusCode: error.status,
             errorMessage: error.message
           })
@@ -767,6 +805,36 @@ export class EventState {
           })
         }
       );
+  }
+
+  @Action(GetEventStats)
+  getEventStats(
+      { patchState }: StateContext<EventStateModel>,
+      { payload }: GetEventStats
+  ) {
+    return this.eventService.getEventStats(payload.eventType, payload.startDate, payload.endDate,payload.excludeSpecialTypes)
+    .then(
+      (eventStats:GlobalEventStatsResponse) => {
+        patchState({
+          finish: true,
+          success: true,
+          eventStats: eventStats,
+          errorStatusCode: 200,
+          errorMessage: null
+        })
+      }
+    )
+    .catch(
+      async (error) => {          
+        patchState({
+          finish: true,
+          success: false,
+          eventStats: new GlobalEventStatsResponse(),
+          errorStatusCode: error.status,
+          errorMessage: error.message
+        })
+      }
+    );
   }
 
 }

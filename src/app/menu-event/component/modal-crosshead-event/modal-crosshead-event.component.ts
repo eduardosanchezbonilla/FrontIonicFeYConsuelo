@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { AlertController, ModalController, PopoverController } from '@ionic/angular';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { AlertController, IonContent, ModalController, PopoverController } from '@ionic/angular';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subscription } from 'rxjs';
 import { DEFAULT_EVENT_IMAGE } from 'src/app/constants/constants';
@@ -15,6 +15,8 @@ import { EventState } from 'src/app/state/event/event.state';
 import { RepertoireMarch } from 'src/app/models/repertoire/repertoire-march';
 import { MarchSelectorComponent } from './march-selector.component';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { Share } from '@capacitor/share';
+import { CaptureService } from 'src/app/services/capture/capture.service';
 
 @Component({
   selector: 'app-modal-crosshead-event',
@@ -63,6 +65,7 @@ export class ModalCrossheadEventComponent implements OnInit {
     private storage: StorageService,
     private alertController: AlertController,
     private popoverController: PopoverController,
+    private captureService: CaptureService
     ) { }
 
   convertDateFormat(dateString: string): string {
@@ -100,9 +103,9 @@ export class ModalCrossheadEventComponent implements OnInit {
       this.showDateTextEvent = this.convertDateFormat(this.event.date) + " (" + this.event.startTime + " - " + this.event.endTime + ")";
     }
     else {
-      this.showTextEvent = this.event.title;
+      this.showTextEvent = this.event.title.trim();
       if(this.event.municipality){
-        this.showTextEvent = this.showTextEvent + " (" + this.event.municipality + ")";
+        this.showTextEvent = this.showTextEvent + " (" + this.event.municipality.trim() + ")";
       }
       this.showDateTextEvent = this.convertDateFormat(this.event.date) + " (" + this.event.startTime + " - " + this.event.endTime + ")";
     }   
@@ -445,5 +448,63 @@ export class ModalCrossheadEventComponent implements OnInit {
 
   onAnnotationsClick(event: any){    
     ;       
+  }
+
+  subrayar(texto: string): string {
+    // Separar en caracteres y añadir el combining low line tras cada uno
+    return texto
+      .split('')
+      .map(char => char + '\u0332')           
+      .join('');
+  }
+
+  async shareWhatsApp() {
+    try {
+      if(this.existstCrosshead && this.crossheadEvent && this.crossheadEvent.streets){
+        let message = '*'+this.showTextEvent.trim()+'*';
+        message = message + '\n\n';
+        this.crossheadEvent.streets.forEach(street => {
+          message = message + '*'+street.street.trim()+'*' + '\n';
+          if(street.isAnnotations){
+            message = message + '_' + this.subrayar('Anotaciones') + '_'+ ': ' + '\n';            
+            message = message  + street.annotations + '\n';
+          }          
+          if(street.marchs && street.marchs.length>0){
+            message = message + '_' + this.subrayar('Marchas') + '_'+ ': ' + '\n';            
+            street.marchs.forEach(march => {
+              message = message + '• ' + march.marchName + '\n';
+            });
+          }
+          message = message + '\n';
+        });
+        await Share.share({
+          title: 'Cruceta Actuación',
+          text: message,
+          dialogTitle: 'Compartir Cruceta' // Título en el diálogo de compartir
+        });
+      }
+      else{
+        this.toast.presentToast("No hay datos para compartir");
+      }
+    } catch (error) {
+      this.toast.presentToast("Error al compartir: " + error);
+    }
+  }
+
+  @ViewChild(IonContent, { static: false }) content: IonContent;
+  public isCapturing = false;
+  
+  async downloadCrosshead() {
+    try {
+      this.editMode = false;
+      this.isCapturing = true;   
+      await this.loadingService.presentLoading('Loading...');                
+      await this.captureService.capture(this.content, 'capture', 'capturaCrosshead.png',100,75);      
+    } catch (error) {     
+      this.toast.presentToast('Error al capturar y compartir la imagen: ' + error);       
+    } finally {
+      this.isCapturing = false;
+      await this.loadingService.dismissLoading();   
+    }    
   }
 }

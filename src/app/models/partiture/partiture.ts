@@ -3,6 +3,7 @@ export class Partiture {
     name?: string;
     googleId: string;    
     content: string;
+    mimeType: string;
 
     constructor(name?: string, 
                 googleId?:string,

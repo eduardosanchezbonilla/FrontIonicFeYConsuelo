@@ -55,6 +55,7 @@ export class MenuPartiturePage implements OnDestroy {
   }
 
   logout(){
+    this.doDestroy();
     this.userService.logout();
   }
 
@@ -387,7 +388,7 @@ export class MenuPartiturePage implements OnDestroy {
           const success = this.store.selectSnapshot(PartitureState.success);
           if(success){            
             const partiture = this.store.selectSnapshot(PartitureState.partiture);            
-            this.fileManagerService.showFile(partitureName, partiture.content);            
+            this.fileManagerService.showFile(partitureName, partiture.content, partiture.mimeType);            
           }
           else{
             const errorStatusCode = this.store.selectSnapshot(PartitureState.errorStatusCode);

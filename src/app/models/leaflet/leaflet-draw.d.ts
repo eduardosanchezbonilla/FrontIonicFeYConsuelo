@@ -18,11 +18,17 @@ declare module 'leaflet' {
       layer: L.Layer;
       layerType: string;
     }
+    interface Edited {
+      layers: L.LayerGroup;
+      layer: L.Layer;
+      layerType: string;      
+    }
   }
 
   const Draw: {
     Event: {
       CREATED: string;
+      EDITED: string;     
     };
   };
 }

@@ -25,6 +25,7 @@ export class Musician {
     unregistrationDate: string;
     dateLastNotificationNonAssistsStreakRehearsals: string;
     unregistred: boolean;
+    observations: string;
     
     constructor(name?: string) {        
         this.name = name;        

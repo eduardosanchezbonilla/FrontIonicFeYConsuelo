@@ -46,6 +46,7 @@ export class MenuRepertoirePage implements OnDestroy {
   }
 
   logout(){
+    this.doDestroy();
     this.userService.logout();
   }
 

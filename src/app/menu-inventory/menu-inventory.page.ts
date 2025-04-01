@@ -47,6 +47,7 @@ export class MenuInventoryPage implements OnDestroy {
   }
 
   logout(){
+    this.doDestroy();
     this.userService.logout();
   }
 

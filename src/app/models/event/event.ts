@@ -26,6 +26,15 @@ export class Event {
     route: RouteEvent;
     currentPosition: LatLng;
     currentMarch: string;
+    eventPublic?: boolean;
+    repertoirePublic?: boolean;
+    crossheadPublic?: boolean;
+    busData?: boolean;
+    busTime?: string;
+    busLocation?: string;
+    duration?:number;
+    kilometers?:number;
+    googleId?: string;
 
     constructor(
         id: number, 
@@ -46,7 +55,16 @@ export class Event {
         image?: string,
         musicianBus?: boolean,
         musicianAssist?: boolean,
-        displacementBus?: boolean
+        displacementBus?: boolean,
+        eventPublic?: boolean,
+        repertoirePublic?: boolean,
+        crossheadPublic?: boolean,  
+        busData?: boolean,
+        busTime?: string,
+        busLocation?: string,
+        duration?:number,
+        kilometers?:number,
+        googleId?: string,
     ){
         this.id = id;
         this.type = type;
@@ -67,5 +85,15 @@ export class Event {
         this.musicianBus = musicianBus;
         this.musicianAssist = musicianAssist;
         this.displacementBus = displacementBus;
+        this.eventPublic = eventPublic;
+        this.repertoirePublic = repertoirePublic;
+        this.crossheadPublic = crossheadPublic;
+        this.busData = busData;
+        this.busTime = busTime;
+        this.busLocation = busLocation;
+        this.duration = duration;
+        this.kilometers = kilometers;
+        this.googleId = googleId;
+
     }
 }

@@ -14,6 +14,9 @@ import { CalendarModule } from 'ion2-calendar';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { NgChartsModule } from 'ng2-charts';
 
+import { Chart, Title, Tooltip, Legend } from 'chart.js';
+Chart.register(Title, Tooltip, Legend);
+
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   declarations: [AppComponent ] ,

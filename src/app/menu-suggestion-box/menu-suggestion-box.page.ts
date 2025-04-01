@@ -48,6 +48,7 @@ export class MenuSuggestionBoxPage implements OnDestroy {
   }
 
   logout(){
+    this.doDestroy();
     this.userService.logout();
   }
 

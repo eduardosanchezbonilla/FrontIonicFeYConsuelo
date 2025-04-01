@@ -34,6 +34,11 @@ export class GetEventMusicianAssistance{
   constructor(public payload: {eventType:string, eventId:number}) { }
 }
 
+export class GetEventMusicianFormation{
+  static readonly type = '[Event] GetEventMusicianFormation';
+  constructor(public payload: {eventType:string, eventId:number}) { }
+}
+
 export class GetEventsGroupByAnyo{
   static readonly type = '[Event] GetEventsGroupByAnyo';
   constructor(public payload: {eventType:string, startDate:string, endDate:string,name:string,}) { }
@@ -107,4 +112,9 @@ export class UpdateEventCrosshead {
 export class GetEventCrosshead{
   static readonly type = '[Event] GetEventCrosshead';
   constructor(public payload: {eventType:string, eventId:number}) { }
+}
+
+export class GetEventStats{
+  static readonly type = '[Event] GetEventStats';
+  constructor(public payload: {eventType:string, startDate:string, endDate:string, excludeSpecialTypes: boolean}) { }
 }

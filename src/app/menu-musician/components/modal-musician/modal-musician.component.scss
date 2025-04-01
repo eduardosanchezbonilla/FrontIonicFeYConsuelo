@@ -62,6 +62,33 @@ ion-item.image-selector {
   margin-bottom: 11px;  
 }
 
+.custom-label-textarea {
+  font-size: 1.5rem !important;
+}
+
+.custom-textarea {
+  margin-top:25px;
+  border: 2px solid #4d4d4d; 
+  border-radius: 10px;        
+  padding: 10px;              
+  background-color: #f9f9f9; 
+  font-size: 16px;            
+  
+  /* Sombra suave en gris oscuro */
+  box-shadow: 0 0 10px rgba(77, 77, 77, 0.2); /* Sombra en gris oscuro, sutil */
+  
+  /* Asegurando visibilidad */
+  display: block;              
+  width: 100%;                
+  min-height: 200px;           
+  visibility: visible;        
+  opacity: 1;                 
+}
+
+.custom-textarea:focus {
+  box-shadow: 0 0 10px rgba(77, 77, 77, 0.4); /* Sombra más pronunciada al hacer foco */
+}
+
 /*********************************************************************/
 /************ Estilos para el selecct ********************************/
 /*********************************************************************/

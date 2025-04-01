@@ -3,165 +3,175 @@
     <ion-buttons slot="start">
       <ion-button color="medium" (click)="cancel()">Cancelar</ion-button>
     </ion-buttons>    
+    <ion-buttons *ngIf="(profile==='SUPER_ADMIN' || profile==='ADMIN')" slot="end">
+      <ion-button (click)="downloadFormation()" class="download-button">
+        <ion-icon name="download-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
 
-  <!-------------------------------->
-  <!------ DATOS REPERTORIO -------->
-  <!-------------------------------->
-  <h2 class="fancy-title custom-modal-title">
-    Formación 
-  </h2>
+<ion-content class="ion-no-padding" >
 
-  <!-- CABECERA -->    
-  <ion-card class="event-card background-white">
-    <ion-item lines="none">
-      <ion-avatar slot="start" class="event-avatar">                  
-        <ion-img 
-          [src]="showImage">
-        </ion-img> 
-      </ion-avatar>
-      <ion-label>
-        <h2>{{ showTextEvent }} </h2>
-        <p>{{ showDateTextEvent }}</p>          
-      </ion-label>
-    </ion-item>
-  </ion-card> 
+  <div class="ion-padding" id="capture" #capture>
+    <!-------------------------------->
+    <!------ DATOS REPERTORIO -------->
+    <!-------------------------------->  
+    <h2 class="fancy-title custom-modal-title">
+      Formación 
+    </h2>
 
-  <div class="spacer-small"></div> 
+    <!-- CABECERA -->    
+    <ion-card class="event-card background-white">
+      <ion-item lines="none">
+        <ion-avatar slot="start" class="event-avatar">                  
+          <ion-img 
+            [src]="showImage">
+          </ion-img> 
+        </ion-avatar>
+        <ion-label>
+          <h2>{{ showTextEvent }} </h2>
+          <p>{{ showDateTextEvent }}</p>          
+        </ion-label>
+      </ion-item>
+    </ion-card> 
 
-  <!-- Mensaje vistoso cuando no hay datos -->
-  <div *ngIf="profile!=='SUPER_ADMIN' && profile!=='ADMIN' && !existsFormation" class="no-data-container">    
-    <ion-icon name="alert-circle-outline" class="no-data-icon"></ion-icon>
-    <p class="no-data-text">No hay formación diseñada<br/> para este evento.</p>         
-  </div>
+    <div class="spacer-small"></div> 
 
-  <!-- Contenedor de filas -->  
-  <div cdkDropListGroup class="formation-container" *ngIf="profile==='SUPER_ADMIN' || profile==='ADMIN' || existsFormation">
-    <div *ngFor="let row of formation.rows; let rowIndex = index;trackBy: trackByRowId" class="row-container">
-      <ion-card class="row-card">
-        <div class="row-content">
+    <!-- Mensaje vistoso cuando no hay datos -->
+    <div *ngIf="profile!=='SUPER_ADMIN' && profile!=='ADMIN' && !existsFormation" class="no-data-container">    
+      <ion-icon name="alert-circle-outline" class="no-data-icon"></ion-icon>
+      <p class="no-data-text">No hay formación diseñada<br/> para este evento.</p>         
+    </div>
 
-          <!-- Contenedor de botones de acción -->
-          <div *ngIf="profile==='SUPER_ADMIN' || profile==='ADMIN'" class="row-action">
-            <!-- Botón para añadir músico -->
-            <ion-button
-              fill="solid"
-              color="primary"
-              class="add-musician-button"
-              (click)="addMusicianToRow(row)"
-              aria-label="Agregar músico"
-            >
-              <ion-icon name="person-add-outline"></ion-icon>
-            </ion-button>
-    
-            <!-- Botón para eliminar la fila -->
-            <ion-button
-              fill="solid"
-              color="danger"
-              class="remove-row-button"
-              (click)="removeRow(row.id)"
-              aria-label="Eliminar fila"
-            >
-              <ion-icon name="trash-outline"></ion-icon>
-            </ion-button>
+    <!-- Contenedor de filas -->  
+    <div cdkDropListGroup class="formation-container" *ngIf="profile==='SUPER_ADMIN' || profile==='ADMIN' || existsFormation">
+      <div *ngFor="let row of formation.rows; let rowIndex = index;trackBy: trackByRowId" class="row-container">
+        <ion-card class="row-card">
+          <div class="row-content">
 
-            <!-- Botón para añadir fila -->
-            <ion-button
-              fill="solid"
-              color="danger"
-              class="remove-row-button"
-              (click)="addRowPosition(row.id,defaultMusiciansPerRow)"
-              aria-label="Añadir fila"
-            >
-              <ion-icon name="add-circle-outline"></ion-icon>
-            </ion-button>
-          </div>
-          
-          <!-- Fila de músicos -->
-          <div
-            class="musicians-row" 
-            [ngStyle]="{
-              'padding-bottom': profile==='SUPER_ADMIN' || profile==='ADMIN' ? '10px' : '0px'
-            }"        
-          >
-            <div
-              *ngFor="let slot of row.musicians; let colIndex = index; trackBy: trackBySlotId"
-              class="musician-slot"                         
-              (click)="profile==='SUPER_ADMIN' || profile==='ADMIN' ? selectMusician(slot): null"
-              cdkDropList
-              [cdkDropListData]="{ row: rowIndex, column: colIndex }"
-              [id]="'cdk-drop-list-' + rowIndex + '-' + colIndex"
-              [cdkDropListConnectedTo]="getConnectedDropLists()"
-              (cdkDropListDropped)="swapMusicians($event)"
-            >
-              <!-- Nombre del músico -->
-              <div *ngIf="slot.musician" class="musician-name initcap">
-                {{ slot.musician.name | lowercase}}
-              </div>
-
-              <div *ngIf="!slot.musician" class="musician-name initcap">
-                -
-              </div>
-
-              <!-- Círculo del músico -->
-              <div class="circle" cdkDrag [cdkDragDisabled]="isDraggingDisabled">
-                <ion-img 
-                  *ngIf="slot.musician"
-                  [src]="slot.musician.image ? 'data:image/jpeg;base64,' + slot.musician.image : 'data:image/jpeg;base64,' + defaultMusicianImage">
-                </ion-img>   
-                <!--<img *ngIf="slot.musician" [src]="slot.musician.image" alt="{{ slot.musician.name }}" />-->
-                <ion-icon *ngIf="!slot.musician" name="person-circle-outline"></ion-icon>
-              </div>
+            <!-- Contenedor de botones de acción -->
+            <div *ngIf="(profile==='SUPER_ADMIN' || profile==='ADMIN') && !isCapturing" class="row-action">
+              <!-- Botón para añadir músico -->
               <ion-button
-                *ngIf="profile==='SUPER_ADMIN' || profile==='ADMIN'"
-                fill="clear"
-                color="danger"
-                size="small"
-                class="remove-musician-button"
-                (click)="removeMusicianFromRow(row, slot.id); $event.stopPropagation();"
-                aria-label="Eliminar músico"
+                fill="solid"
+                color="primary"
+                class="add-musician-button"
+                (click)="addMusicianToRow(row)"
+                aria-label="Agregar músico"
               >
-                <ion-icon name="remove-circle-outline" class="icon-remove-musician-button"></ion-icon>
+                <ion-icon name="person-add-outline"></ion-icon>
               </ion-button>
-            </div>          
-          </div>
-        </div>
-      </ion-card>
-    </div> 
-  </div>
-  
-  <div class="spacer-small"></div>   
-  <div class="spacer-small"></div>   
-
-  <ion-button 
-    *ngIf="profile==='SUPER_ADMIN' || profile==='ADMIN'"
-    type="button" 
-    (click)="saveFormation()" 
-    color="secondary" 
-    expand="block" 
-  >
-    <ion-icon name="save-outline" slot="start"></ion-icon>
-    Actualizar
-  </ion-button>
-
-  <ion-button 
-    *ngIf="profile!=='SUPER_ADMIN' && profile!=='ADMIN'"
-    type="button" 
-    (click)="cancel()" 
-    color="secondary" 
-    expand="block" 
-  >
-    <ion-icon name="return-up-back-outline" slot="start"></ion-icon>    
-    Volver
-  </ion-button>
       
+              <!-- Botón para eliminar la fila -->
+              <ion-button
+                fill="solid"
+                color="danger"
+                class="remove-row-button"
+                (click)="removeRow(row.id)"
+                aria-label="Eliminar fila"
+              >
+                <ion-icon name="trash-outline"></ion-icon>
+              </ion-button>
+
+              <!-- Botón para añadir fila -->
+              <ion-button
+                fill="solid"
+                color="danger"
+                class="remove-row-button"
+                (click)="addRowPosition(row.id,defaultMusiciansPerRow)"
+                aria-label="Añadir fila"
+              >
+                <ion-icon name="add-circle-outline"></ion-icon>
+              </ion-button>
+            </div>
+            
+            <!-- Fila de músicos -->
+            <div
+              class="musicians-row" 
+              [ngStyle]="{
+                'padding-bottom': (profile==='SUPER_ADMIN' || profile==='ADMIN') && !isCapturing ? '10px' : '0px'
+              }"        
+            >
+              <div
+                *ngFor="let slot of row.musicians; let colIndex = index; trackBy: trackBySlotId"
+                class="musician-slot"                         
+                (click)="profile==='SUPER_ADMIN' || profile==='ADMIN' ? selectMusician(slot): null"
+                cdkDropList
+                [cdkDropListData]="{ row: rowIndex, column: colIndex }"
+                [id]="'cdk-drop-list-' + rowIndex + '-' + colIndex"
+                [cdkDropListConnectedTo]="getConnectedDropLists()"
+                (cdkDropListDropped)="swapMusicians($event)"
+              >
+                <!-- Nombre del músico -->
+                <div *ngIf="slot.musician" class="musician-name initcap">
+                  {{ slot.musician.name | lowercase}}
+                </div>
+
+                <div *ngIf="!slot.musician" class="musician-name initcap">
+                  -
+                </div>
+
+                <!-- Círculo del músico -->
+                <div class="circle" cdkDrag [cdkDragDisabled]="isDraggingDisabled">
+                  <ion-img 
+                    *ngIf="slot.musician"
+                    [src]="slot.musician.image ? 'data:image/jpeg;base64,' + slot.musician.image : 'data:image/jpeg;base64,' + defaultMusicianImage">
+                  </ion-img>   
+                  <!--<img *ngIf="slot.musician" [src]="slot.musician.image" alt="{{ slot.musician.name }}" />-->
+                  <ion-icon *ngIf="!slot.musician" name="person-circle-outline"></ion-icon>
+                </div>
+                <ion-button
+                  *ngIf="(profile==='SUPER_ADMIN' || profile==='ADMIN') && !isCapturing"
+                  fill="clear"
+                  color="danger"
+                  size="small"
+                  class="remove-musician-button"
+                  (click)="removeMusicianFromRow(row, slot.id); $event.stopPropagation();"
+                  aria-label="Eliminar músico"
+                >
+                  <ion-icon name="remove-circle-outline" class="icon-remove-musician-button"></ion-icon>
+                </ion-button>
+              </div>          
+            </div>
+          </div>
+        </ion-card>
+      </div> 
+    </div>   
+      
+    <div class="spacer-small"></div>   
+    <div class="spacer-small" *ngIf="!isCapturing"></div>   
+  
+    <ion-button 
+      *ngIf="(profile==='SUPER_ADMIN' || profile==='ADMIN') && !isCapturing"
+      type="button" 
+      (click)="saveFormation()" 
+      color="primary" 
+      expand="block" 
+    >
+      <ion-icon name="save-outline" slot="start"></ion-icon>
+      Actualizar
+    </ion-button>
+    
+    <ion-button 
+      class="no-capture"
+      *ngIf="profile!=='SUPER_ADMIN' && profile!=='ADMIN'"
+      type="button" 
+      (click)="cancel()" 
+      color="primary" 
+      expand="block" 
+    >
+      <ion-icon name="return-up-back-outline" slot="start"></ion-icon>    
+      Volver
+    </ion-button>
+  </div>  
+
   <!-- Botón flotante para agregar una nueva fila -->
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed"  *ngIf="profile==='SUPER_ADMIN' || profile==='ADMIN'">
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed"  *ngIf="(profile==='SUPER_ADMIN' || profile==='ADMIN')">
     <ion-fab-button color="primary" (click)="addRow(defaultMusiciansPerRow)" aria-label="Agregar Fila">
       <ion-icon name="add-outline"></ion-icon>
     </ion-fab-button>
-  </ion-fab>
+  </ion-fab>  
+
 </ion-content>

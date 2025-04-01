@@ -22,6 +22,14 @@ const routes: Routes = [
         loadChildren: () => import('../menu-repertoire/menu-repertoire.module').then( m => m.MenuRepertoirePageModule)
       },
       {
+        path: 'menu-event',
+        loadChildren: () => import('../menu-event/menu-event.module').then( m => m.MenuEventPageModule)
+      },
+      {
+        path: 'menu-today-performance',
+        loadChildren: () => import('../menu-event/menu-event.module').then( m => m.MenuEventPageModule)
+      },
+      {
         path: '',
         redirectTo: '/tabs-guest/menu-multimedia',
         pathMatch: 'full'

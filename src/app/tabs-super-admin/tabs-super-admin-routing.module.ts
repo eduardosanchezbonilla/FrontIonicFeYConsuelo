@@ -25,6 +25,10 @@ const routes: Routes = [
         loadChildren: () => import('../menu-partiture/menu-partiture.module').then(m => m.MenuPartiturePageModule)
       },      
       {
+        path: 'menu-contract',        
+        loadChildren: () => import('../menu-contract/menu-contract.module').then(m => m.MenuContractPageModule)
+      },     
+      {
         path: 'menu-inventory',        
         loadChildren: () => import('../menu-inventory/menu-inventory.module').then(m => m.MenuInventoryPageModule)
       },      
@@ -35,6 +39,10 @@ const routes: Routes = [
       {
         path: 'menu-multimedia',        
         loadChildren: () => import('../menu-multimedia/menu-multimedia.module').then(m => m.MenuMultimediaPageModule)
+      },
+      {
+        path: 'menu-today-performance',        
+        loadChildren: () => import('../menu-event/menu-event.module').then( m => m.MenuEventPageModule)        
       },
       {
         path: 'menu-event',

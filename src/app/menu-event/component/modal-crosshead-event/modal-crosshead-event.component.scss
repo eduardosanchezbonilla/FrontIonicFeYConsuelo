@@ -201,7 +201,8 @@ ion-button[size="small"] {
   
 .no-data-icon {
     font-size: 48px;
-    color: #ff9800; 
+    //color: #ff9800; 
+    color: var(--ion-color-primary);
     margin-top: 10px;
     margin-bottom: 5px;
 }
@@ -212,15 +213,20 @@ ion-button[size="small"] {
     margin-bottom: 16px;
     color: #333;
 }
-  
+
+.div-street-card-view {
+    margin-bottom:12px;
+}
+
 .street-card-view {
-    margin: 12px;
+    //margin: 12px;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     background-color: #FFFFFF;
     margin-left:0px;
     margin-top:0px;
-    margin-right: 0px;;
+    margin-right: 0px;
+    margin-bottom: 0px;
 }
  
 .street-card-header-view {
