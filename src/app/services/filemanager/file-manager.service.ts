@@ -104,7 +104,8 @@ export class FileManagerService {
         if (this.platform.is('hybrid') && this.platform.is('android')) {        
             this.showFileAndroid(name,contentBase64,format);            
         } else if (this.platform.is('hybrid') && this.platform.is('ios')) {
-            console.log('La app se está ejecutando en iOS nativo');            
+            //console.log('La app se está ejecutando en iOS nativo');       
+            this.showFileAndroid(name,contentBase64,format);      
         } else {
             // Lógica específica para navegador web (incluye móviles y PC)
             this.showFileNavigatorWeb(contentBase64,format);      
