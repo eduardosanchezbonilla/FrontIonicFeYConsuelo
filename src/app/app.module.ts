@@ -22,7 +22,9 @@ Chart.register(Title, Tooltip, Legend);
   declarations: [AppComponent ] ,
   imports: [
     BrowserModule, 
-    IonicModule.forRoot(), 
+    IonicModule.forRoot({
+      mode: 'md'
+    }),
     IonicStorageModule.forRoot(),
     NgxsModule.forRoot(),
     AppRoutingModule,
