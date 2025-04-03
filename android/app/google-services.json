@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "123769543166",
+    "project_id": "feyconsuelo-c031e",
+    "storage_bucket": "feyconsuelo-c031e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:123769543166:android:8d086ac170935ff51888af",
+        "android_client_info": {
+          "package_name": "com.feyconsuelo.id"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCVFDrt8aBZtsB91El096ZQXy2vDoqAQ1c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
