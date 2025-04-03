@@ -45,5 +45,30 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+
+	<!-- Permisos de uso -->
+    <key>NSCameraUsageDescription</key>
+    <string>La aplicación necesita acceso a la cámara para tomar fotos y videos.</string>
+
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>La aplicación requiere acceso a tu biblioteca de fotos para seleccionar imágenes.</string>
+
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>La aplicación necesita guardar imágenes en tu biblioteca de fotos.</string>
+
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>La aplicación necesita acceder a tu ubicación mientras la usas para ofrecerte contenido relevante.</string>
+
+    <key>NSLocationAlwaysUsageDescription</key>
+    <string>La aplicación requiere acceso continuo a tu ubicación para funciones en segundo plano.</string>
+
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>La aplicación requiere acceso a tu ubicación en todo momento para ofrecerte una experiencia completa.</string>
+
+    <key>UIBackgroundModes</key>
+    <array>
+      <string>location</string>
+    </array>
+
 </dict>
 </plist>
