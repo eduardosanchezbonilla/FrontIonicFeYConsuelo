@@ -46,6 +46,9 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
 
+	<key>ITSAppUsesNonExemptEncryption</key>
+    <false/>
+
 	<!-- Permisos de uso -->
     <key>NSCameraUsageDescription</key>
     <string>La aplicación necesita acceso a la cámara para tomar fotos y videos.</string>
