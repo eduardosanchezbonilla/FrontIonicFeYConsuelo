@@ -68,10 +68,5 @@
     <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
     <string>La aplicación requiere acceso a tu ubicación en todo momento para ofrecerte una experiencia completa.</string>
 
-    <key>UIBackgroundModes</key>
-    <array>
-      <string>location</string>
-    </array>
-
 </dict>
 </plist>
