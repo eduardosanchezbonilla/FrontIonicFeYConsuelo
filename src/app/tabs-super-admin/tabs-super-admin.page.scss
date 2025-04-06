@@ -25,11 +25,11 @@ ion-tab-bar {
     -ms-overflow-style: none;
 }
 
-.scrollable-tab-buttons::-webkit-scrollbar {
+/*.scrollable-tab-buttons::-webkit-scrollbar {
    display: none;
-}
+}*/
 
-:host-context(.ios) .scrollable-tab-buttons {
+/*:host-context(.ios) .scrollable-tab-buttons {
     padding-left: 50px !important;
     padding-right: 50px !important;
     padding-bottom: 50px !important;
@@ -39,7 +39,7 @@ ion-tab-bar {
     padding-left: 50px !important;
     padding-right: 50px !important;
     padding-bottom: 50px !important;
-}
+}*/
   
 ion-tab-button {
     flex: 1 1 auto; /* Distribuye uniformemente los botones */
