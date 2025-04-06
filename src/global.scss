@@ -101,6 +101,11 @@ platform-ios ion-toolbar {
     height: 56px;
 }  
 
+.ios ion-toolbar {
+    --min-height: 56px;
+    height: 56px;
+}  
+
 ion-tab-bar {
     border-top: 1px solid var(--ion-color-primary);
 }
