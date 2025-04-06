@@ -29,9 +29,15 @@ ion-tab-bar {
    display: none;
 }
 
-:host-context(.platform-ios) .scrollable-tab-buttons {
-    padding-left: 50px !important; 
-    padding-right: 50px !important;    
+:host-context(.ios) .scrollable-tab-buttons {
+    padding-left: 50px !important;
+    padding-right: 50px !important;
+    padding-bottom: 50px !important;
+}
+
+.ios .scrollable-tab-buttons {
+    padding-left: 50px !important;
+    padding-right: 50px !important;
     padding-bottom: 50px !important;
 }
   
