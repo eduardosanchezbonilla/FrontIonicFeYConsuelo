@@ -18,7 +18,7 @@ ion-tab-bar {
     justify-content: space-between;    
     height: 100%;
     padding-left:5px;
-    padding-right:5px;
+    padding-right:5px;    
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
@@ -30,9 +30,9 @@ ion-tab-bar {
 }
 
 .platform-ios .scrollable-tab-buttons {
-    padding-left: 20px; 
-    padding-right: 20px;
-    -webkit-overflow-scrolling: auto;
+    padding-left: 20px !important; 
+    padding-right: 20px !important;    
+    padding-bottom: 20px !important;
 }
   
 ion-tab-button {
