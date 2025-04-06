@@ -97,14 +97,19 @@ ion-toolbar {
 }
 
 platform-ios ion-toolbar {
-    --min-height: 56px;
-    height: 56px;
+    --min-height: 56px !important;
+    height: 56px !important;
 }  
 
 .ios ion-toolbar {
-    --min-height: 56px;
-    height: 56px;
+    --min-height: 56px !important;
+    height: 56px !important;
 }  
+
+body.ios ion-toolbar {
+    --min-height: 56px !important;
+    height: 56px !important;
+  }
 
 ion-tab-bar {
     border-top: 1px solid var(--ion-color-primary);
