@@ -11,22 +11,13 @@ ion-tab-bar {
 }
   
 .scrollable-tab-buttons {
-    display: flex;    
+    display: flex;
+    overflow-x: auto; /* Habilita el scroll horizontal */
     white-space: nowrap;
     scroll-behavior: smooth;
     flex: 1;
     justify-content: space-between;    
     height: 100%;
-    padding-left:5px;
-    padding-right:5px;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none; 
-    -ms-overflow-style: none;
-}
-
-.scrollable-tab-buttons::-webkit-scrollbar {
-    display: none; 
 }
   
 ion-tab-button {
