@@ -7,6 +7,7 @@
       *ngIf="showLeftArrow" 
       name="chevron-back-outline" 
       class="scroll-arrow left" 
+      [class.ios-overrides]="isIOS()"
       (click)="scrollLeft()">
     </ion-icon>
 
@@ -44,6 +45,7 @@
       *ngIf="showRightArrow" 
       name="chevron-forward-outline" 
       class="scroll-arrow right" 
+      [class.ios-overrides]="isIOS()"
       (click)="scrollRight()">
     </ion-icon>
 

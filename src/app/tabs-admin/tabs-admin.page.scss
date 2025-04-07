@@ -28,7 +28,7 @@ ion-tab-bar {
         /* Overrides solo para iOS */
         padding-left: 20px;
         padding-right: 20px;
-        padding-bottom: 10px;
+        padding-bottom: 15px;
         -webkit-overflow-scrolling: touch; /* Solo necesario para iOS */
       }
 }
@@ -54,7 +54,7 @@ ion-tab-button {
     &.ios-overrides {
         /* Overrides solo para iOS */
         padding-left: 20px;
-        padding-bottom: 10px;        
+        padding-bottom: 15px;        
     }    
 }
   
@@ -63,7 +63,7 @@ ion-tab-button {
     &.ios-overrides {
         /* Overrides solo para iOS */
         padding-right: 20px;
-        padding-bottom:10px;
+        padding-bottom:15px;
     }
 }
   

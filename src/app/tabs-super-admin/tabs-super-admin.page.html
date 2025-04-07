@@ -7,7 +7,9 @@
       *ngIf="showLeftArrow" 
       name="chevron-back-outline" 
       class="scroll-arrow left" 
-      (click)="scrollLeft()">
+      [class.ios-overrides]="isIOS()"
+      (click)="scrollLeft()"
+    >
     </ion-icon>
 
     <!-- Botones del tab bar -->
@@ -84,6 +86,7 @@
       *ngIf="showRightArrow" 
       name="chevron-forward-outline" 
       class="scroll-arrow right" 
+      [class.ios-overrides]="isIOS()"
       (click)="scrollRight()">
     </ion-icon>
 
