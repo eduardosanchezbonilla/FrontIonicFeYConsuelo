@@ -46,14 +46,24 @@ ion-tab-button {
     font-size: 24px;
     color: var(--ion-color-primary);
     z-index: 1;
-    cursor: pointer;
+    cursor: pointer;    
 }
   
 .scroll-arrow.left {
     left: 0;
+    &.ios-overrides {
+        /* Overrides solo para iOS */
+        padding-left: 20px;
+        padding-bottom: 10px;        
+    }    
 }
   
 .scroll-arrow.right {
     right: 0;
+    &.ios-overrides {
+        /* Overrides solo para iOS */
+        padding-right: 20px;
+        padding-bottom:10px;
+    }
 }
   
