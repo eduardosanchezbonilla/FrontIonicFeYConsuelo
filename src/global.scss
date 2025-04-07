@@ -93,27 +93,40 @@ ion-toolbar {
 }
 
 /* Para iOS, usando la clase personalizada que agregamos */
-body.my-ios ion-toolbar {
-    /* Anulamos el fondo original */
+body.my-ios ion-toolbar {   
     --background: none;
     background: none;
     position: relative;
 }
   
 /* Usamos un pseudo-elemento para mostrar el fondo con el 75% de ancho centrado */
+/*body.my-ios ion-toolbar::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 75%;  
+    height: 100%;
+    background: linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.1)),
+                url('/assets/images/headerTopNew13.png') no-repeat center center;
+    background-size: cover;
+    z-index: -1; 
+}*/
+
 body.my-ios ion-toolbar::after {
     content: "";
     position: absolute;
     top: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 75%;  /* Ocupa el 75% del ancho del toolbar */
+    width: 75%;
     height: 100%;
-    background: linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.1)),
-                url('/assets/images/headerTopNew13.png') no-repeat center center;
-    background-size: cover;
-    z-index: -1; /* Se coloca detrás del contenido del toolbar */
-}
+    background: linear-gradient(rgba(255,255,255,0.05), rgba(255,255,255,0.1)),
+                url('/assets/images/headerTopNew13.png') no-repeat center bottom;
+    background-size: contain;
+    z-index: -1;
+  }
 
 ion-tab-bar {
     border-top: 1px solid var(--ion-color-primary);
