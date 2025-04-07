@@ -6,7 +6,7 @@ import { PushNotifications } from '@capacitor/push-notifications';
 import { Capacitor } from '@capacitor/core';
 import { ToastService } from './services/toast/toast.service';
 import { GENERAL_TOPIC } from './constants/firebase-topics';
-import { AlertController } from '@ionic/angular';
+import { AlertController, Platform } from '@ionic/angular';
 import { UpdateFirebaseTokenDto } from './models/user/update-firebase-token-dto';
 import { Store } from '@ngxs/store';
 import { UpdateFirebaseToken } from './state/user/users.actions';
@@ -33,8 +33,12 @@ export class AppComponent {
     private storage: StorageService,
     private toastService: ToastService,
     private alertController: AlertController,    
+    private platform: Platform
   ) {
     this.initializeApp();
+    if (this.platform.is('ios')) {
+      document.body.classList.add('my-ios');
+    }
   }
 
   async openMenu(){      
