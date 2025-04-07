@@ -26,9 +26,9 @@ ion-tab-bar {
 
     &.ios-overrides {
         /* Overrides solo para iOS */
-        padding-left: 50px;
-        padding-right: 50px;
-        padding-left: 50px;
+        padding-left: 20px;
+        padding-right: 20px;
+        padding-bottom: 10px;
         -webkit-overflow-scrolling: touch; /* Solo necesario para iOS */
       }
 }

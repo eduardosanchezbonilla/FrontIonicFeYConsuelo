@@ -11,7 +11,7 @@
     </ion-icon>
 
     <!-- Botones del tab bar -->
-    <div class="scrollable-tab-buttons" #scrollContainer (scroll)="onScroll()">
+    <div class="scrollable-tab-buttons"  [class.ios-overrides]="isIOS()" #scrollContainer (scroll)="onScroll()">
 
       <ion-tab-button tab="menu-profile" href="/tabs-musician/menu-profile" >
         <ion-icon name="person-outline"></ion-icon>

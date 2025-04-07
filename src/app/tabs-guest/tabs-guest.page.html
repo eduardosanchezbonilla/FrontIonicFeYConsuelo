@@ -11,7 +11,7 @@
     </ion-icon>
 
     <!-- Botones del tab bar -->
-    <div class="scrollable-tab-buttons" #scrollContainer (scroll)="onScroll()">
+    <div class="scrollable-tab-buttons"  [class.ios-overrides]="isIOS()"  #scrollContainer (scroll)="onScroll()">
       <ion-tab-button tab="menu-history" href="/tabs-guest/menu-history">
         <ion-icon name="information-circle-outline"></ion-icon>
         <ion-label>¿Quienes somos?</ion-label>

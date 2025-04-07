@@ -8,13 +8,26 @@ ion-tab-bar {
   
   .scrollable-tab-buttons {
     display: flex;
-    overflow-x: auto; /* Habilita el scroll horizontal */
     white-space: nowrap;
     scroll-behavior: smooth;
     flex: 1;
     justify-content: space-between;    
     height: 100%;
-  }
+    padding-left:5px;
+    padding-right:5px;    
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &.ios-overrides {
+        /* Overrides solo para iOS */
+        padding-left: 20px;
+        padding-right: 20px;
+        padding-bottom: 10px;
+        -webkit-overflow-scrolling: touch; /* Solo necesario para iOS */
+      }
+}
   
   ion-tab-button {
     flex: 1 1 auto; /* Distribuye uniformemente los botones */

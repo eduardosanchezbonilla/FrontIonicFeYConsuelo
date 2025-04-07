@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { IonTabs } from '@ionic/angular';
+import { IonTabs, Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { TabNavigationService } from '../services/tab-navigation/tab-navigation.service';
 import { User } from '../models/user/user';
@@ -24,8 +24,13 @@ export class TabsAdminPage implements OnInit, OnDestroy {
 
   constructor(
     private tabNavigationService: TabNavigationService,
-    private storage: StorageService
+    private storage: StorageService,
+    public platform: Platform
   ) {}
+
+  isIOS() {
+    return this.platform.is('ios');
+  }
 
   async ngOnInit() {
     this.doEnter();

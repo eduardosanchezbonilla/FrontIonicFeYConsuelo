@@ -2,6 +2,7 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { User } from '../models/user/user';
 import { StorageService } from '../services/storage/storage.service';
+import { Platform } from '@ionic/angular';
 
 @Component({
   selector: 'app-tabs-guest',
@@ -17,8 +18,13 @@ export class TabsGuestPage  implements OnInit {
   public user: User;
 
   constructor(
-      private storage: StorageService
-    ) {}
+      private storage: StorageService,
+      public platform: Platform
+  ) {}
+
+  isIOS() {
+    return this.platform.is('ios');
+  }
 
   async ngOnInit() {
     this.doEnter();
