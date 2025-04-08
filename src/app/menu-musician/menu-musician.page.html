@@ -19,7 +19,7 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
   
-  <div class="searchbar-container">
+  <div *ngIf="profile=='SUPER_ADMIN' || profile=='ADMIN'" class="searchbar-container">
     <ion-searchbar 
       [(ngModel)]="filter.name"
       (ionChange)="onSearchTextChanged($event)"
@@ -35,6 +35,8 @@
       </div>   
     </ion-item>
   </div>
+
+  <div *ngIf="profile!=='SUPER_ADMIN' && profile!=='ADMIN'" class="spacer-super-small"></div>    
   
   <ion-accordion-group #accordionGroup [multiple]="true" [value]="expandVoiceList" (ionChange)="accordionGroupChange($event)">
 
@@ -55,7 +57,7 @@
             <ion-label class="voice-header-label">
               {{ musicianGroupByVoice.voice.name }}
             </ion-label>    
-            <div class="voice-header-buttons" class="voice-header-div-fab" > 
+            <div  *ngIf="profile=='SUPER_ADMIN' || profile=='ADMIN'" class="voice-header-buttons" class="voice-header-div-fab" > 
               <ion-fab-button fill="solid" color="tertiary" size="small" class="musician-header-fab-text">
                 {{ musicianGroupByVoice.musicians ? musicianGroupByVoice.musicians.length:0 }}
               </ion-fab-button>  
@@ -80,17 +82,17 @@
                 <ion-avatar slot="start" class="musician-avatar">                  
                   <ion-img 
                     [src]="musician.image ? 'data:image/jpeg;base64,' + musician.image : 'data:image/jpeg;base64,' + defaultMusicianImage"
-                    (click)="profile === 'SUPER_ADMIN' || profile === 'ADMIN' ? viewMusicianImage(musician) : null"
+                    (click)="viewMusicianImage(musician)"
                   >
                   </ion-img>                              
                 </ion-avatar>
                 <ion-label class="musician-card-label">
                   <p class="musician-name">{{ musician.name }} {{ musician.surname }}</p>                  
-                  <p class="musician-email">{{ musician.email?musician.email:'Sin email'  }}</p>
+                  <p *ngIf="profile=='SUPER_ADMIN' || profile=='ADMIN'" class="musician-email">{{ musician.email?musician.email:'Sin email'  }}</p>
                 </ion-label>
                 
                 <!-- botyon ensayo diario -->                
-                <div *ngIf="!musician.unregistred && musician.idLastRehearsal" class="musician-header-div-fab"> 
+                <div *ngIf="!musician.unregistred && musician.idLastRehearsal && (profile=='SUPER_ADMIN' || profile=='ADMIN')" class="musician-header-div-fab"> 
                   <div *ngIf="musician.assistLastRehearsal" fill="solid" color="success" class="musician-rehearsal-fab-success" (click)="updateMusicianRehearsal(musician)">
                     <div class="fab-text">
                       <span class="fab-line">ENSAYO</span>
@@ -107,7 +109,7 @@
               </ion-item>
             </ion-card> 
             
-            <ion-item-options>
+            <ion-item-options  *ngIf="profile=='SUPER_ADMIN' || profile=='ADMIN'">
               <ion-item-option color="solo-custom" (click)="showMusicianSolo(musician, musicianSliding)" >
                 <ion-icon color="light" slot="icon-only" name="megaphone-outline"></ion-icon>
               </ion-item-option>   
@@ -149,10 +151,10 @@
     </ion-fab-button>  
   
     <ion-fab-list side="end">
-      <ion-fab-button color="warning" (click)="createMusician()">
+      <ion-fab-button color="warning" (click)="createMusician()" *ngIf="(profile=='SUPER_ADMIN' || profile=='ADMIN')">
         <ion-icon name="person-add-outline"></ion-icon>        
       </ion-fab-button>
-      <ion-fab-button color="warning" (click)="createVoice()">
+      <ion-fab-button color="warning" (click)="createVoice()" *ngIf="(profile=='SUPER_ADMIN' || profile=='ADMIN')">
         <ion-icon name="pencil-outline"></ion-icon>
       </ion-fab-button>
       <ion-fab-button color="warning" (click)="expandAll()">

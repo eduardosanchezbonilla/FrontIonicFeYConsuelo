@@ -354,7 +354,7 @@
       </div>
       
       <!-- ACTUACION PUBLICA -->
-      <div *ngIf="type=='PERFORMANCE' && (profile=== 'SUPER_ADMIN' || profile=== 'ADMIN')">
+      <div *ngIf="type=='PERFORMANCE' && (profile=== 'SUPER_ADMIN')">
         <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent" [ngClass]="{ 'no-pointer': isReadonly }">
           <ion-label color="primary" class="custom-label-displacement-bus">Publicar evento</ion-label>            
           <ion-checkbox 
@@ -367,7 +367,7 @@
       </div>
 
       <!-- PREPERTORIO PUBLICO -->
-      <div *ngIf="type=='PERFORMANCE' && (profile=== 'SUPER_ADMIN' || profile=== 'ADMIN')">
+      <div *ngIf="type=='PERFORMANCE' && (profile=== 'SUPER_ADMIN')">
         <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent" [ngClass]="{ 'no-pointer': isReadonly }">
           <ion-label color="primary" class="custom-label-displacement-bus">Publicar repertorio</ion-label>            
           <ion-checkbox 
@@ -380,7 +380,7 @@
       </div>
 
       <!-- CRUCETA PUBLICA -->
-      <div *ngIf="type=='PERFORMANCE' && (profile=== 'SUPER_ADMIN' || profile=== 'ADMIN')">
+      <div *ngIf="type=='PERFORMANCE' && (profile=== 'SUPER_ADMIN')">
         <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent" [ngClass]="{ 'no-pointer': isReadonly }">
           <ion-label color="primary" class="custom-label-displacement-bus">Publicar cruceta</ion-label>            
           <ion-checkbox 

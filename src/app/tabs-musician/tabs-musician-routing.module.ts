@@ -13,6 +13,10 @@ const routes: Routes = [
         loadChildren: () => import('../menu-profile/menu-profile.module').then(m => m.MenuProfilePageModule)
       },
       {
+        path: 'menu-musician',       
+        loadChildren: () => import('../menu-musician/menu-musician.module').then(m => m.MenuMusicianPageModule)
+      },
+      {
         path: 'menu-partiture',        
         loadChildren: () => import('../menu-partiture/menu-partiture.module').then(m => m.MenuPartiturePageModule)
       },      
