@@ -92,7 +92,7 @@ ion-toolbar {
     border-bottom: 1px solid var(--ion-color-primary);
 }
 
-body.my-ios ion-toolbar {   
+/*body.my-ios ion-toolbar {   
     --background: linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.1)), 
                 url('/assets/images/headerTopNew13.png') no-repeat center center / cover;
     filter: contrast(1.3) saturate(1.2);        
@@ -102,7 +102,7 @@ body.my-ios ion-toolbar {
     padding-top: var(--ion-safe-area-top);
     
     min-height: calc(56px + var(--ion-safe-area-top)); 
-}
+}*/
 
 ion-tab-bar {
     border-top: 1px solid var(--ion-color-primary);
