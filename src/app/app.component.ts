@@ -71,7 +71,8 @@ export class AppComponent {
       }
   }
 
-  initializeApp() {
+  async initializeApp() {
+    await this.platform.ready();
     this.registerPushNotifications();
   }
   
