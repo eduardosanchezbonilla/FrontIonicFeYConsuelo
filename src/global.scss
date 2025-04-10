@@ -82,6 +82,16 @@ html, body {
     height: 100%; 
 }
 
+.login-content {
+    background: transparent !important;
+    --background: transparent !important;
+}
+
+ion-content.login-content {
+    --background: transparent !important;
+    background: transparent !important;
+  }
+
 ion-content {
     --ion-background-color: transparent;
 }
