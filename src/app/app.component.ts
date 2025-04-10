@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { StorageService } from './services/storage/storage.service';
 import { User } from './models/user/user';
 import { FirebaseMessaging } from '@capacitor-firebase/messaging';
-import { PushNotifications } from '@capacitor/push-notifications';
+import { ActionPerformed, PushNotifications, PushNotificationSchema, Token } from '@capacitor/push-notifications';
 import { Capacitor } from '@capacitor/core';
 import { ToastService } from './services/toast/toast.service';
 import { GENERAL_TOPIC } from './constants/firebase-topics';
@@ -121,12 +121,25 @@ export class AppComponent {
       
       this.showNotificationAlert(title, body);      
     });
+
+    // Method called when tapping on a notification
+    PushNotifications.addListener('pushNotificationActionPerformed',
+      (notification: ActionPerformed) => {
+        this.toastService.presentToast('Push action performed: ' + JSON.stringify(notification));
+      }
+    );
   }
 
   async addNotificationReceivedListener() {
     await FirebaseMessaging.addListener('notificationReceived', async event => {
       this.showNotificationAlert(event.notification?.title, event.notification?.body);
     });
+
+    PushNotifications.addListener('pushNotificationReceived',
+      (notification: PushNotificationSchema) => {
+        this.toastService.presentToast('Push received: ' + JSON.stringify(notification));
+      }
+    );
   };
 
   async addTokenRefreshListener() {
@@ -150,7 +163,21 @@ export class AppComponent {
           })        
         }
       }      
-    })
+    });
+
+    // On success, we should be able to receive notifications
+    PushNotifications.addListener('registration',
+      (token: Token) => {
+        this.toastService.presentToast('Push registration success, token: ' + token.value);
+      }
+    );
+
+    // Some issue with our setup and push will not work
+    PushNotifications.addListener('registrationError',
+      (error: any) => {
+        this.toastService.presentToast('Error on registration: ' + JSON.stringify(error));
+      }
+    );
   };
 
   async showNotificationAlert(title: string, message: string) {
