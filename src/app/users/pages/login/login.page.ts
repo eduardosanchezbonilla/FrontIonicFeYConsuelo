@@ -162,7 +162,7 @@ export class LoginPage implements OnDestroy{
         }, 400);
       }
       else{
-        this.navController.navigateRoot('tabs-musician/menu-partiture');   
+        this.navController.navigateRoot('tabs-musician/menu-history');   
       }      
     }
     else{

@@ -75,8 +75,8 @@ span[_rrss] {
 		opacity: 0.25;  // Ajusta el valor entre 0 y 1
 		z-index: -1;
 		pointer-events: none; /* Evita interacciones con el video */
-		background-color: transparent;
-		--ion-background-color: transparent;
+		background-color: transparent !important;
+		--ion-background-color: transparent !important;
 	}
   
 	.login-form {
@@ -92,11 +92,6 @@ span[_rrss] {
 	}
 }
 
-/* El body también debe tener fondo transparente */
-body {
-	background-color: transparent;
-	--ion-background-color: transparent;
-}
 
 .background-overlay {
 	position: absolute;

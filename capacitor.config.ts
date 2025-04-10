@@ -12,6 +12,9 @@ const config: CapacitorConfig = {
   plugins: {
     FirebaseMessaging: {
       presentationOptions: ["badge", "sound", "alert"]  // Opciones de presentación de notificaciones en iOS
+    },
+    Keyboard: {
+      resize: "body"
     }
   }
 };
