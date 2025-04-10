@@ -108,76 +108,106 @@ export class AppComponent {
   }
   
   async addPushNotifications() {
-    // Listener para notificaciones clicadas (cuando el usuario pulsa en la notificación)
-    await FirebaseMessaging.addListener('notificationActionPerformed', async event => {
-      const notification = event.notification;
-
-      // Asegúrate de que `data` tiene el tipo correcto
-      const data = notification?.data as NotificationData;
-
-      // Accede al título y cuerpo de la notificación
-      const title = notification?.title || data?.title;
-      const body = notification?.body || data?.body;
-      
-      this.showNotificationAlert(title, body);      
-    });
-
+   
     // Method called when tapping on a notification
-    PushNotifications.addListener('pushNotificationActionPerformed',
-      (notification: ActionPerformed) => {
-        this.toastService.presentToast('Push action performed: ' + JSON.stringify(notification));
-      }
-    );
+    if (this.platform.is('ios')) {
+      PushNotifications.addListener('pushNotificationActionPerformed',
+        (notification: ActionPerformed) => {        
+          //this.toastService.presentToast('Push action performed: ' + JSON.stringify(notification));
+          // Asegúrate de que `data` tiene el tipo correcto
+          const data = notification?.notification.data as NotificationData;
+
+          // Accede al título y cuerpo de la notificación
+          const title = notification?.notification?.title || data?.title;
+          const body = notification?.notification?.body || data?.body;
+          
+          this.showNotificationAlert(title, body);    
+        }
+      );
+    }
+    else{
+      // Listener para notificaciones clicadas (cuando el usuario pulsa en la notificación)
+      await FirebaseMessaging.addListener('notificationActionPerformed', async event => {
+        const notification = event.notification;
+
+        // Asegúrate de que `data` tiene el tipo correcto
+        const data = notification?.data as NotificationData;
+
+        // Accede al título y cuerpo de la notificación
+        const title = notification?.title || data?.title;
+        const body = notification?.body || data?.body;
+        
+        this.showNotificationAlert(title, body);      
+      });
+    }
   }
 
   async addNotificationReceivedListener() {
-    await FirebaseMessaging.addListener('notificationReceived', async event => {
-      this.showNotificationAlert(event.notification?.title, event.notification?.body);
-    });
-
-    PushNotifications.addListener('pushNotificationReceived',
-      (notification: PushNotificationSchema) => {
-        this.toastService.presentToast('Push received: ' + JSON.stringify(notification));
-      }
-    );
+    if (this.platform.is('ios')) {
+      PushNotifications.addListener('pushNotificationReceived',
+        (notification: PushNotificationSchema) => {
+          //this.toastService.presentToast('Push received: ' + JSON.stringify(notification));
+          this.showNotificationAlert(notification?.title, notification?.body);
+        }
+      );
+    }
+    else{
+      await FirebaseMessaging.addListener('notificationReceived', async event => {
+        this.showNotificationAlert(event.notification?.title, event.notification?.body);
+      });  
+    }      
   };
 
   async addTokenRefreshListener() {
-    await FirebaseMessaging.addListener('tokenReceived', async () => {
-      const { token } = await FirebaseMessaging.getToken();            
-      // Suscribir automáticamente al topic general
-      await FirebaseMessaging.subscribeToTopic({ topic: GENERAL_TOPIC });    
-      
-      if (Capacitor.isNativePlatform()) {      
-        const user = JSON.parse(await this.storage.getItem('user'));                        
-        if(user!=null && token!=null){               
-          let updateFirebaseToken = new UpdateFirebaseTokenDto(user.username, token);
+    if (this.platform.is('ios')) {
+      // On success, we should be able to receive notifications
+      PushNotifications.addListener('registration',
+        async (token: Token) => {
+          //this.toastService.presentToast('Push registration success, token: ' + token.value);
+          // Suscribir automáticamente al topic general
+          await FirebaseMessaging.subscribeToTopic({ topic: GENERAL_TOPIC });    
           
-          this.store.dispatch(new UpdateFirebaseToken({updateFirebaseToken:updateFirebaseToken})).subscribe({
-            next: async () => {
-              let success = this.store.selectSnapshot(UsersState.success);
-              if(!success){                              
-                this.toastService.presentToast("Error al actualizar el token del disposibtivo");                        
-              }              
-            } 
-          })        
+          if (Capacitor.isNativePlatform()) {      
+            const user = JSON.parse(await this.storage.getItem('user'));                        
+            if(user!=null && token!=null){               
+              let updateFirebaseToken = new UpdateFirebaseTokenDto(user.username, token.value);
+              
+              this.store.dispatch(new UpdateFirebaseToken({updateFirebaseToken:updateFirebaseToken})).subscribe({
+                next: async () => {
+                  let success = this.store.selectSnapshot(UsersState.success);
+                  if(!success){                              
+                    this.toastService.presentToast("Error al actualizar el token del disposibtivo");                        
+                  }              
+                } 
+              })        
+            }
+          }      
         }
-      }      
-    });
-
-    // On success, we should be able to receive notifications
-    PushNotifications.addListener('registration',
-      (token: Token) => {
-        this.toastService.presentToast('Push registration success, token: ' + token.value);
-      }
-    );
-
-    // Some issue with our setup and push will not work
-    PushNotifications.addListener('registrationError',
-      (error: any) => {
-        this.toastService.presentToast('Error on registration: ' + JSON.stringify(error));
-      }
-    );
+      );  
+    }
+    else{
+      await FirebaseMessaging.addListener('tokenReceived', async () => {
+        const { token } = await FirebaseMessaging.getToken();            
+        // Suscribir automáticamente al topic general
+        await FirebaseMessaging.subscribeToTopic({ topic: GENERAL_TOPIC });    
+        
+        if (Capacitor.isNativePlatform()) {      
+          const user = JSON.parse(await this.storage.getItem('user'));                        
+          if(user!=null && token!=null){               
+            let updateFirebaseToken = new UpdateFirebaseTokenDto(user.username, token);
+            
+            this.store.dispatch(new UpdateFirebaseToken({updateFirebaseToken:updateFirebaseToken})).subscribe({
+              next: async () => {
+                let success = this.store.selectSnapshot(UsersState.success);
+                if(!success){                              
+                  this.toastService.presentToast("Error al actualizar el token del disposibtivo");                        
+                }              
+              } 
+            })        
+          }
+        }      
+      });
+    }            
   };
 
   async showNotificationAlert(title: string, message: string) {
