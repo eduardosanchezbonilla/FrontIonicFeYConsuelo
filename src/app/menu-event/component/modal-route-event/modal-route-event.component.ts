@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
-import { AlertController, IonContent, ModalController } from '@ionic/angular';
+import { AlertController, IonContent, ModalController, PopoverController } from '@ionic/angular';
 import { LoadingService } from 'src/app/services/loading/loading.service';
 import { Geolocation } from '@capacitor/geolocation';
 import * as L from 'leaflet';
@@ -9,15 +9,20 @@ import { ToastService } from 'src/app/services/toast/toast.service';
 import { StorageService } from 'src/app/services/storage/storage.service';
 import { RouteEvent } from 'src/app/models/route-event/route-event';
 import { LatLng } from 'src/app/models/route-event/latLng';
-import { GetEvent, GetEventCurrentData, GetEventCurrentPosition, ResetEvent, UpdateEventCurrentMarch, UpdateEventCurrentPosition, UpdateEventRoute } from 'src/app/state/event/event.actions';
+import { GetEvent, GetEventCurrentData, GetEventCurrentPosition, GetEventRepertoire, ResetEvent, ResetEventRepertoire, UpdateEventCurrentMarch, UpdateEventCurrentPosition, UpdateEventRoute } from 'src/app/state/event/event.actions';
 import { Event } from 'src/app/models/event/event';
-import { Store } from '@ngxs/store';
+import { Select, Store } from '@ngxs/store';
 import { EventState } from 'src/app/state/event/event.state';
 import { UsersService } from 'src/app/services/user/users.service';
 import { App } from '@capacitor/app';
 import 'leaflet-rotate';
 import { DEFAULT_EVENT_IMAGE } from 'src/app/constants/constants';
 import { CaptureService } from 'src/app/services/capture/capture.service';
+import { MarchSelectorComponent } from '../modal-crosshead-event/march-selector.component';
+import { RepertoireMarch } from 'src/app/models/repertoire/repertoire-march';
+import { Observable, Subscription } from 'rxjs';
+import { EventRepertoire } from 'src/app/models/event/event-repertoire';
+import { PoiEvent } from 'src/app/models/route-event/poi-event';
 
 @Component({
   selector: 'app-modal-route-event',
@@ -29,6 +34,13 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
   @Input() event: Event;
   @Input() date: string;
   @Input() type: string;
+  
+  @Select(EventState.eventRepertoire)
+  eventRepertoire$: Observable<EventRepertoire>;
+  eventRepertoireSubscription: Subscription;
+  public eventRepertoire: EventRepertoire;  
+  marchs: RepertoireMarch[] = [];
+  alertRef: HTMLIonAlertElement | null = null;
 
   public profile: string;  
   map: L.Map;
@@ -37,7 +49,7 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
   rotation = 0;
   mapCenterLat : number = 37.7191055;
   mapCenterLng : number = -3.9737003;
-  kilometersRoute = 0;
+  kilometersRoute = 0;  
 
   serverUrl = 'https://tu-servidor.com/api/recorridos';
   trackingMarker!: L.Marker;
@@ -73,10 +85,18 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
     radius: 6, // Radio en píxeles
   };
 
-  routeStyle = {
+  /*routeStyle = {
     color: '#191970', // Color primario de Ionic (puedes cambiarlo)
     weight: 4, // Grosor de la línea
     opacity: 1,
+  };*/
+
+  routeStyle = {
+    color: '#191970',   // Color de la línea
+    weight: 4,          // Grosor de la línea
+    opacity: 1,
+    dashArray: '10,10', // Define un patrón de línea discontinua (10 píxeles de trazo, 10 píxeles de espacio)
+    dashOffset: '0'     // Valor inicial, que se actualizará dinámicamente
   };
 
   redIcon = L.icon({
@@ -115,6 +135,7 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
     private userService: UsersService,
     private alertController: AlertController,
     private captureService: CaptureService,
+    private popoverController: PopoverController,
   ) { 
     this.drawnItems = new L.FeatureGroup(); // Inicializa el FeatureGroup
 
@@ -140,6 +161,11 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
   }
 
   async ngOnInit() { 
+    this.store.dispatch(new ResetEventRepertoire({})).subscribe({ next: async () => { } })        
+    this.eventRepertoire = new EventRepertoire();    
+    this.store.dispatch(new GetEventRepertoire({eventType: this.type, eventId: this.event.id}));    
+    this.getEventRepertoire();   
+
     if(this.event.image){
       this.showImage = `data:image/jpeg;base64,${this.event.image}`;      
     }
@@ -212,11 +238,55 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
     this.stopWatchingLocation();
     this.stopTrackingCurrentPositionMusicAndGuest();
     await this.loadingService.dismissLoading();     
-    this.store.dispatch(new ResetEvent({})).subscribe({ next: async () => { } })                     
+    this.store.dispatch(new ResetEvent({})).subscribe({ next: async () => { } })  
+    
+    if (this.eventRepertoireSubscription) {      
+      this.eventRepertoireSubscription.unsubscribe();  
+    }            
+    this.eventRepertoire = null;    
+    this.store.dispatch(new ResetEventRepertoire({})).subscribe({ next: async () => { } })            
   }  
 
   cancel(){
     this.modalController.dismiss(null, 'cancel');
+  }
+
+  getEventRepertoire(){
+    this.eventRepertoireSubscription = this.eventRepertoire$.subscribe({
+      next: async ()=> {                
+        const finish = this.store.selectSnapshot(EventState.finish)        
+        const errorStatusCode = this.store.selectSnapshot(EventState.errorStatusCode)        
+        const errorMessage = this.store.selectSnapshot(EventState.errorMessage)        
+        if(finish){       
+          this.initSearchFinish = true;  
+          if(errorStatusCode==200){          
+            this.eventRepertoire = this.store.selectSnapshot(EventState.eventRepertoire);            
+            
+            // ahora extraemos todas las marchas existentes y las metemos en un array y lo ordenamos por orden            
+            this.marchs = [];
+
+            if(this.eventRepertoire && this.eventRepertoire.repertoireMarchGroupByType){
+              this.eventRepertoire.repertoireMarchGroupByType.forEach(group => {
+                group.marchs.forEach(march => {                  
+                  march.type.image = group.type.image;                  
+                  this.marchs.push(march);
+                });
+              });
+            }                          
+          }
+          else{            
+            if(errorStatusCode==403){       
+              this.cancel();     
+              this.userService.logout("Ha caducado la sesion, debe logarse de nuevo");
+            }
+            else{
+              this.toast.presentToast(errorMessage);
+            }                
+          }
+          this.dismissInitialLoading();              
+        }
+      }
+    })
   }
 
   async getEvent(){    
@@ -445,7 +515,8 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
       // Escuchar eventos de dibujo
       this.map.on(L.Draw.Event.CREATED, (event: any) => {
         const layer = event.layer;
-        this.drawnItems.addLayer(layer); // Añadir la ruta al FeatureGroup        
+        this.drawnItems.addLayer(layer); // Añadir la ruta al FeatureGroup    
+        this.animateDash(layer);    
         this.calculateDistanceRoute();
       });  
 
@@ -457,7 +528,16 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
       // Escuchar cambios en la rotación
       this.map.on('rotate', () => {
         this.rotation = this.map.getBearing(); // Obtener el ángulo actual                
-      });    
+      });  
+      
+      this.map.on('click', (e: any) => {
+        if (this.addingPOI) {
+          const latlng: L.LatLng = e.latlng;
+          this.presentIconSelection(latlng);
+          // Una vez añadido el punto, desactivamos el modo para no interferir con el dibujado de rutas
+          this.addingPOI = false;
+        }        
+      });
     } catch (error) {
       console.error('Error inicializando el mapa:', error);
     }
@@ -472,7 +552,15 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
   drawPosition(lat:number, lng:number, icon: L.Icon, march:string,  clean:boolean = true) {       
       // limpiamos todos los que haya 
       if(clean){
-        this.markerGroup.clearLayers();
+        // debemos limpiar todos menos los que sean iconos de iglesias y tribuna
+        //this.markerGroup.clearLayers();
+        const layers = this.markerGroup.getLayers();
+        layers.forEach((layer: any) => {
+          // Verificamos que sea un marcador y que no tenga la propiedad isPOI
+          if (layer instanceof L.Marker && !layer.options?.isPOI) {
+            this.markerGroup.removeLayer(layer);
+          }
+        });
       }
 
       if(lat && lng){
@@ -493,6 +581,7 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
   }
 
   loadRoute(){    
+    // itinerario
     if (this.detailEvent && this.detailEvent.route.route && this.detailEvent.route.route.length > 0) {
       const latLngs: L.LatLng[] = this.detailEvent.route.route.map((p: any) => L.latLng(p.lat, p.lng));
       
@@ -503,9 +592,13 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
             this.routeStyle
           ).addTo(this.map);
           this.drawnItems.addLayer(polyline);
+
+          // Inicia la animación de dashOffset para simular el movimiento en la línea
+          this.animateDash(polyline);
       }
     }
 
+    // circulos
     if (this.detailEvent && this.detailEvent.route.circles && this.detailEvent.route.circles.length > 0) {
       this.detailEvent.route.circles.forEach((circle: any) => {
         const objcircle = L.circleMarker(
@@ -513,6 +606,20 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
           this.cicleMarkerStyle
         ).addTo(this.map);
         this.drawnItems.addLayer(objcircle); // Agregar a la capa de dibujo
+      });
+    }
+
+    // pois
+    if (this.detailEvent && this.detailEvent.route.pois && this.detailEvent.route.pois.length > 0) {
+      this.detailEvent.route.pois.forEach((poi: PoiEvent) => {
+        const latlng = L.latLng(poi.center.lat, poi.center.lng);
+        if (poi.type === 'iglesia') {
+          this.addIconIglesia(latlng);
+        } else if (poi.type === 'tribuna') {
+          this.addIconTribuna(latlng);
+        } else {
+          this.addIconIglesia(latlng);
+        }        
       });
     }
 
@@ -548,7 +655,8 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
       route,
       circles,
       this.rotation,
-      this.kilometersRoute
+      this.kilometersRoute,
+      this.poiList
     );
     
     await this.loadingService.presentLoading('Loading...');   
@@ -673,9 +781,9 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
   }
 
   async updateCurrentMarch() {
-    const alert = await this.alertController.create({
+    this.alertRef = await this.alertController.create({
       header: 'Nombre de la marcha',
-      cssClass: 'notifications-alert-width',
+      cssClass: 'notifications-alert-width alert-buttons-inline',      
       inputs: [
         {
           name: 'marchName',
@@ -692,15 +800,47 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
           }
         },
         {
+          text: 'Elegir Marcha',
+          handler: async (data) => {
+            const popover = await this.popoverController.create({
+              component: MarchSelectorComponent,
+              componentProps: {
+                marchs: this.marchs,
+              },
+              event: event, // Posición relativa al evento del clic
+              translucent: true,
+            });
+        
+            popover.onDidDismiss().then((data) => {      
+              if (data.data) {        
+                let textarea = this.alertRef?.querySelector('textarea');
+                if (textarea) {
+                  if(textarea.value.length==0){
+                    textarea.value = '- '+data.data.name;
+                  }
+                  else{
+                    textarea.value = textarea.value + '\n- ' +data.data.name;
+                  }                  
+                }
+              }
+            });
+        
+            await popover.present();
+            return false;
+          }
+        },        
+        {
           text: 'Aceptar',
           handler: (data) => {
-            const marchName = data.marchName || ''; 
-            this.doUpdateCurrentMarch(marchName);
+            let text = this.alertRef?.querySelector('textarea');
+            if (text) {   
+              this.doUpdateCurrentMarch(text.value);
+            }            
           }
         }
       ]
     });  
-    await alert.present();
+    await this.alertRef.present();
 
   }
   
@@ -714,7 +854,7 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
         next: async ()=> {
           const success = this.store.selectSnapshot(EventState.success);
           if(success){     
-            this.lastCurrentMarch = march;       
+            this.lastCurrentMarch = march;     
             this.drawPosition(this.lastLocation.lat, this.lastLocation.lng, this.redIcon, this.lastCurrentMarch);                
             await this.loadingService.dismissLoading();      
           }
@@ -948,5 +1088,148 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
     }    
   }
 
+  animateDash(polyline: L.Polyline) {
+    let offset = 0;
+    const animate = () => {
+      offset = (offset + 0.3) % 20; // Mantén el incremento
+      // Aplica el offset negativo para invertir la dirección de la animación
+      polyline.setStyle({ dashOffset: `-${offset}` });
+      requestAnimationFrame(animate);
+    };
+    animate();
+  }
+
+  /***********************************************************/
+  /****************  Iconos personalizados   *****************/
+  /***********************************************************/
+  public addingPOI: boolean = false;
+  public poiList: PoiEvent[] = [];
+
+  public generateIdPoi(): string {
+    return Date.now().toString();
+  }
+
+  activatePOIMode() {
+    this.addingPOI = true;
+    // Puedes mostrar un mensaje o un toast para indicar al usuario que ahora debe hacer click en el mapa para insertar un POI.
+    this.toast.presentToast("Ahora toca el mapa para agregar el punto de interés");
+  }
+
+  deactivatePOIMode() {
+    this.addingPOI = false;
+    // Puedes mostrar un mensaje o un toast para indicar al usuario que ha salido del modo de agregar POI.
+    this.toast.presentToast("Modo de agregar POI desactivado");
+  }
+
+  poiIconIglesia = L.icon({
+    iconUrl: 'assets/icons/iglesia.png',
+    iconSize: [40, 40],
+    iconAnchor: [20, 40],
+    popupAnchor: [0, -20],
+    //className: 'custom-poi-icon' 
+  });
+
+  poiIconTribuna = L.icon({
+    iconUrl: 'assets/icons/tribuna.png',
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -32],
+    //className: 'custom-poi-icon' 
+  });
+
+  async presentIconSelection(latlng: L.LatLng) {
+    const alert = await this.alertController.create({
+      header: 'Selecciona un icono',
+      message: 'Elige el icono para marcar este punto.',
+      buttons: [
+        {
+          text: 'Icono Iglesia',
+          handler: () => {
+            this.addIconIglesia(latlng);
+          }
+        },
+        {
+          text: 'Icono Tribuna',
+          handler: () => {
+            this.addIconTribuna(latlng);
+          }
+        },
+        {
+          text: 'Cancelar',
+          role: 'cancel'
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  addIconIglesia(latlng: L.LatLng) {
+    const marker = L.marker(latlng, { icon: this.poiIconIglesia, isPOI: true });
+      //.bindPopup('Iglesia');
+      
+    // Agrega el marcador a tu LayerGroup
+    this.markerGroup.addLayer(marker);
+
+
+    // Crear el POI y agregarlo a la lista
+    const poi: PoiEvent = {
+      id: this.generateIdPoi(),
+      center: new LatLng(latlng.lat,latlng.lng),    
+      type: 'iglesia'
+    };
+    this.poiList.push(poi);
+
+    // Opcional: Agregar un evento para eliminar el marcador al hacer click
+    marker.on('click', () => {
+      this.confirmRemoveMarker(marker,poi.id);
+    });
+
+  }
+
+  addIconTribuna(latlng: L.LatLng) {
+    const marker = L.marker(latlng, { icon: this.poiIconTribuna, isPOI: true });
+      //.bindPopup('Tribuna');
+
+    // Agrega el marcador a tu LayerGroup
+    this.markerGroup.addLayer(marker);
+
+    // Crear el POI y agregarlo a la lista
+    const poi: PoiEvent = {
+      id: this.generateIdPoi(),
+      center: new LatLng(latlng.lat,latlng.lng),    
+      type: 'tribuna'
+    };
+    this.poiList.push(poi);
+
+    // Opcional: Agregar un evento para eliminar el marcador al hacer click
+    marker.on('click', () => {
+      this.confirmRemoveMarker(marker,poi.id);
+    });
+
+  }
+
+  async confirmRemoveMarker(marker: L.Marker, poiId: string) {
+    const alert = await this.alertController.create({
+      header: 'Confirmación',
+      message: '¿Estás seguro de eliminar este punto de interés?',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel'
+        },
+        {
+          text: 'Eliminar',
+          handler: () => {
+            // eliminamos del array de pois filtrando por id
+            this.poiList = this.poiList.filter(poi => poi.id !== poiId);
+
+            // Remueve el marcador de la capa
+            this.markerGroup.removeLayer(marker);
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
 
 }

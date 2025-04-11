@@ -156,6 +156,17 @@ ion-popover {
     --width:70% !important; /* Ajusta el ancho a un 80% de la pantalla */
 }
 
+.alert-buttons-inline .alert-button-group {
+    flex-direction: row !important;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+  
+.alert-buttons-inline .alert-button {
+    flex: 1 1 auto;
+    margin: 0 4px;
+}
+
 /***********************************************************************/
 /*********************  BOTOIN LOGOUT **********************************/
 /***********************************************************************/
@@ -207,5 +218,11 @@ swiper-container {
 //   white-space: nowrap !important;
     //padding:0px;
     //padding-top:10px;
-  }
+}
 
+/*.custom-poi-icon {
+    border: 1px solid black;
+    // Opcional: si deseas redondear el borde o ajustar márgenes
+    border-radius: 4px;
+    box-sizing: content-box;
+}*/

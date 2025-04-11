@@ -124,6 +124,20 @@
         </div>
       </ion-fab-button>
 
+      <ion-fab-button *ngIf="!addingPOI" class="buttons-fab-1" color="warning" (click)="activatePOIMode()">
+        <div class="fab-content-1">
+          <ion-icon name="flag-outline" class="fab-button-icon-1"></ion-icon>
+          <span>Activar<br/>modo POI</span>
+        </div>
+      </ion-fab-button>
+
+      <ion-fab-button *ngIf="addingPOI" class="buttons-fab-1" color="warning" (click)="deactivatePOIMode()">
+        <div class="fab-content-1">
+          <ion-icon name="flag-outline" class="fab-button-icon-1"></ion-icon>
+          <span>Desactivar<br/>modo POI</span>
+        </div>
+      </ion-fab-button>
+
       <ion-fab-button *ngIf="!trackingSending" class="buttons-fab" color="danger" (click)="startTrackingPositionAdmin()">
         <div class="fab-content">
           <ion-icon name="locate-outline" class="fab-button-icon"></ion-icon>

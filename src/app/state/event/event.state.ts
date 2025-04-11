@@ -672,7 +672,7 @@ export class EventState {
           patchState({
             finish: true,
             success: false,            
-            routeEvent: new RouteEvent(null,null,null,null,null,null),
+            routeEvent: new RouteEvent(null,null,null,null,null,null,null),
             errorStatusCode: error.status,
             errorMessage: error.message
           })
