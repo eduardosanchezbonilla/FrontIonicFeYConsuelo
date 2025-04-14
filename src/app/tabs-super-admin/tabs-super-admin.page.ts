@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { IonTabs, Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { TabNavigationService } from '../services/tab-navigation/tab-navigation.service';
@@ -25,7 +25,8 @@ export class TabsSuperAdminPage implements OnInit, OnDestroy {
   constructor(
     private tabNavigationService: TabNavigationService,
     private storage: StorageService,
-    public platform: Platform
+    public platform: Platform,
+    private renderer: Renderer2
   ) {}
 
   isIOS() {
@@ -44,7 +45,7 @@ export class TabsSuperAdminPage implements OnInit, OnDestroy {
     // Aquí puedes ejecutar lógica que debe correr cada vez que la página se muestre
     this.user = JSON.parse(await this.storage.getItem('user'));  
 
-    this.tabChangeSubscription = this.tabNavigationService.tabChange$.subscribe(tab => {
+    this.tabChangeSubscription = this.tabNavigationService.tabChange$.subscribe(tab => {      
       this.tabs.select(tab);
     });
 
@@ -105,5 +106,11 @@ export class TabsSuperAdminPage implements OnInit, OnDestroy {
     const element = this.scrollContainer.nativeElement;
     element.scrollBy({ left: 100, behavior: 'smooth' });
     this.onScroll(); // Actualizar flechas después del scroll
+  }
+
+  handleTabChange(event: any) {
+    document.querySelectorAll('ion-tab-button').forEach(tab => {
+      this.renderer.removeClass(tab, 'tab-selected');
+    });
   }
 }

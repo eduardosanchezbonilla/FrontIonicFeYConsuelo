@@ -521,8 +521,8 @@
          *ngIf="!eventToday.image || imageLoaded"        
     >
       <!-- TITLE -->
-      <div>
-        <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent height-item" class="no-pointer">
+      
+        <ion-item class="ion-margin-start ion-no-margin-end ion-no-padding background-transparent height-item no-pointer">
           <ion-label color="primary" position="floating">
               Título
           </ion-label>
@@ -535,10 +535,10 @@
           >
           </ion-input>
         </ion-item>
-      </div>
+     
   
       <!-- FECHA -->
-      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item no-pointer">
+      <ion-item class="ion-margin-start ion-no-margin-end ion-no-padding background-transparent custom-item no-pointer">
         <ion-label color="primary" class="custom-label">Fecha</ion-label>
   
         <ion-datetime-button slot="end" datetime="datetime-event-today" color="primary" class="custom-datetime-button"></ion-datetime-button>      
@@ -564,7 +564,7 @@
       </ion-item>
   
       <!-- HORA DE INICIO -->
-      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item no-pointer">
+      <ion-item class="ion-margin-start ion-no-margin-end ion-no-padding background-transparent custom-item no-pointer">
         <ion-label color="primary" class="custom-label">Hora inicio</ion-label>
   
         <ion-datetime-button slot="end" datetime="time-start-event-today" color="primary" class="custom-datetime-button"></ion-datetime-button>      
@@ -590,7 +590,7 @@
       </ion-item>
   
       <!-- HORA DE FIN -->
-      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item no-pointer">
+      <ion-item class="ion-margin-start ion-no-margin-end ion-no-padding background-transparent custom-item no-pointer">
         <ion-label color="primary" class="custom-label">Hora fin</ion-label>
   
         <ion-datetime-button slot="end" datetime="time-end-event-today" color="primary" class="custom-datetime-button"></ion-datetime-button>      
@@ -634,7 +634,7 @@
   
       <!-- UBICACION -->
       <div>
-        <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent" class="no-pointer">
+        <ion-item class="ion-margin-start ion-no-margin-end ion-no-padding background-transparent no-pointer">
           <ion-label color="primary" position="floating">
               Ubicación
           </ion-label>
@@ -660,7 +660,7 @@
                    profile=== 'MUSICO'
                  )
                 " 
-          class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item no-pointer"           
+          class="ion-margin-start ion-no-margin-end ion-no-padding background-transparent custom-item no-pointer"           
       >
         <ion-label color="primary" class="custom-label">Hora salida autobús</ion-label>
 
@@ -697,7 +697,7 @@
                    profile=== 'MUSICO'
                  )
                 " 
-          class="ion-margin-start ion-margin-end ion-no-padding background-transparent no-pointer"           
+          class="ion-margin-start ion-no-margin-end ion-no-padding background-transparent no-pointer"           
       >
         <ion-label color="primary" position="floating">
             Lugar salida autobús

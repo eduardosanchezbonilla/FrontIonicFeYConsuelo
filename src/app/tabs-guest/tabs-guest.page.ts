@@ -1,5 +1,5 @@
 
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { User } from '../models/user/user';
 import { StorageService } from '../services/storage/storage.service';
 import { Platform } from '@ionic/angular';
@@ -19,7 +19,8 @@ export class TabsGuestPage  implements OnInit {
 
   constructor(
       private storage: StorageService,
-      public platform: Platform
+      public platform: Platform,
+      private renderer: Renderer2
   ) {}
 
   isIOS() {
@@ -91,5 +92,11 @@ export class TabsGuestPage  implements OnInit {
     const element = this.scrollContainer.nativeElement;
     element.scrollBy({ left: 100, behavior: 'smooth' });
     this.onScroll(); // Actualizar flechas después del scroll
+  }
+
+  handleTabChange(event: any) {
+    document.querySelectorAll('ion-tab-button').forEach(tab => {
+      this.renderer.removeClass(tab, 'tab-selected');
+    });
   }
 }
