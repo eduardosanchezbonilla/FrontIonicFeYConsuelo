@@ -272,7 +272,7 @@ export class EventService {
     });     
   }
 
-  async getEventsGroupByAnyo(eventType:string,startDate:string, endDate:string, name: string){
+  async getEventsGroupByAnyo(eventType:string,startDate:string, endDate:string, name: string, isTodayPerformance: boolean){
     
     const token = await this.storage.getItem('token');
     return Http.get(
@@ -282,7 +282,8 @@ export class EventService {
           'eventType':eventType,
           'startDate':startDate,
           'endDate':endDate,
-          'name':name
+          'name':name,
+          'isTodayPerformance': isTodayPerformance.toString()
         },
         headers: {
           'Content-Type': 'application/json',

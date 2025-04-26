@@ -119,8 +119,13 @@ export class ModalCrossheadEventComponent implements OnInit {
       this.editMode = false;
     }*/
     
-    this.store.dispatch(new GetEventRepertoire({eventType: this.type, eventId: this.event.id}));    
-    this.getEventRepertoire();   
+    if(this.profile === 'ADMIN' || this.profile === 'SUPER_ADMIN'){
+      this.store.dispatch(new GetEventRepertoire({eventType: this.type, eventId: this.event.id}));    
+      this.getEventRepertoire();   
+    }
+    else{
+      this.initSearchFinish = true;  
+    }
 
     this.store.dispatch(new GetEventCrosshead({eventType: this.type, eventId: this.event.id}));    
     this.getCrossheadEvent();   

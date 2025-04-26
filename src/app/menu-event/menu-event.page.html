@@ -339,7 +339,7 @@
                     <p class="performance-email">{{ performance.date | date: 'dd-MM-yyyy'}} ({{ performance.startTime}} - {{ performance.endTime}})</p>
                   </ion-label>
                   <ion-icon 
-                    *ngIf="(profile=='MUSICO')"
+                    *ngIf="(profile=='MUSICO' && !isTodayPerformance)"
                     [name]="performance.musicianAssist ? 'checkmark-circle' : 'close-circle'" 
                     [ngClass]="{'assist-icon': performance.musicianAssist, 'notAssist-icon': !performance.musicianAssist}">
                   </ion-icon>
@@ -481,12 +481,12 @@
         </div>
       </ion-fab-button>  
 
-      <ion-fab-button *ngIf="profile!=='INVITADO' && profile==='MUSICO'"  class="buttons-fab"  (click)="showModalMusicianAssistanceEvent(eventToday)">
+      <!--<ion-fab-button *ngIf="profile!=='INVITADO' && profile==='MUSICO'"  class="buttons-fab"  (click)="showModalMusicianAssistanceEvent(eventToday)">
         <div class="fab-content">
           <ion-icon name="checkbox-outline" class="fab-button-icon"></ion-icon>
           <span>Asistencia</span>
         </div>
-      </ion-fab-button>  
+      </ion-fab-button>  -->
 
       <ion-fab-button class="buttons-fab"  (click)="showEventRepertoire(eventToday, null)">
         <div class="fab-content">

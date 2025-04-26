@@ -161,10 +161,18 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
   }
 
   async ngOnInit() { 
+    this.profile = await this.storage.getItem('profile');    
+
     this.store.dispatch(new ResetEventRepertoire({})).subscribe({ next: async () => { } })        
     this.eventRepertoire = new EventRepertoire();    
-    this.store.dispatch(new GetEventRepertoire({eventType: this.type, eventId: this.event.id}));    
-    this.getEventRepertoire();   
+
+    if(this.profile === 'SUPER_ADMIN' || this.profile === 'ADMIN'){
+      this.store.dispatch(new GetEventRepertoire({eventType: this.type, eventId: this.event.id}));    
+      this.getEventRepertoire();   
+    }
+    else{
+      this.initSearchFinish = true;  
+    }
 
     if(this.event.image){
       this.showImage = `data:image/jpeg;base64,${this.event.image}`;      
@@ -186,9 +194,7 @@ export class ModalRouteEventComponent implements OnInit, AfterViewInit {
         this.showTextEvent = this.showTextEvent + " (" + this.event.municipality + ")";
       }
       this.showDateTextEvent = this.convertDateFormat(this.event.date) + " (" + this.event.startTime + " - " + this.event.endTime + ")";
-    }   
-
-    this.profile = await this.storage.getItem('profile');    
+    }       
     
     // ojo que esto afecta a todas las pantallas
     App.addListener('appStateChange', (state) => {

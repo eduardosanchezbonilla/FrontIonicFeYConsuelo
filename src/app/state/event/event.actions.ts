@@ -41,7 +41,7 @@ export class GetEventMusicianFormation{
 
 export class GetEventsGroupByAnyo{
   static readonly type = '[Event] GetEventsGroupByAnyo';
-  constructor(public payload: {eventType:string, startDate:string, endDate:string,name:string,}) { }
+  constructor(public payload: {eventType:string, startDate:string, endDate:string,name:string,isTodayPerformance:boolean}) { }
 }
 
 export class ResetEventMusicianAssistance {

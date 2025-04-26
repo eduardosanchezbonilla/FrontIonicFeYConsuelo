@@ -1,0 +1,252 @@
+<ion-header [translucent]="true" >
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>   
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()" class="logout-button">
+        <ion-icon name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="false" >
+
+  <div class="custom-content">
+    <form *ngIf="profile=='INVITADO'" (ngSubmit)="createContactRequest()" #contactRequestForm="ngForm">   
+
+      <!--------------------------------->
+      <!------ CONTACTO INVITADOS ------->
+      <!--------------------------------->   
+      <h2 class="fancy-title custom-modal-title">
+        Formulario de contacto
+      </h2>
+
+      <!-- NOMBRE -->
+      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+        <ion-label color="primary" position="floating">
+            Nombre
+        </ion-label>
+        <ion-icon name="person-outline" slot="end"></ion-icon>
+        <ion-input                                                        
+              autocomplete="name"       
+              minlength="1"                     
+              maxlength="200"
+              name="name"
+              placeholder="Introduzca el nombre completo"
+              type="text"
+              required="true"
+              (ionInput)="inputUpperCase($event,nameContactRequest)"
+              [(ngModel)]="nameContactRequest"                                                 
+              #nameInput="ngModel"            
+        >
+        </ion-input>
+      </ion-item>
+      
+      <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(nameInput.invalid && nameInput.touched)">
+        <ion-text color="danger" *ngIf="nameInput.errors && nameInput.errors['required']">El nombre es obligatorio.</ion-text>
+        <ion-text color="danger" *ngIf="nameInput.errors && nameInput.errors['minlength']">El nombre debe tener al menos 1 caracter..</ion-text>
+        <ion-text color="danger" *ngIf="nameInput.errors && nameInput.errors['maxlength']">El nombre no puede exceder los 50 caracteres.</ion-text>
+      </div>
+
+      <!-- NUMERO DE TELEFONO -->
+      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+        <ion-label color="primary" position="floating">
+            Teléfono (Opcional)
+        </ion-label>
+        <ion-icon name="call-outline" slot="end"></ion-icon>
+        <ion-input                                                        
+              autocomplete="phoneNumber"       
+              minlength="6"                     
+              maxlength="10"
+              name="phoneNumber"
+              placeholder="Introduzca el teléfono"
+              type="tel"                                 
+              [(ngModel)]="phoneNumberContactRequest"                                                 
+              #phoneNumberInput="ngModel"            
+        >
+        </ion-input>
+      </ion-item>
+
+      <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(phoneNumberInput.invalid && phoneNumberInput.touched)">      
+        <ion-text color="danger" *ngIf="phoneNumberInput.errors && phoneNumberInput.errors['minlength']">El número de teléfono debe tener al menos 6 caracter..</ion-text>
+        <ion-text color="danger" *ngIf="phoneNumberInput.errors && phoneNumberInput.errors['maxlength']">El número de teléfono no puede exceder los 10 caracteres.</ion-text>
+      </div>
+      
+      <!-- EMAIL -->
+      <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+        <ion-label color="primary" position="floating">
+            Email (Opcional)
+        </ion-label>
+        <ion-icon name="at-outline" slot="end"></ion-icon>
+        <ion-input                                                        
+              autocomplete="email"       
+              minlength="1"                     
+              maxlength="100"
+              name="email"
+              placeholder="Introduzca el email"
+              type="email"             
+              pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" 
+              [(ngModel)]="emailContactRequest"                                                 
+              #emailInput="ngModel"            
+        >
+        </ion-input>
+      </ion-item>
+
+      <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(emailInput.invalid && emailInput.touched)">        
+        <ion-text color="danger" *ngIf="emailInput.errors && emailInput.errors['pattern']">Introduzca un email válido.</ion-text>
+        <ion-text color="danger" *ngIf="emailInput.errors && emailInput.errors['minlength']">El mail debe tener al menos 1 caracter..</ion-text>
+        <ion-text color="danger" *ngIf="emailInput.errors && emailInput.errors['maxlength']">El mail no puede exceder los 200 caracteres.</ion-text>
+      </div>
+
+      <!-- Mensaje -->
+      <ion-item lines="none">    
+        <ion-label color="primary" position="stacked" class="custom-label-textarea">
+          Mensaje
+        </ion-label>
+        <ion-textarea 
+            name="description"
+            placeholder="Escribe el mensaje ..." 
+            class="custom-textarea focus-style"
+            minlength="1"                     
+            maxlength="1000"
+            required="true"
+            [(ngModel)]="textContactRequest"  
+            (ngModelChange)="validTextContactRequest()"                                                         
+        >
+        </ion-textarea>
+      </ion-item>
+
+      <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="invalidTextContactRequest">
+        <ion-text color="danger" *ngIf="invalidTextContactRequest">Debe introducir una descripción de 1 a 5000 caracteres.</ion-text>      
+      </div>
+            
+      <div class="spacer"></div>   
+      <div class="spacer-small"></div>  
+
+      <ion-button 
+            class="custom-button"
+            type="submit"           
+            [disabled]="disabledForm"
+            expand="block"
+            class="custom-button"
+      >
+          Enviar mensaje
+      </ion-button>  
+
+      <ion-card
+        *ngIf="showConfirmation"
+        class="ion-margin-top custom-confirm-card"
+      >
+        <ion-card-content class="ion-text-center">
+          Su solicitud ha sido recibida ✅<br>
+          Será atendida a la mayor brevedad posible.          
+        </ion-card-content>
+      </ion-card>
+
+    </form>
+  </div>
+
+
+  <div *ngIf="profile=='SUPER_ADMIN' || profile=='ADMIN'" class="custom-content">
+  
+    <!------------------------------------->
+    <!------ PETICIONES DE CONTACTO ------->
+    <!------------------------------------->   
+    <h2 class="fancy-title custom-modal-title-admin">
+      Peticiones de contacto
+    </h2>
+
+    <ion-refresher slot="fixed" (ionRefresh)="refreshContactRequest($event)">
+      <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+
+    <!-- Selector de filtro justo debajo del título -->
+    <div class="filter-container">
+      <ion-segment (ionChange)="onReadedChanged($event)" value="unread">
+        <ion-segment-button value="unread">
+          <ion-label>No leídas</ion-label>
+        </ion-segment-button>
+
+        <ion-segment-button value="all">
+          <ion-label>Todas</ion-label>
+        </ion-segment-button>          
+      </ion-segment>
+    </div>
+    
+    <!-- Mensaje vistoso cuando no hay datos -->
+    <div *ngIf="initSearchFinish && !existsRequest" class="no-data-container">
+      <div class="spacer"></div>   
+      <ion-icon name="alert-circle-outline" class="no-data-icon"></ion-icon>
+      <p class="no-data-text">No hay peticiones de contacto pendientes <br/> de gestionar.</p>     
+      <div class="spacer"></div>   
+      <div class="spacer"></div> 
+    </div>
+
+    <!-- Contenido principal (solo se muestra si hay datos) -->
+    <div *ngIf="initSearchFinish && existsRequest">
+      <div class="spacer-super-small"></div>   
+
+      <ion-accordion-group>
+      
+        <ion-accordion *ngFor="let contactRequest of contactRequests">
+          <ion-item slot="header" class="user-item" >
+            <ion-avatar slot="start">
+              <ion-img 
+                [src]="'data:image/jpeg;base64,'+defaultUserImage">
+              </ion-img>                              
+            </ion-avatar>            
+            <ion-label>
+              
+              <span class="username">{{ contactRequest.name }}</span>
+              <span class="full-name">{{ getMailPhoneData(contactRequest) }}</span>
+              <span class="full-name">{{ contactRequest.createdTime }}</span>
+            </ion-label>
+          </ion-item>
+    
+          
+          <div class="expanded-content" slot="content">
+            <ion-item>
+                
+              <ion-button
+                slot="start"
+                color="primary"
+                fill="clear"
+                (click)="markAsReadUnread(contactRequest)"
+              >
+                <ion-icon [name]="contactRequest.readed ? 'checkmark-circle' : 'ellipse-outline'"></ion-icon>
+              </ion-button>
+            
+              <ion-label class="request-label">
+                {{ contactRequest.message }}
+              </ion-label>
+            </ion-item>
+
+            <!--<ion-list class="ion-no-padding">
+              <ion-item *ngFor="let suggestion of suggestionBox.suggestions">
+                
+                <ion-button
+                  slot="start"
+                  color="primary"
+                  fill="clear"
+                  (click)="markAsReadUnread(suggestion)"
+                >
+                  <ion-icon [name]="suggestion.readed ? 'checkmark-circle' : 'ellipse-outline'"></ion-icon>
+                </ion-button>
+              
+                <ion-label class="request-label">
+                  {{ suggestion.suggestion }}
+                </ion-label>
+              </ion-item>
+            </ion-list>-->
+          </div>
+        </ion-accordion>
+      </ion-accordion-group>
+
+      <div class="spacer"></div> 
+    </div> 
+  </div>
+
+  
+</ion-content>

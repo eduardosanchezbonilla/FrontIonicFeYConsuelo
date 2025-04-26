@@ -1302,10 +1302,10 @@ export class MenuEventPage implements OnDestroy {
     }       
     let startDate = this.oldPerformances ? '' : new Date().toISOString().split('T')[0];    
     if(this.isTodayPerformance){
-      this.store.dispatch(new GetEventsGroupByAnyo({eventType: 'PERFORMANCE', startDate:startDate, endDate:startDate, name: this.filter.filter})).subscribe({ next: async () => { } });    
+      this.store.dispatch(new GetEventsGroupByAnyo({eventType: 'PERFORMANCE', startDate:startDate, endDate:startDate, name: this.filter.filter,isTodayPerformance:this.isTodayPerformance})).subscribe({ next: async () => { } });    
     }
     else{
-      this.store.dispatch(new GetEventsGroupByAnyo({eventType: 'PERFORMANCE', startDate:startDate, endDate:'', name: this.filter.filter})).subscribe({ next: async () => { } });    
+      this.store.dispatch(new GetEventsGroupByAnyo({eventType: 'PERFORMANCE', startDate:startDate, endDate:'', name: this.filter.filter,isTodayPerformance:this.isTodayPerformance})).subscribe({ next: async () => { } });    
     }    
   }
 

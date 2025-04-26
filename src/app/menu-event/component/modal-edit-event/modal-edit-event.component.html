@@ -35,7 +35,8 @@
         *ngIf="event && event.image && (profile!== 'SUPER_ADMIN' && profile!== 'ADMIN')"
         class="image-container"
       >
-        <img        
+        <img      
+          *ngIf="originalImage"  
           [src]="'data:image/jpeg;base64,' + originalImage"
           class="styled-image"
           (load)="onImageLoad()"

@@ -146,8 +146,13 @@ export class ModalEditEventComponent implements OnInit {
       this.initImageReadonly  = false;
     }
     
-    this.store.dispatch(new GetVoices({}));
-    this.getVoices();    
+    if(this.profile!=='INVITADO'){
+      this.store.dispatch(new GetVoices({}));
+      this.getVoices();    
+    }
+    else{
+      this.initSearchFinish = true; 
+    }
 
     // si es readonly, ademas voy a obtener la imagen original para poder motrarla
     if(this.isReadonly && this.event.image){

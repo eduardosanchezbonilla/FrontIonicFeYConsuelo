@@ -345,7 +345,7 @@ export class EventState {
       { patchState }: StateContext<EventStateModel>,
       { payload }: GetEventsGroupByAnyo
   ) {
-    return this.eventService.getEventsGroupByAnyo(payload.eventType, payload.startDate, payload.endDate, payload.name)
+    return this.eventService.getEventsGroupByAnyo(payload.eventType, payload.startDate, payload.endDate, payload.name,payload.isTodayPerformance)
     .then(
       (eventsGroupByAnyo:EventGroupByAnyo[]) => {
         patchState({
