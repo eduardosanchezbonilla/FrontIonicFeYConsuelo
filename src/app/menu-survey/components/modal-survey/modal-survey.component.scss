@@ -1,0 +1,115 @@
+.custom-h2{
+    margin-top: 12px;
+}
+  
+ion-label.ion-color-primary {
+    color: #B22222;
+    font-size: 1rem;
+    font-weight: bold;  
+    text-shadow: 1px 1px 2px #FFFFFF; /* Sombra leve */
+}
+  
+ion-item.image-selector {
+    display: flex;
+    align-items: center;
+}
+  
+.image-label {
+    display: flex;
+    align-items: center;
+    padding-bottom:7px;
+}
+  
+.preview-image {
+    width: 40px;  
+    height: 40px; 
+    border-radius: 50%;
+    object-fit: cover; 
+    margin-left: 30px;   
+}
+
+.custom-item {
+    margin-top: 7px;  
+}
+
+.custom-ion-button-image {
+    margin-bottom: 11px;  
+}
+
+.custom-label-textarea {
+    font-size: 1.3rem !important;
+}
+
+.custom-textarea {
+    margin-top:15px;
+    border: 2px solid #4d4d4d; 
+    border-radius: 10px;        
+    padding: 10px;   
+    padding-top:0px;           
+    background-color: #f9f9f9; 
+    font-size: 0.8rem;            
+    
+    /* Sombra suave en gris oscuro */
+    box-shadow: 0 0 10px rgba(77, 77, 77, 0.2); /* Sombra en gris oscuro, sutil */
+    
+    /* Asegurando visibilidad */
+    display: block;              
+    width: 100%;                
+    min-height: 80px;           
+    visibility: visible;        
+    opacity: 1;                 
+}
+  
+.custom-textarea:focus {
+    box-shadow: 0 0 10px rgba(77, 77, 77, 0.4); /* Sombra más pronunciada al hacer foco */
+}
+
+.custom-item-image {
+    margin-top: 7px;  
+    margin-left:16px;
+    padding-right:10px !important;
+}
+
+.custom-item-options{
+    margin-top: 7px;  
+    padding-left:16px !important;
+    padding-right:10px !important;
+    //max-height: 35px !important;
+}
+
+.custom-label-options {
+    color: #B22222;
+    font-size: 1rem;
+    font-weight: bold;  
+    text-shadow: 1px 1px 2px #FFFFFF; /* Sombra leve */
+}
+
+.custom-list{
+   width: 100% !important;
+   padding: 0px !important; 
+   //margin-left:10px;
+   //padding-left:10px !important;
+}
+
+.custom-item-option{
+    margin-top:0px;
+    margin-bottom: 5px;
+    margin-left:10px;
+}
+
+::ng-deep .alert-wrapper {
+    width: 400px !important;  
+    max-width: 95% !important; 
+}
+
+.custom-select {
+    padding-bottom: 17px;    
+    min-width: 80%;  
+    text-align: right;
+}
+
+.custom-select-2 {
+    padding-bottom: 17px;    
+    min-width: 60%;  
+    text-align: right;
+}

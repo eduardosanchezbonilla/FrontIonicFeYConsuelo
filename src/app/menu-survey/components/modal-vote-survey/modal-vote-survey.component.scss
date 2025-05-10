@@ -1,0 +1,132 @@
+.modal-content {
+    --background: transparent;
+}
+  
+.modal-wrapper {
+    margin: 15px;                      
+    border-radius: 30px;               
+    overflow: hidden;                  
+    box-shadow: 0 0.5rem 1.5rem rgba(0,0,0,0.1);
+    background: #fff;                 
+}
+    
+.modal-banner {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    height: 250px;
+    background-size: cover;
+    background-position: center;
+    padding: 15px;
+}
+  
+.banner-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 100%);
+}
+  
+.close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    color: #fff;
+}
+  
+.banner-title {    
+    margin: 0;   
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    text-align: center;
+    z-index: 2;    
+}
+  
+.modal-body {
+    position: relative;
+    top: 0px;                
+    z-index: 1;               
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+    background: #fff;
+    padding: 24px 16px 16px;
+    box-shadow: 0 -4px 16px rgba(0,0,0,0.1);
+}
+  
+.question {
+    margin: 0 0 12px;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--ion-color-dark);
+}
+  
+.description {
+    margin: 0 0 12px;
+    font-size: 0.95rem;
+    color: var(--ion-color-medium);
+}
+  
+.option-item {
+    --background: #f9f9f9;
+    --border-radius: 8px;
+    margin-bottom: 15px;
+    padding: 0px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    cursor: pointer;
+    transition: transform 0.1s ease;
+}
+.option-item.ion-activated,
+.option-item.ion-activated:hover {
+    transform: scale(0.98);
+}
+  
+.option-item ion-radio {
+    --size: 20px;
+}
+  
+.submit-btn {
+    margin-top: 6px;
+    --border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+}
+  
+.ranking-label {  
+    font-size: 1rem;
+    margin-left:7px;
+}
+  
+.ranking-select {
+    font-size: 0.9rem;
+}
+
+.custom-list-puntos{
+    margin-bottom: 20px;
+}
+  
+.custom-button-eye{
+    margin-left:-3px !important;
+    margin-right:8px !important;
+}
+
+.option-header-fab {
+    width: 25px;
+    height: 25px;   
+    margin-top: 0px;  
+    margin-bottom: 0px;
+    margin-right: 0px; 
+    margin-left:5px;   
+    border-radius: 50%;
+    background-color: var(--ion-color-primary);
+    display: flex; 
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center; /* Centra verticalmente */    
+}
+
+.option-header-fab-icon {
+    width: 15px;
+    height: 15px;     
+    color:#FFFFFF;    
+}

@@ -162,8 +162,6 @@ export class ModalAttachEventComponent implements OnInit {
   async downloadDocument(document:CloudDocument){       
     // muestro este loading, porque el otro me movia el scroll       
     await this.loadingService.presentLoading('Loading...');   
-
-    console.log("document", document);    
     
     this.store.dispatch(new DownloadCloudDocument({documentGoogleId: document.googleId}))        
       .subscribe({
@@ -171,7 +169,6 @@ export class ModalAttachEventComponent implements OnInit {
           const success = this.store.selectSnapshot(CloudDocumentState.success);
           if(success){            
             const documentDownload = this.store.selectSnapshot(CloudDocumentState.document);     
-            console.log("documentDownload", document.name);       
             this.fileManagerService.showFile(document.name, documentDownload.content, documentDownload.mimeType);            
           }
           else{

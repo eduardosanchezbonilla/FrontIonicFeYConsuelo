@@ -240,7 +240,6 @@ export class ModalMusicianSolosStatsComponent implements OnInit {
         //offset: 4,      // Ajusta el espacio entre el label y la barra
         // Solo se muestra un label por barra: en el último dataset se calcula la suma
         formatter: (value, context) => {
-          //console.log(value);
           //if (context.datasetIndex === context.chart.data.datasets.length - 1) {
           //  const total = context.chart.data.datasets.reduce((acc, dataset, index) => {
           //    return acc + Number(dataset.data[context.dataIndex]);

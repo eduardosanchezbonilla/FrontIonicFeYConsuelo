@@ -162,6 +162,11 @@
           <ion-icon slot="start" name="mail-outline"></ion-icon>
           <ion-label>Mensajes de contacto</ion-label>
         </ion-item>
+
+        <ion-item button (click)="onTabSelect('menu-survey')" >
+          <ion-icon slot="start" name="calculator-outline"></ion-icon>
+          <ion-label>Encuestas</ion-label>
+        </ion-item>
       </ion-list>
 
       <!--<ion-list>
@@ -260,14 +265,10 @@
       <ion-label>Mensajes de contacto</ion-label>
     </ion-item>
 
-    <!--<ion-list>
-      <ion-label class="section-label">Labels</ion-label>
-      <ion-item button>
-        <ion-icon slot="start" name="bookmark-outline"></ion-icon>
-        <ion-label>Family</ion-label>
-      </ion-item>        
-    </ion-list>    
-    -->
+    <ion-item button (click)="onTabSelect('menu-survey')" >
+      <ion-icon slot="start" name="calculator-outline"></ion-icon>
+      <ion-label>Encuestas</ion-label>
+    </ion-item>
   
   </ion-grid>
 
@@ -347,7 +348,14 @@
         <ion-icon slot="start" name="mail-open-outline"></ion-icon>
         <ion-label>Buzón de Sugerencias</ion-label>
       </ion-item>
+
+      <ion-item button (click)="onTabSelect('menu-survey')" >
+        <ion-icon slot="start" name="calculator-outline"></ion-icon>
+        <ion-label>Encuestas</ion-label>
+      </ion-item>
     </ion-list>
+
+
 
     <!-- Imagen del músico -->    
     <!--<div class="musician-image-container">

@@ -1,0 +1,166 @@
+<ion-header [translucent]="true" >
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>   
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()" class="logout-button">
+        <ion-icon name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="false" >
+    
+    <h2 class="fancy-title custom-modal-title">
+        Encuestas
+    </h2>
+
+    <!-- Mensaje vistoso cuando no hay datos -->
+    <div *ngIf="initSearchFinish && (!surveys || surveys.length==0)" class="no-data-container">
+      <div class="spacer"></div>   
+      <ion-icon name="alert-circle-outline" class="no-data-icon"></ion-icon>
+      <p class="no-data-text">Aún no existen encuestas disponibles</p>     
+      <div class="spacer"></div>   
+      <div class="spacer"></div> 
+    </div>
+
+    <!-- 1) Grid de cards -->
+    <ion-grid *ngIf="initSearchFinish && surveys?.length">
+      <ion-row>
+        <ion-col size="12" size-sm="6" size-md="4" *ngFor="let survey of surveys" class="ion-no-padding ion-no-margin">
+          <ion-card class="custom-card">
+            <!-- Cabecera con avatar + título -->
+            <ion-card-header>
+              <ion-item lines="none" class="ion-no-padding ion-no-margin custom-survey-item">
+                <ion-avatar slot="start" class="survey-avatar">
+                  <img 
+                    class="survey-img"
+                    [src]="'data:image/jpeg;base64,' + survey.image"                   
+                  />
+                </ion-avatar>
+              
+                <ion-label>
+                  <h2 class="survey-title">{{ survey.name }}</h2>
+                </ion-label>
+              </ion-item>
+            </ion-card-header>
+  
+            <!-- Contenido: chips y descripción -->
+            <ion-card-content>                    
+              <!-- Contenedor flex para chips + botón -->
+              <div class="chip-row">
+                <div class="chips-container">
+                  <ion-chip *ngIf="profile==='ADMIN' || profile==='SUPER_ADMIN'" [color]="survey.isPublic ? 'success' : 'danger'">
+                    <ion-icon [name]="survey.isPublic ? 'globe-outline' : 'lock-closed-outline'"></ion-icon>
+                    <ion-label>{{ survey.isPublic ? 'Pública' : 'Privada' }}</ion-label>
+                  </ion-chip>
+                  
+                  <ion-chip *ngIf="survey.isOpen && !survey.isFinished" [color]="'success'" fill="outline">
+                    <ion-icon name="play-circle-outline"></ion-icon>
+                    <ion-label>Iniciada</ion-label>
+                  </ion-chip>
+
+                  <ion-chip *ngIf="!survey.isOpen && !survey.isFinished" color="warning" fill="outline">
+                    <ion-icon name="stop-circle-outline"></ion-icon>
+                    <ion-label>Próximamente</ion-label>
+                  </ion-chip>
+
+                  <ion-chip *ngIf="survey.isFinished" color="danger" fill="outline">
+                    <ion-icon name="checkmark-done-outline"></ion-icon>
+                    <ion-label>Finalizada</ion-label>
+                  </ion-chip>
+                </div>
+                
+                <!-- Botón alineado a la derecha -->
+                <ion-button
+                  *ngIf="profile!=='ADMIN' && (survey.isOpen && !survey.isFinished)"
+                  fill="outline"
+                  size="small"   
+                  (click)="voteSurvey(survey)"                    
+                >
+                  <ion-icon name="cellular-outline" slot="start"></ion-icon>
+                  Participar
+                </ion-button>
+
+                <ion-button
+                  *ngIf="profile!=='ADMIN' && profile!=='SUPER_ADMIN' && (survey.isFinished)"
+                  fill="outline"
+                  size="small"                
+                >
+                  <ion-icon name="eye-outline" slot="start"></ion-icon>
+                  Ver resultados
+                </ion-button>
+              </div>
+              
+              <!--<p *ngIf="survey.description" class="survey-desc">
+                {{ survey.description }}
+              </p>-->
+
+              <p class="survey-vote">
+                {{survey.numberUsersVote}} votos
+              </p>
+  
+              <!-- Botones de acción -->
+              <div *ngIf="profile==='ADMIN' || profile==='SUPER_ADMIN'" class="action-buttons">
+                <ion-button
+                  fill="outline"
+                  size="small"   
+                  color="medium"             
+                >
+                  <ion-icon name="eye-outline" slot="start"></ion-icon>
+                  Resultados
+                </ion-button>
+  
+                <ion-button
+                  *ngIf="profile==='ADMIN' || profile==='SUPER_ADMIN'"
+                  fill="solid"
+                  size="small"
+                  color="tertiary"  
+                  (click)="updateSurvey(survey)"                
+                >
+                  <ion-icon name="create-outline" slot="start"></ion-icon>
+                  Editar
+                </ion-button>
+  
+                <ion-button
+                  *ngIf="profile==='ADMIN' || profile==='SUPER_ADMIN'"
+                  fill="clear"
+                  size="small"
+                  color="danger"    
+                  (click)="confirmDeleteSurvey(survey)"              
+                >
+                  <ion-icon name="trash-outline" slot="start"></ion-icon>
+                  Eliminar
+                </ion-button>
+              </div>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <!-- separador -->
+    <div class="spacer"></div>  
+    <div class="spacer-small"></div>  
+    <div class="spacer-small"></div>  
+    <div class="spacer-small"></div>     
+    <div class="spacer-super-small"></div>  
+    <div class="spacer-super-small"></div>  
+    <div class="spacer-super-small"></div>  
+
+    <!-- botones finales -->    
+    <ion-fab *ngIf="profile=='SUPER_ADMIN' || profile=='ADMIN'"  slot="fixed" vertical="bottom" horizontal="end">
+        <ion-fab-button>
+            <ion-icon name="apps-outline"></ion-icon>
+        </ion-fab-button>  
+    
+        <ion-fab-list side="start">
+            <!-- este solo sera para cualqueira que no sea administrador-->   
+            <ion-fab-button color="warning" (click)="createSurvey()">            
+                <ion-icon name="add-outline"></ion-icon>
+            </ion-fab-button>             
+        </ion-fab-list>
+    </ion-fab>
+</ion-content>

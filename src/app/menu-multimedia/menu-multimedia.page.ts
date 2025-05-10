@@ -612,7 +612,7 @@ export class MenuMultimediaPage  implements OnDestroy {
   }
 
   onEditMode(event: any){    
-    console.log("editMode", this.editMode);   
+    ;   
   }
 
   async openVideoCategoryModal(videoCategory: VideoCategory) {

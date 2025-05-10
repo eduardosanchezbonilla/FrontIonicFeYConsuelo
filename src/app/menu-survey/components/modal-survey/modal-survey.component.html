@@ -1,0 +1,188 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="medium" (click)="cancel()">Cancelar</ion-button>
+    </ion-buttons>    
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form (ngSubmit)="confirm()" #surveyForm="ngForm">    
+    <!------------------------->
+    <!------ DATOS ENCUESTA ----->
+    <!------------------------->
+    <h2 class="fancy-title custom-h2">
+      Datos encuesta
+    </h2>    
+
+    <!-- NOMBRE -->
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+      <ion-label color="primary" position="floating">
+          Nombre
+      </ion-label>
+      <ion-icon name="bar-chart-outline" slot="end"></ion-icon>
+      <ion-input                                                        
+            autocomplete="name"       
+            minlength="1"                     
+            maxlength="150"
+            name="name"
+            placeholder="Introduzca el nombre de la encuesta"
+            type="text"
+            required="true"            
+            [(ngModel)]="survey.name"                                                 
+            #nameInput="ngModel"            
+      >
+      </ion-input>
+    </ion-item>
+    
+    <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(nameInput.invalid && nameInput.touched)">
+      <ion-text color="danger" *ngIf="nameInput.errors && nameInput.errors['required']">El nombre es obligatorio.</ion-text>
+      <ion-text color="danger" *ngIf="nameInput.errors && nameInput.errors['minlength']">El nombre debe tener al menos 1 caracter..</ion-text>
+      <ion-text color="danger" *ngIf="nameInput.errors && nameInput.errors['maxlength']">El nombre no puede exceder los 150 caracteres.</ion-text>
+    </div>
+
+    <!-- TIPO DE ENCUESTA -->    
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent custom-item">
+      <ion-label color="primary" class="custom-label">Tipo de encuesta</ion-label>
+      <ion-select  class="custom-select-2" 
+        name="surveyType"
+        placeholder="Seleccionar"
+        [(ngModel)]="survey.type"
+        required        
+        #typeInput="ngModel"    
+        okText="Aceptar"
+        cancelText="Cancelar"      
+      >
+        <ion-select-option value="OPTIONS" checked>Opciones</ion-select-option>
+        <ion-select-option value="POINTS">Puntos</ion-select-option>        
+      </ion-select>
+    </ion-item>
+    
+    <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(typeInput.invalid && typeInput.touched)">
+      <ion-text color="danger" *ngIf="typeInput.errors && typeInput.errors['required']">El tipo de encuesta es obligatorio.</ion-text>      
+    </div>
+
+    <!-- QUESTION -->
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding background-transparent">
+      <ion-label color="primary" position="floating">
+          Pregunta
+      </ion-label>
+      <ion-icon name="help-outline" slot="end"></ion-icon>
+      <ion-input                                                        
+            autocomplete="question"       
+            minlength="1"                     
+            maxlength="150"
+            name="question"
+            placeholder="Introduzca la pregunta de la encuesta"
+            type="text"
+            required="true"          
+            [(ngModel)]="survey.question"                                                 
+            #questionInput="ngModel"            
+      >
+      </ion-input>
+    </ion-item>
+    
+    <div class="ion-margin-start ion-margin-end ion-no-padding" *ngIf="(questionInput.invalid && questionInput.touched)">
+      <ion-text color="danger" *ngIf="questionInput.errors && questionInput.errors['required']">La pregunta es obligatorio.</ion-text>
+      <ion-text color="danger" *ngIf="questionInput.errors && questionInput.errors['minlength']">La pregunta debe tener al menos 1 caracter..</ion-text>
+      <ion-text color="danger" *ngIf="questionInput.errors && questionInput.errors['maxlength']">La pregunta no puede exceder los 150 caracteres.</ion-text>
+    </div>
+
+    <!-- PUBLICA -->
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding">
+      <ion-label color="primary">Publica</ion-label>
+      <ion-checkbox slot="end" [(ngModel)]="survey.isPublic" name="ispublic"></ion-checkbox>
+    </ion-item>
+
+    <!-- ABIERTA -->
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding">
+      <ion-label color="primary">Abierta</ion-label>
+      <ion-checkbox slot="end" [(ngModel)]="survey.isOpen" name="isopen"></ion-checkbox>
+    </ion-item>
+
+    <!-- FINALIZADA -->
+    <ion-item class="ion-margin-start ion-margin-end ion-no-padding">
+      <ion-label color="primary">Finalizada</ion-label>
+      <ion-checkbox slot="end" [(ngModel)]="survey.isFinished" name="isfinished"></ion-checkbox>
+    </ion-item>
+
+    <!-- IMAGEN -->
+    <ion-item class="ion-no-padding ion-no-margin custom-item-image">
+    <!--<ion-item class="ion-margin-start ion-no-padding background-transparent image-selector custom-item-image">-->
+      <ion-label color="primary"  class="image-label">
+        Foto
+        <img *ngIf="showImage" [src]="showImage" alt="Vista previa de la imagen" class="preview-image"/>
+      </ion-label>
+            
+      <ion-button  (click)="selectImage()" class="custom-ion-button-image">
+        <ion-icon name="image-outline"></ion-icon>
+      </ion-button>
+          
+      <ion-button color="warning" (click)="clearImage()" *ngIf="showImage" class="custom-ion-button-image">
+        <ion-icon name="trash-outline"></ion-icon>
+      </ion-button>      
+    </ion-item>
+
+    <!-- DESCRIPCION -->
+    <ion-item lines="none">      
+      <ion-label color="primary" position="stacked" class="custom-label-textarea">
+        Anotaciones
+      </ion-label>
+      <ion-textarea 
+          name="description"
+          placeholder="Escribe las anotaciones asociadas a la encuesta..." 
+          class="custom-textarea focus-style"
+          minlength="1"                     
+          maxlength="10000"
+          required="false"
+          [(ngModel)]="survey.description"              
+      >
+      </ion-textarea>
+    </ion-item>
+
+    <!-- OPCIONES -->
+    <ion-item lines="none" class="ion-no-padding custom-item-options">
+      <ion-label class="custom-label-options">Opciones</ion-label>
+      <ion-button color="danger" size="small" slot="end" (click)="openOptionAlert()">
+        <ion-icon name="add-circle-outline"></ion-icon>
+      </ion-button>
+    </ion-item>
+
+    <ion-item *ngIf="survey.options.length > 0" lines="none">            
+      <ion-list class="custom-list">
+        <ion-reorder-group 
+          [disabled]="false"
+          (ionItemReorder)="doReorder($event)" 
+          class="custom-list"
+        >
+          <ion-item *ngFor="let opt of survey.options; let i = index" class="ion-no-padding custom-item-option">
+            <ion-label class="ion-no-padding ion-no-margin">
+              <h3>{{ opt.name }}</h3>
+              <p *ngIf="opt.youtubeId">{{ opt.youtubeId }}</p>
+            </ion-label>
+            <ion-button fill="clear" size="small" (click)="openOptionAlert(i)">
+              <ion-icon name="create-outline"></ion-icon>
+            </ion-button>
+            <ion-button fill="clear" size="small" color="danger" (click)="removeOption(i)">
+              <ion-icon name="trash-outline"></ion-icon>
+            </ion-button>
+            <ion-reorder slot="end"></ion-reorder>
+          </ion-item>
+        </ion-reorder-group>
+      </ion-list>        
+    </ion-item>
+
+
+    <div class="spacer"></div>   
+    <div class="spacer"></div>  
+
+    <ion-button 
+          type="submit"           
+          [disabled]="surveyForm.invalid"
+          expand="block">
+        {{updating ? 'Actualizar': 'Crear'}} encuesta
+    </ion-button>
+
+    
+  </form>
+</ion-content>

@@ -192,8 +192,7 @@ export class ModalStatsMarchsComponent implements OnInit {
   }
 
   /*toggleCard(card: string) {
-    this.expandedCard = this.expandedCard === card ? null : card;
-    console.log(this.expandedCard);
+    this.expandedCard = this.expandedCard === card ? null : card;   
   }*/
 
   toggleCard(card: string): void {

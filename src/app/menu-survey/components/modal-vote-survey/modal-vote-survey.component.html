@@ -1,0 +1,115 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="medium" (click)="cancel()">Cancelar</ion-button>
+    </ion-buttons>    
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content fullscreen class="modal-content">
+  <!-- Wrapper con margen y esquinas redondeadas -->
+  <div class="modal-wrapper" *ngIf="survey">
+    <!-- BANNER CON IMAGEN DE FONDO Y GRADIENTE -->
+    <div class="modal-banner" [style.background-image]="'url(data:image/jpeg;base64,' + survey.image + ')'">
+      <div class="banner-overlay"></div>    
+      <h1 class="banner-title">{{ survey.name }}</h1>
+    </div>
+  
+    <!-- CONTENIDO BLANCO -->
+    <div class="modal-body">
+      <!-- PREGUNTA -->
+      <h2 class="question">{{ survey.question }}</h2>
+  
+      <!-- DESCRIPCIÓN MENOS DESTACADA -->
+      <p class="description" *ngIf="survey.description">
+        {{ survey.description }}
+      </p>
+  
+      <!-- OPCIONES CON RADIO -->
+      <ion-radio-group [(ngModel)]="selectedOption" *ngIf="survey.type=='OPTIONS'">    
+        <ion-list lines="full" class="custom-list-puntos" >
+          <ion-item 
+            *ngFor="let opt of survey.options" 
+            class="ion-no-padding ion-no-margin"
+            (click)="selectedOption = opt.id"
+          >
+            <div 
+              *ngIf="opt.youtubeId" 
+              slot="start"
+              class="option-header-fab"
+              (click)="viewYouTube(opt,opt.youtubeId);$event.stopPropagation();"
+            >
+              <ion-icon                 
+                name="eye-outline" 
+                class="option-header-fab-icon">
+              </ion-icon>        
+            </div> 
+
+            <ion-label class="ranking-label">{{ opt.name }}</ion-label>
+
+            <ion-radio slot="end" [value]="opt.id"></ion-radio>
+          </ion-item>
+        </ion-list>
+      </ion-radio-group>
+
+      <ng-container *ngIf="survey.type!='OPTIONS'">
+        <ion-list class="custom-list-puntos" lines="full">
+          <ion-item *ngFor="let opt of survey.options" class="ion-no-margin ion-no-padding">
+
+            <div 
+              *ngIf="opt.youtubeId" 
+              slot="start"
+              class="option-header-fab" 
+              (click)="viewYouTube(opt,opt.youtubeId)"
+            >
+              <ion-icon 
+                name="eye-outline" 
+                class="option-header-fab-icon">
+              </ion-icon>        
+            </div> 
+
+            <ion-label class="ranking-label">{{ opt.name }}</ion-label>
+            
+            <ion-select
+              interface="popover"
+              placeholder=""
+              class="ranking-select"
+              [(ngModel)]="ranks[opt.id]"
+              (ionChange)="onRankChange()"
+            >
+              <ion-select-option [value]="null"></ion-select-option>
+              <ion-select-option
+                *ngFor="let num of rankNumbers"
+                [value]="num"
+                [disabled]="isRankDisabled(num, opt.id)"
+              >
+                {{ num }}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-list>
+      </ng-container>
+  
+      <!-- BOTÓN DE ENVÍO -->
+      <ion-button 
+        *ngIf="survey.type=='OPTIONS'"
+        expand="block"         
+        class="submit-btn" 
+        [disabled]="!selectedOption"
+        (click)="confirm()">
+        Votar
+      </ion-button>
+
+      <ion-button
+        *ngIf="survey.type!='OPTIONS'"
+        expand="block"    
+        class="submit-btn"
+        [disabled]="!allRanked()"
+        (click)="confirm()"
+      >
+        Enviar puntuaciones
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

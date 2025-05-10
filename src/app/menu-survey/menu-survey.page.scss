@@ -1,0 +1,140 @@
+.custom-content{
+    margin:16px;    
+}
+
+.custom-modal-title {
+    margin-top:15px !important; 
+    margin-bottom:10px;  
+}
+
+.no-data-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    //height: 100%;
+    text-align: center;
+    color: #888;
+    //margin-top:50px;
+}
+
+.no-data-icon {
+    font-size: 48px;
+    //color: #ff9800; 
+    color: var(--ion-color-primary);
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+  
+.no-data-text {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    color: #333;
+}
+
+ion-card {
+    --padding-start: 0.75rem;
+    --padding-end: 0.75rem;
+    margin-bottom: 1rem;
+}
+  
+.survey-desc {
+    margin: 0.5rem 0;
+    color: var(--ion-color-medium);
+    padding-left:10px;
+}
+
+.survey-vote {
+    margin: 0.5rem 0;
+    margin-top: 10px;
+    margin-bottom: 0px;
+    color: var(--ion-color-medium);
+    padding-left:10px;
+}
+  
+.action-buttons {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+  
+.survey-avatar {
+    width: 40px !important;
+    height: 40px !important;
+    margin-top:0px;
+    margin-bottom:0px;
+    margin-left: 0px; 
+    border-radius: 0px !important;
+}
+
+.survey-img {
+    --border-radius: 0px !important;
+}
+
+.custom-survey-item .survey-label {
+    flex: 1 1 auto;    
+    min-width: 0;      
+}
+  
+.survey-title {
+    font-size: 1.1rem;    
+    color: var(--ion-color-dark);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;         
+    overflow: hidden;            
+    text-overflow: ellipsis;           
+    white-space: normal;              
+}
+
+  
+/* Estilos para las cards con fondo blanco y borde redondeado+sombras */
+.custom-card {
+    /* Forzar fondo blanco */
+    --background: #ffffff;
+  
+    /* Borde sutil */
+    //border: 2px solid #cccccc;
+    border: 1px solid #e74c3c;   
+    border-radius: 0.75rem;
+  
+    /* Sombra suave */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+
+    margin-top:7px;
+    margin-bottom:7px;
+  
+    /* Un poco de separación interior si quieres */
+    //padding: 0.5rem;
+    
+    /* Opcional: separa las cards verticalmente */
+   // margin-bottom: 1rem;
+}
+
+ion-card-header {
+    padding-bottom: 10px !important;
+}
+
+ion-card-content {
+    padding-bottom: 18px !important;
+    padding-left: 10px !important;
+}
+
+.chip-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;       /* para pantallas muy estrechas */
+    gap: 0.5rem;           /* espacio mínimo */
+}
+  
+.chips-container {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}

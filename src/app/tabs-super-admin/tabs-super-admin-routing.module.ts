@@ -57,6 +57,10 @@ const routes: Routes = [
         loadChildren: () => import('../menu-contact/menu-contact.module').then( m => m.MenuContactPageModule)
       },
       {
+        path: 'menu-survey',
+        loadChildren: () => import('../menu-survey/menu-survey.module').then( m => m.MenuSurveyPageModule)
+      },
+      {
         path: 'menu-repertoire',
         loadChildren: () => import('../menu-repertoire/menu-repertoire.module').then( m => m.MenuRepertoirePageModule)
       },
